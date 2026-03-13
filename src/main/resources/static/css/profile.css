@@ -1,0 +1,346 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* CONTENT */
+
+.main {
+  flex: 1;
+  padding: 30px;
+}
+
+/* CARD */
+
+.card-custom {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+/* .main {
+  margin-left: 260px;
+  padding: 30px;
+  min-height: 100vh;
+} */
+body {
+  font-family: "Inter", sans-serif;
+  background: #f5f7fb;
+}
+
+/* Layout */
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.logo strong {
+  font-size: 16px;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.logo small {
+  font-size: 12px;
+  color: #6b7280;
+}
+/* Menu */
+
+/* Content */
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Topbar */
+
+.topbar {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.noti {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background: #f1f5f9;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.noti:hover {
+  background: #e2e8f0;
+}
+
+/* Profile Card */
+
+.profile-card {
+  margin: 40px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+}
+
+.avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Info */
+
+.profile-info h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.major {
+  color: #2563eb;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.profile-meta {
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* Buttons */
+
+.profile-actions {
+  display: flex;
+  gap: 12px;
+}
+
+button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+/* outline */
+
+.btn-outline {
+  border: 1px solid #e2e8f0;
+  background: white;
+}
+
+.btn-outline:hover {
+  background: #f8fafc;
+}
+
+/* primary */
+
+.btn-primary {
+  border: none;
+  background: #2563eb;
+  color: white;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+}
+
+.btn-primary:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.45);
+}
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}
+
+.info-name {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.badge-skill {
+  background: #eef2ff;
+  color: #4f46e5;
+  margin: 4px;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-meta {
+  display: flex;
+  gap: 20px;
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 5px;
+}
+
+.stat-box {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #eef2ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2563eb;
+  font-size: 18px;
+}
+
+.edu-item {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.edu-icon {
+  width: 36px;
+  height: 36px;
+  background: #eef2ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.card-custom:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  transition: 0.2s;
+}
+.card-title {
+  font-weight: 600;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #111827;
+}
+
+.card-title i {
+  color: #2563eb;
+}
+
+/* mục tiêu nghề nghiệp */
+
+.goal-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+}
+
+.goal-list li {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.goal-list i {
+  color: #2563eb;
+}
+
+/* skill tags */
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skill-tags span {
+  background: #eef2ff;
+  color: #2563eb;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  transition: 0.2s;
+}
+
+.skill-tags span:hover {
+  background: #2563eb;
+  color: white;
+}
+
+/* link */
+
+.link-list div {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.link-list i {
+  color: #2563eb;
+}
+
+/* card hover */
+
+.card-custom {
+  transition: 0.25s;
+}
+
+.card-custom:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}

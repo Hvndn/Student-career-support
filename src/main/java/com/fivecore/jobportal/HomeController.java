@@ -26,4 +26,21 @@ public class HomeController {
     public String employerDashboard() {
         return "dashboard_employer";
     }
+
+    @GetMapping("student/profile")
+    public String profile(Model model) {
+
+        model.addAttribute("user","Nguyễn Văn A");
+            model.addAttribute("activePage", "profile");
+
+
+        return "profile";
+    }
+    @GetMapping("/dashboard")
+public String dashboard(Model model) {
+    model.addAttribute("activePage", "dashboard");
+    return "dashboard";
+}
+
+
 }

@@ -1,186 +1,184 @@
 body {
-    background-color: #f5f5f5;
+  background-color: #f5f5f5;
 }
 /* ===== GLOBAL ===== */
 
 body {
-    background: #f4f7fb;
-    font-family: "Segoe UI", Roboto, sans-serif;
-    color: #1f2937;
+  background: #f4f7fb;
+  font-family: "Inter", sans-serif;
 }
 
 .container {
-    max-width: 1200px;
+  max-width: 1200px;
 }
 
 /* ===== NAVBAR ===== */
 
 .navbar {
-    border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .navbar-brand {
-    font-size: 1.3rem;
-    letter-spacing: 0.5px;
+  font-size: 1.3rem;
+  letter-spacing: 0.5px;
 }
 
 .nav-link {
-    font-weight: 500;
-    color: #4b5563 !important;
+  font-weight: 500;
+  color: #4b5563 !important;
 }
 
 .nav-link:hover {
-    color: #2563eb !important;
+  color: #2563eb !important;
 }
 
 .nav-link.active {
-    color: #2563eb !important;
+  color: #2563eb !important;
 }
 
 /* ===== BUTTON ===== */
 
 .btn-primary {
-    background: linear-gradient(135deg, #2563eb, #3b82f6);
-    border: none;
-    border-radius: 8px;
-    padding: 6px 16px;
-    font-weight: 500;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  border: none;
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-weight: 500;
 }
 
 .btn-primary:hover {
-    opacity: 0.9;
+  opacity: 0.9;
 }
 
 /* ===== CARD ===== */
 
 .card {
-    border: none;
-    border-radius: 14px;
-    background: white;
-    transition: all 0.25s ease;
+  border: none;
+  border-radius: 14px;
+  background: white;
+  transition: all 0.25s ease;
 }
 
 .card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
 }
 
 /* ===== STATS ===== */
 
 .card h4 {
-    margin-top: 8px;
-    color: #111827;
+  margin-top: 8px;
+  color: #111827;
 }
 
 /* ===== BADGE ===== */
 
 .badge {
-    padding: 6px 12px;
-    font-weight: 500;
-    border-radius: 20px;
+  padding: 6px 12px;
+  font-weight: 500;
+  border-radius: 20px;
 }
 
 .badge.bg-light {
-    background: #eef2ff !important;
-    color: #2563eb !important;
+  background: #eef2ff !important;
+  color: #2563eb !important;
 }
 
 .badge.bg-secondary {
-    background: #f1f5f9 !important;
-    color: #334155 !important;
+  background: #f1f5f9 !important;
+  color: #334155 !important;
 }
 
 /* ===== PROGRESS ===== */
 
 .progress {
-    background: #e5e7eb;
-    border-radius: 20px;
+  background: #e5e7eb;
+  border-radius: 20px;
 }
 
 .progress-bar {
-    border-radius: 20px;
-    background: linear-gradient(90deg, #2563eb, #60a5fa);
+  border-radius: 20px;
+  background: linear-gradient(90deg, #2563eb, #60a5fa);
 }
 
 /* ===== SECTION TITLE ===== */
 
 h6.fw-bold {
-    color: #111827;
+  color: #111827;
 }
 
 /* ===== ALERT ===== */
 
 .alert-primary {
-    background: #eef2ff;
-    border: none;
-    color: #1e3a8a;
-    border-radius: 12px;
+  background: #eef2ff;
+  border: none;
+  color: #1e3a8a;
+  border-radius: 12px;
 }
 
 /* ===== AVATAR ===== */
 
 img.rounded-circle {
-    object-fit: cover;
-    transition: 0.3s;
+  object-fit: cover;
+  transition: 0.3s;
 }
 
 img.rounded-circle:hover {
-    transform: scale(1.1);
-    cursor: pointer;
+  transform: scale(1.1);
+  cursor: pointer;
 }
 
 /* ===== MOBILE ===== */
 
 @media (max-width: 768px) {
+  .navbar-brand {
+    font-size: 1.1rem;
+  }
 
-    .navbar-brand {
-        font-size: 1.1rem;
-    }
+  .btn-primary {
+    padding: 4px 12px;
+    font-size: 0.9rem;
+  }
 
-    .btn-primary {
-        padding: 4px 12px;
-        font-size: 0.9rem;
-    }
-
-    h4 {
-        font-size: 1.2rem;
-    }
+  h4 {
+    font-size: 1.2rem;
+  }
 }
 /* ===== PAGE LOADER ===== */
 
 #page-loader {
-    position: fixed;
-    inset: 0;
-    background: #f4f7fb;
-    z-index: 9999;
+  position: fixed;
+  inset: 0;
+  background: #f4f7fb;
+  z-index: 9999;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .loader-content {
-    text-align: center;
+  text-align: center;
 }
 
 .spinner {
-    width: 48px;
-    height: 48px;
-    border: 5px solid #e5e7eb;
-    border-top: 5px solid #2563eb;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: auto;
+  width: 48px;
+  height: 48px;
+  border: 5px solid #e5e7eb;
+  border-top: 5px solid #2563eb;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: auto;
 }
 
 .loader-content p {
-    margin-top: 12px;
-    font-size: 14px;
-    color: #64748b;
+  margin-top: 12px;
+  font-size: 14px;
+  color: #64748b;
 }
 
 @keyframes spin {
-    100% {
-        transform: rotate(360deg);
-    }
+  100% {
+    transform: rotate(360deg);
+  }
 }
