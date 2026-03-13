@@ -1,30 +1,35 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+pageEncoding="UTF-8"%> <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Trang chủ</title>
     <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
         <a class="navbar-brand" href="#">Student System</a>
-    </div>
-</nav>
+      </div>
+    </nav>
 
-<div class="container mt-5">
-    <h1 class="text-center">Xin chào!</h1>
-    <p class="text-center">
-        Chào <b><c:out value="${username}"/></b>
-    </p>
-    <div class="text-center mt-4">
-        <a href="${pageContext.request.contextPath}/dashboard" class="btn btn-primary">Vào Dashboard</a>
+    <div class="container mt-5">
+      <h1 class="text-center">Xin chào!</h1>
+      <p class="text-center">
+        Chào <b><c:out value="${username}" /></b>
+      </p>
+      <div class="text-center mt-4">
+        <a
+          href="${pageContext.request.contextPath}/dashboard"
+          class="btn btn-primary"
+          >Vào Dashboard</a
+        >
+      </div>
     </div>
-</div>
-
-</body>
+  </body>
 </html>
