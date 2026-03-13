@@ -1,3 +1,4 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!doctype html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
   <head>
@@ -122,9 +123,7 @@
           </li>
 
           <li class="nav-item me-2">
-            <a href="/employer" class="btn btn-outline-dark">
-              Nhà tuyển dụng
-            </a>
+            <a href="/employer" class="btn btn-outline-dark">Nhà tuyển dụng</a>
           </li>
 
           <li class="nav-item me-2">
