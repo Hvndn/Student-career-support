@@ -9,15 +9,25 @@ body{
   font-size:14px;
 }
 .sidebar{
-  width:240px;
-  background:white;
-  border-right:1px solid #eee;
-  padding:25px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-}
+width:240px;
+background:white;
+border-right:1px solid #eee;
+padding:25px;
 
+position:fixed;
+top:0;
+left:0;
+height:100vh;
+
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+}
+.main{
+margin-left:240px;
+padding:30px;
+flex:1;
+}
 /* LOGO */
 
 .logo{

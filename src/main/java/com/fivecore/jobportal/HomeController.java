@@ -49,5 +49,8 @@ public String studentJobs(){
 public String studentProjects() {
     return "student_projects";
 }
-
+@GetMapping("/student/skills")
+public String studentSkills(){
+    return "student_skills";
+}
 }
