@@ -62,4 +62,12 @@ public class AuthService {
         userRepository.save(newUser);
         return true;
     }
+    public boolean checkEmailExists(String email) {
+    return userRepository.existsByEmail(email);
+}
+
+public void sendResetPasswordEmail(String email) {
+    // Tạm thời chỉ log để test
+    System.out.println("Send reset password email to: " + email);
+}
 }
