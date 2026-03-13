@@ -45,6 +45,9 @@ public String dashboard(Model model) {
 public String studentJobs(){
     return "student_jobs";
 }
-
+@GetMapping("/student/projects")
+public String studentProjects() {
+    return "student_projects";
+}
 
 }
