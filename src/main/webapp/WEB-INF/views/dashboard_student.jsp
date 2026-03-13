@@ -42,7 +42,35 @@
         justify-content: space-between;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.03);
       }
+      .sidebar {
+        width: 240px;
+        min-width: 180px;
+        max-width: 400px;
+        resize: horizontal;
+        overflow: auto;
+      }
 
+      /* thanh kéo */
+
+      .resizer {
+        width: 4px;
+        cursor: col-resize;
+        background: transparent;
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+      }
+
+      .resizer:hover {
+        background: #2563eb;
+      }
+
+      /* để sidebar có vị trí cho resizer */
+
+      .sidebar {
+        position: relative;
+      }
       .logo {
         display: flex;
         align-items: center;
@@ -288,6 +316,8 @@
       <!-- SIDEBAR -->
 
       <div class="sidebar">
+        <!-- resizer -->
+        <div class="resizer"></div>
         <div>
           <div class="logo mb-4">
             <div class="bg-primary text-white p-2 rounded">🎓</div>
@@ -581,5 +611,29 @@
         </div>
       </div>
     </div>
+    <script>
+      const sidebar = document.querySelector(".sidebar");
+      const resizer = document.querySelector(".resizer");
+
+      let isResizing = false;
+
+      resizer.addEventListener("mousedown", function () {
+        isResizing = true;
+      });
+
+      document.addEventListener("mousemove", function (e) {
+        if (!isResizing) return;
+
+        let newWidth = e.clientX;
+
+        if (newWidth > 180 && newWidth < 400) {
+          sidebar.style.width = newWidth + "px";
+        }
+      });
+
+      document.addEventListener("mouseup", function () {
+        isResizing = false;
+      });
+    </script>
   </body>
 </html>
