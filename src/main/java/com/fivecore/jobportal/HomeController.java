@@ -41,6 +41,10 @@ public String dashboard(Model model) {
     model.addAttribute("activePage", "dashboard");
     return "dashboard";
 }
+@GetMapping("/student/jobs")
+public String studentJobs(){
+    return "student_jobs";
+}
 
 
 }
