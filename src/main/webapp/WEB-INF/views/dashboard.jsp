@@ -92,6 +92,97 @@
         background: white;
         padding: 40px;
       }
+      /* sidebar */
+
+.filter-card{
+border:1px solid #e5e7eb;
+}
+
+.cv-box{
+background:#2563eb;
+color:white;
+padding:20px;
+border-radius:12px;
+}
+
+/* job card layout */
+
+.job-card{
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:white;
+border-radius:12px;
+padding:20px;
+margin-bottom:15px;
+border:1px solid #e5e7eb;
+transition:all .25s ease;
+}
+
+.job-card:hover{
+transform:translateY(-4px);
+box-shadow:0 12px 30px rgba(0,0,0,0.1);
+}
+
+/* left */
+
+.job-left{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+/* right */
+
+.job-right{
+text-align:right;
+}
+
+/* title */
+
+.job-title{
+font-weight:600;
+margin-bottom:4px;
+}
+
+/* meta */
+
+.job-meta{
+font-size:13px;
+color:#6b7280;
+}
+
+/* tags */
+
+.tags span{
+background:#eef2ff;
+color:#2563eb;
+font-size:12px;
+padding:4px 8px;
+border-radius:6px;
+margin-right:5px;
+}
+
+/* salary */
+
+.salary{
+color:#2563eb;
+font-weight:600;
+margin-bottom:5px;
+}
+
+/* company */
+
+.company-logo{
+width:42px;
+height:42px;
+border-radius:10px;
+background:#f1f5f9;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+}
     </style>
   </head>
 
@@ -158,154 +249,201 @@
         </div>
       </div>
 
-      <div class="row">
-        <!-- FILTER BAR -->
+  <div class="row">
 
-        <div class="bg-white p-3 rounded mb-4 border">
-          <div class="row g-2">
-            <div class="col-md-3">
-              <select class="form-select">
-                <option>Ngành nghề</option>
-                <option>Công nghệ thông tin</option>
-                <option>Marketing</option>
-                <option>Thiết kế</option>
-              </select>
-            </div>
+  <!-- SIDEBAR FILTER -->
 
-            <div class="col-md-2">
-              <select class="form-select">
-                <option>Địa điểm</option>
-                <option>Hà Nội</option>
-                <option>TP.HCM</option>
-                <option>Đà Nẵng</option>
-              </select>
-            </div>
+  <div class="col-md-3">
 
-            <div class="col-md-2">
-              <select class="form-select">
-                <option>Mức lương</option>
-                <option>Dưới 5 triệu</option>
-                <option>5 - 10 triệu</option>
-                <option>Trên 10 triệu</option>
-              </select>
-            </div>
+    <div class="filter-card">
 
-            <div class="col-md-2">
-              <select class="form-select">
-                <option>Loại hình</option>
-                <option>Thực tập</option>
-                <option>Full-time</option>
-                <option>Part-time</option>
-              </select>
-            </div>
+      <h6 class="fw-bold mb-3">Bộ lọc chi tiết</h6>
 
-            <div class="col-md-3">
-              <button class="btn btn-primary w-100">Áp dụng bộ lọc</button>
-            </div>
-          </div>
-        </div>
+      <label class="small">Ngành nghề</label>
+      <select class="form-select mb-3">
+        <option>Công nghệ thông tin</option>
+        <option>Marketing</option>
+        <option>Thiết kế</option>
+      </select>
 
-        <!-- JOB LIST -->
+      <label class="small">Mức lương</label>
 
-        <div class="col-md-12">
-          <p class="text-muted">Tìm thấy 128 kết quả phù hợp</p>
-
-          <!-- JOB -->
-
-          <div class="job-card">
-            <div class="d-flex">
-              <div class="company-logo me-3">F</div>
-
-              <div class="flex-grow-1">
-                <h6 class="fw-bold">Thực tập sinh Java (Backend)</h6>
-
-                <p class="text-muted small">
-                  FPT Software • Hà Nội • 15 giờ trước
-                </p>
-
-                <span class="tag">Java</span>
-                <span class="tag">Spring Boot</span>
-                <span class="tag">SQL</span>
-              </div>
-
-              <div class="text-end">
-                <p class="text-primary fw-bold">5 - 8 Triệu</p>
-
-                <button class="btn btn-primary btn-sm mb-1">
-                  Ứng tuyển nhanh
-                </button>
-
-                <br />
-
-                <button class="btn btn-light btn-sm">💾 Lưu</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- JOB -->
-
-          <div class="job-card">
-            <div class="d-flex">
-              <div class="company-logo me-3">V</div>
-
-              <div class="flex-grow-1">
-                <h6 class="fw-bold">UI/UX Designer Junior</h6>
-
-                <p class="text-muted small">
-                  VNG Corporation • TP.HCM • 1 ngày trước
-                </p>
-
-                <span class="tag">Figma</span>
-                <span class="tag">Design System</span>
-              </div>
-
-              <div class="text-end">
-                <p class="text-primary fw-bold">10 - 15 Triệu</p>
-
-                <button class="btn btn-primary btn-sm mb-1">
-                  Ứng tuyển nhanh
-                </button>
-
-                <br />
-
-                <button class="btn btn-light btn-sm">💾 Lưu</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- PAGINATION -->
-
-          <nav class="mt-4">
-            <ul class="pagination justify-content-center">
-              <li class="page-item">
-                <a class="page-link">‹</a>
-              </li>
-
-              <li class="page-item active">
-                <a class="page-link">1</a>
-              </li>
-
-              <li class="page-item">
-                <a class="page-link">2</a>
-              </li>
-
-              <li class="page-item">
-                <a class="page-link">3</a>
-              </li>
-
-              <li class="page-item">
-                <a class="page-link">10</a>
-              </li>
-
-              <li class="page-item">
-                <a class="page-link">›</a>
-              </li>
-            </ul>
-          </nav>
-        </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio">
+        <label class="form-check-label small">Dưới 5 triệu</label>
       </div>
+
+      <div class="form-check">
+        <input class="form-check-input" type="radio">
+        <label class="form-check-label small">5 - 10 triệu</label>
+      </div>
+
+      <div class="form-check mb-3">
+        <input class="form-check-input" type="radio">
+        <label class="form-check-label small">Trên 10 triệu</label>
+      </div>
+
+      <label class="small">Loại hình</label>
+
+      <div class="mt-2">
+        <span class="badge bg-light text-dark">Full-time</span>
+        <span class="badge bg-light text-dark">Internship</span>
+        <span class="badge bg-light text-dark">Part-time</span>
+      </div>
+
     </div>
 
+
+    <div class="cv-box mt-3">
+
+      <h6>CV của bạn đã sẵn sàng?</h6>
+
+      <p class="small">
+        Tải CV để nhà tuyển dụng tìm thấy bạn.
+      </p>
+
+      <button class="btn btn-light w-100">
+        Tạo CV ngay
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- JOB LIST -->
+
+  <div class="col-md-9">
+
+    <p class="text-muted">Tìm thấy 128 kết quả phù hợp</p>
+
+    <!-- JOB 1 -->
+
+    <div class="job-card">
+
+      <div class="job-left">
+
+        <div class="company-logo">F</div>
+
+        <div>
+
+          <h6 class="job-title">
+            Thực tập sinh Java (Backend)
+          </h6>
+
+          <p class="job-meta">
+            FPT Software • Hà Nội • 15 giờ trước
+          </p>
+
+          <div class="tags">
+
+            <span>Java</span>
+            <span>Spring Boot</span>
+            <span>SQL</span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="job-right">
+
+        <div class="salary">
+          5 - 8 Triệu
+        </div>
+
+        <button class="btn btn-primary btn-sm">
+          Ứng tuyển nhanh
+        </button>
+
+        <button class="btn btn-light btn-sm mt-1">
+          💾 Lưu
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- JOB 2 -->
+
+    <div class="job-card">
+
+      <div class="job-left">
+
+        <div class="company-logo">V</div>
+
+        <div>
+
+          <h6 class="job-title">
+            UI/UX Designer Junior
+          </h6>
+
+          <p class="job-meta">
+            VNG Corporation • TP.HCM • 1 ngày trước
+          </p>
+
+          <div class="tags">
+
+            <span>Figma</span>
+            <span>Design System</span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="job-right">
+
+        <div class="salary">
+          10 - 15 Triệu
+        </div>
+
+        <button class="btn btn-primary btn-sm">
+          Ứng tuyển nhanh
+        </button>
+
+        <button class="btn btn-light btn-sm mt-1">
+          💾 Lưu
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- PAGINATION -->
+
+    <nav class="mt-4">
+      <ul class="pagination justify-content-center">
+
+        <li class="page-item">
+          <a class="page-link">‹</a>
+        </li>
+
+        <li class="page-item active">
+          <a class="page-link">1</a>
+        </li>
+
+        <li class="page-item">
+          <a class="page-link">2</a>
+        </li>
+
+        <li class="page-item">
+          <a class="page-link">3</a>
+        </li>
+
+        <li class="page-item">
+          <a class="page-link">›</a>
+        </li>
+
+      </ul>
+    </nav>
+
+  </div>
+
+</div>
     <!-- FOOTER -->
 
     <div class="footer">
