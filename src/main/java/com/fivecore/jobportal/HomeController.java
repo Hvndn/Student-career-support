@@ -26,4 +26,8 @@ public class HomeController {
     public String employerDashboard() {
         return "dashboard_employer";
     }
+    @GetMapping("/employer/landing")
+    public String employerLanding() {
+        return "employer_landing";
+    }
 }
