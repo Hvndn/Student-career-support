@@ -29,26 +29,6 @@ body {
   background: #f5f7fb;
 }
 
-/* Sidebar */
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 30px;
-}
-
-.logo strong {
-  font-size: 16px;
-  font-weight: 700;
-  color: #2563eb;
-}
-
-.logo small {
-  font-size: 12px;
-  color: #6b7280;
-}
-/* Menu */
 
 .noti {
   width: 40px;
