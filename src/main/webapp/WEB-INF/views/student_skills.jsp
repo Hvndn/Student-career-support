@@ -21,6 +21,7 @@
     />
 
     <link rel="stylesheet" href="/css/dashboard.css" />
+    <link rel="stylesheet" href="/css/sidebar.css" />
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -133,6 +134,7 @@
       <jsp:include page="sidebar_students.jsp" />
 
       <div class="main">
+        <div class="content">
         <div class="d-flex justify-content-between align-items-center mb-3">
           <div>
             <h4 class="fw-bold">Kỹ năng & Khóa học</h4>
