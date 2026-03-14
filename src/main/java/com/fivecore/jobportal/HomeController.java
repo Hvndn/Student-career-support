@@ -22,10 +22,11 @@ public class HomeController {
         return "dashboard_employer";
     }
 
-    @GetMapping("/employer/dashboard")
-    public String employerDashboard() {
-        return "dashboard_employer";
+    @GetMapping("/employer/landing")
+    public String employerLanding() {
+        return "employer_landing";
     }
+
 
     @GetMapping("student/profile")
     public String profile(Model model) {
