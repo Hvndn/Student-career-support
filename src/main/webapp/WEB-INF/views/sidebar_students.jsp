@@ -2,75 +2,7 @@
 
 
 
-<style>
-  /* SIDEBAR */
-body{
-  font-family:"Inter",sans-serif;
-  font-size:14px;
-}
-.sidebar{
-  width:240px;
-  background:white;
-  border-right:1px solid #eee;
-  padding:25px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-}
 
-/* LOGO */
-
-.logo{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom:30px;
-}
-
-.logo strong{
-  font-size:16px;
-  font-weight:700;
-  color:#2563eb;
-}
-
-.logo small{
-  font-size:12px;
-  color:#6b7280;
-}
-
-.logo .bg-primary{
-  width:36px;
-  height:36px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:8px;
-}
-
-/* MENU */
-
-.menu a{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 12px;
-  border-radius:10px;
-  color:#374151;
-  text-decoration:none;
-  margin-bottom:5px;
-  transition:0.2s;
-}
-
-.menu a:hover{
-  background:#eef2ff;
-}
-
-.menu .active{
-  background:#eef2ff;
-  color:#2563eb;
-  font-weight:600;
-}
-</style>
 
 <div class="sidebar">
 

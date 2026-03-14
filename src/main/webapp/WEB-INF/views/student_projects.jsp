@@ -21,6 +21,7 @@
     />
 
     <link rel="stylesheet" href="/css/dashboard.css" />
+    <link rel="stylesheet" href="/css/sidebar.css" />
 
     <style>
       .project-card {
@@ -149,10 +150,11 @@
       <jsp:include page="sidebar_students.jsp" />
 
       <div class="main">
+      <div class = "content">
         <!-- TOP NAV -->
 
         <div class="topbar mb-4">
-          <div class="fw-semibold">Dự án cộng đồng</div>
+          <div class="fw-semibold"><Strong>Dự án cộng đồng</Strong></div>
 
           <div class="d-flex align-items-center gap-3">
             <div class="search-box">
@@ -356,6 +358,7 @@
           <div class="text-center small text-muted">
             © 2024 CareerHub. Tất cả quyền được bảo lưu.
           </div>
+        </div>
         </div>
       </div>
     </div>
