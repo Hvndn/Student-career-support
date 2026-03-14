@@ -18,7 +18,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
     <link rel="stylesheet" href="/css/dashboard.css" />
-
+<link rel="stylesheet" href="/css/sidebar.css" />
     <link rel="stylesheet" href="/css/profile.css" />
   </head>
 
@@ -33,7 +33,7 @@
 
       <div class="main">
         <!-- PROFILE HEADER -->
-
+        <div class="content">
         <div class="card-custom mb-4">
           <div class="profile-header">
             <img
@@ -194,9 +194,9 @@
               </div>
 
               <p class="text-muted small italic">
-                "Mong muốn trở thành một Fullstack Developer chuyên nghiệp
-                trong 2 năm tới. Tập trung vào việc xây dựng các sản phẩm có
-                tính thực tế cao."
+                "Mong muốn trở thành một Fullstack Developer chuyên nghiệp trong
+                2 năm tới. Tập trung vào việc xây dựng các sản phẩm có tính thực
+                tế cao."
               </p>
 
               <ul class="goal-list">

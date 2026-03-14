@@ -3,18 +3,13 @@
   padding: 0;
   box-sizing: border-box;
 }
-.dashboard {
-  display: flex;
-  min-height: 100vh;
-}
 
 /* CONTENT */
-
-.main {
-  flex: 1;
-  padding: 30px;
+.content {
+  width: 100%;
+  max-width: 1400px;
+  margin: auto;
 }
-
 /* CARD */
 
 .card-custom {
@@ -32,13 +27,6 @@
 body {
   font-family: "Inter", sans-serif;
   background: #f5f7fb;
-}
-
-/* Layout */
-
-.layout {
-  display: flex;
-  min-height: 100vh;
 }
 
 /* Sidebar */
@@ -61,26 +49,6 @@ body {
   color: #6b7280;
 }
 /* Menu */
-
-/* Content */
-
-.content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Topbar */
-
-.topbar {
-  height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 40px;
-  background: white;
-  border-bottom: 1px solid #e2e8f0;
-}
 
 .noti {
   width: 40px;
