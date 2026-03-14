@@ -31,6 +31,7 @@
       <!-- MAIN -->
 
       <div class="main">
+        <div class="content-wrapper">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <input
             class="form-control w-50"
