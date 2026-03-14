@@ -4,162 +4,96 @@
     <title>Bảng điều khiển Nhà tuyển dụng</title>
 
     <link
-      rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      rel="stylesheet"
     />
 
-    <style>
-      body {
-        background: #f4f6f9;
-      }
-
-      .dashboard {
-        display: flex;
-      }
-
-      .sidebar {
-        width: 250px;
-        background: white;
-        height: 100vh;
-        padding: 20px;
-        border-right: 1px solid #eee;
-      }
-
-      .sidebar a {
-        display: block;
-        padding: 10px;
-        text-decoration: none;
-        color: #333;
-        border-radius: 8px;
-        margin-bottom: 10px;
-      }
-
-      .sidebar a:hover {
-        background: #f0f2f5;
-      }
-
-      .main {
-        flex: 1;
-        padding: 30px;
-      }
-
-      .card-box {
-        background: white;
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-      }
-
-      .stat {
-        font-size: 28px;
-        font-weight: 700;
-      }
-
-      .chart {
-        height: 250px;
-        background: #eef2ff;
-        border-radius: 10px;
-      }
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="/css/dashboard_employer.css" rel="stylesheet" />
   </head>
 
   <body>
     <div class="dashboard">
       <!-- SIDEBAR -->
-      <div class="sidebar">
-        <h5 class="mb-4">Recruiter Pro</h5>
 
-        <a href="#">📊 Bảng điều khiển</a>
-        <a href="#">📄 Tin tuyển dụng</a>
-        <a href="#">👥 Ứng viên</a>
-        <a href="#">📅 Lịch phỏng vấn</a>
-        <a href="#">📈 Báo cáo</a>
+      <% request.setAttribute("activePage","dashboard"); %>
 
-        <hr />
-
-        <button class="btn btn-primary w-100">+ Đăng tin mới</button>
-      </div>
+      <jsp:include page="sidebar_employer.jsp" />
 
       <!-- MAIN -->
+
       <div class="main">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <input
+            class="form-control w-50"
+            placeholder="Tìm kiếm ứng viên, tin tuyển dụng..."
+          />
+
+          <div>
+            <i class="fa-regular fa-bell me-3"></i>
+
+            <i class="fa-regular fa-circle-question"></i>
+          </div>
+        </div>
+        <!-- STAT CARDS -->
+
         <div class="row mb-4">
           <div class="col-md-4">
             <div class="card-box">
-              Tin tuyển dụng hoạt động
-              <div class="stat">24</div>
+              <div class="d-flex justify-content-between">
+                <div>
+                  Tin tuyển dụng hoạt động
+                  <div class="stat">24</div>
+                </div>
+
+                <i class="fa-solid fa-bullhorn fa-2x text-primary"></i>
+              </div>
             </div>
           </div>
 
           <div class="col-md-4">
             <div class="card-box">
-              Tổng số ứng viên
-              <div class="stat">1,842</div>
+              <div class="d-flex justify-content-between">
+                <div>
+                  Tổng số ứng viên
+                  <div class="stat">1,842</div>
+                </div>
+
+                <i class="fa-solid fa-users fa-2x text-success"></i>
+              </div>
             </div>
           </div>
 
           <div class="col-md-4">
             <div class="card-box">
-              Ứng viên mới hôm nay
-              <div class="stat">45</div>
+              <div class="d-flex justify-content-between">
+                <div>
+                  Ứng viên mới hôm nay
+                  <div class="stat">45</div>
+                </div>
+
+                <i class="fa-solid fa-user-plus fa-2x text-warning"></i>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="row">
+        <!-- CHART + INTERVIEW -->
+
+        <div class="row mb-4">
           <div class="col-md-8">
             <div class="card-box">
-              <h5>Tăng trưởng ứng viên</h5>
+              <h5>Tăng trưởng ứng viên theo tuần</h5>
 
-              <div class="chart d-flex align-items-end p-3">
-                <div
-                  style="
-                    width: 40px;
-                    height: 120px;
-                    background: #c7d2fe;
-                    margin-right: 10px;
-                  "
-                ></div>
-                <div
-                  style="
-                    width: 40px;
-                    height: 180px;
-                    background: #c7d2fe;
-                    margin-right: 10px;
-                  "
-                ></div>
-                <div
-                  style="
-                    width: 40px;
-                    height: 150px;
-                    background: #c7d2fe;
-                    margin-right: 10px;
-                  "
-                ></div>
-                <div
-                  style="
-                    width: 40px;
-                    height: 210px;
-                    background: #3b82f6;
-                    margin-right: 10px;
-                  "
-                ></div>
-                <div
-                  style="
-                    width: 40px;
-                    height: 130px;
-                    background: #c7d2fe;
-                    margin-right: 10px;
-                  "
-                ></div>
-                <div
-                  style="
-                    width: 40px;
-                    height: 90px;
-                    background: #c7d2fe;
-                    margin-right: 10px;
-                  "
-                ></div>
-              </div>
+              <canvas id="chart"></canvas>
             </div>
           </div>
 
@@ -193,7 +127,109 @@
             </div>
           </div>
         </div>
+
+        <!-- TABLE -->
+
+        <div class="table-box">
+          <h5>Ứng viên chờ duyệt</h5>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Ứng viên</th>
+                <th>Vị trí</th>
+                <th>Kinh nghiệm</th>
+                <th>Trạng thái</th>
+                <th>Thao tác nhanh</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td class="d-flex align-items-center">
+                  <img
+                    src="https://i.pravatar.cc/40?img=1"
+                    class="rounded-circle me-2"
+                  />
+
+                  <div>
+                    <b>Trần Văn A</b><br />
+                    <small class="text-muted">tranvana@example.com</small>
+                  </div>
+                </td>
+
+                <td>Product Designer</td>
+
+                <td>5 năm</td>
+
+                <td>
+                  <span class="badge bg-warning text-dark"> ĐANG CHỜ </span>
+                </td>
+
+                <td>
+                  <i class="fa-solid fa-eye text-primary me-2"></i>
+
+                  <i class="fa-solid fa-check text-success me-2"></i>
+
+                  <i class="fa-solid fa-xmark text-danger"></i>
+                </td>
+              </tr>
+
+              <tr>
+                <td class="d-flex align-items-center">
+                  <img
+                    src="https://i.pravatar.cc/40?img=2"
+                    class="rounded-circle me-2"
+                  />
+
+                  <div>
+                    <b>Lê Thị B</b><br />
+                    <small class="text-muted">lethib@example.com</small>
+                  </div>
+                </td>
+
+                <td>Frontend Developer</td>
+
+                <td>3 năm</td>
+
+                <td>
+                  <span class="badge bg-warning text-dark"> ĐANG CHỜ </span>
+                </td>
+
+                <td>
+                  <i class="fa-solid fa-eye text-primary me-2"></i>
+
+                  <i class="fa-solid fa-check text-success me-2"></i>
+
+                  <i class="fa-solid fa-xmark text-danger"></i>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
+
+    <script>
+      const ctx = document.getElementById("chart");
+
+      new Chart(ctx, {
+        type: "bar",
+
+        data: {
+          labels: ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "CN"],
+
+          datasets: [
+            {
+              label: "Ứng viên",
+
+              data: [12, 19, 14, 24, 15, 10, 11],
+
+              backgroundColor: "#3b82f6",
+            },
+          ],
+        },
+      });
+    </script>
   </body>
 </html>
