@@ -59,6 +59,7 @@
       filter: blur(60px);
       border-radius: 50%;
     }
+    
   </style>
 </head>
 <body class="bg-mesh font-sans text-slate-900 antialiased overflow-x-hidden">
@@ -240,4 +241,5 @@
 </div>
 </footer>
 <!-- END: Footer -->
+ <!-- update by Huy -->
 </body></html>
