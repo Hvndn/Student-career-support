@@ -83,7 +83,7 @@ const SkillManagement = () => {
                                 alignItems: 'center',
                                 transition: 'all 0.3s ease'
                             }}>
-                                <span style={{ fontWeight: '500', color: 'rgba(255,255,255,0.9)' }}>{skill.name}</span>
+                                <span style={{ fontWeight: '500', color: 'black' }}>{skill.name}</span>
                                 <button 
                                     onClick={() => handleDelete(skill.id)} 
                                     style={{ 

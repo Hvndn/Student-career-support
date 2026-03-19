@@ -47,7 +47,7 @@ const AdminDashboard = () => {
                             <span style={{ color: 'var(--text-muted)', fontWeight: '600', textTransform: 'uppercase', fontSize: '0.8rem', letterSpacing: '0.05em' }}>{card.label}</span>
                             <div style={{ fontSize: '1.5rem', opacity: 0.8 }}>{card.icon}</div>
                         </div>
-                        <h2 style={{ fontSize: '2.5rem', fontWeight: '700', color: 'white', letterSpacing: '-0.02em' }}>{card.value}</h2>
+                        <h2 style={{ fontSize: '2.5rem', fontWeight: '700', color: 'black', letterSpacing: '-0.02em' }}>{card.value}</h2>
                         <div style={{ fontSize: '0.8rem', color: 'var(--success)', marginTop: '0.4rem' }}>↑ +12% so với tháng trước</div>
                     </div>
                 ))}

@@ -62,7 +62,7 @@ const UserManagement = () => {
                                 {users.map(user => (
                                     <tr key={user.id} className="fade-in" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', transition: 'background 0.2s' }}>
                                         <td style={{ padding: '1.2rem 1.5rem' }}>
-                                            <div style={{ fontWeight: '700', color: 'white', fontSize: '1rem' }}>{user.fullName}</div>
+                                            <div style={{ fontWeight: '700', color: 'black', fontSize: '1rem' }}>{user.fullName}</div>
                                             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>ID: #{user.id}</div>
                                         </td>
                                         <td style={{ padding: '1.2rem 1.5rem', color: 'var(--text-muted)' }}>{user.email}</td>
