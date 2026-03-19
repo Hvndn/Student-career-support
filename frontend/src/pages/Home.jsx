@@ -63,7 +63,7 @@ const Home = () => {
                                     background: 'transparent', 
                                     border: 'none', 
                                     padding: '1rem 1.5rem', 
-                                    color: 'var(--text)', 
+                                    color: '#000', 
                                     fontSize: '1.1rem',
                                     outline: 'none'
                                 }}

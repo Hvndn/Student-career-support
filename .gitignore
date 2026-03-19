@@ -1,20 +1,10 @@
-# Misc
+<<<<<<< HEAD
 HELP.md
-
-# Maven
 target/
 .mvn/wrapper/maven-wrapper.jar
-.mvn/
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-# Node
-node_modules/
-
-# Build outputs
-dist/
-build/
-out/
-
-# Gradle / Eclipse / STS
 ### STS ###
 .apt_generated
 .classpath
@@ -36,8 +26,28 @@ out/
 /dist/
 /nbdist/
 /.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Uploads ###
+uploads/
+=======
+# Dependencies
+node_modules/
+target/
+.mvn/
+
+# Compiled files
+*.class
+*.jar
+*.war
 
 # IDEs and editors
+.idea/
 .vscode/
 *.swp
 *.swo
@@ -45,6 +55,11 @@ out/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Build output
+dist/
+build/
+out/
 
 # Environment variables
 .env
@@ -58,12 +73,4 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 *.log
-
-# Keep build folders in source trees
-!**/src/main/**/target/
-!**/src/test/**/target/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-# Uploads
-uploads/
+>>>>>>> bacd685 (Add all project files (frontend and jobportal))

@@ -65,7 +65,7 @@ const Login = () => {
                         <input 
                             type="email" 
                             className="glass" 
-                            style={{ width: '100%', padding: '1rem', color: 'white', fontSize: '1rem', outline: 'none' }}
+                            style={{ width: '100%', padding: '1rem', color: '#000', fontSize: '1rem', outline: 'none' }}
                             placeholder="name@example.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -77,7 +77,7 @@ const Login = () => {
                         <input 
                             type="password" 
                             className="glass" 
-                            style={{ width: '100%', padding: '1rem', color: 'white', fontSize: '1rem', outline: 'none' }}
+                            style={{ width: '100%', padding: '1rem', color: '#000', fontSize: '1rem', outline: 'none' }}
                             placeholder="••••••••"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
