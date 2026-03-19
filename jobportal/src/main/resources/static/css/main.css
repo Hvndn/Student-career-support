@@ -13,7 +13,7 @@
     --s-h: 262; --s-s: 83%; --s-l: 58%; /* Secondary Purple */
     --secondary: hsl(var(--s-h), var(--s-s), var(--s-l));
     
-    --slate-50: #ffffff;
+    --slate-50: #f8fafc;
     --slate-100: #f1f5f9;
     --slate-200: #e2e8f0;
     --slate-800: #1e293b;

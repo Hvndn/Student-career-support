@@ -63,7 +63,7 @@ const JobList = () => {
                                     background: 'transparent',
                                     border: 'none',
                                     padding: '0.8rem 1.2rem',
-                                    color: 'var(--text)',
+                                    color: 'white',
                                     fontSize: '1rem',
                                     outline: 'none'
                                 }}

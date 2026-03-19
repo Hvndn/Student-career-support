@@ -11,17 +11,19 @@ const Navbar = () => {
         navigate('/login');
     };
 
-    const linkStyle = { color: 'rgba(255, 255, 255, 0.9)' };
-
     return (
-        <nav className="glass fade-in navbar-fixed" style={{
-            padding: '1rem 2.5rem',
+        <nav className="glass fade-in" style={{
+            position: 'sticky',
+            top: '1.5rem',
+            left: '1.5rem',
+            right: '1.5rem',
+            margin: '1.5rem auto',
+            padding: '0.8rem 2.5rem',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            background: 'rgba(0, 0, 0, 0.75)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
-            boxShadow: 'none'
+            zIndex: 1000,
+            maxWidth: '1200px'
         }}>
             <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
                 <img
@@ -31,28 +33,28 @@ const Navbar = () => {
                 />
             </Link>
             <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'center', fontWeight: '500' }}>
-                <Link to="/" style={linkStyle} className="nav-link navbar-link">Việc làm</Link>
+                <Link to="/" style={{ color: 'var(--text-muted)' }} className="nav-link">Việc làm</Link>
                 {user ? (
                     <>
                         {user.role === 'ROLE_STUDENT' && (
                             <>
-                                <Link to="/student/notifications" style={linkStyle} className="nav-link navbar-link">Thông báo</Link>
-                                <Link to="/student/applications" style={linkStyle} className="nav-link navbar-link">Đơn tuyển</Link>
-                                <Link to="/student/profile" style={linkStyle} className="nav-link navbar-link">Hồ sơ</Link>
+                                <Link to="/student/notifications" style={{ color: 'var(--text-muted)' }}>Thông báo</Link>
+                                <Link to="/student/applications" style={{ color: 'var(--text-muted)' }}>Đơn tuyển</Link>
+                                <Link to="/student/profile" style={{ color: 'var(--text-muted)' }}>Hồ sơ</Link>
                             </>
                         )}
                         {user.role === 'ROLE_COMPANY' && (
                             <>
-                                <Link to="/company/dashboard" style={linkStyle} className="nav-link navbar-link">Trang chủ</Link>
-                                <Link to="/company/jobs/post" style={linkStyle} className="nav-link navbar-link">Đăng tin</Link>
-                                <Link to="/company/candidates/search" style={linkStyle} className="nav-link navbar-link">Tìm ứng viên</Link>
+                                <Link to="/company/dashboard" style={{ color: 'var(--text-muted)' }}>Dashboard</Link>
+                                <Link to="/company/jobs/post" style={{ color: 'var(--text-muted)' }}>Đăng tin</Link>
+                                <Link to="/company/candidates/search" style={{ color: 'var(--text-muted)' }}>Tìm ứng viên</Link>
                             </>
                         )}
                         {user.role === 'ROLE_ADMIN' && (
                             <>
-                                <Link to="/admin/dashboard" style={linkStyle} className="nav-link navbar-link">Admin</Link>
-                                <Link to="/admin/skills" style={linkStyle} className="nav-link navbar-link">Kỹ năng</Link>
-                                <Link to="/admin/users" style={linkStyle} className="nav-link navbar-link">Thành viên</Link>
+                                <Link to="/admin/dashboard" style={{ color: 'var(--text-muted)' }}>Admin</Link>
+                                <Link to="/admin/skills" style={{ color: 'var(--text-muted)' }}>Kỹ năng</Link>
+                                <Link to="/admin/users" style={{ color: 'var(--text-muted)' }}>Thành viên</Link>
                             </>
                         )}
 

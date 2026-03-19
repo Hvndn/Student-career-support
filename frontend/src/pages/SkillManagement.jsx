@@ -60,7 +60,7 @@ const SkillManagement = () => {
                             type="text" 
                             placeholder="Nhập tên kỹ năng mới (ví dụ: React, Spring Boot...)" 
                             className="glass" 
-                            style={{ flex: 1, padding: '1rem 1.2rem', color: '#000', fontSize: '1rem', outline: 'none' }}
+                            style={{ flex: 1, padding: '1rem 1.2rem', color: 'white', fontSize: '1rem', outline: 'none' }}
                             value={newSkill}
                             onChange={(e) => setNewSkill(e.target.value)}
                         />

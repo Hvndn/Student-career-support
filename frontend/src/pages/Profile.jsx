@@ -97,10 +97,29 @@ const Profile = () => {
     /* ---- Skills ---- */
     const loadAllSkills = async () => {
         try {
-            const res = await studentApi.getProfile(); // Wait, I need a general skills list
-            // Assuming adminApi.getSkills is accessible or I can use a standard list
-            // For now, let's just use the studentApi.addSkill logic
-        } catch {}
+            const res = await studentApi.getSkills();
+            setAllSkills(res.data.data);
+        } catch { flash('❌ Không thể tải danh sách kỹ năng.'); }
+    };
+
+    useEffect(() => {
+        if (showSkillForm) loadAllSkills();
+    }, [showSkillForm]);
+
+    const handleAvatarChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('avatarFile', file);
+
+        setSaving(true);
+        try {
+            const res = await studentApi.updateAvatar(formData);
+            await reload();
+            flash('✅ Cập nhật ảnh đại diện thành công!');
+        } catch { flash('❌ Lỗi khi tải ảnh lên.'); }
+        setSaving(false);
     };
 
     const addSkill = async () => {
@@ -113,7 +132,9 @@ const Profile = () => {
             await reload();
             setShowSkillForm(false);
             flash('✅ Đã thêm kỹ năng!');
-        } catch { flash('❌ Lỗi khi thêm kỹ năng.'); }
+        } catch (err) { 
+            flash(err.response?.data?.message || '❌ Lỗi khi thêm kỹ năng.'); 
+        }
         setSaving(false);
     };
 
@@ -128,14 +149,22 @@ const Profile = () => {
 
     /* ---- Education ---- */
     const saveEdu = async () => {
+        if (!eduForm.schoolName || !eduForm.major || !eduForm.startDate) {
+            flash('⚠️ Vui lòng điền tên trường, chuyên ngành và ngày bắt đầu.');
+            return;
+        }
+        const data = { ...eduForm };
+        if (!data.endDate) data.endDate = null;
         setSaving(true);
         try {
-            await studentApi.addEducation(eduForm);
+            await studentApi.addEducation(data);
             await reload();
             setShowEduForm(false);
             setEduForm(BLANK_EDU);
             flash('✅ Thêm học vấn thành công!');
-        } catch { flash('❌ Lỗi khi thêm học vấn.'); }
+        } catch (err) { 
+            flash(err.response?.data?.message || '❌ Lỗi khi thêm học vấn.'); 
+        }
         setSaving(false);
     };
     const deleteEdu = async (id) => {
@@ -147,14 +176,22 @@ const Profile = () => {
 
     /* ---- Experience ---- */
     const saveExp = async () => {
+        if (!expForm.companyName || !expForm.jobTitle || !expForm.startDate) {
+            flash('⚠️ Vui lòng điền tên công ty, chức danh và ngày bắt đầu.');
+            return;
+        }
+        const data = { ...expForm };
+        if (!data.endDate) data.endDate = null;
         setSaving(true);
         try {
-            await studentApi.addExperience(expForm);
+            await studentApi.addExperience(data);
             await reload();
             setShowExpForm(false);
             setExpForm(BLANK_EXP);
             flash('✅ Thêm kinh nghiệm thành công!');
-        } catch { flash('❌ Lỗi khi thêm kinh nghiệm.'); }
+        } catch (err) { 
+            flash(err.response?.data?.message || '❌ Lỗi khi thêm kinh nghiệm.'); 
+        }
         setSaving(false);
     };
     const deleteExp = async (id) => {
@@ -193,10 +230,27 @@ const Profile = () => {
                                 background: 'var(--surface)', margin: '0 auto 1.5rem',
                                 border: '3px solid rgba(255,255,255,0.15)',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                fontSize: '3.5rem'
-                            }}>
-                                {profile.avatarUrl ? <img src={profile.avatarUrl} alt="avatar" style={{ width: '100%', borderRadius: '50%' }} /> : '👤'}
+                                fontSize: '3.5rem', position: 'relative', overflow: 'hidden',
+                                cursor: 'pointer'
+                            }} onClick={() => document.getElementById('avatarInput').click()}>
+                                {profile.avatarUrl ? (
+                                    <img src={profile.avatarUrl} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : '👤'}
+                                <div style={{
+                                    position: 'absolute', bottom: 0, left: 0, right: 0,
+                                    background: 'rgba(0,0,0,0.5)', padding: '0.3rem 0',
+                                    fontSize: '0.7rem', color: 'white', fontWeight: 'bold'
+                                }}>
+                                    THAY ĐỔI
+                                </div>
                             </div>
+                            <input 
+                                type="file" 
+                                id="avatarInput" 
+                                accept="image/*" 
+                                style={{ display: 'none' }} 
+                                onChange={handleAvatarChange} 
+                            />
 
                             {editBasic ? (
                                 <div style={{ textAlign: 'left' }}>
@@ -239,7 +293,12 @@ const Profile = () => {
 
                             {showSkillForm && (
                                 <div style={{ marginBottom: '1rem', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '10px' }}>
-                                    <input style={inputStyle} placeholder="ID Kỹ năng (VD: 1, 2...)" value={skillId} onChange={e => setSkillId(e.target.value)} />
+                                    <select style={inputStyle} value={skillId} onChange={e => setSkillId(e.target.value)}>
+                                        <option value="">-- Chọn kỹ năng --</option>
+                                        {allSkills.map(s => (
+                                            <option key={s.id} value={s.id}>{s.name}</option>
+                                        ))}
+                                    </select>
                                     <select style={inputStyle} value={skillLevel} onChange={e => setSkillLevel(e.target.value)}>
                                         <option value="Beginner">Beginner</option>
                                         <option value="Intermediate">Intermediate</option>

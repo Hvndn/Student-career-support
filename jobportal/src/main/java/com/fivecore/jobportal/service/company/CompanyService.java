@@ -81,7 +81,7 @@ public class CompanyService {
                 .description(request.getDescription())
                 .location(request.getLocation())
                 .salary(request.getSalary())
-                .jobType(Job.JobType.valueOf(request.getJobType().toLowerCase()))
+                .jobType(Job.JobType.valueOf(request.getJobType().toLowerCase().replace("-", "").replace(" ", "")))
                 .deadline(request.getDeadline())
                 .status(Job.JobStatus.open)
                 .build();

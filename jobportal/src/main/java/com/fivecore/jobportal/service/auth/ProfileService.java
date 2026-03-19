@@ -115,11 +115,14 @@ public class ProfileService {
      */
     @Transactional
     public Education addEducation(Integer studentId, Education education) {
-        if (education.getEndDate() != null && education.getEndDate().isBefore(education.getStartDate())) {
+        if (education.getEndDate() != null && education.getStartDate() != null && education.getEndDate().isBefore(education.getStartDate())) {
             throw new IllegalArgumentException("Thời gian kết thúc không được nhỏ hơn thời gian bắt đầu");
         }
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
+        if (student.getEducations() == null) {
+            student.setEducations(new java.util.ArrayList<>());
+        }
         education.setStudent(student);
         return educationRepository.save(education);
     }
@@ -129,13 +132,19 @@ public class ProfileService {
      */
     @Transactional
     public Experience addExperience(Integer studentId, Experience experience) {
-        if (experience.getEndDate() != null && experience.getEndDate().isBefore(experience.getStartDate())) {
+        log.info("ProfileService: Đang thêm kinh nghiệm cho sinh viên ID: {}", studentId);
+        if (experience.getEndDate() != null && experience.getStartDate() != null && experience.getEndDate().isBefore(experience.getStartDate())) {
             throw new IllegalArgumentException("Thời gian kết thúc không được nhỏ hơn thời gian bắt đầu");
         }
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
+        if (student.getExperiences() == null) {
+            student.setExperiences(new java.util.ArrayList<>());
+        }
         experience.setStudent(student);
-        return experienceRepository.save(experience);
+        Experience saved = experienceRepository.save(experience);
+        log.info("ProfileService: Đã lưu kinh nghiệm ID: {}", saved.getId());
+        return saved;
     }
 
     /**
@@ -194,6 +203,7 @@ public class ProfileService {
         }
         exp.setCompanyName(request.getCompanyName());
         exp.setJobTitle(request.getJobTitle());
+        exp.setPosition(request.getJobTitle());
         exp.setStartDate(request.getStartDate());
         exp.setEndDate(request.getEndDate());
         exp.setDescription(request.getDescription());

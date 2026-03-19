@@ -30,7 +30,7 @@ const CandidateSearch = () => {
                         type="text" 
                         placeholder="Nhập kỹ năng bạn đang tìm kiếm (VD: Java, React, SQL...)" 
                         className="glass" 
-                        style={{ flex: 1, padding: '1rem', color: '#000' }}
+                        style={{ flex: 1, padding: '1rem', color: 'white' }}
                         value={skill}
                         onChange={(e) => setSkill(e.target.value)}
                     />
