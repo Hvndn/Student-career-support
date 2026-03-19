@@ -21,7 +21,8 @@ const Navbar = () => {
             alignItems: 'center',
             background: 'rgba(0, 0, 0, 0.75)',
             borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
-            boxShadow: 'none'
+            boxShadow: 'none',
+            borderRadius: 0
         }}>
             <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
                 <img

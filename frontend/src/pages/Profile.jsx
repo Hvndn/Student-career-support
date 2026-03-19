@@ -7,7 +7,7 @@ const inputStyle = {
     background: 'rgba(255,255,255,0.04)',
     border: '1px solid rgba(255,255,255,0.1)',
     borderRadius: '10px',
-    color: 'white',
+    color: 'black',
     fontSize: '1rem',
     outline: 'none',
     fontFamily: 'Outfit, sans-serif',
@@ -16,7 +16,7 @@ const inputStyle = {
 
 const labelStyle = {
     display: 'block',
-    color: '#888',
+    color: 'black',
     fontSize: '0.85rem',
     marginBottom: '0.4rem',
     fontWeight: '500'

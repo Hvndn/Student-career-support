@@ -38,7 +38,7 @@ const Home = () => {
                 background: 'radial-gradient(circle at 50% 50%, rgba(129, 140, 248, 0.15) 0%, transparent 70%)'
             }}>
                 <div className="container">
-                    <h1 style={{ fontSize: '4.5rem', fontWeight: '800', lineHeight: '1.1', marginBottom: '1.5rem', letterSpacing: '-0.04em' }}>
+                    <h1 style={{ fontSize: '4.5rem', fontWeight: '800', lineHeight: '1.1', marginBottom: '1.5rem', letterSpacing: '-0.04em', fontFamily: 'arial, ' }}>
                         Tìm kiếm <span className="gradient-text">Tương lai</span> <br/> bắt đầu từ đây.
                     </h1>
                     <p style={{ color: 'var(--text-muted)', fontSize: '1.25rem', maxWidth: '600px', margin: '0 auto 3rem', fontWeight: '400' }}>
