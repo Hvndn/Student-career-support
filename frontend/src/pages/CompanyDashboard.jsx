@@ -58,10 +58,11 @@ const CompanyDashboard = () => {
                             textAlign: 'left', 
                             padding: '1.5rem 2rem',
                             borderTop: `4px solid ${card.color}`,
-                            animationDelay: `${i * 0.1}s`
+                            animationDelay: `${i * 0.1}s`,
+                            background: 'rgba(100, 100, 100, 0.6)'
                         }}>
-                            <h2 style={{ fontSize: '2.5rem', fontWeight: '800', color: 'white', marginBottom: '0.5rem' }}>{card.value}</h2>
-                            <p style={{ color: 'var(--text-muted)', fontWeight: '600', textTransform: 'uppercase', fontSize: '0.8rem', letterSpacing: '0.05em' }}>{card.label}</p>
+                            <h2 style={{ fontSize: '2.5rem', fontWeight: '800', color: 'black', marginBottom: '0.5rem' }}>{card.value}</h2>
+                            <p style={{ color: 'rgba(0,0,0,0.7)', fontWeight: '600', textTransform: 'uppercase', fontSize: '0.8rem', letterSpacing: '0.05em' }}>{card.label}</p>
                         </div>
                     ))}
                 </div>

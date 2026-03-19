@@ -20,7 +20,8 @@ const Navbar = () => {
             justifyContent: 'space-between',
             alignItems: 'center',
             background: 'rgba(0, 0, 0, 0.75)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.15)'
+            borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
+            boxShadow: 'none'
         }}>
             <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
                 <img
