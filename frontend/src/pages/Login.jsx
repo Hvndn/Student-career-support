@@ -8,21 +8,37 @@ const Login = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const res = await authApi.login({ email, password });
-            if (res.data.status === 'success') {
-                localStorage.setItem('user', JSON.stringify(res.data.data));
-                navigate('/');
-            } else {
-                setError(res.data.message);
-            }
-        } catch (err) {
-            setError('Sai email hoặc mật khẩu!');
-        }
-    };
+   const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+        const res = await authApi.login({ email, password });
 
+        if (res.data.status === 'success') {
+            const user = res.data.data;
+
+            // lưu user
+            localStorage.setItem('user', JSON.stringify(user));
+
+            const role = user.role;
+
+            // 🔥 redirect theo role
+            if (role === 'ROLE_COMPANY') {
+                navigate('/company/dashboard');
+            } else if (role === 'ROLE_STUDENT') {
+                navigate('/');
+            } else if (role === 'ROLE_ADMIN') {
+                navigate('/admin');
+            } else {
+                navigate('/');
+            }
+
+        } else {
+            setError(res.data.message);
+        }
+    } catch (err) {
+        setError('Sai email hoặc mật khẩu!');
+    }
+};
     return (
         <div className="fade-in" style={{ 
             display: 'flex', 
