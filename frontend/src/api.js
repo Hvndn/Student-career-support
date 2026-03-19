@@ -34,7 +34,11 @@ export const studentApi = {
     updateExperience: (id, data) => api.put(`/student/profile/experiences/${id}`, data),
     deleteExperience: (id) => api.delete(`/student/profile/experiences/${id}`),
     addSkill: (skillId, level) => api.post(`/student/profile/skills`, { skillId, level }),
-    deleteSkill: (skillId) => api.delete(`/student/profile/skills/${skillId}`)
+    deleteSkill: (skillId) => api.delete(`/student/profile/skills/${skillId}`),
+    getSkills: () => api.get('/student/profile/skills/all'),
+    updateAvatar: (formData) => api.post('/student/profile/avatar', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    })
 };
 
 

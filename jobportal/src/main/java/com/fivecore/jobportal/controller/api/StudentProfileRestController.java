@@ -9,7 +9,9 @@ import com.fivecore.jobportal.service.auth.SkillService;
 import com.fivecore.jobportal.service.common.StorageService;
 import com.fivecore.jobportal.service.interaction.PdfExportService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/student/profile")
 @RequiredArgsConstructor
+@Slf4j
 public class StudentProfileRestController {
 
     private final SkillService skillService;
@@ -57,12 +60,12 @@ public class StudentProfileRestController {
                 .graduationYear(student.getGraduationYear())
                 .bio(student.getBio())
                 .avatarUrl(student.getAvatarUrl())
-                .skills(student.getSkills().stream().map((StudentSkill s) -> StudentProfileResponse.SkillDto.builder()
+                .skills(student.getSkills() == null ? List.of() : student.getSkills().stream().map((StudentSkill s) -> StudentProfileResponse.SkillDto.builder()
                         .id(s.getSkill().getId())
                         .name(s.getSkill().getName())
-                        .level(s.getLevel().name())
+                        .level(s.getLevel() == null ? null : s.getLevel().name())
                         .build()).collect(Collectors.toList()))
-                .educations(student.getEducations().stream().map((Education e) -> StudentProfileResponse.EducationDto.builder()
+                .educations(student.getEducations() == null ? List.of() : student.getEducations().stream().map((Education e) -> StudentProfileResponse.EducationDto.builder()
                         .id(e.getId())
                         .schoolName(e.getSchoolName())
                         .major(e.getMajor())
@@ -71,7 +74,7 @@ public class StudentProfileRestController {
                         .endDate(e.getEndDate())
                         .description(e.getDescription())
                         .build()).collect(Collectors.toList()))
-                .experiences(student.getExperiences().stream().map((Experience exp) -> StudentProfileResponse.ExperienceDto.builder()
+                .experiences(student.getExperiences() == null ? List.of() : student.getExperiences().stream().map((Experience exp) -> StudentProfileResponse.ExperienceDto.builder()
                         .id(exp.getId())
                         .companyName(exp.getCompanyName())
                         .jobTitle(exp.getJobTitle())
@@ -93,55 +96,90 @@ public class StudentProfileRestController {
 
     @PutMapping
     public ResponseEntity<ApiResponse<Object>> updateProfile(@RequestBody StudentProfileRequest request, Authentication authentication) {
-        Integer studentId = getCurrentStudentId(authentication);
-        profileService.updateProfile(studentId, request);
-        return ResponseEntity.ok(ApiResponse.success("Cập nhật thông tin thành công", null));
+        try {
+            Integer studentId = getCurrentStudentId(authentication);
+            if (studentId == null) {
+                return ResponseEntity.status(401).body(ApiResponse.error("Không tìm thấy sinh viên", "UNAUTHORIZED"));
+            }
+            profileService.updateProfile(studentId, request);
+            return ResponseEntity.ok(ApiResponse.success("Cập nhật thông tin thành công", null));
+        } catch (Exception e) {
+            log.error("Lỗi khi cập nhật hồ sơ: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi cập nhật hồ sơ: " + e.getMessage(), "SERVER_ERROR"));
+        }
     }
 
     /* ---- Education ---- */
     @PostMapping("/educations")
-    public ResponseEntity<ApiResponse<Object>> addEducation(@RequestBody EducationRequest request, Authentication authentication) {
-        Integer studentId = getCurrentStudentId(authentication);
-        profileService.addEducation(studentId, Education.builder()
-                .schoolName(request.getSchoolName())
-                .major(request.getMajor())
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
-                .description(request.getDescription())
-                .build());
-        return ResponseEntity.ok(ApiResponse.success("Thêm học vấn thành công", null));
+    public ResponseEntity<ApiResponse<Object>> addEducation(@Valid @RequestBody EducationRequest request, Authentication authentication) {
+        try {
+            Integer studentId = getCurrentStudentId(authentication);
+            if (studentId == null) {
+                return ResponseEntity.status(401).body(ApiResponse.error("Không tìm thấy sinh viên", "UNAUTHORIZED"));
+            }
+            profileService.addEducation(studentId, Education.builder()
+                    .schoolName(request.getSchoolName())
+                    .major(request.getMajor())
+                    .startDate(request.getStartDate())
+                    .endDate(request.getEndDate())
+                    .description(request.getDescription())
+                    .build());
+            return ResponseEntity.ok(ApiResponse.success("Thêm học vấn thành công", null));
+        } catch (Exception e) {
+            log.error("Lỗi khi thêm học vấn: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi thêm học vấn: " + e.getMessage(), "SERVER_ERROR"));
+        }
     }
 
     @PutMapping("/educations/{id}")
-    public ResponseEntity<ApiResponse<Object>> updateEducation(@PathVariable Integer id, @RequestBody EducationRequest request, Authentication authentication) {
-        Integer studentId = getCurrentStudentId(authentication);
-        profileService.updateEducation(id, studentId, request);
-        return ResponseEntity.ok(ApiResponse.success("Cập nhật học vấn thành công", null));
+    public ResponseEntity<ApiResponse<Object>> updateEducation(@PathVariable Integer id, @Valid @RequestBody EducationRequest request, Authentication authentication) {
+        try {
+            Integer studentId = getCurrentStudentId(authentication);
+            profileService.updateEducation(id, studentId, request);
+            return ResponseEntity.ok(ApiResponse.success("Cập nhật học vấn thành công", null));
+        } catch (Exception e) {
+            log.error("Lỗi khi cập nhật học vấn: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi cập nhật học vấn: " + e.getMessage(), "SERVER_ERROR"));
+        }
     }
 
     @DeleteMapping("/educations/{id}")
     public ResponseEntity<ApiResponse<Object>> deleteEducation(@PathVariable Integer id, Authentication authentication) {
-        Integer studentId = getCurrentStudentId(authentication);
-        profileService.deleteEducation(id, studentId);
-        return ResponseEntity.ok(ApiResponse.success("Xóa học vấn thành công", null));
+        try {
+            Integer studentId = getCurrentStudentId(authentication);
+            profileService.deleteEducation(id, studentId);
+            return ResponseEntity.ok(ApiResponse.success("Xóa học vấn thành công", null));
+        } catch (Exception e) {
+            log.error("Lỗi khi xóa học vấn: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi xóa học vấn: " + e.getMessage(), "SERVER_ERROR"));
+        }
     }
 
     /* ---- Experience ---- */
     @PostMapping("/experiences")
-    public ResponseEntity<ApiResponse<Object>> addExperience(@RequestBody ExperienceRequest request, Authentication authentication) {
-        Integer studentId = getCurrentStudentId(authentication);
-        profileService.addExperience(studentId, Experience.builder()
-                .companyName(request.getCompanyName())
-                .jobTitle(request.getJobTitle())
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
-                .description(request.getDescription())
-                .build());
-        return ResponseEntity.ok(ApiResponse.success("Thêm kinh nghiệm thành công", null));
+    public ResponseEntity<ApiResponse<Object>> addExperience(@Valid @RequestBody ExperienceRequest request, Authentication authentication) {
+        try {
+            Integer studentId = getCurrentStudentId(authentication);
+            if (studentId == null) {
+                return ResponseEntity.status(401).body(ApiResponse.error("Bạn không phải là sinh viên hoặc hồ sơ sinh viên chưa được khởi tạo", "UNAUTHORIZED"));
+            }
+            profileService.addExperience(studentId, Experience.builder()
+                    .companyName(request.getCompanyName())
+                    .jobTitle(request.getJobTitle())
+                    .position(request.getJobTitle()) // Giải quyết lỗi [Field 'position' doesn't have a default value]
+                    .startDate(request.getStartDate())
+                    .endDate(request.getEndDate())
+                    .description(request.getDescription())
+                    .build());
+            return ResponseEntity.ok(ApiResponse.success("Thêm kinh nghiệm thành công", null));
+        } catch (Exception e) {
+            log.error("Lỗi khi thêm kinh nghiệm: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi thêm kinh nghiệm: " + e.getMessage(), "SERVER_ERROR"));
+        }
     }
 
     @PutMapping("/experiences/{id}")
-    public ResponseEntity<ApiResponse<Object>> updateExperience(@PathVariable Integer id, @RequestBody ExperienceRequest request, Authentication authentication) {
+    public ResponseEntity<ApiResponse<Object>> updateExperience(@PathVariable Integer id, @Valid @RequestBody ExperienceRequest request, Authentication authentication) {
         Integer studentId = getCurrentStudentId(authentication);
         profileService.updateExperience(id, studentId, request);
         return ResponseEntity.ok(ApiResponse.success("Cập nhật kinh nghiệm thành công", null));
@@ -158,16 +196,41 @@ public class StudentProfileRestController {
     @PostMapping("/skills")
     public ResponseEntity<ApiResponse<Object>> addSkill(@RequestBody SkillAddRequest request,
                                                        Authentication authentication) {
-        Integer studentId = getCurrentStudentId(authentication);
-        skillService.addSkillToStudent(studentId, request.getSkillId(), StudentSkill.SkillLevel.valueOf(request.getLevel().toUpperCase()));
-        return ResponseEntity.ok(ApiResponse.success("Thêm kỹ năng thành công", null));
+        try {
+            log.info("Bắt đầu thêm kỹ năng: skillId={}, level={}", request.getSkillId(), request.getLevel());
+            if (request.getLevel() == null) {
+                return ResponseEntity.badRequest().body(ApiResponse.error("Cấp độ kỹ năng không được để trống", "BAD_REQUEST"));
+            }
+            Integer studentId = getCurrentStudentId(authentication);
+            if (studentId == null) {
+                return ResponseEntity.status(401).body(ApiResponse.error("Không tìm thấy sinh viên", "UNAUTHORIZED"));
+            }
+            skillService.addSkillToStudent(studentId, request.getSkillId(), StudentSkill.SkillLevel.valueOf(request.getLevel().toLowerCase()));
+            return ResponseEntity.ok(ApiResponse.success("Thêm kỹ năng thành công", null));
+        } catch (IllegalArgumentException e) {
+            log.error("Lỗi dữ liệu khi thêm kỹ năng: {}", e.getMessage());
+            return ResponseEntity.status(400).body(ApiResponse.error("Dữ liệu không hợp lệ: " + e.getMessage(), "BAD_REQUEST"));
+        } catch (Exception e) {
+            log.error("Lỗi hệ thống khi thêm kỹ năng: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi hệ thống khi thêm kỹ năng: " + e.getMessage(), "SERVER_ERROR"));
+        }
     }
 
     @DeleteMapping("/skills/{skillId}")
     public ResponseEntity<ApiResponse<Object>> deleteSkill(@PathVariable Integer skillId, Authentication authentication) {
-        Integer studentId = getCurrentStudentId(authentication);
-        skillService.removeSkillFromStudent(studentId, skillId);
-        return ResponseEntity.ok(ApiResponse.success("Xóa kỹ năng thành công", null));
+        try {
+            Integer studentId = getCurrentStudentId(authentication);
+            skillService.removeSkillFromStudent(studentId, skillId);
+            return ResponseEntity.ok(ApiResponse.success("Xóa kỹ năng thành công", null));
+        } catch (Exception e) {
+            log.error("Lỗi khi xóa kỹ năng: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi xóa kỹ năng: " + e.getMessage(), "SERVER_ERROR"));
+        }
+    }
+
+    @GetMapping("/skills/all")
+    public ResponseEntity<ApiResponse<List<Skill>>> getAllSystemSkills() {
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh mục kỹ năng thành công", skillService.getAllSkills()));
     }
 
     @PostMapping("/avatar")

@@ -45,7 +45,7 @@ public class Job {
     private JobStatus status;
 
     public enum JobType {
-        intern, parttime, fulltime
+        intern, parttime, fulltime, freelance
     }
 
     public enum JobStatus {

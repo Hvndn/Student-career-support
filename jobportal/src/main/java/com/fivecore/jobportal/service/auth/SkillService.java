@@ -47,22 +47,26 @@ public class SkillService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy kỹ năng"));
 
         // Kiểm tra xem đã có kỹ năng này chưa
-        boolean exists = student.getSkills() != null && student.getSkills().stream()
-                .anyMatch(ss -> ss.getSkill().getId().equals(skillId));
+        if (student.getSkills() == null) {
+            student.setSkills(new java.util.ArrayList<>());
+        }
+        StudentSkill studentSkill = student.getSkills().stream()
+                .filter(ss -> ss.getSkill().getId().equals(skillId))
+                .findFirst().orElse(null);
 
-        if (exists) {
-            log.warn("Sinh viên {} đã có kỹ năng: {}", studentId, skill.getName());
-            throw new IllegalArgumentException("Kỹ năng này đã tồn tại trong hồ sơ của bạn");
+        if (studentSkill != null) {
+            log.info("Cập nhật trình độ kỹ năng cho sinh viên {}: {} -> {}", studentId, skill.getName(), level);
+            studentSkill.setLevel(level);
+        } else {
+            studentSkill = StudentSkill.builder()
+                    .student(student)
+                    .skill(skill)
+                    .level(level)
+                    .build();
         }
 
-        StudentSkill studentSkill = StudentSkill.builder()
-                .student(student)
-                .skill(skill)
-                .level(level)
-                .build();
-
         studentSkillRepository.save(studentSkill);
-        log.info("Đã thêm kỹ năng {} cho sinh viên {}", skill.getName(), studentId);
+        log.info("Đã lưu kỹ năng {} cho sinh viên {}", skill.getName(), studentId);
     }
 
     /**

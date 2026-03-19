@@ -74,10 +74,10 @@ const PostJob = () => {
                                 value={formData.jobType}
                                 onChange={(e) => setFormData({...formData, jobType: e.target.value})}
                             >
-                                <option>Full-time</option>
-                                <option>Part-time</option>
-                                <option>Internship</option>
-                                <option>Freelance</option>
+                                <option value="fulltime">Full-time</option>
+                                <option value="parttime">Part-time</option>
+                                <option value="intern">Internship</option>
+                                <option value="freelance">Freelance</option>
                             </select>
                         </div>
                     </div>
