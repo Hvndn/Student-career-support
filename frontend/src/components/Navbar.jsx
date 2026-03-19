@@ -14,19 +14,13 @@ const Navbar = () => {
     const linkStyle = { color: 'rgba(255, 255, 255, 0.9)' };
 
     return (
-        <nav className="glass fade-in" style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
+        <nav className="glass fade-in navbar-fixed" style={{
             padding: '1rem 2.5rem',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            zIndex: 1000,
             background: 'rgba(0, 0, 0, 0.75)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
-            borderRadius: 0
+            borderBottom: '1px solid rgba(255, 255, 255, 0.15)'
         }}>
             <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
                 <img
