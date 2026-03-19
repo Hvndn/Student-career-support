@@ -35,7 +35,7 @@ const PostJob = () => {
                             <input 
                                 type="text" 
                                 className="glass" 
-                                style={{ width: '100%', padding: '0.75rem', color: 'white' }}
+                                style={{ width: '100%', padding: '0.75rem', color: '#000' }}
                                 value={formData.title}
                                 onChange={(e) => setFormData({...formData, title: e.target.value})}
                                 required
@@ -46,7 +46,7 @@ const PostJob = () => {
                             <input 
                                 type="text" 
                                 className="glass" 
-                                style={{ width: '100%', padding: '0.75rem', color: 'white' }}
+                                style={{ width: '100%', padding: '0.75rem', color: '#000' }}
                                 value={formData.salary}
                                 onChange={(e) => setFormData({...formData, salary: e.target.value})}
                                 required
@@ -60,7 +60,7 @@ const PostJob = () => {
                             <input 
                                 type="text" 
                                 className="glass" 
-                                style={{ width: '100%', padding: '0.75rem', color: 'white' }}
+                                style={{ width: '100%', padding: '0.75rem', color: '#000' }}
                                 value={formData.location}
                                 onChange={(e) => setFormData({...formData, location: e.target.value})}
                                 required
@@ -70,7 +70,7 @@ const PostJob = () => {
                             <label className="text-muted" style={{ display: 'block', marginBottom: '0.5rem' }}>Loại hình</label>
                             <select 
                                 className="glass" 
-                                style={{ width: '100%', padding: '0.75rem', color: 'white', background: 'var(--surface)' }}
+                                style={{ width: '100%', padding: '0.75rem', color: '#000', background: 'var(--surface)' }}
                                 value={formData.jobType}
                                 onChange={(e) => setFormData({...formData, jobType: e.target.value})}
                             >
@@ -87,7 +87,7 @@ const PostJob = () => {
                         <input 
                             type="date" 
                             className="glass" 
-                            style={{ width: '100%', padding: '0.75rem', color: 'white' }}
+                            style={{ width: '100%', padding: '0.75rem', color: '#000' }}
                             value={formData.deadline}
                             onChange={(e) => setFormData({...formData, deadline: e.target.value})}
                             required
@@ -98,7 +98,7 @@ const PostJob = () => {
                         <label className="text-muted" style={{ display: 'block', marginBottom: '0.5rem' }}>Mô tả công việc</label>
                         <textarea 
                             className="glass" 
-                            style={{ width: '100%', padding: '0.75rem', color: 'white', minHeight: '200px' }}
+                            style={{ width: '100%', padding: '0.75rem', color: '#000', minHeight: '200px' }}
                             value={formData.description}
                             onChange={(e) => setFormData({...formData, description: e.target.value})}
                             required
