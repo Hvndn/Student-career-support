@@ -6,6 +6,16 @@ import { jobApi } from '../api';
 const Home = () => {
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState('');
+
+    const filteredJobs = jobs.filter(job => {
+        const q = search.toLowerCase();
+        return (
+            job.title?.toLowerCase().includes(q) ||
+            job.companyName?.toLowerCase().includes(q) ||
+            job.location?.toLowerCase().includes(q)
+        );
+    });
 
     useEffect(() => {
         jobApi.getJobs()
@@ -46,12 +56,14 @@ const Home = () => {
                             <input 
                                 type="text" 
                                 placeholder="Tên công việc, kỹ năng hoặc công ty..." 
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
                                 style={{ 
                                     flex: 1, 
                                     background: 'transparent', 
                                     border: 'none', 
                                     padding: '1rem 1.5rem', 
-                                    color: 'white', 
+                                    color: '#000', 
                                     fontSize: '1.1rem',
                                     outline: 'none'
                                 }}
@@ -77,9 +89,13 @@ const Home = () => {
                     <div style={{ textAlign: 'center', padding: '5rem', color: 'var(--text-muted)' }}>
                         <div className="glass" style={{ display: 'inline-block', padding: '1rem 2rem' }}>Đang tải danh sách việc làm...</div>
                     </div>
+                ) : filteredJobs.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '5rem', color: 'var(--text-muted)' }}>
+                        <div className="glass" style={{ display: 'inline-block', padding: '1rem 2rem' }}>Không tìm thấy kết quả cho "{search}"</div>
+                    </div>
                 ) : (
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '2rem' }}>
-                        {jobs.map(job => (
+                        {filteredJobs.map(job => (
                             <div key={job.id} className="card" style={{ display: 'flex', flexDirection: 'column' }}>
                                 <div style={{ marginBottom: '1.5rem' }}>
                                     <h3 style={{ fontSize: '1.35rem', marginBottom: '0.4rem', fontWeight: '600' }}>

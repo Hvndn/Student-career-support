@@ -1,0 +1,148 @@
+
+      .job-card {
+        background: white;
+        border-radius: 12px;
+        padding: 18px;
+        border: 1px solid #e5e7eb;
+        margin-bottom: 15px;
+        transition: 0.25s;
+      }
+
+      .job-card:hover {
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        transform: translateY(-3px);
+      }
+
+      .company-logo {
+        width: 45px;
+        height: 45px;
+        border-radius: 10px;
+        background: #eef2ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        color: #2563eb;
+      }
+
+      .job-tags span {
+        background: #eef2ff;
+        color: #2563eb;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        margin-right: 5px;
+      }
+
+      .filter-box {
+        background: white;
+        border-radius: 12px;
+        padding: 18px;
+        border: 1px solid #e5e7eb;
+      }
+
+      .salary {
+        color: #2563eb;
+        font-weight: 600;
+      }
+      /* search bar */
+
+      .top-search {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .search-box {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 30px;
+        padding: 8px 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 420px;
+      }
+
+      .search-box input {
+        border: none;
+        outline: none;
+        width: 100%;
+      }
+
+      .search-icons {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+      }
+
+      .avatar-mini {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #ddd;
+      }
+
+      /* breadcrumb */
+
+      .breadcrumb-ui {
+        font-size: 13px;
+        color: #6b7280;
+      }
+
+      /* bookmark */
+
+      .bookmark {
+        color: #9ca3af;
+        cursor: pointer;
+      }
+
+      .bookmark:hover {
+        color: #2563eb;
+      }
+
+      /* job card animation */
+
+      .job-card {
+        position: relative;
+      }
+
+      .job-card:hover {
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      /* tag animation */
+
+      .job-tags span {
+        transition: 0.2s;
+      }
+
+      .job-tags span:hover {
+        background: #2563eb;
+        color: white;
+      }
+
+      /* button */
+
+      .btn-primary {
+        transition: 0.2s;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
+      }
+      .footer-ui {
+        background: white;
+        border-top: 1px solid #e5e7eb;
+        padding: 40px;
+        border-radius: 10px;
+      }
+
+      .footer-ui ul {
+        list-style: none;
+        padding: 0;
+        font-size: 14px;
+        color: #6b7280;
+      }
+    

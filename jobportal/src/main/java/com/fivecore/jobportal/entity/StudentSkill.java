@@ -33,6 +33,6 @@ public class StudentSkill {
     private SkillLevel level;
 
     public enum SkillLevel {
-        beginner, intermediate, advanced, expert
+        beginner, intermediate, advanced
     }
 }

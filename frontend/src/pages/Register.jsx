@@ -68,7 +68,7 @@ const Register = () => {
                         <input 
                             type="text" 
                             className="glass" 
-                            style={{ width: '100%', padding: '1rem', color: 'white', fontSize: '1rem', outline: 'none' }}
+                            style={{ width: '100%', padding: '1rem', color: '#000', fontSize: '1rem', outline: 'none' }}
                             placeholder="Nguyễn Văn A"
                             value={formData.fullName}
                             onChange={(e) => setFormData({...formData, fullName: e.target.value})}
@@ -80,7 +80,7 @@ const Register = () => {
                         <input 
                             type="email" 
                             className="glass" 
-                            style={{ width: '100%', padding: '1rem', color: 'white', fontSize: '1rem', outline: 'none' }}
+                            style={{ width: '100%', padding: '1rem', color: '#000', fontSize: '1rem', outline: 'none' }}
                             placeholder="name@example.com"
                             value={formData.email}
                             onChange={(e) => setFormData({...formData, email: e.target.value})}
@@ -92,7 +92,7 @@ const Register = () => {
                         <input 
                             type="password" 
                             className="glass" 
-                            style={{ width: '100%', padding: '1rem', color: 'white', fontSize: '1rem', outline: 'none' }}
+                            style={{ width: '100%', padding: '1rem', color: '#000', fontSize: '1rem', outline: 'none' }}
                             placeholder="Mật khẩu tối thiểu 6 ký tự"
                             value={formData.password}
                             onChange={(e) => setFormData({...formData, password: e.target.value})}
@@ -103,7 +103,7 @@ const Register = () => {
                         <label style={{ display: 'block', marginBottom: '0.6rem', color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: '500' }}>Bạn là ai?</label>
                         <select 
                             className="glass" 
-                            style={{ width: '100%', padding: '1rem', color: 'white', background: 'var(--surface)', fontSize: '1rem', outline: 'none' }}
+                            style={{ width: '100%', padding: '1rem', color: '#000', background: 'var(--surface)', fontSize: '1rem', outline: 'none' }}
                             value={formData.role}
                             onChange={(e) => setFormData({...formData, role: e.target.value})}
                         >

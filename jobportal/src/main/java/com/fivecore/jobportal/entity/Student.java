@@ -46,14 +46,11 @@ public class Student {
     private String phone;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
-    @Builder.Default
-    private java.util.List<StudentSkill> skills = new java.util.ArrayList<>();
+    private java.util.List<StudentSkill> skills;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private java.util.List<Education> educations = new java.util.ArrayList<>();
+    private java.util.List<Education> educations;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private java.util.List<Experience> experiences = new java.util.ArrayList<>();
+    private java.util.List<Experience> experiences;
 }

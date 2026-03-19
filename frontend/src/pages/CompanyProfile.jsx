@@ -84,21 +84,21 @@ const CompanyProfile = () => {
                     <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '1.5rem' }}>
                         <div>
                             <label className="text-muted" style={{ display: 'block', marginBottom: '0.4rem' }}>Tên doanh nghiệp</label>
-                            <input type="text" name="name" className="glass" style={{ width: '100%', padding: '0.75rem', color: 'white' }} value={formData.name} onChange={handleChange} />
+                            <input type="text" name="name" className="glass" style={{ width: '100%', padding: '0.75rem', color: '#000' }} value={formData.name} onChange={handleChange} />
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                             <div>
                                 <label className="text-muted" style={{ display: 'block', marginBottom: '0.4rem' }}>Email</label>
-                                <input type="email" name="email" className="glass" style={{ width: '100%', padding: '0.75rem', color: 'white' }} value={formData.email} onChange={handleChange} />
+                                <input type="email" name="email" className="glass" style={{ width: '100%', padding: '0.75rem', color: '#000' }} value={formData.email} onChange={handleChange} />
                             </div>
                             <div>
                                 <label className="text-muted" style={{ display: 'block', marginBottom: '0.4rem' }}>Số điện thoại</label>
-                                <input type="text" name="phone" className="glass" style={{ width: '100%', padding: '0.75rem', color: 'white' }} value={formData.phone} onChange={handleChange} />
+                                <input type="text" name="phone" className="glass" style={{ width: '100%', padding: '0.75rem', color: '#000' }} value={formData.phone} onChange={handleChange} />
                             </div>
                         </div>
                         <div>
                             <label className="text-muted" style={{ display: 'block', marginBottom: '0.4rem' }}>Website</label>
-                            <input type="text" name="website" className="glass" style={{ width: '100%', padding: '0.75rem', color: 'white' }} value={formData.website} onChange={handleChange} />
+                            <input type="text" name="website" className="glass" style={{ width: '100%', padding: '0.75rem', color: '#000' }} value={formData.website} onChange={handleChange} />
                         </div>
                         <button type="submit" className="btn btn-primary" style={{ marginTop: '1rem' }}>Lưu thay đổi</button>
                     </form>
