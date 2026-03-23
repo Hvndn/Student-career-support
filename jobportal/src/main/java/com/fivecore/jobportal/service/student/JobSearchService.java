@@ -19,6 +19,14 @@ import java.util.stream.Collectors;
 public class JobSearchService {
 
     private final JobRepository jobRepository;
+    private final com.fivecore.jobportal.repository.ApplicationRepository applicationRepository; // Thêm repository để kiểm tra ứng tuyển
+    private final com.fivecore.jobportal.repository.UserRepository userRepository; // Thêm repository để lấy ID sinh viên
+
+    public Integer getStudentIdByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .map(u -> u.getStudent() != null ? u.getStudent().getId() : null)
+                .orElse(null);
+    }
 
     /**
      * Tìm kiếm việc làm với nhiều bộ lọc (US-006).
@@ -72,10 +80,16 @@ public class JobSearchService {
     /**
      * Lấy thông tin chi tiết một công việc theo ID.
      */
-    public JobResponse getJobById(Integer id) {
-        return jobRepository.findById(id)
+    public JobResponse getJobById(Integer id, Integer studentId) {
+        JobResponse response = jobRepository.findById(id)
                 .map(this::mapToResponse)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy công việc với ID: " + id));
+        
+        if (studentId != null) {
+            response.setApplied(applicationRepository.findByStudentIdAndJobId(studentId, id).isPresent());
+        }
+        
+        return response;
     }
 
     private JobResponse mapToResponse(Job job) {

@@ -20,4 +20,5 @@ public class JobResponse {
     private String status;
     private String description;
     private LocalDate deadline;
+    private boolean isApplied;
 }

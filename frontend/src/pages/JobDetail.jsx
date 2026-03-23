@@ -20,17 +20,59 @@ const JobDetail = () => {
             });
     }, [id]);
 
+    const user = JSON.parse(localStorage.getItem('user'));
+
     const handleApply = async () => {
         try {
             const res = await studentApi.applyJob(id);
             setMessage(res.data.message);
+            setJob(prev => ({ ...prev, isApplied: true }));
         } catch (err) {
-            setMessage('Bạn cần đăng nhập để ứng tuyển!');
+            setMessage(err.response?.data?.message || 'Bạn cần đăng nhập để ứng tuyển!');
+        }
+    };
+
+    const handleCancel = async () => {
+        try {
+            const res = await studentApi.cancelApplication(id);
+            setMessage(res.data.message);
+            setJob(prev => ({ ...prev, isApplied: false }));
+        } catch (err) {
+            setMessage(err.response?.data?.message || 'Có lỗi xảy ra khi hủy ứng tuyển');
         }
     };
 
     if (loading) return <div className="container" style={{ textAlign: 'center', marginTop: '5rem' }}>Đang tải...</div>;
     if (!job) return <div className="container" style={{ textAlign: 'center', marginTop: '5rem' }}>Không tìm thấy công việc!</div>;
+
+    const renderApplyButton = () => {
+        if (!user) {
+            return (
+                <div style={{ textAlign: 'center', width: '100%' }}>
+                    <p style={{ color: 'var(--primary)', marginBottom: '1rem', fontWeight: '500' }}>✨ Bạn cần đăng nhập để ứng tuyển!</p>
+                    <a href="/login" className="btn btn-primary" style={{ display: 'inline-flex', padding: '0.8rem 2.5rem' }}>Đăng nhập ngay</a>
+                </div>
+            );
+        }
+
+        if (user.role === 'ROLE_ADMIN' || user.role === 'ROLE_COMPANY') {
+            return null;
+        }
+
+        if (user.role === 'ROLE_STUDENT') {
+            return job.isApplied ? (
+                <button onClick={handleCancel} className="btn glass" style={{ flex: 3, height: '3.5rem', fontSize: '1.1rem', justifyContent: 'center', color: 'var(--error)', border: '1px solid var(--error)' }}>
+                    Hủy ứng tuyển ↩️
+                </button>
+            ) : (
+                <button onClick={handleApply} className="btn btn-primary" style={{ flex: 3, height: '3.5rem', fontSize: '1.1rem', justifyContent: 'center' }}>
+                    Ứng tuyển ngay 🚀
+                </button>
+            );
+        }
+
+        return null;
+    };
 
     return (
         <div className="fade-in" style={{ padding: '4rem 2rem 6rem' }}>
@@ -100,13 +142,13 @@ const JobDetail = () => {
                         </div>
                     )}
 
-                    <div style={{ display: 'flex', gap: '1.5rem' }}>
-                        <button onClick={handleApply} className="btn btn-primary" style={{ flex: 3, height: '3.5rem', fontSize: '1.1rem', justifyContent: 'center' }}>
-                            Ứng tuyển ngay 🚀
-                        </button>
-                        <button className="btn glass" style={{ flex: 1, height: '3.5rem', fontSize: '1.1rem', justifyContent: 'center' }}>
-                            🔖 Lưu tin
-                        </button>
+                    <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+                        {renderApplyButton()}
+                        {(user && user.role === 'ROLE_STUDENT') && (
+                            <button className="btn glass" style={{ flex: 1, height: '3.5rem', fontSize: '1.1rem', justifyContent: 'center' }}>
+                                🔖 Lưu tin
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
