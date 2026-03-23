@@ -1,0 +1,84 @@
+.company-sidebar {
+  width: 250px;
+  min-height: 100vh;
+  background: #fff;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 200;
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Logo */
+.cs-logo {
+  padding: 1.1rem 1.3rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+.cs-logo a {
+  display: flex; align-items: center; gap: 0.5rem;
+  text-decoration: none;
+}
+.cs-logo-icon { font-size: 1.2rem; }
+.cs-logo-text { font-weight: 800; font-size: 0.95rem; color: #111827; }
+
+/* Nav */
+.cs-nav {
+  flex: 1;
+  padding: 1rem 0.7rem;
+  display: flex; flex-direction: column; gap: 0.15rem;
+}
+.cs-nav-item {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #4b5563;
+  font-size: 0.88rem; font-weight: 500;
+  transition: all 0.18s;
+}
+.cs-nav-item:hover { background: #f3f4f6; color: #111827; }
+.cs-nav-item.active { background: #eff6ff; color: #2563eb; font-weight: 700; }
+.cs-icon { font-size: 1rem; width: 20px; text-align: center; }
+
+/* Post CTA */
+.cs-post-cta { padding: 0.5rem 0.7rem; }
+.cs-post-btn {
+  display: block;
+  width: 100%;
+  padding: 0.7rem;
+  background: #2563eb;
+  color: white;
+  border-radius: 10px;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.88rem;
+  transition: background 0.2s;
+}
+.cs-post-btn:hover { background: #1d4ed8; color: white; }
+
+/* Bottom */
+.cs-bottom {
+  padding: 0.8rem 0.7rem 1.2rem;
+  border-top: 1px solid #f3f4f6;
+  display: flex; flex-direction: column; gap: 0.2rem;
+}
+.cs-bottom-link {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.5rem 0.85rem; border-radius: 8px;
+  text-decoration: none; color: #6b7280; font-size: 0.82rem;
+  transition: all 0.18s;
+}
+.cs-bottom-link:hover { background: #f3f4f6; color: #111827; }
+.cs-logout {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.5rem 0.85rem; border-radius: 8px;
+  background: none; border: none; cursor: pointer;
+  color: #ef4444; font-size: 0.82rem;
+  font-family: 'Outfit', sans-serif;
+  width: 100%; text-align: left;
+  transition: all 0.18s;
+}
+.cs-logout:hover { background: #fef2f2; }

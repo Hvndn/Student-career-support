@@ -16,6 +16,7 @@ import PostJob from './pages/PostJob'
 import Applicants from './pages/Applicants'
 import CompanyProfile from './pages/CompanyProfile'
 import CandidateSearch from './pages/CandidateSearch'
+import EmployerHome from './pages/EmployerHome'
 import AdminDashboard from './pages/AdminDashboard'
 import SkillManagement from './pages/SkillManagement'
 import UserManagement from './pages/UserManagement'
@@ -26,6 +27,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/employer" element={<EmployerHome />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/jobs" element={<JobList />} />

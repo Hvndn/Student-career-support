@@ -1,8 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Footer = () => {
     const year = new Date().getFullYear();
+    const location = useLocation();
+    if (location.pathname === '/employer' || location.pathname === '/' || location.pathname === '/login' || location.pathname.startsWith('/student/') || location.pathname.startsWith('/company/')) return null;
 
     return (
         <footer style={{
