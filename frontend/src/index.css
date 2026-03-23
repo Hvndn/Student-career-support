@@ -1,0 +1,171 @@
+:root {
+  --primary: #ffffff;           /* Pure white — sharp and premium */
+  --primary-glow: rgba(255, 255, 255, 0.08);
+  --accent: #7a8060;            /* Olive green — earthy, unique */
+  --accent-glow: rgba(88, 93, 71, 0.35);
+  --secondary: #fb7185;         /* Rose — for tags and highlights */
+  --secondary-glow: rgba(251, 113, 133, 0.3);
+  --bg: #080808;                /* True black */
+  --surface: #101010;
+  --surface-hover: #181818;
+  --text: #ffffff;
+  --text-muted: #888888;
+  --border: rgba(255, 255, 255, 0.07);
+  --success: #22c55e;
+  --error: #f43f5e;
+  --glass-bg: rgba(16, 16, 16, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--bg);
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(88, 93, 71, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 80% 80%, rgba(251, 113, 133, 0.05) 0%, transparent 45%);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  font-family: 'Outfit', sans-serif;
+}
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.btn {
+  padding: 0.8rem 1.8rem;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background: #585d47;
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 20px rgba(88, 93, 71, 0.4);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  background: #6b7157;
+  box-shadow: 0 10px 30px rgba(88, 93, 71, 0.5);
+}
+
+.btn-accent {
+  background: var(--accent);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 15px rgba(122, 128, 96, 0.3);
+}
+
+.btn-accent:hover {
+  background: #8b926d;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(122, 128, 96, 0.5);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 2rem;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  background: var(--surface-hover);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent), var(--secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.8s ease forwards;
+}
+
+
+/* Custom Select Styling */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.2em;
+  padding-right: 3rem !important;
+}
+
+select option {
+  background-color: #1a1a1a;
+  color: white;
+  padding: 1rem;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.03);
+}
+
+.skill-tag {
+  transition: all 0.3s ease;
+}
+
+.skill-tag:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  transform: scale(1.02);
+}
