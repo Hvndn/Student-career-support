@@ -176,10 +176,10 @@ const PostJob = () => {
                 <div className="pj-field">
                   <label>MỨC LƯƠNG</label>
                   <div className="pj-input-icon">
-                    <span>$</span>
+                    <span>VNĐ</span>
                     <input
-                      style={{ ...inputStyle, paddingLeft: '2rem', border: 'none', outline: 'none' }}
-                      placeholder="Vd: 2,000 - 4,500"
+                      style={{ ...inputStyle, paddingLeft: '3rem', border: 'none', outline: 'none' }}
+                      placeholder="Vd: 15.000.000 - 30.000.000"
                       value={form.salary}
                       onChange={e => set('salary', e.target.value)}
                     />
