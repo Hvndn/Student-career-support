@@ -23,6 +23,7 @@ export const studentApi = {
     getProfile: () => api.get('/student/profile'),
     updateProfile: (data) => api.put('/student/profile', data),
     applyJob: (jobId) => api.post(`/student/jobs/${jobId}/apply`),
+    cancelApplication: (jobId) => api.delete(`/student/jobs/${jobId}/apply`),
     saveJob: (jobId) => api.post(`/student/jobs/${jobId}/save`),
     getSavedJobs: () => api.get('/student/jobs/saved'),
     getMyApplications: () => api.get('/student/applications'),

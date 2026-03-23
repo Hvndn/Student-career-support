@@ -126,4 +126,20 @@ public class ApplicationService {
     public long countPendingInterviewsByCompany(Integer companyId) {
         return applicationRepository.countByJobCompanyId(companyId); 
     }
+
+    /**
+     * Sinh viên hủy ứng tuyển.
+     */
+    @Transactional
+    public void cancelApplication(Integer studentId, Integer jobId) {
+        Application application = applicationRepository.findByStudentIdAndJobId(studentId, jobId)
+                .orElseThrow(() -> new RuntimeException("Bạn chưa ứng tuyển công việc này"));
+        
+        if (application.getStatus() != Application.ApplicationStatus.pending) {
+            throw new RuntimeException("Không thể hủy đơn đã được xử lý (Sàng lọc/Phỏng vấn)");
+        }
+        
+        applicationRepository.delete(application);
+        log.info("Sinh viên ID {} đã hủy ứng tuyển công việc ID {}", studentId, jobId);
+    }
 }

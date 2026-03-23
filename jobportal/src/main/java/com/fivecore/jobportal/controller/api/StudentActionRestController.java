@@ -52,6 +52,22 @@ public class StudentActionRestController {
     }
 
     /**
+     * API Hủy ứng tuyển công việc.
+     */
+    @DeleteMapping("/jobs/{jobId}/apply")
+    public ResponseEntity<ApiResponse<Object>> cancelApply(@PathVariable("jobId") Integer jobId, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        if (studentId == null) return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+
+        try {
+            applicationService.cancelApplication(studentId, jobId);
+            return ResponseEntity.ok(ApiResponse.success("Hủy ứng tuyển thành công", null));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage(), "CANCEL_ERROR"));
+        }
+    }
+
+    /**
      * API Lưu tin tuyển dụng.
      */
     @PostMapping("/jobs/{jobId}/save")

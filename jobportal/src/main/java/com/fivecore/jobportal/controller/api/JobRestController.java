@@ -38,8 +38,14 @@ public class JobRestController {
      * API Chi tiết công việc.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<JobResponse>> getJobById(@PathVariable("id") Integer id) {
-        JobResponse job = jobSearchService.getJobById(id);
+    public ResponseEntity<ApiResponse<JobResponse>> getJobById(@PathVariable("id") Integer id, org.springframework.security.core.Authentication authentication) {
+        Integer studentId = null;
+        if (authentication != null && authentication.isAuthenticated()) {
+            // Lấy studentId nếu là sinh viên
+            studentId = jobSearchService.getStudentIdByEmail(authentication.getName());
+        }
+
+        JobResponse job = jobSearchService.getJobById(id, studentId);
         if (job == null) {
             return ResponseEntity.status(404)
                     .body(ApiResponse.error("Không tìm thấy công việc", "NOT_FOUND"));

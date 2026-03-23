@@ -4,14 +4,15 @@ import { studentApi } from '../api';
 const inputStyle = {
     width: '100%',
     padding: '0.8rem 1.2rem',
-    background: 'rgba(255,255,255,0.04)',
-    border: '1px solid rgba(255,255,255,0.1)',
-    borderRadius: '10px',
+    background: 'rgba(255,255,255,0.03)',
+    border: '1px solid rgba(255,255,255,0.08)',
+    borderRadius: '12px',
     color: 'white',
-    fontSize: '1rem',
+    fontSize: '0.95rem',
     outline: 'none',
     fontFamily: 'Outfit, sans-serif',
-    marginBottom: '0.8rem'
+    marginBottom: '1rem',
+    transition: 'all 0.3s ease'
 };
 
 const labelStyle = {
@@ -80,12 +81,12 @@ const Profile = () => {
     const saveBio = async () => {
         setSaving(true);
         try {
-            await studentApi.updateProfile({ 
+            await studentApi.updateProfile({
                 fullName: profile.fullName,
                 major: profile.major,
                 graduationYear: profile.graduationYear,
                 phone: profile.phone,
-                bio: bio 
+                bio: bio
             });
             await reload();
             setEditBio(false);
@@ -132,8 +133,8 @@ const Profile = () => {
             await reload();
             setShowSkillForm(false);
             flash('✅ Đã thêm kỹ năng!');
-        } catch (err) { 
-            flash(err.response?.data?.message || '❌ Lỗi khi thêm kỹ năng.'); 
+        } catch (err) {
+            flash(err.response?.data?.message || '❌ Lỗi khi thêm kỹ năng.');
         }
         setSaving(false);
     };
@@ -162,8 +163,8 @@ const Profile = () => {
             setShowEduForm(false);
             setEduForm(BLANK_EDU);
             flash('✅ Thêm học vấn thành công!');
-        } catch (err) { 
-            flash(err.response?.data?.message || '❌ Lỗi khi thêm học vấn.'); 
+        } catch (err) {
+            flash(err.response?.data?.message || '❌ Lỗi khi thêm học vấn.');
         }
         setSaving(false);
     };
@@ -189,8 +190,8 @@ const Profile = () => {
             setShowExpForm(false);
             setExpForm(BLANK_EXP);
             flash('✅ Thêm kinh nghiệm thành công!');
-        } catch (err) { 
-            flash(err.response?.data?.message || '❌ Lỗi khi thêm kinh nghiệm.'); 
+        } catch (err) {
+            flash(err.response?.data?.message || '❌ Lỗi khi thêm kinh nghiệm.');
         }
         setSaving(false);
     };
@@ -244,12 +245,12 @@ const Profile = () => {
                                     THAY ĐỔI
                                 </div>
                             </div>
-                            <input 
-                                type="file" 
-                                id="avatarInput" 
-                                accept="image/*" 
-                                style={{ display: 'none' }} 
-                                onChange={handleAvatarChange} 
+                            <input
+                                type="file"
+                                id="avatarInput"
+                                accept="image/*"
+                                style={{ display: 'none' }}
+                                onChange={handleAvatarChange}
                             />
 
                             {editBasic ? (
@@ -275,7 +276,7 @@ const Profile = () => {
                                     <p style={{ color: '#585d47', fontWeight: '600', marginBottom: '0.5rem' }}>{profile.major}</p>
                                     <p style={{ color: '#666', fontSize: '0.9rem', marginBottom: '0.5rem' }}>🎓 {profile.graduationYear}</p>
                                     {profile.phone && <p style={{ color: '#666', fontSize: '0.9rem', marginBottom: '1.5rem' }}>📞 {profile.phone}</p>}
-                                    <button onClick={openBasic} className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
+                                    <button onClick={openBasic} className="btn btn-accent" style={{ width: '100%', justifyContent: 'center' }}>
                                         ✏️ Chỉnh sửa thông tin
                                     </button>
                                 </>
@@ -286,19 +287,21 @@ const Profile = () => {
                         <div className="card glass" style={{ marginTop: '1.5rem' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem' }}>
                                 <h3 style={{ fontSize: '1.1rem', fontWeight: '700' }}>Kỹ năng</h3>
-                                <button onClick={() => setShowSkillForm(!showSkillForm)} className="btn glass" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>
+                                <button onClick={() => setShowSkillForm(!showSkillForm)} className="btn glass" style={{ padding: '0.5rem 0.6rem', fontSize: '0.9rem', minWidth: '36px', height: '36px', justifyContent: 'center', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', transform: showSkillForm ? 'rotate(0deg)' : 'rotate(0deg)' }}>
                                     {showSkillForm ? '✕' : '+'}
                                 </button>
                             </div>
 
                             {showSkillForm && (
-                                <div style={{ marginBottom: '1rem', padding: '1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '10px' }}>
+                                <div className="fade-in" style={{ marginBottom: '1.2rem', padding: '1.2rem', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                    <label style={labelStyle}>Tên kỹ năng</label>
                                     <select style={inputStyle} value={skillId} onChange={e => setSkillId(e.target.value)}>
                                         <option value="">-- Chọn kỹ năng --</option>
                                         {allSkills.map(s => (
-                                            <option key={s.id} value={s.id}>{s.name}</option>
+                                            <option key={s.id} value={s.id} style={{ padding: '1rem' }}>{s.name}</option>
                                         ))}
                                     </select>
+                                    <label style={labelStyle}>Mức độ</label>
                                     <select style={inputStyle} value={skillLevel} onChange={e => setSkillLevel(e.target.value)}>
                                         <option value="Beginner">Beginner</option>
                                         <option value="Intermediate">Intermediate</option>
@@ -311,17 +314,17 @@ const Profile = () => {
 
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
                                 {profile.skills?.map(skill => (
-                                    <span key={skill.id} style={{
-                                        padding: '0.35rem 0.9rem', borderRadius: '8px',
-                                        background: 'rgba(255,255,255,0.05)',
-                                        border: '1px solid rgba(255,255,255,0.1)',
-                                        fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.5rem'
+                                    <span key={skill.id} className="skill-tag" style={{
+                                        padding: '0.5rem 1rem', borderRadius: '10px',
+                                        background: 'rgba(255,255,255,0.04)',
+                                        border: '1px solid rgba(255,255,255,0.08)',
+                                        fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '0.7rem'
                                     }}>
-                                        {skill.name}
-                                        <span style={{ color: '#585d47', fontWeight: '600', fontSize: '0.8rem' }}>{skill.level}</span>
+                                        <span style={{ color: 'white' }}>{skill.name}</span>
+                                        <span style={{ color: '#585d47', fontWeight: '700', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{skill.level}</span>
                                         <button onClick={() => deleteSkill(skill.id)} style={{
-                                            background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: '0.75rem', padding: '0',
-                                            marginLeft: '0.3rem'
+                                            background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: '0.85rem', padding: '0',
+                                            marginLeft: '0.2rem', display: 'flex', alignItems: 'center'
                                         }}>✕</button>
                                     </span>
                                 ))}
@@ -336,7 +339,7 @@ const Profile = () => {
                         <div className="card glass" style={{ marginBottom: '2rem' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem' }}>
                                 <h3 style={{ fontSize: '1.2rem', fontWeight: '700' }}>Giới thiệu bản thân</h3>
-                                {!editBio && <button onClick={openBio} className="btn glass" style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}>✏️ Sửa</button>}
+                                {!editBio && <button onClick={openBio} className="btn btn-accent" style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}>✏️ Sửa</button>}
                             </div>
                             {editBio ? (
                                 <>
@@ -363,7 +366,7 @@ const Profile = () => {
                         <div className="card glass" style={{ marginBottom: '2rem' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                                 <h3 style={{ fontSize: '1.2rem', fontWeight: '700' }}>Học vấn</h3>
-                                <button onClick={() => setShowEduForm(!showEduForm)} className="btn glass" style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}>
+                                <button onClick={() => setShowEduForm(!showEduForm)} className="btn btn-accent" style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}>
                                     {showEduForm ? '✕ Đóng' : '+ Thêm'}
                                 </button>
                             </div>
@@ -418,7 +421,7 @@ const Profile = () => {
                         <div className="card glass">
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                                 <h3 style={{ fontSize: '1.2rem', fontWeight: '700' }}>Kinh nghiệm làm việc</h3>
-                                <button onClick={() => setShowExpForm(!showExpForm)} className="btn glass" style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}>
+                                <button onClick={() => setShowExpForm(!showExpForm)} className="btn btn-accent" style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}>
                                     {showExpForm ? '✕ Đóng' : '+ Thêm'}
                                 </button>
                             </div>
