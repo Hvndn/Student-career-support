@@ -21,7 +21,7 @@ const Applications = () => {
         switch (status) {
             case 'REVIEWING': return { background: 'rgba(99, 102, 241, 0.2)', color: 'var(--primary)' };
             case 'ACCEPTED': return { background: 'rgba(16, 185, 129, 0.2)', color: 'var(--success)' };
-            case 'REJECTED': return { background: 'rgba(239, 68, 68, 0.2)', color: 'var(--error)' };
+            case 'REJECTED': return { background: 'rgba(240, 68, 68, 0.2)', color: 'var(--error)' };
             default: return { background: 'var(--surface)', color: 'var(--text-muted)' };
         }
     };

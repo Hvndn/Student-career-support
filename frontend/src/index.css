@@ -1,22 +1,30 @@
 :root {
-  --primary: #ffffff;           /* Pure white — sharp and premium */
-  --primary-glow: rgba(255, 255, 255, 0.08);
-  --accent: #7a8060;            /* Olive green — earthy, unique */
-  --accent-glow: rgba(88, 93, 71, 0.35);
-  --secondary: #fb7185;         /* Rose — for tags and highlights */
-  --secondary-glow: rgba(251, 113, 133, 0.3);
-  --bg: #080808;                /* True black */
-  --surface: #101010;
-  --surface-hover: #181818;
-  --text: #ffffff;
-  --text-muted: #888888;
-  --border: rgba(255, 255, 255, 0.07);
+  --primary: #2563eb;
+  --primary-glow: rgba(37, 99, 235, 0.1);
+
+  --accent: #7a8060;
+  --accent-glow: rgba(122, 128, 96, 0.2);
+
+  --secondary: #fb7185;
+  --secondary-glow: rgba(251, 113, 133, 0.2);
+
+  /* 🔥 QUAN TRỌNG */
+  --bg: --bg: rgb(245, 245, 245);
+  --surface: #f8f9fa;
+  --surface-hover: #f1f5f9;
+
+  --text: #222222;
+  --text-muted: #6b7280;
+
+  --border: #e5e7eb;
+
   --success: #22c55e;
   --error: #f43f5e;
-  --glass-bg: rgba(16, 16, 16, 0.75);
-  --glass-border: rgba(255, 255, 255, 0.08);
-}
 
+  /* glass */
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: #e5e7eb;
+}
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
 * {
