@@ -27,7 +27,7 @@ const Login = () => {
             } else if (role === 'ROLE_STUDENT') {
                 navigate('/');
             } else if (role === 'ROLE_ADMIN') {
-                navigate('/admin');
+                navigate('/admin/dashboard');
             } else {
                 navigate('/');
             }
