@@ -5,17 +5,25 @@ const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    if (location.pathname.startsWith('/employer') || location.pathname === '/login' || location.pathname.startsWith('/student/') || location.pathname.startsWith('/company/')) return null;
-    const isHome = location.pathname === '/';
+
+
     const user = JSON.parse(localStorage.getItem('user'));
+    const isHome = location.pathname === '/';
+    
+    const isStudentRoute = location.pathname.startsWith('/student/') || (isHome && user?.role === 'ROLE_STUDENT');
+    const isJobRoute = location.pathname === '/jobs' || location.pathname.startsWith('/jobs/');
+
+    if (location.pathname === '/employer' || 
+        location.pathname === '/login' || 
+        location.pathname.startsWith('/company/')) return null;
 
     const handleLogout = () => {
         localStorage.removeItem('user');
         navigate('/login');
     };
 
-    /* ── Light Navbar for Student Home ── */
-    if (isHome) {
+    /* ── Light Navbar for Student Pages, Job Pages & Public Home ── */
+    if (isHome || isStudentRoute || isJobRoute) {
         return (
             <nav style={{
                 background: '#fff',
@@ -34,27 +42,57 @@ const Navbar = () => {
                     alignItems: 'center',
                     height: '64px',
                 }}>
-                    <Link to="/" style={{ fontWeight: 800, fontSize: '1.1rem', color: '#111827' }}>
+                    <Link to="/" style={{ fontWeight: 800, fontSize: '1.1rem', color: '#111827', textDecoration: 'none' }}>
                         Nexus Talent
                     </Link>
                     <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-                        <Link to="/" style={{ color: '#374151', fontWeight: 600, fontSize: '0.9rem' }}>Trang chủ</Link>
-                        <Link to="/jobs" style={{ color: '#6b7280', fontSize: '0.9rem' }}>Việc làm</Link>
-                        <Link to="/employer" style={{ color: '#6b7280', fontSize: '0.9rem' }}>Doanh nghiệp</Link>
-                        <a href="#" style={{ color: '#6b7280', fontSize: '0.9rem' }}>Blog</a>
+                        <Link to="/" style={{ color: '#374151', fontWeight: 600, fontSize: '0.9rem', textDecoration: 'none' }}>Trang chủ</Link>
+                        <Link to="/jobs" style={{ color: '#6b7280', fontSize: '0.9rem', textDecoration: 'none' }}>Việc làm</Link>
+                        {user?.role === 'ROLE_STUDENT' ? (
+                            <>
+                                <Link to="/student/notifications" style={{ color: '#6b7280', fontSize: '0.9rem', textDecoration: 'none' }}>Thông báo</Link>
+                                <Link to="/student/applications" style={{ color: '#6b7280', fontSize: '0.9rem', textDecoration: 'none' }}>Đơn tuyển</Link>
+                                <Link to="/student/profile" style={{ color: '#6b7280', fontSize: '0.9rem', textDecoration: 'none' }}>Hồ sơ</Link>
+                            </>
+                        ) : (
+                            <>
+                                <Link to="/employer" style={{ color: '#6b7280', fontSize: '0.9rem', textDecoration: 'none' }}>Doanh nghiệp</Link>
+                                <a href="#" style={{ color: '#6b7280', fontSize: '0.9rem', textDecoration: 'none' }}>Blog</a>
+                            </>
+                        )}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <Link to="/login" style={{ color: '#374151', fontWeight: 600, fontSize: '0.9rem' }}>Đăng nhập</Link>
-                        <Link to="/register" style={{
-                            background: '#2563eb', color: 'white',
-                            padding: '0.5rem 1.2rem', borderRadius: '8px', fontWeight: 700,
-                            fontSize: '0.9rem'
-                        }}>Đăng ký</Link>
-                        <Link to="/employer" style={{
-                            background: '#1e293b', color: 'white',
-                            padding: '0.5rem 1rem', borderRadius: '8px', fontWeight: 600,
-                            fontSize: '0.85rem'
-                        }}>🏢 Nhà tuyển dụng</Link>
+                        {user ? (
+                            <>
+                                <span style={{ fontWeight: '600', color: '#2563eb', fontSize: '0.9rem' }}>{user.fullName}</span>
+                                <button 
+                                    onClick={handleLogout} 
+                                    style={{ 
+                                        background: 'transparent', border: '1px solid #ef4444', color: '#ef4444',
+                                        padding: '0.4rem 1rem', borderRadius: '8px', fontWeight: 600,
+                                        fontSize: '0.85rem', cursor: 'pointer'
+                                    }}
+                                >
+                                    Đăng xuất
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <Link to="/login" style={{ color: '#374151', fontWeight: 600, fontSize: '0.9rem', textDecoration: 'none' }}>Đăng nhập</Link>
+                                <Link to="/register" style={{
+                                    background: '#2563eb', color: 'white',
+                                    padding: '0.5rem 1.2rem', borderRadius: '8px', fontWeight: 700,
+                                    fontSize: '0.9rem', textDecoration: 'none'
+                                }}>Đăng ký</Link>
+                            </>
+                        )}
+                        {!user && (
+                            <Link to="/employer" style={{
+                                background: '#1e293b', color: 'white',
+                                padding: '0.5rem 1rem', borderRadius: '8px', fontWeight: 600,
+                                fontSize: '0.85rem', textDecoration: 'none'
+                            }}>🏢 Nhà tuyển dụng</Link>
+                        )}
                     </div>
                 </div>
             </nav>

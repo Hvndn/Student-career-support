@@ -45,6 +45,24 @@ public class Student {
     @Column(length = 20)
     private String phone;
 
+    @Column(name = "gpa")
+    private Double gpa;
+
+    @Column(name = "total_credits")
+    private Integer totalCredits;
+
+    @Column(name = "earned_credits")
+    private Integer earnedCredits;
+
+    @Column(name = "class_rank", length = 50)
+    private String classRank;
+
+    @Column(name = "academic_year", length = 50)
+    private String academicYear;
+
+    @Column(name = "current_term", length = 50)
+    private String currentTerm;
+
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     @Builder.Default
     private java.util.List<StudentSkill> skills = new java.util.ArrayList<>();

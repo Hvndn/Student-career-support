@@ -4,7 +4,14 @@ import { Link, useLocation } from 'react-router-dom';
 const Footer = () => {
     const year = new Date().getFullYear();
     const location = useLocation();
-    if (location.pathname === '/employer' || location.pathname === '/' || location.pathname === '/login' || location.pathname.startsWith('/student/') || location.pathname.startsWith('/company/')) return null;
+    const user = JSON.parse(localStorage.getItem('user'));
+    const isHome = location.pathname === '/';
+    if (location.pathname === '/employer' || 
+        isHome || 
+        location.pathname === '/login' || 
+        location.pathname.startsWith('/student/') || 
+        location.pathname.startsWith('/company/') ||
+        (isHome && user?.role === 'ROLE_STUDENT')) return null;
 
     return (
         <footer style={{
