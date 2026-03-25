@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Map;
+import com.fivecore.jobportal.repository.UserRepository;
 
 /**
  * REST API Controller cho Xác thực (Login & Register).
@@ -30,10 +31,10 @@ import java.util.Map;
 public class AuthRestController {
 
     private final RegisterService registerService;
-
     private final PasswordResetService passwordResetService;
     private final AuthenticationManager authenticationManager;
     private final SecurityContextRepository securityContextRepository;
+    private final UserRepository userRepository;
 
     /**
      * API Đăng nhập.
@@ -55,9 +56,17 @@ public class AuthRestController {
                 .map(r -> r.getAuthority())
                 .findFirst().orElse("");
 
+        // Get the user's full name from the database
+        String fullName = request.getEmail();
+        var userOpt = userRepository.findByEmail(request.getEmail());
+        if (userOpt.isPresent()) {
+            fullName = userOpt.get().getFullName();
+        }
+
         Map<String, Object> data = Map.of(
                 "email", request.getEmail(),
                 "role", role,
+                "fullName", fullName != null ? fullName : request.getEmail(),
                 "message", "Đăng nhập thành công"
         );
 

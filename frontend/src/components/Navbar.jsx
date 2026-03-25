@@ -8,19 +8,20 @@ const Navbar = () => {
     const user = JSON.parse(localStorage.getItem('user'));
     const isHome = location.pathname === '/';
     
+    const isStudentRoute = location.pathname.startsWith('/student/') || (isHome && user?.role === 'ROLE_STUDENT');
+    const isJobRoute = location.pathname === '/jobs' || location.pathname.startsWith('/jobs/');
+
     if (location.pathname === '/employer' || 
         location.pathname === '/login' || 
-        location.pathname.startsWith('/student/') || 
-        location.pathname.startsWith('/company/') ||
-        (isHome && user?.role === 'ROLE_STUDENT')) return null;
+        location.pathname.startsWith('/company/')) return null;
 
     const handleLogout = () => {
         localStorage.removeItem('user');
         navigate('/login');
     };
 
-    /* ── Light Navbar for Student Home ── */
-    if (isHome) {
+    /* ── Light Navbar for Student Pages, Job Pages & Public Home ── */
+    if (isHome || isStudentRoute || isJobRoute) {
         return (
             <nav style={{
                 background: '#fff',
@@ -39,14 +40,23 @@ const Navbar = () => {
                     alignItems: 'center',
                     height: '64px',
                 }}>
-                    <Link to="/" style={{ fontWeight: 800, fontSize: '1.1rem', color: '#111827' }}>
+                    <Link to="/" style={{ fontWeight: 800, fontSize: '1.1rem', color: '#111827', textDecoration: 'none' }}>
                         Nexus Talent
                     </Link>
                     <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-                        <Link to="/" style={{ color: '#374151', fontWeight: 600, fontSize: '0.9rem' }}>Trang chủ</Link>
-                        <Link to="/jobs" style={{ color: '#6b7280', fontSize: '0.9rem' }}>Việc làm</Link>
-                        <Link to="/employer" style={{ color: '#6b7280', fontSize: '0.9rem' }}>Doanh nghiệp</Link>
-                        <a href="#" style={{ color: '#6b7280', fontSize: '0.9rem' }}>Blog</a>
+                        <Link to="/" style={{ color: '#374151', fontWeight: 600, fontSize: '0.9rem', textDecoration: 'none' }}>Trang chủ</Link>
+                        <Link to="/jobs" style={{ color: '#6b7280', fontSize: '0.9rem', textDecoration: 'none' }}>Việc làm</Link>
+                        {user?.role === 'ROLE_STUDENT' ? (
+                            <>
+                                <Link to="/student/applications" style={{ color: '#6b7280', fontSize: '0.9rem', textDecoration: 'none' }}>Đơn tuyển</Link>
+                                <Link to="/student/profile" style={{ color: '#6b7280', fontSize: '0.9rem', textDecoration: 'none' }}>Hồ sơ</Link>
+                            </>
+                        ) : (
+                            <>
+                                <Link to="/employer" style={{ color: '#6b7280', fontSize: '0.9rem', textDecoration: 'none' }}>Doanh nghiệp</Link>
+                                <a href="#" style={{ color: '#6b7280', fontSize: '0.9rem', textDecoration: 'none' }}>Blog</a>
+                            </>
+                        )}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                         {user ? (
@@ -65,19 +75,21 @@ const Navbar = () => {
                             </>
                         ) : (
                             <>
-                                <Link to="/login" style={{ color: '#374151', fontWeight: 600, fontSize: '0.9rem' }}>Đăng nhập</Link>
+                                <Link to="/login" style={{ color: '#374151', fontWeight: 600, fontSize: '0.9rem', textDecoration: 'none' }}>Đăng nhập</Link>
                                 <Link to="/register" style={{
                                     background: '#2563eb', color: 'white',
                                     padding: '0.5rem 1.2rem', borderRadius: '8px', fontWeight: 700,
-                                    fontSize: '0.9rem'
+                                    fontSize: '0.9rem', textDecoration: 'none'
                                 }}>Đăng ký</Link>
                             </>
                         )}
-                        <Link to="/employer" style={{
-                            background: '#1e293b', color: 'white',
-                            padding: '0.5rem 1rem', borderRadius: '8px', fontWeight: 600,
-                            fontSize: '0.85rem'
-                        }}>🏢 Nhà tuyển dụng</Link>
+                        {!user && (
+                            <Link to="/employer" style={{
+                                background: '#1e293b', color: 'white',
+                                padding: '0.5rem 1rem', borderRadius: '8px', fontWeight: 600,
+                                fontSize: '0.85rem', textDecoration: 'none'
+                            }}>🏢 Nhà tuyển dụng</Link>
+                        )}
                     </div>
                 </div>
             </nav>

@@ -174,22 +174,6 @@ const Profile = () => {
                 </div>
             )}
 
-            {/* Header */}
-            <header className="pf-header">
-                <div className="pf-logo-area">
-                    <div className="pf-logo-box">
-                        <span className="material-symbols-outlined">school</span>
-                    </div>
-                    <Link to="/" style={{ textDecoration: 'none' }}><h2 className="pf-logo-text">CareerHub</h2></Link>
-                </div>
-                <div className="pf-header-right">
-                    <button className="pf-icon-btn">
-                        <span className="material-symbols-outlined">notifications</span>
-                    </button>
-                    <div className="pf-avatar-tiny" style={{ backgroundImage: `url(${profile.avatarUrl || 'https://vectorified.com/images/default-avatar-icon-33.png'})` }}></div>
-                </div>
-            </header>
-
             <main className="pf-container pf-main">
                 {/* Profile Header Card */}
                 <div className="pf-card pf-profile-header">

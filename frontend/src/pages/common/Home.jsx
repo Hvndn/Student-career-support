@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { jobApi } from '../../api';
+import { jobApi, studentApi } from '../../api';
 import '../../assets/css/Home.css';
 
 const CATEGORIES = [
@@ -25,6 +25,17 @@ const HOW_IT_WORKS_RECRUITER = [
 const JOB_COLORS = ['#f59e0b', '#3b82f6', '#10b981', '#8b5cf6', '#ec4899', '#06b6d4'];
 
 const StudentDashboard = ({ user, handleLogout }) => {
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    studentApi.getProfile()
+      .then(res => setProfile(res.data.data))
+      .catch(console.error);
+  }, []);
+
+  const displayName = profile?.fullName || user?.fullName || 'Người dùng';
+  const displayAvatar = profile?.avatarUrl || user?.avatar || "https://vectorified.com/images/default-avatar-icon-33.png";
+
   return (
     <div className="sd-layout">
       {/* Sidebar */}
@@ -62,10 +73,10 @@ const StudentDashboard = ({ user, handleLogout }) => {
         <div className="sd-sidebar-bottom">
           <div className="sd-user-brief">
             <div className="sd-avatar-small">
-              <img src={user?.avatar || "https://vectorified.com/images/default-avatar-icon-33.png"} alt="Avatar" />
+              <img src={displayAvatar} alt="Avatar" />
             </div>
             <div className="sd-user-info">
-              <span>{user?.fullName || 'Người dùng'}</span>
+              <span>{displayName}</span>
               <span>Sinh viên</span>
             </div>
           </div>
@@ -80,22 +91,12 @@ const StudentDashboard = ({ user, handleLogout }) => {
 
       {/* Main Content */}
       <main className="sd-main">
-        <header className="sd-header">
-          <div className="sd-welcome">
-            <h1>Chào mừng trở lại, {user?.fullName?.split(' ').pop()} 👋</h1>
-            <p>Hôm nay là một ngày tuyệt vời để phát triển sự nghiệp của bạn.</p>
-          </div>
-          <div className="sd-actions">
-            <button className="sd-icon-btn">
-              <span className="material-symbols-outlined">search</span>
-            </button>
-            <button className="sd-icon-btn">
-              <span className="material-symbols-outlined">notifications</span>
-              <span className="sd-dot"></span>
-            </button>
-          </div>
-        </header>
-
+        <div style={{ padding: '0 0 2rem 0' }}>
+          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.25rem' }}>
+            Chào mừng trở lại, {displayName.split(' ').pop()} 👋
+          </h1>
+          <p style={{ color: '#64748b' }}>Hôm nay là một ngày tuyệt vời để phát triển sự nghiệp của bạn.</p>
+        </div>
         <div className="sd-grid">
           {/* Left Column */}
           <div className="sd-content-left">
