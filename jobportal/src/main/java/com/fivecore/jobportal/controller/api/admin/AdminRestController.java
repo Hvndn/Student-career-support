@@ -1,4 +1,4 @@
-package com.fivecore.jobportal.controller.api;
+package com.fivecore.jobportal.controller.api.admin;
 
 import com.fivecore.jobportal.dto.ApiResponse;
 import com.fivecore.jobportal.service.admin.AdminService;

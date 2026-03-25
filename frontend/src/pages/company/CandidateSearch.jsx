@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { recruitmentApi } from '../api';
+import { recruitmentApi } from '../../api';
 
 const CandidateSearch = () => {
     const [skill, setSkill] = useState('');

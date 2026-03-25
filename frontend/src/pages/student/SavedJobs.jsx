@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { studentApi } from '../api';
+import { studentApi } from '../../api';
 
 const SavedJobs = () => {
     const [jobs, setJobs] = useState([]);

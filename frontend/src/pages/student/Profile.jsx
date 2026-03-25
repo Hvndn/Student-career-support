@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { studentApi } from '../api';
-import './Profile.css';
+import { studentApi } from '../../api';
+import '../../assets/css/Profile.css';
 
 const BLANK_EDU = { schoolName: '', major: '', startDate: '', endDate: '', description: '' };
 const BLANK_EXP = { companyName: '', jobTitle: '', startDate: '', endDate: '', description: '' };

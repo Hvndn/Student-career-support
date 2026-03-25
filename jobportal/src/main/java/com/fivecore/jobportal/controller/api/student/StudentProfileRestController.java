@@ -1,4 +1,4 @@
-package com.fivecore.jobportal.controller.api;
+package com.fivecore.jobportal.controller.api.student;
 
 import com.fivecore.jobportal.dto.*;
 import com.fivecore.jobportal.entity.*;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { companyApi } from '../api';
+import { companyApi } from '../../api';
 
 const CompanyProfile = () => {
     const [profile, setProfile] = useState(null);

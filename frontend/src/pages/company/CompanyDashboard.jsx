@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import CompanySidebar from '../components/CompanySidebar';
-import CompanyTopbar from '../components/CompanyTopbar';
-import { companyApi } from '../api';
-import './CompanyDashboard.css';
+import CompanySidebar from '../../components/CompanySidebar';
+import CompanyTopbar from '../../components/CompanyTopbar';
+import { companyApi } from '../../api';
+import '../../assets/css/CompanyDashboard.css';
 
 const MONTHS = ['T1', 'T2', 'T3', 'T4 (NAY)', 'T5', 'T6'];
 const CHART_DATA = [38, 55, 70, 100, 72, 60]; // relative heights %

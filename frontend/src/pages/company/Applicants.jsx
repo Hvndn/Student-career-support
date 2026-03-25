@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { recruitmentApi } from '../api';
+import { recruitmentApi } from '../../api';
 
 const Applicants = () => {
     const { jobId } = useParams();

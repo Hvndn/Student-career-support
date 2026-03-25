@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { jobApi } from '../api';
-import './Home.css';
+import { jobApi } from '../../api';
+import '../../assets/css/Home.css';
 
 const CATEGORIES = [
   { icon: '💻', label: 'IT & Software', count: '1.2k+' },

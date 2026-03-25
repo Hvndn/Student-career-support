@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { jobApi } from "../api";
+import { jobApi } from '../../api';
 
 const EditJob = () => {
   const { id } = useParams();

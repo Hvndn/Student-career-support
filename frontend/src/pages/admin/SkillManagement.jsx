@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { adminApi } from '../api';
+import { adminApi } from '../../api';
 
 const SkillManagement = () => {
     const [skills, setSkills] = useState([]);

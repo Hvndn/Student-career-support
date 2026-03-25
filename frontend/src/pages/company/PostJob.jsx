@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import CompanySidebar from '../components/CompanySidebar';
-import CompanyTopbar from '../components/CompanyTopbar';
-import { companyApi } from '../api';
-import './PostJob.css';
+import CompanySidebar from '../../components/CompanySidebar';
+import CompanyTopbar from '../../components/CompanyTopbar';
+import { companyApi } from '../../api';
+import '../../assets/css/PostJob.css';
 
 const INDUSTRIES = ['Công nghệ thông tin', 'Marketing', 'Tài chính', 'Thiết kế', 'Kế toán', 'Giáo dục', 'Y tế'];
 const JOB_TYPES = ['Toàn thời gian', 'Bán thời gian', 'Thực tập', 'Từ xa', 'Hợp đồng'];
