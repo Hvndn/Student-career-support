@@ -37,60 +37,7 @@ const StudentDashboard = ({ user, handleLogout }) => {
   const displayAvatar = profile?.avatarUrl || user?.avatar || "https://vectorified.com/images/default-avatar-icon-33.png";
 
   return (
-    <div className="sd-layout">
-      {/* Sidebar */}
-      <aside className="sd-sidebar">
-        <div className="sd-logo-area">
-          <div className="sd-logo-box">
-            <span className="material-symbols-outlined">auto_awesome</span>
-          </div>
-          <span className="sd-logo-text">CareerHub</span>
-        </div>
-        
-        <nav className="sd-nav">
-          <Link to="/" className="sd-nav-item active">
-            <span className="material-symbols-outlined">dashboard</span>
-            Bảng điều khiển
-          </Link>
-          <Link to="/student/profile" className="sd-nav-item">
-            <span className="material-symbols-outlined">person</span>
-            Hồ sơ cá nhân
-          </Link>
-          <Link to="/jobs" className="sd-nav-item">
-            <span className="material-symbols-outlined">work</span>
-            Việc làm
-          </Link>
-          <Link to="/student/applications" className="sd-nav-item">
-            <span className="material-symbols-outlined">folder_open</span>
-            Dự án & Đơn ứng tuyển
-          </Link>
-          <Link to="/student/notifications" className="sd-nav-item">
-            <span className="material-symbols-outlined">notifications</span>
-            Thông báo
-          </Link>
-        </nav>
-
-        <div className="sd-sidebar-bottom">
-          <div className="sd-user-brief">
-            <div className="sd-avatar-small">
-              <img src={displayAvatar} alt="Avatar" />
-            </div>
-            <div className="sd-user-info">
-              <span>{displayName}</span>
-              <span>Sinh viên</span>
-            </div>
-          </div>
-          <button onClick={handleLogout} className="sd-upgrade-btn" style={{ background: '#ef4444', marginBottom: '0.5rem' }}>
-            Đăng xuất
-          </button>
-          <button className="sd-upgrade-btn">
-            Nâng cấp Premium
-          </button>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className="sd-main">
+    <div className="sd-main" style={{ background: '#f8fafd', minHeight: '100vh', padding: '2rem 3rem' }}>
         <div style={{ padding: '0 0 2rem 0' }}>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.25rem' }}>
             Chào mừng trở lại, {displayName.split(' ').pop()} 👋
@@ -296,7 +243,6 @@ const StudentDashboard = ({ user, handleLogout }) => {
             </div>
           </div>
         </div>
-      </main>
     </div>
   );
 };

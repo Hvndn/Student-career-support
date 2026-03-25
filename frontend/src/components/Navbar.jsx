@@ -48,6 +48,7 @@ const Navbar = () => {
                         <Link to="/jobs" style={{ color: '#6b7280', fontSize: '0.9rem', textDecoration: 'none' }}>Việc làm</Link>
                         {user?.role === 'ROLE_STUDENT' ? (
                             <>
+                                <Link to="/student/notifications" style={{ color: '#6b7280', fontSize: '0.9rem', textDecoration: 'none' }}>Thông báo</Link>
                                 <Link to="/student/applications" style={{ color: '#6b7280', fontSize: '0.9rem', textDecoration: 'none' }}>Đơn tuyển</Link>
                                 <Link to="/student/profile" style={{ color: '#6b7280', fontSize: '0.9rem', textDecoration: 'none' }}>Hồ sơ</Link>
                             </>
