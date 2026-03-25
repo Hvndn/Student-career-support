@@ -25,30 +25,82 @@ public class Job {
     @Column(nullable = false, length = 255)
     private String title;
 
+    @Column(length = 100)
+    private String industry;
+
+    @Column(length = 50)
+    private String level;
+
     @Column(columnDefinition = "TEXT", nullable = false)
     private String description;
+
+    @Column(columnDefinition = "TEXT")
+    private String requirements;
+
+    @Column(columnDefinition = "TEXT")
+    private String benefits;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "job_type", nullable = false)
     private JobType jobType;
 
+    private Integer quantity;
+
+    @Column(length = 50)
+    private String gender;
+
+    @Column(length = 100)
+    private String experience;
+
+    @Column(length = 100)
+    private String qualification;
+
+    @Column(name = "salary_type", length = 20)
+    private String salaryType; // range, agreement
+
+    @Column(name = "min_salary")
+    private java.math.BigDecimal minSalary;
+
+    @Column(name = "max_salary")
+    private java.math.BigDecimal maxSalary;
+
+    @Column(length = 100)
+    private String region;
+
     @Column(length = 255)
     private String location;
 
-    @Column(length = 100)
-    private String salary;
+    @Column(columnDefinition = "INT DEFAULT 0")
+    private Integer views = 0;
 
     private LocalDate deadline;
+    
+    @Column(name = "posted_at", nullable = false)
+    private java.time.LocalDateTime postedAt;
+
+    @Column(name = "contact_name", length = 255)
+    private String contactName;
+
+    @Column(name = "contact_email", length = 255)
+    private String contactEmail;
+
+    @Column(name = "contact_phone", length = 20)
+    private String contactPhone;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private JobStatus status;
 
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private java.util.List<JobSkill> skills = new java.util.ArrayList<>();
+
     public enum JobType {
-        intern, parttime, fulltime, freelance
+        intern, parttime, fulltime, freelance, remote
     }
 
     public enum JobStatus {
-        open, closed, archived
+        draft, pending, open, rejected, closed, archived
     }
+
 }

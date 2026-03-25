@@ -5,7 +5,7 @@ const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    if (location.pathname === '/employer' || location.pathname === '/login' || location.pathname.startsWith('/student/') || location.pathname.startsWith('/company/')) return null;
+    if (location.pathname.startsWith('/employer') || location.pathname === '/login' || location.pathname.startsWith('/student/') || location.pathname.startsWith('/company/')) return null;
     const isHome = location.pathname === '/';
     const user = JSON.parse(localStorage.getItem('user'));
 

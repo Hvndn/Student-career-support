@@ -12,19 +12,29 @@ const UserManagement = () => {
     const loadUsers = async () => {
         try {
             const res = await adminApi.getUsers();
-            setUsers(res.data.data);
+            if (res.data.status === 'success') {
+                setUsers(res.data.data || []);
+            } else {
+                console.error('API Business Error:', res.data.message);
+            }
             setLoading(false);
         } catch (err) {
-            console.error(err);
+            console.error('Fetch users error:', err);
+            setLoading(false);
         }
     };
 
     const handleToggleStatus = async (userId) => {
         try {
-            await adminApi.toggleUserStatus(userId);
-            loadUsers(); // Reload to get updated status
+            const res = await adminApi.toggleUserStatus(userId);
+            if (res.data.status === 'success') {
+                loadUsers(); // Reload to get updated status
+            } else {
+                alert(res.data.message || 'Cập nhật trạng thái người dùng thất bại!');
+            }
         } catch (err) {
-            alert('Cập nhật trạng thái người dùng thất bại!');
+            console.error('Toggle status error:', err);
+            alert('Đã có lỗi xảy ra. Vui lòng thử lại!');
         }
     };
 

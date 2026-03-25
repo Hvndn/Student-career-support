@@ -1,8 +1,8 @@
 package com.fivecore.jobportal.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fivecore.jobportal.entity.Job;
 import lombok.*;
-import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
 /**
@@ -14,13 +14,30 @@ import java.time.LocalDate;
 @Builder
 public class JobRequest {
     
-    @NotBlank(message = "Tiêu đề không được để trống")
     private String title;
     
-    @NotBlank(message = "Mô tả công việc không được để trống")
     private String description;
+
+    private String industry;
+    private String level;
+    private String requirements;
+    private String benefits;
+    private String jobType;
+    private Integer quantity;
+    private String gender;
+    private String experience;
+    private String qualification;
+    private String salaryType;
+    private java.math.BigDecimal minSalary;
+    private java.math.BigDecimal maxSalary;
+    private String region;
     private String location;
-    private String salary;
-    private String jobType; // intern, parttime, fulltime
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate deadline;
+    private String contactName;
+    private String contactEmail;
+    private String contactPhone;
+    
+    private String status;
+    private java.util.List<String> skills;
 }

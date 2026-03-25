@@ -12,13 +12,13 @@ const EmployerHome = () => {
             <strong>Curator Recruit</strong>
           </Link>
           <div className="nav-links">
-            <a href="#features">Features</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#solutions">Solutions</a>
-            <a href="#resources">Resources</a>
-            <Link to="/" className="switch-role">Dành cho Người tìm việc</Link>
+            <a href="#features">Tính năng</a>
+            <Link to="/employer/pricing">Bảng giá</Link>
+            <a href="#solutions">Tìm ứng viên</a>
+            <a href="#resources">Tài nguyên</a>
           </div>
           <div className="nav-auth">
+            <Link to="/" className="switch-role">Dành cho Người tìm việc</Link>
             <Link to="/login" className="login-btn">Đăng nhập</Link>
             <Link to="/register" className="register-btn">Đăng ký</Link>
           </div>
@@ -115,47 +115,7 @@ const EmployerHome = () => {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="pricing-section">
-        <div className="pricing-header">
-          <h2>Gói dịch vụ linh hoạt</h2>
-          <p>Phù hợp cho mọi quy mô doanh nghiệp từ Startup đến Corporation.</p>
-        </div>
-        <div className="pricing-grid">
-          <div className="price-card">
-            <span className="plan-name">CƠ BẢN</span>
-            <h3 className="plan-price">Free</h3>
-            <ul className="plan-features">
-              <li>✓ 03 Tin tuyển dụng/tháng</li>
-              <li>✓ Quản lý hồ sơ cơ bản</li>
-              <li className="disabled">× AI Gợi ý ứng viên</li>
-            </ul>
-            <button className="btn-outline-blue">Bắt đầu ngay</button>
-          </div>
-          <div className="price-card popular">
-            <div className="popular-badge">PHỔ BIẾN NHẤT</div>
-            <span className="plan-name text-blue">CHUYÊN NGHIỆP</span>
-            <h3 className="plan-price">2.5M <span className="per-month">/tháng</span></h3>
-            <ul className="plan-features">
-              <li>✓ 15 Tin tuyển dụng/tháng</li>
-              <li>✓ AI Gợi ý 50 ứng viên/vị trí</li>
-              <li>✓ Nổi bật trên tin tuyển dụng</li>
-              <li>✓ Tích hợp đa nền tảng</li>
-            </ul>
-            <button className="btn-primary-blue full-width">Chọn gói Pro</button>
-          </div>
-          <div className="price-card">
-            <span className="plan-name text-blue">DOANH NGHIỆP</span>
-            <h3 className="plan-price">Liên hệ</h3>
-            <ul className="plan-features">
-              <li>✓ Không giới hạn tin tuyển dụng</li>
-              <li>✓ Tài khoản quản lý team (20+)</li>
-              <li>✓ Support 24/7 riêng biệt</li>
-            </ul>
-            <button className="btn-outline-dark">Liên hệ Sales</button>
-          </div>
-        </div>
-      </section>
+      {/* Pricing Section removed, moved to EmployerPricing.jsx */}
 
       {/* Partners Section */}
       <section className="partners-section">

@@ -31,6 +31,19 @@ const JobList = () => {
             )
         );
     }, [search, jobs]);
+    
+    const formatDate = (dateValue) => {
+        if (!dateValue) return 'Không giới hạn';
+        if (typeof dateValue === 'string') {
+            const d = new Date(dateValue);
+            if (isNaN(d.getTime())) return dateValue;
+            return d.toLocaleDateString('vi-VN');
+        }
+        if (Array.isArray(dateValue) && dateValue.length >= 3) {
+            return `${dateValue[2]}/${dateValue[1]}/${dateValue[0]}`;
+        }
+        return String(dateValue);
+    };
 
     return (
         <div className="fade-in" style={{ padding: '4rem 2rem 6rem' }}>
@@ -119,6 +132,9 @@ const JobList = () => {
                                             🕒 {job.jobType}
                                         </span>
                                     )}
+                                    <span style={{ padding: '0.4rem 0.8rem', background: 'rgba(239, 68, 68, 0.1)', borderRadius: '8px', fontSize: '0.85rem', color: 'var(--error)', fontWeight: '500' }}>
+                                        📅 {formatDate(job.deadline)}
+                                    </span>
                                 </div>
 
                                 <div style={{ marginTop: 'auto' }}>

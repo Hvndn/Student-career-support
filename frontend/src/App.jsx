@@ -13,10 +13,15 @@ import SavedJobs from './pages/SavedJobs'
 import Notifications from './pages/Notifications'
 import CompanyDashboard from './pages/CompanyDashboard'
 import PostJob from './pages/PostJob'
+import PostJobSelection from './pages/PostJobSelection'
+import PostJobAI from './pages/PostJobAI'
+import PostJobJD from './pages/PostJobJD'
+import CompanyJobManagement from './pages/CompanyJobManagement'
 import Applicants from './pages/Applicants'
 import CompanyProfile from './pages/CompanyProfile'
 import CandidateSearch from './pages/CandidateSearch'
 import EmployerHome from './pages/EmployerHome'
+import EmployerPricing from './pages/EmployerPricing'
 import AdminDashboard from './pages/AdminDashboard'
 import SkillManagement from './pages/SkillManagement'
 import UserManagement from './pages/UserManagement'
@@ -28,6 +33,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/employer" element={<EmployerHome />} />
+        <Route path="/employer/pricing" element={<EmployerPricing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/jobs" element={<JobList />} />
@@ -38,7 +44,12 @@ function App() {
         <Route path="/student/notifications" element={<Notifications />} />
         
         <Route path="/company/dashboard" element={<CompanyDashboard />} />
-        <Route path="/company/jobs/post" element={<PostJob />} />
+        <Route path="/company/management" element={<CompanyJobManagement />} />
+        <Route path="/company/jobs/post" element={<PostJobSelection />} />
+        <Route path="/company/jobs/create" element={<PostJob />} />
+        <Route path="/company/jobs/edit/:id" element={<PostJob />} />
+        <Route path="/company/jobs/create-ai" element={<PostJobAI />} />
+        <Route path="/company/jobs/create-jd" element={<PostJobJD />} />
         <Route path="/company/management/jobs/:jobId/applicants" element={<Applicants />} />
         <Route path="/company/profile" element={<CompanyProfile />} />
         <Route path="/company/candidates/search" element={<CandidateSearch />} />

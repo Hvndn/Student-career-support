@@ -47,7 +47,10 @@ export const companyApi = {
     getDashboard: () => api.get('/company/dashboard'),
     getProfile: () => api.get('/company/profile'),
     updateProfile: (data) => api.put('/company/profile', data),
-    postJob: (jobData) => api.post('/company/jobs', jobData)
+    postJob: (jobData) => api.post('/company/jobs', jobData),
+    updateJob: (id, jobData) => api.put(`/company/jobs/${id}`, jobData),
+    getJobDetailsForEdit: (id) => api.get(`/company/jobs/${id}`),
+    getJobs: () => api.get('/company/jobs')
 };
 
 export const recruitmentApi = {

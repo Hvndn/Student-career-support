@@ -42,6 +42,19 @@ const JobDetail = () => {
         }
     };
 
+    const formatDate = (dateValue) => {
+        if (!dateValue) return 'Không giới hạn';
+        if (typeof dateValue === 'string') {
+            const d = new Date(dateValue);
+            if (isNaN(d.getTime())) return dateValue;
+            return d.toLocaleDateString('vi-VN');
+        }
+        if (Array.isArray(dateValue) && dateValue.length >= 3) {
+            return `${dateValue[2]}/${dateValue[1]}/${dateValue[0]}`;
+        }
+        return String(dateValue);
+    };
+
     if (loading) return <div className="container" style={{ textAlign: 'center', marginTop: '5rem' }}>Đang tải...</div>;
     if (!job) return <div className="container" style={{ textAlign: 'center', marginTop: '5rem' }}>Không tìm thấy công việc!</div>;
 
@@ -111,6 +124,9 @@ const JobDetail = () => {
                             </span>
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--secondary)', fontSize: '1rem', fontWeight: '500' }}>
                                 🕒 {job.jobType}
+                            </span>
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--error)', fontSize: '1rem', fontWeight: '500' }}>
+                                📅 Hạn chốt: {formatDate(job.deadline)}
                             </span>
                         </div>
                     </header>
