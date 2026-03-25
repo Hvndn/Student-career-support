@@ -13,8 +13,18 @@ const Login = () => {
         try {
             const res = await authApi.login({ email, password });
             if (res.data.status === 'success') {
-                localStorage.setItem('user', JSON.stringify(res.data.data));
-                navigate('/');
+                const userData = res.data.data;
+                localStorage.setItem('user', JSON.stringify(userData));
+                
+                // Redirect based on role
+                const userRole = userData.role ? userData.role.toUpperCase() : '';
+                if (userRole === 'ADMIN' || userRole === 'ROLE_ADMIN') {
+                    navigate('/admin/dashboard');
+                } else if (userRole === 'EMPLOYER' || userRole === 'ROLE_EMPLOYER') {
+                    navigate('/company/dashboard');
+                } else {
+                    navigate('/');
+                }
             } else {
                 setError(res.data.message);
             }

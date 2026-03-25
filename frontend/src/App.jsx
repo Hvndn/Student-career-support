@@ -19,6 +19,9 @@ import CandidateSearch from './pages/CandidateSearch'
 import AdminDashboard from './pages/AdminDashboard'
 import SkillManagement from './pages/SkillManagement'
 import UserManagement from './pages/UserManagement'
+import CompanyVerification from './pages/CompanyVerification'
+import JobApproval from './pages/JobApproval'
+import Reports from './pages/Reports'
 
 function App() {
   return (
@@ -44,6 +47,9 @@ function App() {
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/skills" element={<SkillManagement />} />
         <Route path="/admin/users" element={<UserManagement />} />
+        <Route path="/admin/companies" element={<CompanyVerification />} />
+        <Route path="/admin/jobs" element={<JobApproval />} />
+        <Route path="/admin/reports" element={<Reports />} />
       </Routes>
       <Footer />
     </Router>

@@ -1,10 +1,15 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     // Giả định login đơn giản bằng localStorage cho demo nhanh
     const user = JSON.parse(localStorage.getItem('user'));
+
+    if (location.pathname === '/register' || location.pathname.startsWith('/admin')) {
+        return null;
+    }
 
     const handleLogout = () => {
         localStorage.removeItem('user');
