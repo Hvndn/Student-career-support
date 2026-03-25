@@ -5,9 +5,14 @@ const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    if (location.pathname === '/employer' || location.pathname === '/login' || location.pathname.startsWith('/student/') || location.pathname.startsWith('/company/')) return null;
-    const isHome = location.pathname === '/';
     const user = JSON.parse(localStorage.getItem('user'));
+    const isHome = location.pathname === '/';
+    
+    if (location.pathname === '/employer' || 
+        location.pathname === '/login' || 
+        location.pathname.startsWith('/student/') || 
+        location.pathname.startsWith('/company/') ||
+        (isHome && user?.role === 'ROLE_STUDENT')) return null;
 
     const handleLogout = () => {
         localStorage.removeItem('user');
@@ -44,12 +49,30 @@ const Navbar = () => {
                         <a href="#" style={{ color: '#6b7280', fontSize: '0.9rem' }}>Blog</a>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <Link to="/login" style={{ color: '#374151', fontWeight: 600, fontSize: '0.9rem' }}>Đăng nhập</Link>
-                        <Link to="/register" style={{
-                            background: '#2563eb', color: 'white',
-                            padding: '0.5rem 1.2rem', borderRadius: '8px', fontWeight: 700,
-                            fontSize: '0.9rem'
-                        }}>Đăng ký</Link>
+                        {user ? (
+                            <>
+                                <span style={{ fontWeight: '600', color: '#2563eb', fontSize: '0.9rem' }}>{user.fullName}</span>
+                                <button 
+                                    onClick={handleLogout} 
+                                    style={{ 
+                                        background: 'transparent', border: '1px solid #ef4444', color: '#ef4444',
+                                        padding: '0.4rem 1rem', borderRadius: '8px', fontWeight: 600,
+                                        fontSize: '0.85rem', cursor: 'pointer'
+                                    }}
+                                >
+                                    Đăng xuất
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <Link to="/login" style={{ color: '#374151', fontWeight: 600, fontSize: '0.9rem' }}>Đăng nhập</Link>
+                                <Link to="/register" style={{
+                                    background: '#2563eb', color: 'white',
+                                    padding: '0.5rem 1.2rem', borderRadius: '8px', fontWeight: 700,
+                                    fontSize: '0.9rem'
+                                }}>Đăng ký</Link>
+                            </>
+                        )}
                         <Link to="/employer" style={{
                             background: '#1e293b', color: 'white',
                             padding: '0.5rem 1rem', borderRadius: '8px', fontWeight: 600,

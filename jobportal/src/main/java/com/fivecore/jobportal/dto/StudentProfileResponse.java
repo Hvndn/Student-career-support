@@ -20,6 +20,12 @@ public class StudentProfileResponse {
     private String university;
     private String major;
     private Integer graduationYear;
+    private Double gpa;
+    private Integer totalCredits;
+    private Integer earnedCredits;
+    private String classRank;
+    private String academicYear;
+    private String currentTerm;
     private String bio;
     private String avatarUrl;
     private List<SkillDto> skills;

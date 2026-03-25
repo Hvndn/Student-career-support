@@ -24,13 +24,293 @@ const HOW_IT_WORKS_RECRUITER = [
 
 const JOB_COLORS = ['#f59e0b', '#3b82f6', '#10b981', '#8b5cf6', '#ec4899', '#06b6d4'];
 
+const StudentDashboard = ({ user, handleLogout }) => {
+  return (
+    <div className="sd-layout">
+      {/* Sidebar */}
+      <aside className="sd-sidebar">
+        <div className="sd-logo-area">
+          <div className="sd-logo-box">
+            <span className="material-symbols-outlined">auto_awesome</span>
+          </div>
+          <span className="sd-logo-text">CareerHub</span>
+        </div>
+        
+        <nav className="sd-nav">
+          <Link to="/" className="sd-nav-item active">
+            <span className="material-symbols-outlined">dashboard</span>
+            Bảng điều khiển
+          </Link>
+          <Link to="/student/profile" className="sd-nav-item">
+            <span className="material-symbols-outlined">person</span>
+            Hồ sơ cá nhân
+          </Link>
+          <Link to="/jobs" className="sd-nav-item">
+            <span className="material-symbols-outlined">work</span>
+            Việc làm
+          </Link>
+          <Link to="/student/applications" className="sd-nav-item">
+            <span className="material-symbols-outlined">folder_open</span>
+            Dự án & Đơn ứng tuyển
+          </Link>
+          <Link to="/student/notifications" className="sd-nav-item">
+            <span className="material-symbols-outlined">notifications</span>
+            Thông báo
+          </Link>
+        </nav>
+
+        <div className="sd-sidebar-bottom">
+          <div className="sd-user-brief">
+            <div className="sd-avatar-small">
+              <img src={user?.avatar || "https://vectorified.com/images/default-avatar-icon-33.png"} alt="Avatar" />
+            </div>
+            <div className="sd-user-info">
+              <span>{user?.fullName || 'Người dùng'}</span>
+              <span>Sinh viên</span>
+            </div>
+          </div>
+          <button onClick={handleLogout} className="sd-upgrade-btn" style={{ background: '#ef4444', marginBottom: '0.5rem' }}>
+            Đăng xuất
+          </button>
+          <button className="sd-upgrade-btn">
+            Nâng cấp Premium
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="sd-main">
+        <header className="sd-header">
+          <div className="sd-welcome">
+            <h1>Chào mừng trở lại, {user?.fullName?.split(' ').pop()} 👋</h1>
+            <p>Hôm nay là một ngày tuyệt vời để phát triển sự nghiệp của bạn.</p>
+          </div>
+          <div className="sd-actions">
+            <button className="sd-icon-btn">
+              <span className="material-symbols-outlined">search</span>
+            </button>
+            <button className="sd-icon-btn">
+              <span className="material-symbols-outlined">notifications</span>
+              <span className="sd-dot"></span>
+            </button>
+          </div>
+        </header>
+
+        <div className="sd-grid">
+          {/* Left Column */}
+          <div className="sd-content-left">
+            {/* Profile Progress */}
+            <div className="sd-card">
+              <div className="sd-progress-header">
+                <div className="sd-progress-title">
+                  <h3>Tiến độ hồ sơ chuyên nghiệp</h3>
+                  <p>Hồ sơ của bạn đạt mức: <span style={{ color: '#2563eb', fontWeight: 600 }}>Khá</span></p>
+                </div>
+                <span className="sd-progress-percent">75%</span>
+              </div>
+              <div className="sd-progress-bar-bg">
+                <div className="sd-progress-bar-fill" style={{ width: '75%' }}></div>
+              </div>
+              <div className="sd-suggestion-box">
+                <p className="sd-suggestion-title">
+                  <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>lightbulb</span>
+                  Gợi ý hoàn thiện
+                </p>
+                <div className="sd-suggestion-list">
+                  <div className="sd-suggestion-item">
+                    <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#3b82f6' }}>add_circle</span>
+                    Bổ sung chứng chỉ ngoại ngữ (IELTS/TOEIC)
+                  </div>
+                  <div className="sd-suggestion-item">
+                    <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#3b82f6' }}>add_circle</span>
+                    Thêm liên kết Portfolio hoặc GitHub
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Stats */}
+            <div className="sd-stats-grid">
+              <div className="sd-card sd-stat-card">
+                <div className="sd-stat-icon emerald">
+                  <span className="material-symbols-outlined">verified_user</span>
+                </div>
+                <p className="sd-stat-label">Kỹ năng</p>
+                <p className="sd-stat-value">12</p>
+                <p className="sd-stat-trend emerald">
+                  <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>trending_up</span> +2 tháng này
+                </p>
+              </div>
+              <div className="sd-card sd-stat-card">
+                <div className="sd-stat-icon blue">
+                  <span className="material-symbols-outlined">terminal</span>
+                </div>
+                <p className="sd-stat-label">Dự án</p>
+                <p className="sd-stat-value">08</p>
+                <p className="sd-stat-trend blue">
+                  <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>check_circle</span> 3 đã hoàn thành
+                </p>
+              </div>
+              <div className="sd-card sd-stat-card">
+                <div className="sd-stat-icon purple">
+                  <span className="material-symbols-outlined">send</span>
+                </div>
+                <p className="sd-stat-label">Đơn ứng tuyển</p>
+                <p className="sd-stat-value">05</p>
+                <p className="sd-stat-trend purple">
+                  <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>visibility</span> 2 đang xem xét
+                </p>
+              </div>
+            </div>
+
+            {/* Recommended Jobs */}
+            <section>
+              <div className="sd-section-header">
+                <h3>
+                  <span className="material-symbols-outlined" style={{ color: '#2563eb' }}>auto_awesome</span>
+                  Việc làm gợi ý cho bạn
+                </h3>
+                <Link to="/jobs" className="sd-view-link">Xem tất cả</Link>
+              </div>
+              <div className="sd-job-list">
+                <div className="sd-card sd-job-card">
+                  <div className="sd-job-content">
+                    <div className="sd-company-logo">
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/Figma-logo.svg" alt="Figma" />
+                    </div>
+                    <div className="sd-job-info">
+                      <div className="sd-job-title-row">
+                        <div>
+                          <p className="sd-job-title">UI/UX Designer Intern</p>
+                          <p className="sd-job-company">Figma Vietnam • TP. Hồ Chí Minh</p>
+                        </div>
+                        <span className="sd-job-badge">Mới</span>
+                      </div>
+                      <div className="sd-job-tags">
+                        <span className="sd-job-tag">Figma</span>
+                        <span className="sd-job-tag">Design System</span>
+                        <span className="sd-job-tag sd-job-match">Trùng khớp 95%</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="sd-card sd-job-card">
+                  <div className="sd-job-content">
+                    <div className="sd-company-logo">
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" />
+                    </div>
+                    <div className="sd-job-info">
+                      <div className="sd-job-title-row">
+                        <div>
+                          <p className="sd-job-title">Frontend Developer (React)</p>
+                          <p className="sd-job-company">Google Operations • Từ xa</p>
+                        </div>
+                        <span className="sd-job-badge" style={{ background: '#f1f5f9', color: '#64748b' }}>2 ngày trước</span>
+                      </div>
+                      <div className="sd-job-tags">
+                        <span className="sd-job-tag">ReactJS</span>
+                        <span className="sd-job-tag">TailwindCSS</span>
+                        <span className="sd-job-tag sd-job-match">Trùng khớp 88%</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          {/* Right Column */}
+          <div className="sd-content-right">
+            {/* Notifications */}
+            <div className="sd-card sd-notifications">
+              <div className="sd-section-header" style={{ marginBottom: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.125rem' }}>Thông báo</h3>
+                <button className="sd-view-link" style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.75rem' }}>Đánh dấu đã đọc</button>
+              </div>
+              <div className="sd-notif-list">
+                <div className="sd-notif-item">
+                  <div className="sd-notif-line"></div>
+                  <div className="sd-notif-icon blue">
+                    <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>work</span>
+                  </div>
+                  <div className="sd-notif-text">
+                    <p>Đơn ứng tuyển được xem xét</p>
+                    <p>Figma Vietnam đã xem hồ sơ của bạn cho vị trí UI/UX Designer.</p>
+                    <p className="sd-notif-time">10 phút trước</p>
+                  </div>
+                </div>
+                <div className="sd-notif-item">
+                  <div className="sd-notif-line"></div>
+                  <div className="sd-notif-icon emerald">
+                    <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>verified</span>
+                  </div>
+                  <div className="sd-notif-text">
+                    <p>Kỹ năng mới được xác thực</p>
+                    <p>Kỹ năng "ReactJS" của bạn đã được xác thực bởi cộng đồng.</p>
+                    <p className="sd-notif-time">2 giờ trước</p>
+                  </div>
+                </div>
+                <div className="sd-notif-item">
+                  <div className="sd-notif-icon amber">
+                    <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>warning</span>
+                  </div>
+                  <div className="sd-notif-text">
+                    <p>Nhắc nhở hoàn thiện hồ sơ</p>
+                    <p>Hãy thêm chứng chỉ ngoại ngữ để tăng 25% cơ hội được mời phỏng vấn.</p>
+                    <p className="sd-notif-time">Hôm qua</p>
+                  </div>
+                </div>
+              </div>
+              <button className="sd-upgrade-btn" style={{ background: 'transparent', border: '1px solid #e2e8f0', color: '#475569', marginTop: '1.5rem' }}>
+                Xem tất cả thông báo
+              </button>
+            </div>
+
+            {/* Events */}
+            <div className="sd-card sd-event-card">
+              <div className="sd-event-title">Sự kiện sắp tới</div>
+              <div className="sd-event-list">
+                <div className="sd-event-item">
+                  <div className="sd-event-date">
+                    <span>15</span>
+                    <span>THG 10</span>
+                  </div>
+                  <div className="sd-event-info">
+                    <p>Career Fair 2024</p>
+                    <p>Đại học Bách Khoa</p>
+                  </div>
+                </div>
+                <div className="sd-event-item">
+                  <div className="sd-event-date">
+                    <span>18</span>
+                    <span>THG 10</span>
+                  </div>
+                  <div className="sd-event-info">
+                    <p>Workshop: CV Writing</p>
+                    <p>Online qua Zoom</p>
+                  </div>
+                </div>
+              </div>
+              <div className="sd-event-deco"></div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
 const Home = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [searchLocation, setSearchLocation] = useState('');
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
+    const savedUser = JSON.parse(localStorage.getItem('user'));
+    setUser(savedUser);
+
     jobApi.getJobs()
       .then(res => {
         setJobs(res.data.data || []);
@@ -39,9 +319,17 @@ const Home = () => {
       .catch(() => setLoading(false));
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    window.location.reload();
+  };
+
+  if (user?.role === 'ROLE_STUDENT') {
+    return <StudentDashboard user={user} handleLogout={handleLogout} />;
+  }
+
   return (
     <div className="student-home">
-
       {/* ── HERO ── */}
       <section className="sh-hero">
         <div className="sh-hero-inner">
@@ -210,9 +498,15 @@ const Home = () => {
                   </div>
                 ))}
               </div>
-              <Link to="/register" className="sh-how-btn sh-how-btn-blue">
-                Bắt đầu ngay
-              </Link>
+              {user ? (
+                <Link to="/jobs" className="sh-how-btn sh-how-btn-blue">
+                  Tìm việc ngay
+                </Link>
+              ) : (
+                <Link to="/register" className="sh-how-btn sh-how-btn-blue">
+                  Bắt đầu ngay
+                </Link>
+              )}
             </div>
 
             {/* For Recruiters */}
@@ -249,7 +543,7 @@ const Home = () => {
             Tham gia cùng Nexus Talent ngày hôm nay để mở những cánh cửa tiềm năng dành riêng cho bạn trên thị trường.
           </p>
           <div className="sh-cta-btns">
-            <Link to="/register" className="sh-cta-btn-white">Đăng ký ngay</Link>
+            {!user && <Link to="/register" className="sh-cta-btn-white">Đăng ký ngay</Link>}
             <Link to="/jobs" className="sh-cta-btn-outline">Tìm kiếm việc làm</Link>
           </div>
         </div>
@@ -272,9 +566,14 @@ const Home = () => {
               <h4>SINH VIÊN</h4>
               <ul>
                 <li><Link to="/jobs">Tìm việc làm</Link></li>
-                <li><Link to="/register">Tạo hồ sơ</Link></li>
-                <li><Link to="/login">Đăng nhập</Link></li>
-                <li><Link to="/register">Đăng ký miễn phí</Link></li>
+                <li>{user ? <Link to="/student/profile">Hồ sơ cá nhân</Link> : <Link to="/register">Tạo hồ sơ</Link>}</li>
+                {!user && (
+                    <>
+                        <li><Link to="/login">Đăng nhập</Link></li>
+                        <li><Link to="/register">Đăng ký miễn phí</Link></li>
+                    </>
+                )}
+                {user && <li><button onClick={handleLogout} style={{ background: 'none', border: 'none', color: '#374151', fontSize: '0.9rem', cursor: 'pointer', padding: 0 }}>Đăng xuất</button></li>}
               </ul>
             </div>
             <div className="sh-footer-col">
@@ -285,7 +584,7 @@ const Home = () => {
                 <li><Link to="/employer">Tìm ứng viên</Link></li>
               </ul>
             </div>
-            <div className="sh-footer-col">
+            <div className="sd-footer-col">
               <h4>VỀ CHÚNG TÔI</h4>
               <ul>
                 <li><a href="#">Trung tâm hỗ trợ</a></li>
