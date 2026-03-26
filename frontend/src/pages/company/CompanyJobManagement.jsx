@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import './CompanyJobManagement.css';
-import CompanySidebar from '../components/CompanySidebar';
-import CompanyTopbar from '../components/CompanyTopbar';
+import '../../components/CompanyJobManagement.css';
+import CompanySidebar from '../../components/CompanySidebar';
+import CompanyTopbar from '../../components/CompanyTopbar';
 import { Link } from 'react-router-dom';
-import { companyApi } from '../api';
+import { companyApi } from '../../api';
 
 const CompanyJobManagement = () => {
   const [jobs, setJobs] = useState([]);

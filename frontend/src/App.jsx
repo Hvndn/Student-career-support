@@ -1,4 +1,8 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Home from './pages/common/Home'
+
 import Login from './pages/common/Login'
 import Register from './pages/common/Register'
 import JobDetail from './pages/common/JobDetail'

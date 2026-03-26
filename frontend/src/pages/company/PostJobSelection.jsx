@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import CompanySidebar from '../../components/CompanySidebar';
 import CompanyTopbar from '../../components/CompanyTopbar';
-import './PostJobSelection.css';
+import '../../components/PostJobSelection.css';
 
 const PostJobSelection = () => {
   const navigate = useNavigate();

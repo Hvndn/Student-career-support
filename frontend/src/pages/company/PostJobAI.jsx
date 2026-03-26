@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import CompanySidebar from '../components/CompanySidebar';
-import CompanyTopbar from '../components/CompanyTopbar';
-import './PostJobAI.css';
+import CompanySidebar from '../../components/CompanySidebar';
+import CompanyTopbar from '../../components/CompanyTopbar';
+import '../../components/PostJobAI.css';
 
 const INDUSTRIES = ['Công nghệ thông tin', 'Marketing', 'Tài chính', 'Thiết kế', 'Kế toán', 'Giáo dục', 'Y tế'];
 
