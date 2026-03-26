@@ -582,3 +582,119 @@
 
 .pf-toast-success { background: #10b981; }
 .pf-toast-error { background: #ef4444; }
+/* ── PRINT STYLES (CV EXPORT) ── */
+@media print {
+  body, .pf-layout {
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Hide non-essential UI */
+  .pf-header, 
+  .pf-footer, 
+  .pf-actions, 
+  .pf-add-btn,
+  .pf-avatar-edit,
+  .pf-stats-grid,
+  .pf-toast,
+  .pf-form-overlay {
+    display: none !important;
+  }
+
+  .pf-main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .pf-container {
+    max-width: 100% !important;
+    padding: 20mm !important; /* Standard A4 margin */
+  }
+
+  .pf-card {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin-bottom: 2rem !important;
+  }
+
+  .pf-profile-header {
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    border-bottom: 2px solid #2563eb !important;
+    padding-bottom: 2rem !important;
+  }
+
+  .pf-avatar-large {
+    width: 100px !important;
+    height: 100px !important;
+    box-shadow: none !important;
+  }
+
+  .pf-user-details h1 {
+    font-size: 24pt !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .pf-user-details p.pf-major {
+    font-size: 14pt !important;
+    color: #2563eb !important;
+  }
+
+  .pf-contact-row {
+    margin-top: 1rem !important;
+    gap: 1.5rem !important;
+  }
+
+  .pf-section-title h2 {
+    font-size: 16pt !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding-bottom: 0.5rem !important;
+    color: #2563eb !important;
+  }
+
+  .pf-main-grid {
+    display: block !important;
+  }
+
+  .pf-col-left, .pf-col-right {
+    width: 100% !important;
+  }
+
+  .pf-item-icon {
+    display: none !important;
+  }
+
+  .pf-timeline-item {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    border-left: none !important;
+  }
+
+  .pf-timeline-dot {
+    display: none !important;
+  }
+
+  .pf-item-content h4 {
+    font-size: 12pt !important;
+    margin-bottom: 0.2rem !important;
+  }
+
+  .pf-exp-desc {
+    font-size: 10pt !important;
+    color: #334155 !important;
+  }
+
+  .pf-skill-tag {
+    border: 1px solid #cbd5e1 !important;
+    background: white !important;
+    color: black !important;
+    padding: 2pt 6pt !important;
+  }
+
+  /* Force page breaks if needed */
+  .pf-card {
+    page-break-inside: avoid;
+  }
+}

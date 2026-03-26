@@ -7,12 +7,12 @@ const Navbar = () => {
 
     const user = JSON.parse(localStorage.getItem('user'));
     const isHome = location.pathname === '/';
-    
+
     const isStudentRoute = location.pathname.startsWith('/student/') || (isHome && user?.role === 'ROLE_STUDENT');
     const isJobRoute = location.pathname === '/jobs' || location.pathname.startsWith('/jobs/');
 
-    if (location.pathname === '/employer' || 
-        location.pathname === '/login' || 
+    if (location.pathname === '/employer' ||
+        location.pathname === '/login' ||
         location.pathname.startsWith('/company/')) return null;
 
     const handleLogout = () => {
@@ -63,9 +63,9 @@ const Navbar = () => {
                         {user ? (
                             <>
                                 <span style={{ fontWeight: '600', color: '#2563eb', fontSize: '0.9rem' }}>{user.fullName}</span>
-                                <button 
-                                    onClick={handleLogout} 
-                                    style={{ 
+                                <button
+                                    onClick={handleLogout}
+                                    style={{
                                         background: 'transparent', border: '1px solid #ef4444', color: '#ef4444',
                                         padding: '0.4rem 1rem', borderRadius: '8px', fontWeight: 600,
                                         fontSize: '0.85rem', cursor: 'pointer'

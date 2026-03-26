@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { studentApi } from '../../api';
+import { jobApi, studentApi } from '../../api';
+import Navbar from '../../components/Navbar';
+import CVTemplate from '../../components/CVTemplate';
+import html2pdf from 'html2pdf.js';
 import '../../assets/css/Profile.css';
 
 const BLANK_EDU = { schoolName: '', major: '', startDate: '', endDate: '', description: '' };
@@ -161,6 +164,20 @@ const Profile = () => {
         await reload();
     };
 
+    const handleDownloadCV = () => {
+        const element = document.getElementById('cv-template');
+        const opt = {
+            margin: 0,
+            filename: `CV_${profile.fullName?.replace(/\s+/g, '_')}.pdf`,
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: { scale: 3, useCORS: true, logging: false, letterRendering: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // Standard flow to generate and download PDF
+        html2pdf().from(element).set(opt).save();
+    };
+
     if (loading) return <div className="pf-layout" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Đang tải hồ sơ...</div>;
     if (!profile) return <div className="pf-layout" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Không tìm thấy hồ sơ!</div>;
 
@@ -199,7 +216,7 @@ const Profile = () => {
                         <button className="pf-btn pf-btn-outline" onClick={openBasic}>
                             <span className="material-symbols-outlined">edit</span> Chỉnh sửa hồ sơ
                         </button>
-                        <button className="pf-btn pf-btn-primary">
+                        <button className="pf-btn pf-btn-primary" onClick={handleDownloadCV}>
                             <span className="material-symbols-outlined">download</span> Tải xuống CV
                         </button>
                     </div>
@@ -508,6 +525,15 @@ const Profile = () => {
             <footer className="pf-footer">
                 <p>© 2024 CareerHub SaaS - Nền tảng quản lý hồ sơ sinh viên hiện đại.</p>
             </footer>
+            {/* Hidden CV Template for PDF Export */}
+            <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
+                <CVTemplate 
+                    profile={profile} 
+                    experiences={profile.experiences || []} 
+                    educations={profile.educations || []} 
+                    skills={profile.skills || []} 
+                />
+            </div>
         </div>
     );
 };
