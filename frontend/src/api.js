@@ -53,6 +53,10 @@ export const studentApi = {
     addActivity: (data) => api.post('/student/profile/activities', data),
     updateActivity: (id, data) => api.put(`/student/profile/activities/${id}`, data),
     deleteActivity: (id) => api.delete(`/student/profile/activities/${id}`),
+
+    addCertification: (data) => api.post('/student/profile/certifications', data),
+    updateCertification: (id, data) => api.put(`/student/profile/certifications/${id}`, data),
+    deleteCertification: (id) => api.delete(`/student/profile/certifications/${id}`),
 };
 
 

@@ -38,6 +38,7 @@ public class StudentProfileResponse {
     private List<LanguageDto> languages;
     private List<InterestDto> interests;
     private List<ActivityDto> activities;
+    private List<CertificationDto> certifications;
 
     @Data
     @Builder
@@ -108,5 +109,16 @@ public class StudentProfileResponse {
         private String startDate;
         private String endDate;
         private String description;
+    }
+
+    @Data
+    @Builder
+    public static class CertificationDto {
+        private Integer id;
+        private String name;
+        private String issuer;
+        private String issueDate;
+        private String expirationDate;
+        private String certificateUrl;
     }
 }

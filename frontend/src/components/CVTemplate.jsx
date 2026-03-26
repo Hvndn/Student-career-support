@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CVTemplate = ({ profile, experiences, educations, skills, languages, interests, projects, activities }) => {
+const CVTemplate = ({ profile, experiences, educations, skills, languages, interests, projects, activities, certifications }) => {
   return (
     <div id="cv-template" style={{
       width: '210mm',
@@ -220,6 +220,22 @@ const CVTemplate = ({ profile, experiences, educations, skills, languages, inter
                 </div>
               )) : (
                 <p style={{ fontSize: '9pt', color: '#94a3b8', fontStyle: 'italic' }}>Chưa cập nhật ngoại ngữ.</p>
+              )}
+            </div>
+          </section>
+
+          {/* Certifications */}
+          <section style={{ marginBottom: '3rem' }}>
+            <h3 style={{ fontSize: '12pt', fontWeight: 800, color: '#0f172a', marginBottom: '1.2rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Chứng chỉ</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {certifications && certifications.length > 0 ? certifications.map((cert, i) => (
+                <div key={i} style={{ background: 'white', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  <p style={{ margin: 0, fontSize: '10pt', fontWeight: 700 }}>{cert.name}</p>
+                  <p style={{ margin: '0.2rem 0 0', fontSize: '8.5pt', color: '#64748b' }}>{cert.issuer}</p>
+                  <p style={{ margin: '0.2rem 0 0', fontSize: '8pt', color: '#94a3b8' }}>Ngày cấp: {cert.issueDate}</p>
+                </div>
+              )) : (
+                <p style={{ fontSize: '9pt', color: '#94a3b8', fontStyle: 'italic' }}>Chưa cập nhật chứng chỉ.</p>
               )}
             </div>
           </section>

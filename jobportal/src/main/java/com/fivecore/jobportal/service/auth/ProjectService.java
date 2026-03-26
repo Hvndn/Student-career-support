@@ -35,7 +35,7 @@ public class ProjectService {
      */
     @Transactional
     public Project addProject(Integer studentId, Project projectData) {
-        if (studentId == null) throw new IllegalArgumentException("Student ID cannot be null");
+        java.util.Objects.requireNonNull(studentId, "Student ID cannot be null");
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
         

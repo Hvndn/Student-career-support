@@ -9,6 +9,7 @@ import com.fivecore.jobportal.service.auth.LanguageService;
 import com.fivecore.jobportal.service.auth.ProfileService;
 import com.fivecore.jobportal.service.auth.ProjectService;
 import com.fivecore.jobportal.service.auth.SkillService;
+import com.fivecore.jobportal.service.auth.CertificationService;
 import com.fivecore.jobportal.service.common.StorageService;
 import com.fivecore.jobportal.service.interaction.PdfExportService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -41,6 +42,7 @@ public class StudentProfileRestController {
     private final LanguageService languageService;
     private final InterestService interestService;
     private final ActivityService activityService;
+    private final CertificationService certificationService;
 
     private Integer getCurrentStudentId(Authentication authentication) {
         return userRepository.findByEmail(authentication.getName())
@@ -123,6 +125,14 @@ public class StudentProfileRestController {
                         .startDate(a.getStartDate() != null ? a.getStartDate().toString() : null)
                         .endDate(a.getEndDate() != null ? a.getEndDate().toString() : null)
                         .description(a.getDescription())
+                        .build()).collect(Collectors.toList()))
+                .certifications(student.getCertifications() == null ? List.of() : student.getCertifications().stream().map((Certification c) -> StudentProfileResponse.CertificationDto.builder()
+                        .id(c.getId())
+                        .name(c.getName())
+                        .issuer(c.getIssuer())
+                        .issueDate(c.getIssueDate() != null ? c.getIssueDate().toString() : null)
+                        .expirationDate(c.getExpirationDate() != null ? c.getExpirationDate().toString() : null)
+                        .certificateUrl(c.getCertificateUrl())
                         .build()).collect(Collectors.toList()))
                 .build();
 
@@ -401,5 +411,39 @@ public class StudentProfileRestController {
         Integer studentId = getCurrentStudentId(authentication);
         activityService.deleteActivity(id, studentId);
         return ResponseEntity.ok(ApiResponse.success("Xóa hoạt động thành công", null));
+    }
+
+    /* ---- Certifications ---- */
+    @PostMapping("/certifications")
+    public ResponseEntity<ApiResponse<Object>> addCertification(@RequestBody CertificationRequest request, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        certificationService.addCertification(studentId, Certification.builder()
+                .name(request.getName())
+                .issuer(request.getIssuer())
+                .issueDate(request.getIssueDate())
+                .expirationDate(request.getExpirationDate())
+                .certificateUrl(request.getCertificateUrl())
+                .build());
+        return ResponseEntity.ok(ApiResponse.success("Thêm chứng chỉ thành công", null));
+    }
+
+    @PutMapping("/certifications/{id}")
+    public ResponseEntity<ApiResponse<Object>> updateCertification(@PathVariable Integer id, @RequestBody CertificationRequest request, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        certificationService.updateCertification(id, studentId, Certification.builder()
+                .name(request.getName())
+                .issuer(request.getIssuer())
+                .issueDate(request.getIssueDate())
+                .expirationDate(request.getExpirationDate())
+                .certificateUrl(request.getCertificateUrl())
+                .build());
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật chứng chỉ thành công", null));
+    }
+
+    @DeleteMapping("/certifications/{id}")
+    public ResponseEntity<ApiResponse<Object>> deleteCertification(@PathVariable Integer id, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        certificationService.deleteCertification(id, studentId);
+        return ResponseEntity.ok(ApiResponse.success("Xóa chứng chỉ thành công", null));
     }
 }

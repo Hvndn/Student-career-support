@@ -23,6 +23,7 @@ const BLANK_EXP = { companyName: '', jobTitle: '', startDate: '', endDate: '', d
 const BLANK_LANG = { languageName: '', proficiency: 'Intermediate', certificate: '' };
 const BLANK_PROJECT = { name: '', techStack: '', role: '', repositoryUrl: '', demoUrl: '', description: '' };
 const BLANK_ACTIVITY = { name: '', organization: '', role: '', startDate: '', endDate: '', description: '' };
+const BLANK_CERT = { name: '', issuer: '', issueDate: '', expirationDate: '', certificateUrl: '' };
 
 const Profile = () => {
     const [profile, setProfile] = useState(null);
@@ -59,6 +60,9 @@ const Profile = () => {
 
     const [showActivityForm, setShowActivityForm] = useState(false);
     const [activityForm, setActivityForm] = useState(BLANK_ACTIVITY);
+
+    const [showCertForm, setShowCertForm] = useState(false);
+    const [certForm, setCertForm] = useState(BLANK_CERT);
 
     useEffect(() => {
         studentApi.getProfile()
@@ -304,6 +308,39 @@ const Profile = () => {
             await reload();
             flash('✅ Đã xóa hoạt động.');
         } catch { flash('❌ Lỗi khi xóa hoạt động.'); }
+    };
+
+    /* ---- Certification Handlers ---- */
+    const openCertEdit = (cert) => {
+        setCertForm({ ...cert });
+        setShowCertForm(true);
+    };
+
+    const saveCert = async () => {
+        if (!certForm.name) return flash('⚠️ Vui lòng nhập tên chứng chỉ.');
+        setSaving(true);
+        try {
+            if (certForm.id) {
+                await studentApi.updateCertification(certForm.id, certForm);
+                flash('✅ Cập nhật chứng chỉ thành công!');
+            } else {
+                await studentApi.addCertification(certForm);
+                flash('✅ Thêm chứng chỉ thành công!');
+            }
+            await reload();
+            setShowCertForm(false);
+            setCertForm(BLANK_CERT);
+        } catch { flash('❌ Lỗi khi lưu chứng chỉ.'); }
+        setSaving(false);
+    };
+
+    const deleteCert = async (id) => {
+        if (!window.confirm('Bạn có chắc muốn xóa chứng chỉ này?')) return;
+        try {
+            await studentApi.deleteCertification(id);
+            await reload();
+            flash('✅ Đã xóa chứng chỉ.');
+        } catch { flash('❌ Lỗi khi xóa chứng chỉ.'); }
     };
 
     const handleDownloadCV = () => {
@@ -571,14 +608,6 @@ const Profile = () => {
                                     dangerouslySetInnerHTML={{ __html: profile.bio || 'Chưa cập nhật mục tiêu nghề nghiệp.' }} 
                                 />
                             </div>
-                            <div className="pf-goal-list">
-                                <div className="pf-goal-item">
-                                    <span className="material-symbols-outlined">verified</span> Làm việc tại công ty đa quốc gia
-                                </div>
-                                <div className="pf-goal-item">
-                                    <span className="material-symbols-outlined">verified</span> Master React & Node.js
-                                </div>
-                            </div>
                         </section>
 
                         {/* Skills */}
@@ -596,6 +625,42 @@ const Profile = () => {
                                     </span>
                                 ))}
                                 {profile.skills?.length === 0 && <p style={{ color: '#94a3b8', fontSize: '14px' }}>Chưa có kỹ năng.</p>}
+                            </div>
+                        </section>
+
+                        {/* Certifications */}
+                        <section className="pf-card" style={{ marginTop: '1.5rem' }}>
+                            <div className="pf-section-title">
+                                <h2>Chứng chỉ</h2>
+                                <button className="pf-add-btn" onClick={() => { setCertForm(BLANK_CERT); setShowCertForm(true); }}>
+                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
+                                </button>
+                            </div>
+                            <div className="pf-items-list">
+                                {profile.certifications?.map(cert => (
+                                    <div key={cert.id} className="pf-item" style={{ position: 'relative', marginBottom: '1rem', paddingBottom: '0.8rem', borderBottom: '1px dashed #e2e8f0' }}>
+                                        <div className="pf-item-content">
+                                            <h3 style={{ fontSize: '14px', color: '#1e293b', fontWeight: 600 }}>{cert.name}</h3>
+                                            <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>
+                                                {cert.issuer} • {cert.issueDate}
+                                            </div>
+                                            {cert.certificateUrl && (
+                                                <a href={cert.certificateUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', color: '#2563eb', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px' }}>
+                                                    <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>link</span> Xem chứng chỉ
+                                                </a>
+                                            )}
+                                        </div>
+                                        <div className="pf-item-actions">
+                                            <button onClick={() => openCertEdit(cert)} className="pf-edit-btn-small">
+                                                <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>edit</span>
+                                            </button>
+                                            <button onClick={() => deleteCert(cert.id)} className="pf-delete-btn-small">
+                                                <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                                {profile.certifications?.length === 0 && <p style={{ color: '#94a3b8', fontSize: '13px' }}>Chưa cập nhật chứng chỉ.</p>}
                             </div>
                         </section>
 
@@ -963,8 +1028,46 @@ const Profile = () => {
                     interests={profile.interests || []}
                     projects={profile.projects || []}
                     activities={profile.activities || []}
+                    certifications={profile.certifications || []}
                 />
             </div>
+            {showCertForm && (
+                <div className="pf-form-overlay">
+                    <div className="pf-form-container" style={{ maxWidth: '600px' }}>
+                        <div className="pf-form-header">
+                            <h3>{certForm.id ? 'Chỉnh sửa chứng chỉ' : 'Thêm chứng chỉ mới'}</h3>
+                            <button onClick={() => setShowCertForm(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                            <div className="pf-field" style={{ gridColumn: 'span 2' }}>
+                                <label className="pf-label">Tên chứng chỉ</label>
+                                <input className="pf-input" placeholder="Vd: AWS Certified Solutions Architect" value={certForm.name} onChange={e => setCertForm({ ...certForm, name: e.target.value })} />
+                            </div>
+                            <div className="pf-field" style={{ gridColumn: 'span 2' }}>
+                                <label className="pf-label">Tổ chức cấp</label>
+                                <input className="pf-input" placeholder="Vd: Amazon Web Services" value={certForm.issuer} onChange={e => setCertForm({ ...certForm, issuer: e.target.value })} />
+                            </div>
+                            <div className="pf-field">
+                                <label className="pf-label">Ngày cấp</label>
+                                <input type="date" className="pf-input" value={certForm.issueDate} onChange={e => setCertForm({ ...certForm, issueDate: e.target.value })} />
+                            </div>
+                            <div className="pf-field">
+                                <label className="pf-label">Ngày hết hạn (Nếu có)</label>
+                                <input type="date" className="pf-input" value={certForm.expirationDate} onChange={e => setCertForm({ ...certForm, expirationDate: e.target.value })} />
+                            </div>
+                            <div className="pf-field" style={{ gridColumn: 'span 2' }}>
+                                <label className="pf-label">Link chứng chỉ / Portfolio</label>
+                                <input className="pf-input" placeholder="https://..." value={certForm.certificateUrl} onChange={e => setCertForm({ ...certForm, certificateUrl: e.target.value })} />
+                            </div>
+                        </div>
+                        <button className="pf-btn pf-btn-primary" style={{ width: '100%', marginTop: '1rem' }} onClick={saveCert} disabled={saving}>
+                            {saving ? 'Đang lưu...' : (certForm.id ? 'Lưu thay đổi' : 'Thêm mới')}
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
