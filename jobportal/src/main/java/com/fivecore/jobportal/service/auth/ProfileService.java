@@ -62,6 +62,7 @@ public class ProfileService {
         if (request.getCurrentTerm() != null) student.setCurrentTerm(request.getCurrentTerm());
         if (request.getBio() != null) student.setBio(request.getBio());
         if (request.getPhone() != null) student.setPhone(request.getPhone());
+        if (request.getAddress() != null) student.setAddress(request.getAddress());
         
         studentRepository.save(student);
         log.info("Đã cập nhật thông tin hồ sơ cho sinh viên ID: {}", studentId);

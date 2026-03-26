@@ -63,6 +63,9 @@ public class Student {
     @Column(name = "current_term", length = 50)
     private String currentTerm;
 
+    @Column(length = 255)
+    private String address;
+
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     @Builder.Default
     private java.util.List<StudentSkill> skills = new java.util.ArrayList<>();
@@ -74,4 +77,12 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private java.util.List<Experience> experiences = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private java.util.List<Language> languages = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private java.util.List<Interest> interests = new java.util.ArrayList<>();
 }

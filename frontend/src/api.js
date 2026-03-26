@@ -39,7 +39,12 @@ export const studentApi = {
     getSkills: () => api.get('/student/profile/skills/all'),
     updateAvatar: (formData) => api.post('/student/profile/avatar', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
-    })
+    }),
+    addLanguage: (data) => api.post('/student/profile/languages', data),
+    updateLanguage: (id, data) => api.put(`/student/profile/languages/${id}`, data),
+    deleteLanguage: (id) => api.delete(`/student/profile/languages/${id}`),
+    addInterest: (data) => api.post('/student/profile/interests', data),
+    deleteInterest: (id) => api.delete(`/student/profile/interests/${id}`)
 };
 
 

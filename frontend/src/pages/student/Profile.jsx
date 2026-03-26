@@ -4,10 +4,23 @@ import { jobApi, studentApi } from '../../api';
 import Navbar from '../../components/Navbar';
 import CVTemplate from '../../components/CVTemplate';
 import html2pdf from 'html2pdf.js';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 import '../../assets/css/Profile.css';
+
+const QUILL_MODULES = {
+    toolbar: [
+        [{ 'header': [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+        ['clean']
+    ],
+};
 
 const BLANK_EDU = { schoolName: '', major: '', startDate: '', endDate: '', description: '' };
 const BLANK_EXP = { companyName: '', jobTitle: '', startDate: '', endDate: '', description: '' };
+const BLANK_LANG = { languageName: '', proficiency: 'Intermediate', certificate: '' };
 
 const Profile = () => {
     const [profile, setProfile] = useState(null);
@@ -33,9 +46,20 @@ const Profile = () => {
     const [skillLevel, setSkillLevel] = useState('Intermediate');
     const [allSkills, setAllSkills] = useState([]);
 
+    const [showLangForm, setShowLangForm] = useState(false);
+    const [langForm, setLangForm] = useState(BLANK_LANG);
+
+    const [showInterestForm, setShowInterestForm] = useState(false);
+    const [interestName, setInterestName] = useState('');
+
     useEffect(() => {
         studentApi.getProfile()
-            .then(res => { setProfile(res.data.data); setLoading(false); })
+            .then(res => { 
+                const data = res.data.data;
+                setProfile(data); 
+                setBio(data.bio || ''); 
+                setLoading(false); 
+            })
             .catch(() => setLoading(false));
     }, []);
 
@@ -55,7 +79,8 @@ const Profile = () => {
             earnedCredits: profile.earnedCredits || '',
             classRank: profile.classRank || '',
             academicYear: profile.academicYear || '',
-            currentTerm: profile.currentTerm || ''
+            currentTerm: profile.currentTerm || '',
+            address: profile.address || ''
         });
         setEditBasic(true);
     };
@@ -164,6 +189,50 @@ const Profile = () => {
         await reload();
     };
 
+    const saveLang = async () => {
+        if (!langForm.languageName) return flash('⚠️ Nhập tên ngoại ngữ');
+        setSaving(true);
+        try {
+            await studentApi.addLanguage(langForm);
+            await reload();
+            setShowLangForm(false);
+            setLangForm(BLANK_LANG);
+            flash('✅ Thêm ngoại ngữ thành công!');
+        } catch { flash('❌ Lỗi khi thêm.'); }
+        setSaving(false);
+    };
+
+    const deleteLang = async (id) => {
+        if (!window.confirm('Xóa ngoại ngữ này?')) return;
+        try {
+            await studentApi.deleteLanguage(id);
+            await reload();
+            flash('✅ Đã xóa ngoại ngữ.');
+        } catch { flash('❌ Lỗi khi xóa.'); }
+    };
+
+    const addInterest = async () => {
+        if (!interestName) return flash('⚠️ Nhập tên sở thích');
+        setSaving(true);
+        try {
+            await studentApi.addInterest({ name: interestName });
+            await reload();
+            setShowInterestForm(false);
+            setInterestName('');
+            flash('✅ Thêm sở thích thành công!');
+        } catch { flash('❌ Lỗi khi thêm.'); }
+        setSaving(false);
+    };
+
+    const deleteInterest = async (id) => {
+        if (!window.confirm('Xóa sở thích này?')) return;
+        try {
+            await studentApi.deleteInterest(id);
+            await reload();
+            flash('✅ Đã xóa sở thích.');
+        } catch { flash('❌ Lỗi khi xóa.'); }
+    };
+
     const handleDownloadCV = () => {
         const element = document.getElementById('cv-template');
         const opt = {
@@ -202,12 +271,15 @@ const Profile = () => {
                         <div className="pf-user-details">
                             <h1>{profile.fullName}</h1>
                             <p className="pf-major">{profile.major || 'Chưa cập nhật chuyên ngành'}</p>
-                            <div className="pf-contact-row">
+                            <div className="pf-contact-row" style={{ display: 'flex', gap: '1.5rem', marginTop: '0.5rem' }}>
                                 <span className="pf-contact-item">
-                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>location_on</span> Hà Nội, Việt Nam
+                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>location_on</span> {profile.address || 'Hà Nội, Việt Nam'}
                                 </span>
                                 <span className="pf-contact-item">
-                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>mail</span> {profile.phone || 'Chưa có SĐT'}
+                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>mail</span> {profile.email || 'Chưa có email'}
+                                </span>
+                                <span className="pf-contact-item">
+                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>call</span> {profile.phone || 'Chưa có SĐT'}
                                 </span>
                             </div>
                         </div>
@@ -278,7 +350,7 @@ const Profile = () => {
                                             <p>{edu.major}</p>
                                             <p className="pf-date">{edu.startDate} - {edu.endDate || 'Hiện tại'}</p>
                                         </div>
-                                        <button onClick={() => deleteEdu(edu.id)} style={{ position: 'absolute', right: 0, top: 0, background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}>
+                                        <button onClick={() => deleteEdu(edu.id)} className="pf-delete-btn-abs">
                                             <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>delete</span>
                                         </button>
                                     </div>
@@ -308,7 +380,7 @@ const Profile = () => {
                                         </div>
                                         <p className="pf-date">{exp.startDate} - {exp.endDate || 'Hiện tại'}</p>
                                         <p style={{ fontSize: '14px', color: '#475569', marginTop: '0.5rem' }}>{exp.description}</p>
-                                        <button onClick={() => deleteExp(exp.id)} style={{ position: 'absolute', right: 0, top: 0, background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}>
+                                        <button onClick={() => deleteExp(exp.id)} className="pf-delete-btn-abs">
                                             <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>delete</span>
                                         </button>
                                     </div>
@@ -329,7 +401,10 @@ const Profile = () => {
                                 </button>
                             </div>
                             <div className="pf-goal-box">
-                                <p className="pf-goal-text">"{profile.bio || 'Chưa cập nhật mục tiêu nghề nghiệp.'}"</p>
+                                <div 
+                                    className="pf-goal-text pf-rich-text" 
+                                    dangerouslySetInnerHTML={{ __html: profile.bio || 'Chưa cập nhật mục tiêu nghề nghiệp.' }} 
+                                />
                             </div>
                             <div className="pf-goal-list">
                                 <div className="pf-goal-item">
@@ -356,6 +431,48 @@ const Profile = () => {
                                     </span>
                                 ))}
                                 {profile.skills?.length === 0 && <p style={{ color: '#94a3b8', fontSize: '14px' }}>Chưa có kỹ năng.</p>}
+                            </div>
+                        </section>
+
+                        {/* Languages */}
+                        <section className="pf-card">
+                            <div className="pf-section-title">
+                                <h2>Ngoại ngữ</h2>
+                                <button className="pf-add-btn" onClick={() => setShowLangForm(true)}>
+                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
+                                </button>
+                            </div>
+                            <div className="pf-goal-list" style={{ marginTop: 0 }}>
+                                {profile.languages?.map(lang => (
+                                    <div key={lang.id} className="pf-item" style={{ position: 'relative', marginBottom: '1rem', background: '#f8fafc', padding: '0.75rem', borderRadius: '0.5rem' }}>
+                                        <div className="pf-item-content">
+                                            <h4 style={{ color: '#2563eb' }}>{lang.languageName}</h4>
+                                            <p style={{ fontWeight: 500, fontSize: '13px' }}>{lang.proficiency} {lang.certificate ? `• ${lang.certificate}` : ''}</p>
+                                        </div>
+                                        <button onClick={() => deleteLang(lang.id)} className="pf-delete-btn-abs">
+                                            <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>delete</span>
+                                        </button>
+                                    </div>
+                                ))}
+                                {profile.languages?.length === 0 && <p style={{ color: '#94a3b8', fontSize: '14px' }}>Chưa cập nhật ngoại ngữ.</p>}
+                            </div>
+                        </section>
+
+                        {/* Interests */}
+                        <section className="pf-card">
+                            <div className="pf-section-title">
+                                <h2>Sở thích</h2>
+                                <button className="pf-add-btn" onClick={() => setShowInterestForm(true)}>
+                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
+                                </button>
+                            </div>
+                            <div className="pf-skills-list">
+                                {profile.interests?.map(item => (
+                                    <span key={item.id} className="pf-skill-tag" style={{ background: '#f0fdf4', borderColor: '#bbf7d0', color: '#16a34a', cursor: 'pointer' }} onClick={() => deleteInterest(item.id)}>
+                                        {item.name} • <span style={{ fontSize: '10px' }}>Xóa</span>
+                                    </span>
+                                ))}
+                                {profile.interests?.length === 0 && <p style={{ color: '#94a3b8', fontSize: '14px' }}>Chưa cập nhật sở thích.</p>}
                             </div>
                         </section>
 
@@ -429,8 +546,8 @@ const Profile = () => {
                                 <input type="number" className="pf-input" value={basicForm.earnedCredits} onChange={e => setBasicForm({ ...basicForm, earnedCredits: e.target.value })} />
                             </div>
                             <div className="pf-field">
-                                <label className="pf-label">Xếp hạng lớp</label>
-                                <input className="pf-input" placeholder="Vd: Top 5%" value={basicForm.classRank} onChange={e => setBasicForm({ ...basicForm, classRank: e.target.value })} />
+                                <label className="pf-label">Địa chỉ</label>
+                                <input className="pf-input" placeholder="Vd: Hà Nội, Việt Nam" value={basicForm.address} onChange={e => setBasicForm({ ...basicForm, address: e.target.value })} />
                             </div>
                         </div>
                         <button className="pf-btn pf-btn-primary" style={{ width: '100%', marginTop: '1rem' }} onClick={saveBasic} disabled={saving}>
@@ -449,8 +566,18 @@ const Profile = () => {
                                 <span className="material-symbols-outlined">close</span>
                             </button>
                         </div>
-                        <textarea className="pf-input" rows={6} value={bio} onChange={e => setBio(e.target.value)} style={{ marginBottom: '1rem' }} />
-                        <button className="pf-btn pf-btn-primary" style={{ width: '100%' }} onClick={saveBio} disabled={saving}>Lưu</button>
+                        <div className="pf-quill-wrapper" style={{ marginBottom: '1.5rem' }}>
+                            <ReactQuill 
+                                theme="snow" 
+                                value={bio} 
+                                onChange={setBio} 
+                                modules={QUILL_MODULES}
+                                placeholder="Nhập mục tiêu nghề nghiệp của bạn..."
+                            />
+                        </div>
+                        <button className="pf-btn pf-btn-primary" style={{ width: '100%' }} onClick={saveBio} disabled={saving}>
+                            {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
+                        </button>
                     </div>
                 </div>
             )}
@@ -522,6 +649,55 @@ const Profile = () => {
                 </div>
             )}
 
+            {showLangForm && (
+                <div className="pf-form-overlay">
+                    <div className="pf-form-container">
+                        <div className="pf-form-header">
+                            <h3>Thêm ngoại ngữ</h3>
+                            <button onClick={() => setShowLangForm(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        <div className="pf-field">
+                            <label className="pf-label">Ngoại ngữ</label>
+                            <input className="pf-input" placeholder="Vd: Tiếng Anh, Tiếng Nhật..." value={langForm.languageName} onChange={e => setLangForm({ ...langForm, languageName: e.target.value })} />
+                        </div>
+                        <div className="pf-field">
+                            <label className="pf-label">Trình độ</label>
+                            <select className="pf-input" value={langForm.proficiency} onChange={e => setLangForm({ ...langForm, proficiency: e.target.value })}>
+                                <option value="Sơ cấp">Sơ cấp (Beginner)</option>
+                                <option value="Trung cấp">Trung cấp (Intermediate)</option>
+                                <option value="Cao cấp">Cao cấp (Advanced)</option>
+                                <option value="Bản ngữ">Bản ngữ (Native)</option>
+                            </select>
+                        </div>
+                        <div className="pf-field">
+                            <label className="pf-label">Chứng chỉ (Nếu có)</label>
+                            <input className="pf-input" placeholder="Vd: IELTS 7.5, JLPT N3..." value={langForm.certificate} onChange={e => setLangForm({ ...langForm, certificate: e.target.value })} />
+                        </div>
+                        <button className="pf-btn pf-btn-primary" style={{ width: '100%' }} onClick={saveLang} disabled={saving}>Thêm</button>
+                    </div>
+                </div>
+            )}
+
+            {showInterestForm && (
+                <div className="pf-form-overlay">
+                    <div className="pf-form-container">
+                        <div className="pf-form-header">
+                            <h3>Thêm sở thích</h3>
+                            <button onClick={() => setShowInterestForm(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        <div className="pf-field">
+                            <label className="pf-label">Sở thích</label>
+                            <input className="pf-input" placeholder="Vd: Đọc sách, Du lịch, Thể thao..." value={interestName} onChange={e => setInterestName(e.target.value)} />
+                        </div>
+                        <button className="pf-btn pf-btn-primary" style={{ width: '100%' }} onClick={addInterest} disabled={saving}>Thêm</button>
+                    </div>
+                </div>
+            )}
+
             <footer className="pf-footer">
                 <p>© 2024 CareerHub SaaS - Nền tảng quản lý hồ sơ sinh viên hiện đại.</p>
             </footer>
@@ -532,6 +708,8 @@ const Profile = () => {
                     experiences={profile.experiences || []} 
                     educations={profile.educations || []} 
                     skills={profile.skills || []} 
+                    languages={profile.languages || []}
+                    interests={profile.interests || []}
                 />
             </div>
         </div>

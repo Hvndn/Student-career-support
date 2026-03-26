@@ -27,11 +27,16 @@ public class StudentProfileResponse {
     private String academicYear;
     private String currentTerm;
     private String bio;
+    private String phone;
+    private String address;
     private String avatarUrl;
+    
     private List<SkillDto> skills;
     private List<EducationDto> educations;
     private List<ExperienceDto> experiences;
     private List<ProjectDto> projects;
+    private List<LanguageDto> languages;
+    private List<InterestDto> interests;
 
     @Data
     @Builder
@@ -72,5 +77,21 @@ public class StudentProfileResponse {
         private String description;
         private String repositoryUrl;
         private String demoUrl;
+    }
+
+    @Data
+    @Builder
+    public static class LanguageDto {
+        private Integer id;
+        private String languageName;
+        private String proficiency;
+        private String certificate;
+    }
+
+    @Data
+    @Builder
+    public static class InterestDto {
+        private Integer id;
+        private String name;
     }
 }

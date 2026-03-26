@@ -370,6 +370,8 @@
 .pf-timeline-item {
   position: relative;
   padding-left: 1.5rem;
+  padding-right: 2.5rem;
+  padding-top: 5px;
   border-left: 2px solid #f1f5f9;
   margin-left: 1.5rem;
 }
@@ -418,6 +420,30 @@
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+}
+
+.pf-delete-btn-abs {
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: white;
+  border: 1px solid #fee2e2;
+  color: #ef4444;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.pf-delete-btn-abs:hover {
+  background: #fef2f2;
+  transform: scale(1.1);
 }
 
 .pf-col-right {

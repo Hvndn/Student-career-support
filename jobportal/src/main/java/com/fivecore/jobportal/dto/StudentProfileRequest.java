@@ -22,4 +22,5 @@ public class StudentProfileRequest {
     private String classRank;
     private String academicYear;
     private String currentTerm;
+    private String address;
 }

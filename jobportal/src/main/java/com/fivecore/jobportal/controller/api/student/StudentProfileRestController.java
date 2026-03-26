@@ -3,6 +3,8 @@ package com.fivecore.jobportal.controller.api.student;
 import com.fivecore.jobportal.dto.*;
 import com.fivecore.jobportal.entity.*;
 import com.fivecore.jobportal.repository.UserRepository;
+import com.fivecore.jobportal.service.auth.InterestService;
+import com.fivecore.jobportal.service.auth.LanguageService;
 import com.fivecore.jobportal.service.auth.ProfileService;
 import com.fivecore.jobportal.service.auth.ProjectService;
 import com.fivecore.jobportal.service.auth.SkillService;
@@ -35,6 +37,8 @@ public class StudentProfileRestController {
     private final PdfExportService pdfExportService;
     private final StorageService storageService;
     private final UserRepository userRepository;
+    private final LanguageService languageService;
+    private final InterestService interestService;
 
     private Integer getCurrentStudentId(Authentication authentication) {
         return userRepository.findByEmail(authentication.getName())
@@ -65,6 +69,8 @@ public class StudentProfileRestController {
                 .academicYear(student.getAcademicYear())
                 .currentTerm(student.getCurrentTerm())
                 .bio(student.getBio())
+                .phone(student.getPhone())
+                .address(student.getAddress())
                 .avatarUrl(student.getAvatarUrl())
                 .skills(student.getSkills() == null ? List.of() : student.getSkills().stream().map((StudentSkill s) -> StudentProfileResponse.SkillDto.builder()
                         .id(s.getSkill().getId())
@@ -94,6 +100,16 @@ public class StudentProfileRestController {
                         .description(p.getDescription())
                         .repositoryUrl(p.getRepositoryUrl())
                         .demoUrl(p.getDemoUrl())
+                        .build()).collect(Collectors.toList()))
+                .languages(student.getLanguages() == null ? List.of() : student.getLanguages().stream().map((Language l) -> StudentProfileResponse.LanguageDto.builder()
+                        .id(l.getId())
+                        .languageName(l.getLanguageName())
+                        .proficiency(l.getProficiency())
+                        .certificate(l.getCertificate())
+                        .build()).collect(Collectors.toList()))
+                .interests(student.getInterests() == null ? List.of() : student.getInterests().stream().map((Interest i) -> StudentProfileResponse.InterestDto.builder()
+                        .id(i.getId())
+                        .name(i.getName())
                         .build()).collect(Collectors.toList()))
                 .build();
 
@@ -257,5 +273,48 @@ public class StudentProfileRestController {
         response.setContentType("application/pdf");
         response.setHeader("Content-Disposition", "attachment; filename=profile.pdf");
         pdfExportService.exportProfileToPdf(studentId, response);
+    }
+
+    /* ---- Languages ---- */
+    @PostMapping("/languages")
+    public ResponseEntity<ApiResponse<Object>> addLanguage(@RequestBody LanguageRequest request, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        languageService.addLanguage(studentId, Language.builder()
+                .languageName(request.getLanguageName())
+                .proficiency(request.getProficiency())
+                .certificate(request.getCertificate())
+                .build());
+        return ResponseEntity.ok(ApiResponse.success("Thêm ngoại ngữ thành công", null));
+    }
+
+    @PutMapping("/languages/{id}")
+    public ResponseEntity<ApiResponse<Object>> updateLanguage(@PathVariable Integer id, @RequestBody LanguageRequest request, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        languageService.updateLanguage(id, studentId, request);
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật ngoại ngữ thành công", null));
+    }
+
+    @DeleteMapping("/languages/{id}")
+    public ResponseEntity<ApiResponse<Object>> deleteLanguage(@PathVariable Integer id, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        languageService.deleteLanguage(id, studentId);
+        return ResponseEntity.ok(ApiResponse.success("Xóa ngoại ngữ thành công", null));
+    }
+
+    /* ---- Interests ---- */
+    @PostMapping("/interests")
+    public ResponseEntity<ApiResponse<Object>> addInterest(@RequestBody InterestRequest request, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        interestService.addInterest(studentId, Interest.builder()
+                .name(request.getName())
+                .build());
+        return ResponseEntity.ok(ApiResponse.success("Thêm sở thích thành công", null));
+    }
+
+    @DeleteMapping("/interests/{id}")
+    public ResponseEntity<ApiResponse<Object>> deleteInterest(@PathVariable Integer id, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        interestService.deleteInterest(id, studentId);
+        return ResponseEntity.ok(ApiResponse.success("Xóa sở thích thành công", null));
     }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CVTemplate = ({ profile, experiences, educations, skills }) => {
+const CVTemplate = ({ profile, experiences, educations, skills, languages }) => {
   return (
     <div id="cv-template" style={{
       width: '210mm',
@@ -69,9 +69,9 @@ const CVTemplate = ({ profile, experiences, educations, skills }) => {
           gap: '0.4rem',
           opacity: 0.9
         }}>
-          <p style={{ margin: 0 }}>{profile.user?.email || 'email@example.com'}</p>
+          <p style={{ margin: 0 }}>{profile.email || 'email@example.com'}</p>
           <p style={{ margin: 0 }}>{profile.phone || '0123 456 789'}</p>
-          <p style={{ margin: 0 }}>Hà Nội, Việt Nam</p>
+          <p style={{ margin: 0 }}>{profile.address || 'Hà Nội, Việt Nam'}</p>
         </div>
       </div>
 
@@ -86,9 +86,10 @@ const CVTemplate = ({ profile, experiences, educations, skills }) => {
               <span style={{ width: '4px', height: '18px', background: '#2563eb' }}></span>
               GIỚI THIỆU BẢN THÂN
             </h3>
-            <p style={{ fontSize: '10.5pt', color: '#475569', lineHeight: '1.6', textAlign: 'justify' }}>
-              {profile.bio || 'Một sinh viên năng động với nền tảng kiến thức vững chắc và mong muốn phát triển sự nghiệp trong môi trường chuyên nghiệp.'}
-            </p>
+            <div 
+              style={{ fontSize: '10.5pt', color: '#475569', lineHeight: '1.6', textAlign: 'justify' }}
+              dangerouslySetInnerHTML={{ __html: profile.bio || 'Một sinh viên năng động với nền tảng kiến thức vững chắc và mong muốn phát triển sự nghiệp trong môi trường chuyên nghiệp.' }}
+            />
           </section>
 
           {/* Experience */}
@@ -127,7 +128,6 @@ const CVTemplate = ({ profile, experiences, educations, skills }) => {
                     <span style={{ fontSize: '9pt', color: '#64748b', fontWeight: 600 }}>{edu.startDate} - {edu.endDate || 'Hiện tại'}</span>
                   </div>
                   <p style={{ margin: '0.2rem 0', fontWeight: 600, color: '#2563eb', fontSize: '10pt' }}>{edu.degree} - {profile.major}</p>
-                  <p style={{ margin: '0.5rem 0 0', fontSize: '10pt', color: '#64748b' }}>GPA: <strong>{profile.gpa || 'N/A'} / 4.0</strong></p>
                 </div>
               )) : <p style={{ color: '#94a3b8', fontStyle: 'italic' }}>Chưa có thông tin học vấn.</p>}
             </div>
@@ -159,14 +159,14 @@ const CVTemplate = ({ profile, experiences, educations, skills }) => {
           <section style={{ marginBottom: '3rem' }}>
             <h3 style={{ fontSize: '12pt', fontWeight: 800, color: '#0f172a', marginBottom: '1.2rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Ngoại ngữ</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ background: 'white', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                <p style={{ margin: 0, fontSize: '10pt', fontWeight: 700 }}>Tiếng Anh</p>
-                <p style={{ margin: '0.2rem 0 0', fontSize: '8.5pt', color: '#64748b' }}>IELTS 7.5 / Advanced</p>
-              </div>
-              <div style={{ background: 'white', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                <p style={{ margin: 0, fontSize: '10pt', fontWeight: 700 }}>Tiếng Nhật</p>
-                <p style={{ margin: '0.2rem 0 0', fontSize: '8.5pt', color: '#64748b' }}>JLPT N3 / Intermediate</p>
-              </div>
+              {languages && languages.length > 0 ? languages.map((lang, i) => (
+                <div key={i} style={{ background: 'white', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  <p style={{ margin: 0, fontSize: '10pt', fontWeight: 700 }}>{lang.languageName}</p>
+                  <p style={{ margin: '0.2rem 0 0', fontSize: '8.5pt', color: '#64748b' }}>{lang.certificate || lang.proficiency}</p>
+                </div>
+              )) : (
+                <p style={{ fontSize: '9pt', color: '#94a3b8', fontStyle: 'italic' }}>Chưa cập nhật ngoại ngữ.</p>
+              )}
             </div>
           </section>
 
