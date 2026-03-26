@@ -1,118 +1,8 @@
-.register-container {
-    display: flex;
-    min-height: 100vh;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    font-family: 'Inter', 'Outfit', sans-serif;
-    background-color: #f7f9fa; /* slightly off-white for full body outside the main container, actually the image implies the whole screen is the container */
-    overflow: hidden; /* Avoid scroll if possible */
-}
+@import './Auth.css';
 
-/* LEFT PANEL */
-.register-left {
-    flex: 1;
-    max-width: 480px;
-    background: linear-gradient(135deg, #0f409f 0%, #052668 100%);
-    position: relative;
-    padding: 3rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    color: white;
-    /* Optional: background image with overlay */
-    /* background-image: linear-gradient(rgba(11, 49, 131, 0.85), rgba(5, 38, 104, 0.95)), url('path-to-students-image.jpg'); */
-    background-size: cover;
-    background-position: center;
-}
+/* REGISTER SPECIFIC STYLES */
 
-.brand-title {
-    font-size: 2.2rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    letter-spacing: -0.5px;
-}
-
-.brand-desc {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: rgba(255, 255, 255, 0.85);
-    margin-bottom: 4rem;
-    max-width: 90%;
-}
-
-.feature-list {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    margin-bottom: auto; /* push copyright to bottom */
-}
-
-.feature-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 1.2rem;
-}
-
-.feature-icon {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-}
-
-.feature-text h4 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 0.4rem;
-}
-
-.feature-text p {
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.7);
-    line-height: 1.5;
-}
-
-.copyright {
-    margin-top: auto;
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.5);
-    padding-top: 3rem;
-}
-
-/* RIGHT PANEL */
-.register-right {
-    flex: 2;
-    background-color: #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 3rem 2rem;
-    overflow-y: auto;
-}
-
-.register-form-box {
-    width: 100%;
-    max-width: 540px;
-}
-
-.form-header h2 {
-    font-size: 2rem;
-    color: #1a1a1a;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-}
-
-.form-header p {
-    color: #666;
-    font-size: 1rem;
-    margin-bottom: 2.5rem;
-}
-
-/* ROLE SELECTOR */
+/* ROLE SELECTOR - Specific to Register */
 .role-selector {
     display: flex;
     gap: 1rem;
@@ -156,11 +46,7 @@
     color: #0d5cda;
 }
 
-/* FORM FIELDS */
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
+/* FORM ROW - specific to Register (FullName, ConfirmPassword) */
 .form-row {
     display: flex;
     gap: 1.5rem;
@@ -172,39 +58,7 @@
     margin-bottom: 0;
 }
 
-.form-group label {
-    display: block;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #666;
-    margin-bottom: 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.form-input {
-    width: 100%;
-    padding: 1rem 1.2rem;
-    background: #f7f9fa;
-    border: 1px solid transparent;
-    border-radius: 10px;
-    font-size: 1rem;
-    color: #1a1a1a;
-    transition: all 0.2s ease;
-    outline: none;
-}
-
-.form-input::placeholder {
-    color: #aaa;
-}
-
-.form-input:focus {
-    background: #fff;
-    border-color: #0d5cda;
-    box-shadow: 0 0 0 3px rgba(13, 92, 218, 0.1);
-}
-
-/* TERMS CHECKBOX */
+/* TERMS CHECKBOX - specific to Register */
 .terms-group {
     display: flex;
     align-items: flex-start;
@@ -237,123 +91,7 @@
     text-decoration: underline;
 }
 
-/* SUBMIT BTN */
-.btn-submit {
-    width: 100%;
-    background: #0652dd;
-    color: white;
-    font-weight: 600;
-    font-size: 1rem;
-    padding: 1.2rem;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.8rem;
-    cursor: pointer;
-    transition: background 0.2s ease;
-    border: none;
-}
-
-.btn-submit:hover {
-    background: #0540b0;
-}
-
-/* LOGIN LINK & STUFF */
-.login-prompt {
-    text-align: center;
-    margin-top: 2.5rem;
-    font-size: 0.95rem;
-    color: #666;
-}
-
-.login-link {
-    color: #0d5cda;
-    font-weight: 600;
-    margin-left: 0.3rem;
-}
-
-.login-link:hover {
-    text-decoration: underline;
-}
-
-.divider {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    margin: 2rem 0;
-    color: #999;
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-}
-
-.divider::before,
-.divider::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid #eee;
-}
-
-.divider:not(:empty)::before {
-    margin-right: 1rem;
-}
-
-.divider:not(:empty)::after {
-    margin-left: 1rem;
-}
-
-.social-login {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-}
-
-.social-btn {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: #f7f9fa;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.social-btn:hover {
-    background: #eee;
-    transform: translateY(-2px);
-}
-
-.social-btn svg {
-    width: 20px;
-    height: 20px;
-}
-
-/* RESPONSIVE */
-@media (max-width: 900px) {
-    .register-container {
-        flex-direction: column;
-        min-height: auto;
-    }
-    .register-left {
-        max-width: 100%;
-        padding: 3rem 2rem;
-    }
-    .feature-list {
-        margin-bottom: 0;
-        gap: 1.5rem;
-    }
-    .copyright {
-        padding-top: 2rem;
-    }
-    .register-right {
-        padding: 3rem 1.5rem;
-    }
-}
-
+/* RESPONSIVE SPECIFICS */
 @media (max-width: 600px) {
     .form-row {
         flex-direction: column;

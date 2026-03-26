@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
@@ -23,10 +23,14 @@ import CompanyVerification from './pages/CompanyVerification'
 import JobApproval from './pages/JobApproval'
 import Reports from './pages/Reports'
 
-function App() {
+const AppContent = () => {
+  const location = useLocation();
+  const hideOnRoutes = ['/login', '/register'];
+  const shouldHide = hideOnRoutes.includes(location.pathname);
+
   return (
-    <Router>
-      <Navbar />
+    <>
+      {!shouldHide && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -51,12 +55,17 @@ function App() {
         <Route path="/admin/jobs" element={<JobApproval />} />
         <Route path="/admin/reports" element={<Reports />} />
       </Routes>
-      <Footer />
+      {!shouldHide && <Footer />}
+    </>
+  );
+};
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   )
 }
-
-
-
 
 export default App

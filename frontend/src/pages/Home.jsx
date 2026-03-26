@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { jobApi } from '../api';
 
 
@@ -17,6 +17,17 @@ const Home = () => {
         );
     });
 
+    const location = useLocation();
+    const [successMessage, setSuccessMessage] = useState(location.state?.message || '');
+
+    useEffect(() => {
+        if (location.state?.message) {
+            window.history.replaceState({}, document.title);
+            const timer = setTimeout(() => setSuccessMessage(''), 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [location]);
+
     useEffect(() => {
         jobApi.getJobs()
             .then(res => {
@@ -31,6 +42,13 @@ const Home = () => {
 
     return (
         <div className="fade-in" style={{ paddingBottom: '5rem' }}>
+            {successMessage && (
+                <div style={{ position: 'fixed', top: '100px', right: '20px', zIndex: 9999, backgroundColor: '#dcfce7', color: '#15803d', padding: '1rem 1.5rem', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', border: '1px solid #bbf7d0', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    {successMessage}
+                    <button onClick={() => setSuccessMessage('')} style={{ background: 'none', border: 'none', color: '#15803d', cursor: 'pointer', padding: 0, marginLeft: '10px', fontSize: '1.2rem' }}>&times;</button>
+                </div>
+            )}
             {/* Hero Section */}
             <header style={{ 
                 padding: '8rem 2rem 6rem', 

@@ -6,6 +6,8 @@ import './AdminDashboard.css';
 const SkillManagement = () => {
     const [skills, setSkills] = useState([]);
     const [newSkill, setNewSkill] = useState('');
+    const [editingId, setEditingId] = useState(null);
+    const [editingName, setEditingName] = useState('');
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
@@ -30,7 +32,7 @@ const SkillManagement = () => {
 
     const handleAdd = async (e) => {
         e.preventDefault();
-        if (!newSkill) return;
+        if (!newSkill.trim()) return;
         try {
             await adminApi.addSkill(newSkill);
             setNewSkill('');
@@ -50,6 +52,18 @@ const SkillManagement = () => {
         }
     };
 
+    const handleUpdate = async (id) => {
+        if (!editingName.trim()) return;
+        try {
+            await adminApi.updateSkill(id, editingName);
+            setEditingId(null);
+            setEditingName('');
+            loadSkills();
+        } catch (err) {
+            alert('Cập nhật thất bại!');
+        }
+    };
+
     const handleLogout = () => {
         localStorage.removeItem('user');
         navigate('/login');
@@ -59,13 +73,11 @@ const SkillManagement = () => {
 
     return (
         <div className="admin-layout">
-            {/* SIDEBAR */}
+            {/* SIDEBAR GIỮ NGUYÊN */}
             <aside className="admin-sidebar" style={{ background: '#f8f9fa', display: 'flex', flexDirection: 'column' }}>
                 <div className="sidebar-brand">
                     <div className="brand-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
                     </div>
                     <div className="brand-text-container">
                         <span className="brand-title">ScholarBridge</span>
@@ -94,17 +106,9 @@ const SkillManagement = () => {
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
                         Quản lý ngành nghề
                     </div>
-                    <Link to="/admin/reports" className="nav-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
-                        Báo cáo
-                    </Link>
                 </nav>
 
                 <div className="sidebar-bottom" style={{ padding: '0 1.5rem 1.5rem', marginTop: '1rem' }}>
-                    <Link to="/admin/settings" className="nav-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                        Cài đặt hệ thống
-                    </Link>
                     <button onClick={handleLogout} className="nav-item danger" style={{ background: 'transparent', border: 'none', width: '100%', textAlign: 'left', fontFamily: 'inherit', color: '#dc2626' }}>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
                         Đăng xuất
@@ -114,20 +118,13 @@ const SkillManagement = () => {
 
             {/* MAIN CONTENT */}
             <main className="admin-main">
-                {/* HEADER */}
+                {/* HEADER TRÊN CÙNG GIỮ NGUYÊN */}
                 <header className="admin-header" style={{ background: '#fff', borderBottom: '1px solid #eef0f4' }}>
                     <div className="header-search">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                         <input type="text" placeholder="Tìm kiếm ngành nghề..." style={{ fontSize: '0.9rem' }}/>
                     </div>
-                    
                     <div className="header-actions">
-                        <div className="action-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-                        </div>
-                        <div className="action-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                        </div>
                         <div className="user-profile">
                             <div className="user-info">
                                 <span className="user-name">Admin ScholarBridge</span>
@@ -140,89 +137,156 @@ const SkillManagement = () => {
 
                 <div className="admin-content" style={{ padding: '2.5rem', background: '#f8f9fc', overflowY: 'auto' }}>
                     
-                    <div className="page-header" style={{ marginBottom: '2.5rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                        <h1 style={{ fontSize: '2rem', fontWeight: '700', color: '#111827', margin: 0 }}>Quản lý Ngành nghề</h1>
-                        <p style={{ color: '#4b5563', fontSize: '1rem', margin: '0.5rem 0 0', maxWidth: '600px', lineHeight: 1.5 }}>
-                            Thêm mới hoặc loại bỏ các ngành nghề, kỹ năng trong hệ thống để người dùng lựa chọn thuận tiện.
-                        </p>
+                    {/* TIÊU ĐỀ TRANG */}
+                    <div className="page-header" style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div>
+                            <h1 style={{ fontSize: '1.8rem', fontWeight: '700', color: '#111827', margin: 0 }}>Quản lý ngành nghề</h1>
+                            <p style={{ color: '#6b7280', fontSize: '0.95rem', margin: '0.5rem 0 0', maxWidth: '600px' }}>
+                                Kiểm soát và quản trị danh sách ngành nghề toàn diện.
+                            </p>
+                        </div>
                     </div>
 
-                    <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #eef0f4', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', padding: '2rem', marginBottom: '2rem' }}>
-                        <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#111827', margin: '0 0 1.5rem 0' }}>Thêm ngành nghề mới</h3>
+                    {/* FORM THÊM MỚI (Giữ nguyên logic của bạn nhưng gọn gàng hơn) */}
+                    <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #f1f5f9', padding: '1.5rem', marginBottom: '2rem' }}>
                         <form onSubmit={handleAdd} style={{ display: 'flex', gap: '1rem' }}>
-                            <div style={{ flex: 1, position: 'relative' }}>
-                                <div style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#9ca3af' }}>
-                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                                </div>
-                                <input 
-                                    type="text" 
-                                    placeholder="Nhập tên ngành nghề (ví dụ: Công nghệ thông tin, Thiết kế...)" 
-                                    style={{ width: '100%', padding: '1rem 1rem 1rem 3rem', background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#111827', fontSize: '1rem', outline: 'none' }}
-                                    value={newSkill}
-                                    onChange={(e) => setNewSkill(e.target.value)}
-                                />
-                            </div>
-                            <button type="submit" style={{ background: '#0d5cda', color: '#fff', border: 'none', padding: '0 2rem', borderRadius: '8px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 6px rgba(13,92,218,0.2)' }}>
-                                Lưu thay đổi
+                            <input 
+                                type="text" 
+                                placeholder="Nhập tên ngành nghề mới (ví dụ: Công nghệ thông tin...)" 
+                                style={{ flex: 1, padding: '0.75rem 1rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#0f172a', fontSize: '0.95rem', outline: 'none' }}
+                                value={newSkill}
+                                onChange={(e) => setNewSkill(e.target.value)}
+                            />
+                            <button type="submit" style={{ background: '#1d4ed8', color: '#fff', border: 'none', padding: '0 1.5rem', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                + Thêm mới
                             </button>
                         </form>
                     </div>
 
-                    <div style={{ background: '#fff', borderRadius: '16px', border: '1px solid #eef0f4', boxShadow: '0 4px 6px rgba(0,0,0,0.02)', padding: '2rem' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#111827', margin: 0 }}>Danh sách ngành nghề hiện có</h3>
-                            <span style={{ background: '#e0ebff', color: '#0d5cda', padding: '0.3rem 0.8rem', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700 }}>Tổng cộng: {skills.length}</span>
-                        </div>
+                    {/* DANH SÁCH NGÀNH NGHỀ - CLONE 100% STYLE TỪ ẢNH QUẢN LÝ NGƯỜI DÙNG */}
+                    <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #f1f5f9', overflow: 'hidden', marginBottom: '2rem' }}>
                         
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1rem' }}>
-                            {skills.map(skill => (
+                        {/* Tiêu đề bảng */}
+                        <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid #f1f5f9' }}>
+                            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>Danh sách ngành nghề</h3>
+                        </div>
+
+                        {/* Header của bảng */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', padding: '1rem 2rem', borderBottom: '1px solid #f1f5f9', color: '#64748b', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                            <div>NGÀNH NGHỀ</div>
+                            <div style={{ textAlign: 'center' }}>TRẠNG THÁI</div>
+                            <div style={{ textAlign: 'right' }}>THAO TÁC</div>
+                        </div>
+
+                        {/* Nội dung bảng */}
+                        <div>
+                            {skills.map((skill, index) => (
                                 <div key={skill.id} style={{ 
-                                    padding: '1.2rem', 
-                                    borderRadius: '10px', 
-                                    background: '#f8f9fa',
-                                    border: '1px solid #eef0f4',
-                                    display: 'flex', 
-                                    justifyContent: 'space-between', 
+                                    display: 'grid', 
+                                    gridTemplateColumns: '2fr 1fr 1fr', 
+                                    padding: '1.25rem 2rem', 
+                                    borderBottom: index === skills.length - 1 ? 'none' : '1px solid #f1f5f9', 
                                     alignItems: 'center',
-                                    transition: 'all 0.2s ease',
-                                    cursor: 'default'
+                                    transition: 'background 0.2s ease'
                                 }}
-                                onMouseOver={e => { e.currentTarget.style.borderColor = '#c7d2fe'; e.currentTarget.style.background = '#eef2ff'; }}
-                                onMouseOut={e => { e.currentTarget.style.borderColor = '#eef0f4'; e.currentTarget.style.background = '#f8f9fa'; }}
+                                onMouseOver={e => e.currentTarget.style.background = '#f8fafc'}
+                                onMouseOut={e => e.currentTarget.style.background = 'transparent'}
                                 >
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                                        <div style={{ color: '#0d5cda' }}>
-                                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
-                                        </div>
-                                        <span style={{ fontWeight: 600, color: '#374151', fontSize: '0.95rem' }}>{skill.name}</span>
+                                    
+                                    {/* CỘT 1: Tên Ngành nghề & ID */}
+                                    <div>
+                                        {editingId === skill.id ? (
+                                            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                                <input 
+                                                    value={editingName} 
+                                                    onChange={(e) => setEditingName(e.target.value)}
+                                                    autoFocus
+                                                    style={{ padding: '0.4rem 0.6rem', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.9rem', outline: 'none', width: '80%' }}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <div style={{ fontWeight: 700, color: '#0f172a', fontSize: '0.95rem' }}>{skill.name}</div>
+                                                <div style={{ color: '#94a3b8', fontSize: '0.8rem', marginTop: '0.2rem' }}>ID: #{skill.id}</div>
+                                            </>
+                                        )}
                                     </div>
-                                    <button 
-                                        onClick={() => handleDelete(skill.id)} 
-                                        style={{ 
-                                            background: 'transparent', 
-                                            color: '#ef4444', 
-                                            border: 'none',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            cursor: 'pointer',
-                                            padding: '0.4rem',
-                                            borderRadius: '6px'
-                                        }}
-                                        title="Xóa ngành nghề"
-                                        onMouseOver={(e) => { e.currentTarget.style.background = '#fee2e2'; }}
-                                        onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; }}
-                                    >
-                                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                                    </button>
+
+                                    {/* CỘT 2: Trạng thái (Badge giống hệt ảnh) */}
+                                    <div style={{ textAlign: 'center' }}>
+                                        <span style={{ 
+                                            display: 'inline-flex', 
+                                            alignItems: 'center', 
+                                            gap: '0.35rem', 
+                                            background: '#dcfce7', 
+                                            color: '#166534', 
+                                            padding: '0.3rem 0.8rem', 
+                                            borderRadius: '9999px', 
+                                            fontSize: '0.75rem', 
+                                            fontWeight: 700 
+                                        }}>
+                                            <span style={{ width: '6px', height: '6px', background: '#16a34a', borderRadius: '50%' }}></span>
+                                            Hoạt động
+                                        </span>
+                                    </div>
+
+                                    {/* CỘT 3: Thao tác (Nút viền giống ảnh) */}
+                                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
+                                        {editingId === skill.id ? (
+                                            <>
+                                                <button onClick={() => handleUpdate(skill.id)} style={{ border: '1px solid #22c55e', color: '#16a34a', background: 'transparent', padding: '0.35rem 1rem', borderRadius: '6px', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}>Lưu</button>
+                                                <button onClick={() => setEditingId(null)} style={{ border: '1px solid #94a3b8', color: '#64748b', background: 'transparent', padding: '0.35rem 1rem', borderRadius: '6px', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}>Hủy</button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <button 
+                                                    onClick={() => { setEditingId(skill.id); setEditingName(skill.name); }} 
+                                                    style={{ border: '1px solid #cbd5e1', color: '#1d4ed8', background: 'transparent', padding: '0.35rem 1.2rem', borderRadius: '6px', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}
+                                                >
+                                                    Sửa
+                                                </button>
+                                                <button 
+                                                    onClick={() => handleDelete(skill.id)} 
+                                                    style={{ border: '1px solid #fca5a5', color: '#ef4444', background: 'transparent', padding: '0.35rem 1.2rem', borderRadius: '6px', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}
+                                                >
+                                                    Xóa
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
+
                                 </div>
                             ))}
                         </div>
+
                         {skills.length === 0 && (
-                            <div style={{ textAlign: 'center', padding: '3rem', color: '#9ca3af', fontStyle: 'italic', background: '#f9fafb', borderRadius: '10px', border: '1px dashed #e5e7eb' }}>
-                                Chưa có chuyên mục ngành nghề nào trong hệ thống.
+                            <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8', fontStyle: 'italic' }}>
+                                Chưa có ngành nghề nào trong hệ thống.
                             </div>
                         )}
+                    </div>
+
+                    {/* THỐNG KÊ PHÍA DƯỚI */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
+                        <div style={{ background: '#fff', padding: '1.5rem', borderRadius: '12px', border: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                            <div style={{ width: '48px', height: '48px', background: '#eff6ff', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#1d4ed8' }}>
+                                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                            </div>
+                            <div>
+                                <div style={{ color: '#64748b', fontSize: '0.85rem', fontWeight: 600, textTransform: 'uppercase' }}>Tổng ngành nghề</div>
+                                <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0f172a' }}>{skills.length}</div>
+                            </div>
+                        </div>
+
+                        <div style={{ background: '#fff', padding: '1.5rem', borderRadius: '12px', border: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                            <div style={{ width: '48px', height: '48px', background: '#f0fdf4', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#16a34a' }}>
+                                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            </div>
+                            <div>
+                                <div style={{ color: '#64748b', fontSize: '0.85rem', fontWeight: 600, textTransform: 'uppercase' }}>Đang hoạt động</div>
+                                <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0f172a' }}>{skills.length}</div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>

@@ -1,10 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { companyApi } from '../api';
 
 const CompanyDashboard = () => {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const location = useLocation();
+    const [successMessage, setSuccessMessage] = useState(location.state?.message || '');
+
+    useEffect(() => {
+        if (location.state?.message) {
+            window.history.replaceState({}, document.title);
+            const timer = setTimeout(() => setSuccessMessage(''), 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [location]);
 
     useEffect(() => {
         companyApi.getDashboard()
@@ -43,6 +54,13 @@ const CompanyDashboard = () => {
 
     return (
         <div className="fade-in" style={{ padding: '3rem 2rem 6rem' }}>
+            {successMessage && (
+                <div style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 9999, backgroundColor: '#dcfce7', color: '#15803d', padding: '1rem 1.5rem', borderRadius: '12px', boxShadow: '14px 14px 28px rgba(0,0,0,0.25), 10px 10px 10px rgba(0,0,0,0.22)', border: '1px solid #bbf7d0', display: 'flex', alignItems: 'center', gap: '10px', animation: 'fadeIn 0.3s' }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    {successMessage}
+                    <button onClick={() => setSuccessMessage('')} style={{ background: 'none', border: 'none', color: '#15803d', cursor: 'pointer', padding: 0, marginLeft: '10px', fontSize: '1.2rem' }}>&times;</button>
+                </div>
+            )}
             <div className="container">
                 <header style={{ marginBottom: '4rem' }}>
                     <h1 style={{ fontSize: '3rem', fontWeight: '800', marginBottom: '0.8rem', letterSpacing: '-0.02em' }}>

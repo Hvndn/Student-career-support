@@ -1,17 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { adminApi } from '../api';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
+    const location = useLocation();
     const navigate = useNavigate();
+    const [successMessage, setSuccessMessage] = useState(location.state?.message || '');
+
+    useEffect(() => {
+        // Clear message from location state after initial load
+        if (location.state?.message) {
+            window.history.replaceState({}, document.title);
+            // Hide message after 5 seconds
+            const timer = setTimeout(() => setSuccessMessage(''), 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [location]);
 
     useEffect(() => {
         // We set padding-top back to 0 because index.css might interfere, though we hid Navbar.
         document.body.style.paddingTop = '0';
-        
+
         adminApi.getStats()
             .then(res => {
                 setStats(res.data.data);
@@ -28,7 +40,7 @@ const AdminDashboard = () => {
                 });
                 setLoading(false);
             });
-            
+
         return () => {
             document.body.style.paddingTop = '';
         };
@@ -48,7 +60,7 @@ const AdminDashboard = () => {
                 <div className="sidebar-brand">
                     <div className="brand-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+                            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
                         </svg>
                     </div>
                     <div className="brand-text-container">
@@ -106,13 +118,20 @@ const AdminDashboard = () => {
 
             {/* MAIN CONTENT */}
             <main className="admin-main">
+                {successMessage && (
+                    <div style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 9999, backgroundColor: '#dcfce7', color: '#15803d', padding: '1rem 1.5rem', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', border: '1px solid #bbf7d0', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                        {successMessage}
+                        <button onClick={() => setSuccessMessage('')} style={{ background: 'none', border: 'none', color: '#15803d', cursor: 'pointer', padding: 0, marginLeft: '10px', fontSize: '1.2rem' }}>&times;</button>
+                    </div>
+                )}
                 {/* HEADER */}
                 <header className="admin-header">
                     <div className="header-search">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                         <input type="text" placeholder="Tìm kiếm ứng dụng, công ty..." />
                     </div>
-                    
+
                     <div className="header-actions">
                         <div className="action-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
@@ -226,7 +245,7 @@ const AdminDashboard = () => {
                                 </div>
                                 <div className="panel-action">30 ngày qua</div>
                             </div>
-                            
+
                             <div className="chart-container">
                                 {[35, 45, 30, 52, 38, 55, 40, 60].map((val, idx) => (
                                     <div key={idx} className={`chart-bar ${idx === 7 ? 'active' : ''}`} style={{ height: `${val}%` }}></div>
@@ -256,7 +275,7 @@ const AdminDashboard = () => {
                                         <p>12 yêu cầu đang chờ</p>
                                     </div>
                                 </div>
-                                
+
                                 <div className="action-card">
                                     <div className="action-icon-wrapper" style={{ background: '#fef2f2', color: '#dc2626' }}>
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
@@ -287,7 +306,7 @@ const AdminDashboard = () => {
                                 </div>
                                 <div className="panel-action transparent">Xem tất cả nhật ký</div>
                             </div>
-                            
+
                             <div className="log-list">
                                 <div className="log-item">
                                     <div className="log-avatar">G</div>
@@ -326,11 +345,11 @@ const AdminDashboard = () => {
                                     <p>Lưu lượng truy cập theo khu vực</p>
                                 </div>
                             </div>
-                            
+
                             <div className="globe-img-wrapper">
                                 <div className="dummy-globe"></div>
                             </div>
-                            
+
                             <div className="region-stats">
                                 <div className="region-stat">
                                     <div className="region-name">Bắc Mỹ</div>

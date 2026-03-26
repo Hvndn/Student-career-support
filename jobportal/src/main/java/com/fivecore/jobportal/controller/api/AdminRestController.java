@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-
 /**
  * REST API Controller cho Quản trị viên.
  */
@@ -34,7 +33,8 @@ public class AdminRestController {
      */
     @GetMapping("/users")
     public ResponseEntity<ApiResponse<java.util.List<com.fivecore.jobportal.entity.User>>> getAllUsers() {
-        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách người dùng thành công", adminService.getAllUsers()));
+        return ResponseEntity
+                .ok(ApiResponse.success("Lấy danh sách người dùng thành công", adminService.getAllUsers()));
     }
 
     /**
@@ -58,8 +58,8 @@ public class AdminRestController {
      * API Thêm kỹ năng mới.
      */
     @PostMapping("/skills")
-    public ResponseEntity<ApiResponse<Object>> createSkill(@RequestParam("name") String name, 
-                                                           @RequestParam(value = "category", defaultValue = "General") String category) {
+    public ResponseEntity<ApiResponse<Object>> createSkill(@RequestParam("name") String name,
+            @RequestParam(value = "category", defaultValue = "General") String category) {
         skillService.createNewSkill(name, category);
         return ResponseEntity.ok(ApiResponse.success("Thêm kỹ năng thành công", null));
     }
@@ -82,7 +82,7 @@ public class AdminRestController {
         com.fivecore.jobportal.entity.User user = adminService.getAllUsers().stream()
                 .filter(u -> u.getId().equals(id))
                 .findFirst().orElse(null);
-        
+
         if (user != null) {
             boolean currentLocked = !user.isActive();
             adminService.toggleUserLock(id, !currentLocked);
@@ -91,4 +91,3 @@ public class AdminRestController {
         return ResponseEntity.badRequest().body(ApiResponse.error("Không tìm thấy người dùng", "NOT_FOUND"));
     }
 }
-

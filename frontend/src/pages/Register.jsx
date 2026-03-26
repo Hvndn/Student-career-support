@@ -35,19 +35,21 @@ const Register = () => {
             const { confirmPassword, ...registerData } = formData;
             const res = await authApi.register(registerData);
             if (res.data.status === 'success') {
-                navigate('/login');
+                navigate('/login', { state: { message: 'Đăng ký thành công! Vui lòng đăng nhập.' } });
             } else {
-                setError(res.data.message);
+                setError(res.data.message || 'Đăng ký thất bại. Vui lòng thử lại.');
             }
         } catch (err) {
-            setError('Đăng ký thất bại. Email có thể đã tồn tại.');
+            console.error('Registration error:', err);
+            const serverMessage = err.response?.data?.message;
+            setError(serverMessage || 'Đăng ký thất bại. Email có thể đã tồn tại hoặc hệ thống gặp sự cố.');
         }
     };
 
     return (
-        <div className="register-container">
+        <div className="auth-container">
             {/* Left Panel */}
-            <div className="register-left">
+            <div className="auth-left">
                 <h1 className="brand-title">Five core</h1>
                 <p className="brand-desc">
                     Nơi tri thức gặp gỡ cơ hội. Khởi đầu hành trình nghề nghiệp của bạn cùng mạng lưới chuyên gia hàng đầu.
@@ -85,8 +87,8 @@ const Register = () => {
             </div>
 
             {/* Right Panel */}
-            <div className="register-right">
-                <div className="register-form-box">
+            <div className="auth-right">
+                <div className="auth-form-box">
                     <div className="form-header">
                         <h2>Tạo tài khoản mới</h2>
                         <p>Chọn vai trò của bạn và bắt đầu hành trình ngay hôm nay.</p>
@@ -193,8 +195,8 @@ const Register = () => {
                             </svg>
                         </button>
 
-                        <div className="login-prompt">
-                            Đã có tài khoản? <Link to="/login" className="login-link">Đăng nhập</Link>
+                        <div className="auth-prompt">
+                            Đã có tài khoản? <Link to="/login" className="auth-link">Đăng nhập</Link>
                         </div>
 
                         <div className="divider">HOẶC ĐĂNG KÝ BẰNG</div>
