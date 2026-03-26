@@ -37,6 +37,7 @@ public class StudentProfileResponse {
     private List<ProjectDto> projects;
     private List<LanguageDto> languages;
     private List<InterestDto> interests;
+    private List<ActivityDto> activities;
 
     @Data
     @Builder
@@ -77,6 +78,8 @@ public class StudentProfileResponse {
         private String description;
         private String repositoryUrl;
         private String demoUrl;
+        private String techStack;
+        private String role;
     }
 
     @Data
@@ -93,5 +96,17 @@ public class StudentProfileResponse {
     public static class InterestDto {
         private Integer id;
         private String name;
+    }
+
+    @Data
+    @Builder
+    public static class ActivityDto {
+        private Integer id;
+        private String name;
+        private String organization;
+        private String role;
+        private String startDate;
+        private String endDate;
+        private String description;
     }
 }

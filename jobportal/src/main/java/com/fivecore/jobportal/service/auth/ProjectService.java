@@ -35,6 +35,7 @@ public class ProjectService {
      */
     @Transactional
     public Project addProject(Integer studentId, Project projectData) {
+        if (studentId == null) throw new IllegalArgumentException("Student ID cannot be null");
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
         
@@ -48,6 +49,26 @@ public class ProjectService {
         Project savedProject = projectRepository.save(projectData);
         log.info("Đã thêm dự án mới: {} cho sinh viên ID: {}", savedProject.getName(), studentId);
         return savedProject;
+    }
+
+    @Transactional
+    public Project updateProject(Integer id, Integer studentId, Project projectData) {
+        Project existing = projectRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy dự án"));
+        
+        if (!existing.getStudent().getId().equals(studentId)) {
+            throw new RuntimeException("Bạn không có quyền sửa dự án này");
+        }
+
+        existing.setName(projectData.getName());
+        existing.setDescription(projectData.getDescription());
+        existing.setTechStack(projectData.getTechStack());
+        existing.setRole(projectData.getRole());
+        existing.setRepositoryUrl(projectData.getRepositoryUrl());
+        existing.setDemoUrl(projectData.getDemoUrl());
+
+        log.info("Đã cập nhật dự án ID: {}", id);
+        return projectRepository.save(existing);
     }
 
     /**

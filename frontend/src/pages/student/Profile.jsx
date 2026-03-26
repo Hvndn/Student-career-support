@@ -21,6 +21,8 @@ const QUILL_MODULES = {
 const BLANK_EDU = { schoolName: '', major: '', startDate: '', endDate: '', description: '' };
 const BLANK_EXP = { companyName: '', jobTitle: '', startDate: '', endDate: '', description: '' };
 const BLANK_LANG = { languageName: '', proficiency: 'Intermediate', certificate: '' };
+const BLANK_PROJECT = { name: '', techStack: '', role: '', repositoryUrl: '', demoUrl: '', description: '' };
+const BLANK_ACTIVITY = { name: '', organization: '', role: '', startDate: '', endDate: '', description: '' };
 
 const Profile = () => {
     const [profile, setProfile] = useState(null);
@@ -51,6 +53,12 @@ const Profile = () => {
 
     const [showInterestForm, setShowInterestForm] = useState(false);
     const [interestName, setInterestName] = useState('');
+
+    const [showProjectForm, setShowProjectForm] = useState(false);
+    const [projectForm, setProjectForm] = useState(BLANK_PROJECT);
+
+    const [showActivityForm, setShowActivityForm] = useState(false);
+    const [activityForm, setActivityForm] = useState(BLANK_ACTIVITY);
 
     useEffect(() => {
         studentApi.getProfile()
@@ -233,6 +241,71 @@ const Profile = () => {
         } catch { flash('❌ Lỗi khi xóa.'); }
     };
 
+    const saveProject = async () => {
+        if (!projectForm.name) return flash('⚠️ Nhập tên dự án');
+        setSaving(true);
+        try {
+            if (projectForm.id) {
+                await studentApi.updateProject(projectForm.id, projectForm);
+                flash('✅ Cập nhật dự án thành công!');
+            } else {
+                await studentApi.addProject(projectForm);
+                flash('✅ Thêm dự án thành công!');
+            }
+            await reload();
+            setShowProjectForm(false);
+            setProjectForm(BLANK_PROJECT);
+        } catch { flash('❌ Lỗi khi lưu dự án.'); }
+        setSaving(false);
+    };
+
+    const openProjectEdit = (proj) => {
+        setProjectForm({ ...proj });
+        setShowProjectForm(true);
+    };
+
+    const deleteProject = async (id) => {
+        if (!window.confirm('Xóa dự án này?')) return;
+        try {
+            await studentApi.deleteProject(id);
+            await reload();
+            flash('✅ Đã xóa dự án.');
+        } catch { flash('❌ Lỗi khi xóa dự án.'); }
+    };
+
+    /* ---- Activity Handlers ---- */
+    const openActivityEdit = (act) => {
+        setActivityForm({ ...act });
+        setShowActivityForm(true);
+    };
+
+    const saveActivity = async () => {
+        if (!activityForm.name) return flash('⚠️ Vui lòng nhập tên hoạt động.');
+        setSaving(true);
+        try {
+            if (activityForm.id) {
+                await studentApi.updateActivity(activityForm.id, activityForm);
+                flash('✅ Cập nhật hoạt động thành công!');
+            } else {
+                await studentApi.addActivity(activityForm);
+                flash('✅ Thêm hoạt động thành công!');
+            }
+            await reload();
+            setShowActivityForm(false);
+            setActivityForm(BLANK_ACTIVITY);
+        } catch { flash('❌ Lỗi khi lưu hoạt động.'); }
+        setSaving(false);
+    };
+
+    const deleteActivity = async (id) => {
+        if (!window.confirm('Bạn có chắc muốn xóa hoạt động này?')) return;
+        try {
+            await studentApi.deleteActivity(id);
+            await reload();
+            flash('✅ Đã xóa hoạt động.');
+        } catch { flash('❌ Lỗi khi xóa hoạt động.'); }
+    };
+
     const handleDownloadCV = () => {
         const element = document.getElementById('cv-template');
         const opt = {
@@ -388,6 +461,98 @@ const Profile = () => {
                                 {profile.experiences?.length === 0 && <p style={{ color: '#94a3b8', fontSize: '14px' }}>Chưa có kinh nghiệm làm việc.</p>}
                             </div>
                         </section>
+
+                        {/* Projects */}
+                        <section className="pf-card">
+                            <div className="pf-section-title">
+                                <h2>Dự án cá nhân</h2>
+                                <button className="pf-add-btn" onClick={() => setShowProjectForm(true)}>
+                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add_circle</span> Thêm mới
+                                </button>
+                            </div>
+                            <div className="pf-timeline">
+                                {profile.projects?.map(proj => (
+                                    <div key={proj.id} className="pf-item" style={{ position: 'relative', marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px dashed #e2e8f0' }}>
+                                        <div className="pf-item-icon" style={{ background: '#f0f9ff', color: '#0369a1' }}>
+                                            <span className="material-symbols-outlined">rocket_launch</span>
+                                        </div>
+                                        <div className="pf-item-content">
+                                            <h4 style={{ color: '#0369a1' }}>{proj.name}</h4>
+                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.25rem' }}>
+                                                {proj.role && <span style={{ fontSize: '12px', background: '#e0f2fe', color: '#0369a1', padding: '2px 8px', borderRadius: '4px' }}>Vai trò: {proj.role}</span>}
+                                                {proj.techStack && <span style={{ fontSize: '12px', background: '#f1f5f9', color: '#475569', padding: '2px 8px', borderRadius: '4px' }}>Tech: {proj.techStack}</span>}
+                                            </div>
+                                            <div 
+                                                className="pf-project-desc" 
+                                                style={{ fontSize: '14px', color: '#475569', marginTop: '0.5rem', lineHeight: '1.6' }}
+                                                dangerouslySetInnerHTML={{ __html: proj.description }}
+                                            />
+                                            <div style={{ display: 'flex', gap: '1rem', marginTop: '0.5rem' }}>
+                                                {proj.repositoryUrl && (
+                                                    <a href={proj.repositoryUrl} target="_blank" rel="noreferrer" style={{ fontSize: '12px', color: '#2563eb', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                        <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>code</span> GitHub
+                                                    </a>
+                                                )}
+                                                {proj.demoUrl && (
+                                                    <a href={proj.demoUrl} target="_blank" rel="noreferrer" style={{ fontSize: '12px', color: '#059669', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                        <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>visibility</span> Demo
+                                                    </a>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="pf-item-actions">
+                                            <button onClick={() => openProjectEdit(proj)} className="pf-edit-btn-small">
+                                                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>edit</span>
+                                            </button>
+                                            <button onClick={() => deleteProject(proj.id)} className="pf-delete-btn-small">
+                                                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                                {profile.projects?.length === 0 && <p style={{ color: '#94a3b8', fontSize: '14px' }}>Chưa cập nhật dự án cá nhân.</p>}
+                            </div>
+                        </section>
+
+                        {/* Activities */}
+                        <section className="pf-card" style={{ marginTop: '1.5rem' }}>
+                            <div className="pf-section-title">
+                                <h2>Hoạt động</h2>
+                                <button className="pf-add-btn" onClick={() => { setActivityForm(BLANK_ACTIVITY); setShowActivityForm(true); }}>
+                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
+                                </button>
+                            </div>
+                            <div className="pf-items-list">
+                                {profile.activities?.map(act => (
+                                    <div key={act.id} className="pf-item" style={{ position: 'relative', marginBottom: '1.5rem', paddingBottom: '1rem', borderBottom: '1px dashed #e2e8f0' }}>
+                                        <div className="pf-item-content">
+                                            <h3 style={{ fontSize: '16px', color: '#1e293b', fontWeight: 600 }}>{act.name}</h3>
+                                            <div style={{ display: 'flex', gap: '8px', marginTop: '4px', flexWrap: 'wrap' }}>
+                                                {act.organization && <span style={{ fontSize: '12px', background: '#f8fafc', color: '#475569', padding: '2px 8px', borderRadius: '4px' }}>{act.organization}</span>}
+                                                {act.role && <span style={{ fontSize: '12px', background: '#f0fdf4', color: '#16a34a', padding: '2px 8px', borderRadius: '4px' }}>Vai trò: {act.role}</span>}
+                                                <span style={{ fontSize: '12px', color: '#94a3b8' }}>
+                                                    {act.startDate} — {act.endDate || 'Hiện tại'}
+                                                </span>
+                                            </div>
+                                            <div 
+                                                className="pf-project-desc" 
+                                                style={{ fontSize: '14px', color: '#475569', marginTop: '0.5rem', lineHeight: '1.6' }}
+                                                dangerouslySetInnerHTML={{ __html: act.description }}
+                                            />
+                                        </div>
+                                        <div className="pf-item-actions">
+                                            <button onClick={() => openActivityEdit(act)} className="pf-edit-btn-small">
+                                                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>edit</span>
+                                            </button>
+                                            <button onClick={() => deleteActivity(act.id)} className="pf-delete-btn-small">
+                                                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                                {profile.activities?.length === 0 && <p style={{ color: '#94a3b8', fontSize: '14px' }}>Chưa cập nhật hoạt động ngoại khóa.</p>}
+                            </div>
+                        </section>
                     </div>
 
                     {/* Right Col */}
@@ -459,6 +624,7 @@ const Profile = () => {
                         </section>
 
                         {/* Interests */}
+                        {/* Interests */}
                         <section className="pf-card">
                             <div className="pf-section-title">
                                 <h2>Sở thích</h2>
@@ -473,21 +639,6 @@ const Profile = () => {
                                     </span>
                                 ))}
                                 {profile.interests?.length === 0 && <p style={{ color: '#94a3b8', fontSize: '14px' }}>Chưa cập nhật sở thích.</p>}
-                            </div>
-                        </section>
-
-                        {/* Links */}
-                        <section className="pf-card">
-                            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem' }}>Liên kết</h2>
-                            <div className="pf-col-right" style={{ gap: '0.75rem' }}>
-                                <a href="#" className="pf-link-item">
-                                    <span className="material-symbols-outlined">link</span>
-                                    <span style={{ fontSize: '14px' }}>linkedin.com/in/{profile.fullName?.toLowerCase().replace(/ /g, '')}</span>
-                                </a>
-                                <a href="#" className="pf-link-item">
-                                    <span className="material-symbols-outlined">code</span>
-                                    <span style={{ fontSize: '14px' }}>github.com/{profile.fullName?.toLowerCase().split(' ').pop()}</span>
-                                </a>
                             </div>
                         </section>
                     </div>
@@ -698,6 +849,106 @@ const Profile = () => {
                 </div>
             )}
 
+            {showProjectForm && (
+                <div className="pf-form-overlay">
+                    <div className="pf-form-container" style={{ maxWidth: '600px' }}>
+                        <div className="pf-form-header">
+                            <h3>{projectForm.id ? 'Chỉnh sửa dự án' : 'Thêm dự án mới'}</h3>
+                            <button onClick={() => { setShowProjectForm(false); setProjectForm(BLANK_PROJECT); }} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                            <div className="pf-field" style={{ gridColumn: 'span 2' }}>
+                                <label className="pf-label">Tên dự án</label>
+                                <input className="pf-input" placeholder="Vd: E-commerce Web App" value={projectForm.name} onChange={e => setProjectForm({ ...projectForm, name: e.target.value })} />
+                            </div>
+                            <div className="pf-field">
+                                <label className="pf-label">Công nghệ sử dụng</label>
+                                <input className="pf-input" placeholder="Vd: React, Node.js, MongoDB" value={projectForm.techStack} onChange={e => setProjectForm({ ...projectForm, techStack: e.target.value })} />
+                            </div>
+                            <div className="pf-field">
+                                <label className="pf-label">Vai trò</label>
+                                <input className="pf-input" placeholder="Vd: Frontend Developer" value={projectForm.role} onChange={e => setProjectForm({ ...projectForm, role: e.target.value })} />
+                            </div>
+                            <div className="pf-field">
+                                <label className="pf-label">Link GitHub (Source code)</label>
+                                <input className="pf-input" placeholder="https://github.com/..." value={projectForm.repositoryUrl} onChange={e => setProjectForm({ ...projectForm, repositoryUrl: e.target.value })} />
+                            </div>
+                            <div className="pf-field">
+                                <label className="pf-label">Link Demo / Live</label>
+                                <input className="pf-input" placeholder="https://..." value={projectForm.demoUrl} onChange={e => setProjectForm({ ...projectForm, demoUrl: e.target.value })} />
+                            </div>
+                            <div className="pf-field" style={{ gridColumn: 'span 2' }}>
+                                <label className="pf-label">Mô tả dự án (Hỗ trợ định dạng văn bản)</label>
+                                <div style={{ background: 'white' }}>
+                                    <ReactQuill 
+                                        theme="snow" 
+                                        value={projectForm.description} 
+                                        onChange={val => setProjectForm({ ...projectForm, description: val })}
+                                        modules={QUILL_MODULES}
+                                        placeholder="Mô tả ngắn gọn về dự án, các tính năng chính, giải pháp kỹ thuật..."
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <button className="pf-btn pf-btn-primary" style={{ width: '100%', marginTop: '1rem' }} onClick={saveProject} disabled={saving}>
+                            {saving ? 'Đang lưu...' : (projectForm.id ? 'Lưu thay đổi' : 'Thêm mới')}
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {showActivityForm && (
+                <div className="pf-form-overlay">
+                    <div className="pf-form-container" style={{ maxWidth: '700px' }}>
+                        <div className="pf-form-header">
+                            <h3>{activityForm.id ? 'Chỉnh sửa hoạt động' : 'Thêm hoạt động mới'}</h3>
+                            <button onClick={() => setShowActivityForm(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                            <div className="pf-field" style={{ gridColumn: 'span 2' }}>
+                                <label className="pf-label">Tên hoạt động</label>
+                                <input className="pf-input" placeholder="Vd: Tình nguyện mùa hè xanh" value={activityForm.name} onChange={e => setActivityForm({ ...activityForm, name: e.target.value })} />
+                            </div>
+                            <div className="pf-field">
+                                <label className="pf-label">Tổ chức</label>
+                                <input className="pf-input" placeholder="Vd: Hội sinh viên" value={activityForm.organization} onChange={e => setActivityForm({ ...activityForm, organization: e.target.value })} />
+                            </div>
+                            <div className="pf-field">
+                                <label className="pf-label">Vai trò</label>
+                                <input className="pf-input" placeholder="Vd: Thành viên / Nhóm trưởng" value={activityForm.role} onChange={e => setActivityForm({ ...activityForm, role: e.target.value })} />
+                            </div>
+                            <div className="pf-field">
+                                <label className="pf-label">Ngày bắt đầu</label>
+                                <input type="date" className="pf-input" value={activityForm.startDate} onChange={e => setActivityForm({ ...activityForm, startDate: e.target.value })} />
+                            </div>
+                            <div className="pf-field">
+                                <label className="pf-label">Ngày kết thúc</label>
+                                <input type="date" className="pf-input" value={activityForm.endDate} onChange={e => setActivityForm({ ...activityForm, endDate: e.target.value })} />
+                            </div>
+                            <div className="pf-field" style={{ gridColumn: 'span 2' }}>
+                                <label className="pf-label">Mô tả hoạt động (Hỗ trợ định dạng văn bản)</label>
+                                <div style={{ background: 'white' }}>
+                                    <ReactQuill 
+                                        theme="snow" 
+                                        value={activityForm.description} 
+                                        onChange={val => setActivityForm({ ...activityForm, description: val })}
+                                        modules={QUILL_MODULES}
+                                        placeholder="Mô tả kỹ hơn về đóng góp và thành tích của bạn..."
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <button className="pf-btn pf-btn-primary" style={{ width: '100%', marginTop: '1rem' }} onClick={saveActivity} disabled={saving}>
+                            {saving ? 'Đang lưu...' : (activityForm.id ? 'Lưu thay đổi' : 'Thêm mới')}
+                        </button>
+                    </div>
+                </div>
+            )}
+
             <footer className="pf-footer">
                 <p>© 2024 CareerHub SaaS - Nền tảng quản lý hồ sơ sinh viên hiện đại.</p>
             </footer>
@@ -710,6 +961,8 @@ const Profile = () => {
                     skills={profile.skills || []} 
                     languages={profile.languages || []}
                     interests={profile.interests || []}
+                    projects={profile.projects || []}
+                    activities={profile.activities || []}
                 />
             </div>
         </div>

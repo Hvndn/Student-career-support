@@ -422,22 +422,12 @@
   gap: 0.25rem;
 }
 
-.pf-delete-btn-abs {
+.pf-item-actions {
   position: absolute;
   right: 0;
   top: 0;
-  background: white;
-  border: 1px solid #fee2e2;
-  color: #ef4444;
-  cursor: pointer;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  transition: all 0.2s;
+  gap: 0.5rem;
   z-index: 10;
 }
 
@@ -445,6 +435,25 @@
   background: #fef2f2;
   transform: scale(1.1);
 }
+
+.pf-edit-btn-small, .pf-delete-btn-small {
+  background: white;
+  border: 1px solid #e2e8f0;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pf-edit-btn-small { color: #2563eb; border-color: #dbeafe; }
+.pf-edit-btn-small:hover { background: #eff6ff; }
+
+.pf-delete-btn-small { color: #ef4444; border-color: #fee2e2; }
+.pf-delete-btn-small:hover { background: #fef2f2; }
 
 .pf-col-right {
   display: flex;

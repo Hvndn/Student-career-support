@@ -34,6 +34,12 @@ public class Project {
     @Column(name = "demo_url", length = 255)
     private String demoUrl;
 
+    @Column(name = "tech_stack", length = 255)
+    private String techStack;
+
+    @Column(length = 255)
+    private String role;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProjectImage> images;
 }

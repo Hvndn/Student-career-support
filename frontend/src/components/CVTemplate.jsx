@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CVTemplate = ({ profile, experiences, educations, skills, languages }) => {
+const CVTemplate = ({ profile, experiences, educations, skills, languages, interests, projects, activities }) => {
   return (
     <div id="cv-template" style={{
       width: '210mm',
@@ -132,6 +132,60 @@ const CVTemplate = ({ profile, experiences, educations, skills, languages }) => 
               )) : <p style={{ color: '#94a3b8', fontStyle: 'italic' }}>Chưa có thông tin học vấn.</p>}
             </div>
           </section>
+
+          {/* Projects */}
+          <section style={{ marginTop: '2.5rem' }}>
+            <h3 style={{ fontSize: '14pt', fontWeight: 800, color: '#0f172a', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ width: '4px', height: '18px', background: '#2563eb' }}></span>
+              DỰ ÁN CÁ NHÂN
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              {projects && projects.length > 0 ? projects.map((proj, i) => (
+                <div key={i} style={{ position: 'relative', paddingLeft: '1.5rem', borderLeft: '1px solid #e2e8f0' }}>
+                  <div style={{ position: 'absolute', left: '-5px', top: '5px', width: '9px', height: '9px', background: '#2563eb', borderRadius: '50%' }}></div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <h4 style={{ margin: 0, fontSize: '12pt', fontWeight: 700, color: '#1e293b' }}>{proj.name}</h4>
+                    {proj.repositoryUrl && <span style={{ fontSize: '8.5pt', color: '#2563eb' }}>Source code: {proj.repositoryUrl.replace('https://', '')}</span>}
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.2rem' }}>
+                    {proj.role && <span style={{ fontSize: '9pt', fontWeight: 600, color: '#0f172a' }}>Vai trò: {proj.role}</span>}
+                    {proj.techStack && <span style={{ fontSize: '9pt', color: '#64748b' }}>• {proj.techStack}</span>}
+                  </div>
+                  <div 
+                    style={{ margin: '0.5rem 0 0', fontSize: '10pt', color: '#475569', lineHeight: '1.5' }}
+                    dangerouslySetInnerHTML={{ __html: proj.description }}
+                  />
+                </div>
+              )) : <p style={{ color: '#94a3b8', fontStyle: 'italic' }}>Chưa cập nhật dự án cá nhân.</p>}
+            </div>
+          </section>
+
+          {/* Activities */}
+          <section style={{ marginTop: '2.5rem' }}>
+            <h3 style={{ fontSize: '14pt', fontWeight: 800, color: '#0f172a', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ width: '4px', height: '18px', background: '#2563eb' }}></span>
+              HOẠT ĐỘNG NGOẠI KHÓA
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              {activities && activities.length > 0 ? activities.map((act, i) => (
+                <div key={i} style={{ position: 'relative', paddingLeft: '1.5rem', borderLeft: '1px solid #e2e8f0' }}>
+                  <div style={{ position: 'absolute', left: '-5px', top: '5px', width: '9px', height: '9px', background: '#2563eb', borderRadius: '50%' }}></div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <h4 style={{ margin: 0, fontSize: '12pt', fontWeight: 700, color: '#1e293b' }}>{act.name}</h4>
+                    <span style={{ fontSize: '9pt', color: '#64748b', fontWeight: 600 }}>{act.startDate} - {act.endDate || 'Hiện tại'}</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.2rem' }}>
+                    {act.organization && <span style={{ fontSize: '9pt', fontWeight: 600, color: '#0f172a' }}>{act.organization}</span>}
+                    {act.role && <span style={{ fontSize: '9pt', color: '#64748b' }}>• {act.role}</span>}
+                  </div>
+                  <div 
+                    style={{ margin: '0.5rem 0 0', fontSize: '10pt', color: '#475569', lineHeight: '1.5' }}
+                    dangerouslySetInnerHTML={{ __html: act.description }}
+                  />
+                </div>
+              )) : <p style={{ color: '#94a3b8', fontStyle: 'italic' }}>Chưa cập nhật hoạt động ngoại khóa.</p>}
+            </div>
+          </section>
         </div>
 
         {/* Right Column (Sidebar) */}
@@ -170,13 +224,16 @@ const CVTemplate = ({ profile, experiences, educations, skills, languages }) => 
             </div>
           </section>
 
-          {/* Projects Link/Meta */}
+          {/* Interests */}
           <section>
-            <h3 style={{ fontSize: '12pt', fontWeight: 800, color: '#0f172a', marginBottom: '1.2rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Chứng chỉ</h3>
-            <ul style={{ paddingLeft: '1.2rem', margin: 0, fontSize: '9.5pt', color: '#475569', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-              <li>Google Data Analytics Professional Certificate</li>
-              <li>AWS Certified Cloud Practitioner</li>
-            </ul>
+            <h3 style={{ fontSize: '12pt', fontWeight: 800, color: '#0f172a', marginBottom: '1.2rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Sở thích</h3>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+              {interests && interests.length > 0 ? interests.map((item, i) => (
+                <span key={i} style={{ fontSize: '9pt', background: '#f1f5f9', padding: '4px 10px', borderRadius: '4px', color: '#475569' }}>
+                  # {item.name}
+                </span>
+              )) : <p style={{ fontSize: '9pt', color: '#94a3b8', fontStyle: 'italic' }}>Chưa cập nhật sở thích.</p>}
+            </div>
           </section>
 
         </div>

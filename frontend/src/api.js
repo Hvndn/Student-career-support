@@ -44,7 +44,15 @@ export const studentApi = {
     updateLanguage: (id, data) => api.put(`/student/profile/languages/${id}`, data),
     deleteLanguage: (id) => api.delete(`/student/profile/languages/${id}`),
     addInterest: (data) => api.post('/student/profile/interests', data),
-    deleteInterest: (id) => api.delete(`/student/profile/interests/${id}`)
+    deleteInterest: (id) => api.delete(`/student/profile/interests/${id}`),
+    // Projects
+    addProject: (data) => api.post('/student/profile/projects', data),
+    updateProject: (id, data) => api.put(`/student/profile/projects/${id}`, data),
+    deleteProject: (id) => api.delete(`/student/profile/projects/${id}`),
+
+    addActivity: (data) => api.post('/student/profile/activities', data),
+    updateActivity: (id, data) => api.put(`/student/profile/activities/${id}`, data),
+    deleteActivity: (id) => api.delete(`/student/profile/activities/${id}`),
 };
 
 

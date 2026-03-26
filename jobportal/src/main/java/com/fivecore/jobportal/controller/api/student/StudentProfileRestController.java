@@ -3,6 +3,7 @@ package com.fivecore.jobportal.controller.api.student;
 import com.fivecore.jobportal.dto.*;
 import com.fivecore.jobportal.entity.*;
 import com.fivecore.jobportal.repository.UserRepository;
+import com.fivecore.jobportal.service.auth.ActivityService;
 import com.fivecore.jobportal.service.auth.InterestService;
 import com.fivecore.jobportal.service.auth.LanguageService;
 import com.fivecore.jobportal.service.auth.ProfileService;
@@ -39,6 +40,7 @@ public class StudentProfileRestController {
     private final UserRepository userRepository;
     private final LanguageService languageService;
     private final InterestService interestService;
+    private final ActivityService activityService;
 
     private Integer getCurrentStudentId(Authentication authentication) {
         return userRepository.findByEmail(authentication.getName())
@@ -100,6 +102,8 @@ public class StudentProfileRestController {
                         .description(p.getDescription())
                         .repositoryUrl(p.getRepositoryUrl())
                         .demoUrl(p.getDemoUrl())
+                        .techStack(p.getTechStack())
+                        .role(p.getRole())
                         .build()).collect(Collectors.toList()))
                 .languages(student.getLanguages() == null ? List.of() : student.getLanguages().stream().map((Language l) -> StudentProfileResponse.LanguageDto.builder()
                         .id(l.getId())
@@ -110,6 +114,15 @@ public class StudentProfileRestController {
                 .interests(student.getInterests() == null ? List.of() : student.getInterests().stream().map((Interest i) -> StudentProfileResponse.InterestDto.builder()
                         .id(i.getId())
                         .name(i.getName())
+                        .build()).collect(Collectors.toList()))
+                .activities(student.getActivities() == null ? List.of() : student.getActivities().stream().map((Activity a) -> StudentProfileResponse.ActivityDto.builder()
+                        .id(a.getId())
+                        .name(a.getName())
+                        .organization(a.getOrganization())
+                        .role(a.getRole())
+                        .startDate(a.getStartDate() != null ? a.getStartDate().toString() : null)
+                        .endDate(a.getEndDate() != null ? a.getEndDate().toString() : null)
+                        .description(a.getDescription())
                         .build()).collect(Collectors.toList()))
                 .build();
 
@@ -316,5 +329,77 @@ public class StudentProfileRestController {
         Integer studentId = getCurrentStudentId(authentication);
         interestService.deleteInterest(id, studentId);
         return ResponseEntity.ok(ApiResponse.success("Xóa sở thích thành công", null));
+    }
+
+    /* ---- Projects ---- */
+    @PostMapping("/projects")
+    public ResponseEntity<ApiResponse<Object>> addProject(@RequestBody ProjectRequest request, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        projectService.addProject(studentId, Project.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .repositoryUrl(request.getRepositoryUrl())
+                .demoUrl(request.getDemoUrl())
+                .techStack(request.getTechStack())
+                .role(request.getRole())
+                .build());
+        return ResponseEntity.ok(ApiResponse.success("Thêm dự án thành công", null));
+    }
+
+    @PutMapping("/projects/{id}")
+    public ResponseEntity<ApiResponse<Object>> updateProject(@PathVariable Integer id, @RequestBody ProjectRequest request, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        projectService.updateProject(id, studentId, Project.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .repositoryUrl(request.getRepositoryUrl())
+                .demoUrl(request.getDemoUrl())
+                .techStack(request.getTechStack())
+                .role(request.getRole())
+                .build());
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật dự án thành công", null));
+    }
+
+    @DeleteMapping("/projects/{id}")
+    public ResponseEntity<ApiResponse<Object>> deleteProject(@PathVariable Integer id, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        projectService.deleteProject(id, studentId);
+        return ResponseEntity.ok(ApiResponse.success("Xóa dự án thành công", null));
+    }
+
+    /* ---- Activities ---- */
+    @PostMapping("/activities")
+    public ResponseEntity<ApiResponse<Object>> addActivity(@RequestBody ActivityRequest request, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        activityService.addActivity(studentId, Activity.builder()
+                .name(request.getName())
+                .organization(request.getOrganization())
+                .role(request.getRole())
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
+                .description(request.getDescription())
+                .build());
+        return ResponseEntity.ok(ApiResponse.success("Thêm hoạt động thành công", null));
+    }
+
+    @PutMapping("/activities/{id}")
+    public ResponseEntity<ApiResponse<Object>> updateActivity(@PathVariable Integer id, @RequestBody ActivityRequest request, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        activityService.updateActivity(id, studentId, Activity.builder()
+                .name(request.getName())
+                .organization(request.getOrganization())
+                .role(request.getRole())
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
+                .description(request.getDescription())
+                .build());
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật hoạt động thành công", null));
+    }
+
+    @DeleteMapping("/activities/{id}")
+    public ResponseEntity<ApiResponse<Object>> deleteActivity(@PathVariable Integer id, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        activityService.deleteActivity(id, studentId);
+        return ResponseEntity.ok(ApiResponse.success("Xóa hoạt động thành công", null));
     }
 }
