@@ -1,0 +1,184 @@
+.pjs-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f6f6f6;
+  font-family: 'Outfit', sans-serif;
+}
+
+.pjs-main {
+  flex: 1;
+  transition: margin-left 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-left: 70px;
+  position: relative;
+}
+
+body.sidebar-pinned .pjs-main {
+  margin-left: 270px;
+}
+
+.pjs-content-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 80px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pjs-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.pjs-title {
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.pjs-guide-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #5a30b9;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.pjs-cards-container {
+  display: flex;
+  gap: 1.5rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.pjs-card {
+  flex: 1;
+  max-width: 388px;
+  background: #ffffff;
+  border: 1px solid #e7e7e8;
+  border-radius: 24px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.pjs-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border-color: #5a30b9;
+}
+
+.pjs-card-icon-box {
+  width: 80px;
+  height: 80px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.ai-bg {
+  background-color: #f6f6f6;
+  color: #5a30b9;
+}
+
+.jd-bg {
+  background-color: #f6f6f6;
+  color: #64748b;
+}
+
+.pjs-card-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.pjs-card-tag {
+  background-color: #fff7ed;
+  color: #f97316;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 100px;
+  align-self: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.pjs-card-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.75rem 0;
+}
+
+.pjs-card-desc {
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.5;
+  margin: 0 0 2rem 0;
+  flex: 1;
+}
+
+.pjs-btn {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  font-family: inherit;
+}
+
+.pjs-btn-primary {
+  background-color: #5a30b9;
+  color: #ffffff;
+}
+
+.pjs-btn-primary:hover {
+  background-color: #451da0;
+}
+
+.pjs-btn-secondary {
+  background-color: rgba(195, 168, 255, 0.16);
+  color: #451da0;
+}
+
+.pjs-btn-secondary:hover {
+  background-color: rgba(195, 168, 255, 0.25);
+}
+
+.pjs-manual-text {
+  margin-top: 2rem;
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.pjs-manual-text a {
+  color: #5a30b9;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.pjs-manual-text a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 800px) {
+  .pjs-cards-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .pjs-card {
+    max-width: 100%;
+  }
+}

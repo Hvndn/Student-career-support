@@ -1,0 +1,236 @@
+body {
+  background-color: #fff;
+}
+
+.company-sidebar {
+  width: 70px;
+  min-height: 100vh;
+  background: #fff;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 1000; /* Sidebar Icons always on top */
+  transition: all 0.2s ease;
+}
+
+/* Nav */
+.cs-nav {
+  flex: 1;
+  padding: 1.5rem 0.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.cs-toggle {
+  background: #fff;
+  border: none;
+  height: 70px; /* Match topbar exactly */
+  width: 100%;
+  cursor: pointer;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.cs-toggle:hover {
+  color: #2563eb;
+}
+
+.cs-nav-group {
+  position: relative;
+}
+
+.cs-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.8rem 0;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #64748b;
+  font-size: 0.62rem;
+  font-weight: 700;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
+}
+
+.cs-nav-item:hover, .cs-nav-item.active {
+  background: #f1f5f9;
+  color: #2563eb;
+}
+
+.cs-nav-item.active .cs-icon {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.cs-icon {
+  font-size: 1.3rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  transition: all 0.2s;
+}
+
+.cs-nav-label {
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+
+/* Sub Menu - Base (Flyout on hover) */
+.cs-sub-menu {
+  position: absolute;
+  top: 0;
+  left: 100%; 
+  width: 0; /* Changed from fixed 200px to animate width */
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+  padding: 0.5rem 0;
+  margin-left: 0;
+  z-index: 900;
+  background: #fff;
+}
+
+.cs-sub-menu-inner {
+  min-width: 200px;
+  white-space: nowrap;
+}
+
+/* Explicitly block hover flyouts when sidebar is transitioning/blocking */
+.company-sidebar.block-hover .cs-sub-menu {
+  display: none !important;
+}
+
+/* Hover flyout rule */
+.cs-nav-group:hover .cs-sub-menu {
+  width: 200px;
+  opacity: 1;
+  visibility: visible;
+  padding: 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0 12px 12px 0;
+  box-shadow: 10px 10px 30px rgba(0,0,0,0.08);
+  z-index: 1001; 
+}
+
+/* Pinned Sub Menu - Layered Layout (Image 2 style) */
+.company-sidebar.pinned .cs-nav-group:has(.cs-nav-item.active) .cs-sub-menu {
+  width: 200px;
+  opacity: 1;
+  visibility: visible;
+  position: fixed; 
+  top: 70px; 
+  left: 70px; 
+  height: calc(100vh - 70px);
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); /* Only animate width for unroll effect */
+  padding: 1.5rem 0.5rem;
+  margin-left: 0;
+  border-radius: 0;
+  border-top: none;
+  border-bottom: none;
+  border-left: none;
+  border-right: 1px solid #e2e8f0;
+  box-shadow: 5px 0 15px rgba(0,0,0,0.03);
+  z-index: 450; 
+  background: #fff;
+}
+
+.cs-sub-header {
+  padding: 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #1e293b;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 1rem;
+}
+
+.cs-sub-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.8rem 1rem;
+  color: #64748b;
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+}
+
+.cs-sub-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  transition: color 0.2s;
+}
+
+.cs-sub-item:hover, .cs-sub-item.active {
+  background: #f8fafc;
+  color: #2563eb;
+}
+
+.cs-sub-item.active {
+  font-weight: 700;
+}
+
+.cs-sub-item:hover .cs-sub-icon, .cs-sub-item.active .cs-sub-icon {
+  color: #2563eb;
+}
+
+/* Global Content Shifts */
+.cd-main {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-left: 70px;
+  padding-top: 70px; /* Offset for fixed topbar height */
+}
+
+body.sidebar-pinned .cd-main {
+  margin-left: 270px;
+}
+
+/* Bottom Actions */
+.cs-bottom {
+  padding: 1.5rem 0;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.cs-logout, .cs-bottom-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.2s;
+}
+
+.cs-logout:hover {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+.cs-bottom-link:hover {
+  background: #f1f5f9;
+  color: #2563eb;
+}
