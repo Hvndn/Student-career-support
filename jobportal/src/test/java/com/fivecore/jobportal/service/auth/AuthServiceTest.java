@@ -28,4 +28,24 @@ class AuthServiceTest {
     @InjectMocks
     private AuthService authService;
 
+    @Test
+    @DisplayName("checkEmailExists should return true if email exists")
+    void testCheckEmailExists_Exists() {
+        when(userRepository.existsByEmail("test@example.com")).thenReturn(true);
+        assertTrue(authService.checkEmailExists("test@example.com"));
+    }
+
+    @Test
+    @DisplayName("checkEmailExists should return false if email does not exist")
+    void testCheckEmailExists_NotExists() {
+        when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
+        assertFalse(authService.checkEmailExists("test@example.com"));
+    }
+
+    @Test
+    @DisplayName("sendResetPasswordEmail should execute without errors")
+    void testSendResetPasswordEmail() {
+        assertDoesNotThrow(() -> authService.sendResetPasswordEmail("test@example.com"));
+    }
+
 }
