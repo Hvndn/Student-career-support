@@ -4,8 +4,11 @@ import com.fivecore.jobportal.dto.JobRequest;
 import com.fivecore.jobportal.dto.JobResponse;
 import com.fivecore.jobportal.entity.Company;
 import com.fivecore.jobportal.entity.Job;
+import com.fivecore.jobportal.entity.User;
 import com.fivecore.jobportal.repository.CompanyRepository;
 import com.fivecore.jobportal.repository.JobRepository;
+import com.fivecore.jobportal.repository.UserRepository;
+import com.fivecore.jobportal.service.common.StorageService;
 import com.fivecore.jobportal.service.student.JobSearchService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +30,8 @@ class RecruitmentTests {
 
     @Mock private CompanyRepository companyRepository;
     @Mock private JobRepository jobRepository;
+    @Mock private UserRepository userRepository;
+    @Mock private StorageService storageService;
 
     @InjectMocks private CompanyService companyService;
     @InjectMocks private JobSearchService jobSearchService;
@@ -74,5 +79,34 @@ class RecruitmentTests {
 
         assertFalse(results.isEmpty());
         assertEquals("Java Dev", results.get(0).getTitle());
+    }
+
+    @Test
+    @DisplayName("Lấy thông tin công ty theo email thành công")
+    void getCompanyByUserEmail_Success() {
+        Company company = Company.builder().name("Test Company").build();
+        User user = User.builder().email("hr@company.com").company(company).build();
+
+        when(userRepository.findByEmail("hr@company.com")).thenReturn(Optional.of(user));
+
+        Company result = companyService.getCompanyByUserEmail("hr@company.com");
+
+        assertNotNull(result);
+        assertEquals("Test Company", result.getName());
+    }
+
+    @Test
+    @DisplayName("Cập nhật thông tin công ty thành công")
+    void updateCompanyInfo_Success() {
+        Company existingCompany = Company.builder().id(1).name("Old Name").build();
+        Company updatedData = Company.builder().name("New Name").description("Description").build();
+
+        when(companyRepository.findById(1)).thenReturn(Optional.of(existingCompany));
+
+        companyService.updateCompanyInfo(1, updatedData, null);
+
+        verify(companyRepository).save(existingCompany);
+        assertEquals("New Name", existingCompany.getName());
+        assertEquals("Description", existingCompany.getDescription());
     }
 }
