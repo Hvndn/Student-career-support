@@ -168,4 +168,153 @@ class StudentProfileRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("success"));
     }
+
+    @Test
+    void testDeleteSkill_Success() throws Exception {
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(mockUser));
+
+        mockMvc.perform(delete("/api/student/profile/skills/5")
+                .principal(authentication))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("success"));
+
+        verify(skillService).removeSkillFromStudent(1, 5);
+    }
+
+    @Test
+    void testAddLanguage_Success() throws Exception {
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(mockUser));
+        LanguageRequest request = new LanguageRequest();
+        request.setLanguageName("Tiếng Anh");
+        request.setProficiency("Intermediate");
+
+        mockMvc.perform(post("/api/student/profile/languages")
+                .principal(authentication)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("success"));
+    }
+
+    @Test
+    void testDeleteLanguage_Success() throws Exception {
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(mockUser));
+
+        mockMvc.perform(delete("/api/student/profile/languages/3")
+                .principal(authentication))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("success"));
+
+        verify(languageService).deleteLanguage(3, 1);
+    }
+
+    @Test
+    void testAddInterest_Success() throws Exception {
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(mockUser));
+        InterestRequest request = new InterestRequest();
+        request.setName("Du lịch");
+
+        mockMvc.perform(post("/api/student/profile/interests")
+                .principal(authentication)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("success"));
+    }
+
+    @Test
+    void testDeleteInterest_Success() throws Exception {
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(mockUser));
+
+        mockMvc.perform(delete("/api/student/profile/interests/2")
+                .principal(authentication))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("success"));
+
+        verify(interestService).deleteInterest(2, 1);
+    }
+
+    @Test
+    void testAddProject_Success() throws Exception {
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(mockUser));
+        ProjectRequest request = new ProjectRequest();
+        request.setName("My Portfolio Website");
+
+        mockMvc.perform(post("/api/student/profile/projects")
+                .principal(authentication)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("success"));
+    }
+
+    @Test
+    void testDeleteProject_Success() throws Exception {
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(mockUser));
+
+        mockMvc.perform(delete("/api/student/profile/projects/7")
+                .principal(authentication))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("success"));
+    }
+
+    @Test
+    void testAddCertification_Success() throws Exception {
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(mockUser));
+        CertificationRequest request = new CertificationRequest();
+        request.setName("AWS Certified");
+
+        mockMvc.perform(post("/api/student/profile/certifications")
+                .principal(authentication)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("success"));
+    }
+
+    @Test
+    void testDeleteCertification_Success() throws Exception {
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(mockUser));
+
+        mockMvc.perform(delete("/api/student/profile/certifications/4")
+                .principal(authentication))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("success"));
+    }
+
+    @Test
+    void testAddActivity_Success() throws Exception {
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(mockUser));
+        ActivityRequest request = new ActivityRequest();
+        request.setName("Mùa hè xanh 2024");
+
+        mockMvc.perform(post("/api/student/profile/activities")
+                .principal(authentication)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("success"));
+    }
+
+    @Test
+    void testDeleteActivity_Success() throws Exception {
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(mockUser));
+
+        mockMvc.perform(delete("/api/student/profile/activities/8")
+                .principal(authentication))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("success"));
+    }
+
+    @Test
+    void testUpdateAvatar_EmptyFile_ReturnsBadRequest() throws Exception {
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(mockUser));
+
+        mockMvc.perform(multipart("/api/student/profile/avatar")
+                .file("avatarFile", new byte[0])
+                .principal(authentication))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("error"));
+    }
 }
+
