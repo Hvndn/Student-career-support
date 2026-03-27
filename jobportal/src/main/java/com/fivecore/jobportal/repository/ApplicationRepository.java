@@ -13,4 +13,10 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     List<Application> findByJobIdOrderByAppliedAtDesc(Integer jobId);
     List<Application> findByJobCompanyIdOrderByAppliedAtDesc(Integer companyId);
     long countByJobCompanyId(Integer companyId);
+    long countByJobId(Integer jobId);
+    long countByJobCompanyIdAndStatus(Integer companyId, Application.ApplicationStatus status);
+    long countByJobCompanyIdAndAppliedAtAfter(Integer companyId, java.time.LocalDateTime appliedAt);
+    long countByJobIdAndAppliedAtAfter(Integer jobId, java.time.LocalDateTime appliedAt);
+    long countByJobIdAndStatus(Integer jobId, com.fivecore.jobportal.entity.Application.ApplicationStatus status);
+    boolean existsByJobCompanyIdAndStudentId(Integer companyId, Integer studentId);
 }

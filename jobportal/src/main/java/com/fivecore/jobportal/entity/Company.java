@@ -39,6 +39,15 @@ public class Company {
     @Column(length = 255)
     private String address;
 
+    @Column(length = 100)
+    private String industry;
+
+    @Column(name = "company_size", length = 50)
+    private String companySize;
+
+    @Column(name = "founding_year")
+    private Integer foundingYear;
+
     @Column(columnDefinition = "TEXT")
     private String description;
 

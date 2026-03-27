@@ -5,6 +5,8 @@ const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+
+
     const user = JSON.parse(localStorage.getItem('user'));
     const isHome = location.pathname === '/';
 
@@ -30,7 +32,7 @@ const Navbar = () => {
                 position: 'sticky',
                 top: 0,
                 zIndex: 1000,
-                fontFamily: "'Outfit', sans-serif",
+                fontFamily: "'Inter', sans-serif",
             }}>
                 <div style={{
                     maxWidth: '1100px',

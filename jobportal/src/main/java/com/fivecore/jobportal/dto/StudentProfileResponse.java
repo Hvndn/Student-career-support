@@ -30,7 +30,6 @@ public class StudentProfileResponse {
     private String phone;
     private String address;
     private String avatarUrl;
-    
     private List<SkillDto> skills;
     private List<EducationDto> educations;
     private List<ExperienceDto> experiences;

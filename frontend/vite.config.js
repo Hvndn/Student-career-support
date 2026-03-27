@@ -10,6 +10,9 @@ export default defineConfig({
     setupFiles: './src/setupTests.js',
     css: true,
   },
+  optimizeDeps: {
+    include: ['recharts']
+  },
   server: {
     proxy: {
       '/api': {

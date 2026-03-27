@@ -1,0 +1,338 @@
+/* ─── Company Candidates Page ─── */
+.candidates-page {
+  padding: 2.3rem 4rem;
+  max-width: 100%;
+  margin: 0;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.candidates-container {
+  display: block;
+  margin-top: 1rem;
+}
+
+/* ─── Candidates Submenu (Left Sidebar) ─── */
+.candidates-submenu {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.submenu-card {
+  border-radius: 16px;
+  padding: 1rem;
+  background: white;
+}
+
+.submenu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.submenu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.submenu-item i {
+  font-size: 1.2rem;
+}
+
+.submenu-item:hover {
+  background: #f8fafc;
+  color: #2563eb;
+}
+
+.submenu-item.active {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.badge-count {
+  margin-left: auto;
+  background: #f1f5f9;
+  color: #64748b;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.submenu-item.active .badge-count {
+  background: #2563eb;
+  color: white;
+}
+
+/* ─── Main Content Area ─── */
+.candidates-main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* Filter Panel */
+.filter-panel {
+  padding: 2rem;
+  border-radius: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  align-items: flex-end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-group label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input-wrapper i {
+  position: absolute;
+  left: 12px;
+  color: #94a3b8;
+}
+
+.filter-control {
+  width: 100%;
+  padding: 10px 12px;
+  padding-left: 36px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: #1e293b;
+  background: #f8fafc;
+  transition: all 0.2s;
+}
+
+.filter-control:focus {
+  outline: none;
+  border-color: #2563eb;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+select.filter-control {
+    padding-left: 12px;
+}
+
+/* Tabs */
+.status-tabs {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.5rem;
+  overflow-x: auto;
+}
+
+.tab-item {
+  padding: 10px 15px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #64748b;
+  cursor: pointer;
+  white-space: nowrap;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.tab-item:hover {
+  color: #1e293b;
+}
+
+.tab-item.active {
+  color: #2563eb;
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: #2563eb;
+  border-radius: 3px 3px 0 0;
+}
+
+/* Candidate Table/List */
+.candidates-list-card {
+  border-radius: 20px;
+  background: white;
+  overflow: hidden;
+}
+
+.candidates-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.candidates-table th {
+  background: #f8fafc;
+  padding: 1rem 1.5rem;
+  text-align: left;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.candidates-table td {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.candidates-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Candidate Info Cell */
+.candidate-info-cell {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.candidate-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: #f1f5f9;
+}
+
+.candidate-name-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.candidate-name {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 1rem;
+}
+
+.candidate-meta {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* Match Percentage Cell */
+.match-cell {
+  text-align: center;
+}
+
+.match-badge {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.match-high {
+  color: #059669;
+  background: #ecfdf5;
+}
+
+.match-med {
+  color: #d97706;
+  background: #fffbeb;
+}
+
+/* Job Title Cell */
+.job-title-cell {
+    max-width: 250px;
+}
+
+.job-link {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #334155;
+    text-decoration: none;
+}
+
+.job-link:hover {
+    color: #2563eb;
+}
+
+/* Status Pill */
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.status-pending { color: #6366f1; background: #eef2ff; }
+.status-review { color: #f59e0b; background: #fffbeb; }
+.status-suitable { color: #10b981; background: #ecfdf5; }
+.status-interview { color: #3b82f6; background: #eff6ff; }
+.status-offered { color: #f59e0b; background: #fff7ed; }
+.status-accepted { color: #059669; background: #f0fdf4; }
+.status-rejected { color: #ef4444; background: #fef2f2; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .candidates-container {
+    grid-template-columns: 1fr;
+  }
+  .candidates-submenu {
+      display: none;
+  }
+}
+
+/* ─── Candidate Table Tags ─── */
+.candidate-table-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    max-width: 200px;
+}
+
+.mini-tag-badge {
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+.candidates-table tr {
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.candidates-table tr:hover td {
+    background: #fcfdfe;
+}
