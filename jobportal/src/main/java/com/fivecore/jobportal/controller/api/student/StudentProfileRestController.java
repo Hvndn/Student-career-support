@@ -43,6 +43,7 @@ public class StudentProfileRestController {
     private final InterestService interestService;
     private final ActivityService activityService;
     private final CertificationService certificationService;
+    private final StudentProfileMapper studentProfileMapper;
 
     private Integer getCurrentStudentId(Authentication authentication) {
         return userRepository.findByEmail(authentication.getName())
@@ -58,83 +59,8 @@ public class StudentProfileRestController {
         }
 
         Student student = user.getStudent();
-        StudentProfileResponse response = StudentProfileResponse.builder()
-                .id(student.getId())
-                .fullName(user.getFullName())
-                .email(user.getEmail())
-                .studentCode(student.getStudentCode())
-                .university(student.getUniversity())
-                .major(student.getMajor())
-                .graduationYear(student.getGraduationYear())
-                .gpa(student.getGpa())
-                .totalCredits(student.getTotalCredits())
-                .earnedCredits(student.getEarnedCredits())
-                .classRank(student.getClassRank())
-                .academicYear(student.getAcademicYear())
-                .currentTerm(student.getCurrentTerm())
-                .bio(student.getBio())
-                .phone(student.getPhone())
-                .address(student.getAddress())
-                .avatarUrl(student.getAvatarUrl())
-                .skills(student.getSkills() == null ? List.of() : student.getSkills().stream().map((StudentSkill s) -> StudentProfileResponse.SkillDto.builder()
-                        .id(s.getSkill().getId())
-                        .name(s.getSkill().getName())
-                        .level(s.getLevel() == null ? null : s.getLevel().name())
-                        .build()).collect(Collectors.toList()))
-                .educations(student.getEducations() == null ? List.of() : student.getEducations().stream().map((Education e) -> StudentProfileResponse.EducationDto.builder()
-                        .id(e.getId())
-                        .schoolName(e.getSchoolName())
-                        .major(e.getMajor())
-                        .degree(e.getDegree())
-                        .startDate(e.getStartDate())
-                        .endDate(e.getEndDate())
-                        .description(e.getDescription())
-                        .build()).collect(Collectors.toList()))
-                .experiences(student.getExperiences() == null ? List.of() : student.getExperiences().stream().map((Experience exp) -> StudentProfileResponse.ExperienceDto.builder()
-                        .id(exp.getId())
-                        .companyName(exp.getCompanyName())
-                        .jobTitle(exp.getJobTitle())
-                        .startDate(exp.getStartDate())
-                        .endDate(exp.getEndDate())
-                        .description(exp.getDescription())
-                        .build()).collect(Collectors.toList()))
-                .projects(projectService.getProjectsByStudent(student.getId()).stream().map((Project p) -> StudentProfileResponse.ProjectDto.builder()
-                        .id(p.getId())
-                        .name(p.getName())
-                        .description(p.getDescription())
-                        .repositoryUrl(p.getRepositoryUrl())
-                        .demoUrl(p.getDemoUrl())
-                        .techStack(p.getTechStack())
-                        .role(p.getRole())
-                        .build()).collect(Collectors.toList()))
-                .languages(student.getLanguages() == null ? List.of() : student.getLanguages().stream().map((Language l) -> StudentProfileResponse.LanguageDto.builder()
-                        .id(l.getId())
-                        .languageName(l.getLanguageName())
-                        .proficiency(l.getProficiency())
-                        .certificate(l.getCertificate())
-                        .build()).collect(Collectors.toList()))
-                .interests(student.getInterests() == null ? List.of() : student.getInterests().stream().map((Interest i) -> StudentProfileResponse.InterestDto.builder()
-                        .id(i.getId())
-                        .name(i.getName())
-                        .build()).collect(Collectors.toList()))
-                .activities(student.getActivities() == null ? List.of() : student.getActivities().stream().map((Activity a) -> StudentProfileResponse.ActivityDto.builder()
-                        .id(a.getId())
-                        .name(a.getName())
-                        .organization(a.getOrganization())
-                        .role(a.getRole())
-                        .startDate(a.getStartDate() != null ? a.getStartDate().toString() : null)
-                        .endDate(a.getEndDate() != null ? a.getEndDate().toString() : null)
-                        .description(a.getDescription())
-                        .build()).collect(Collectors.toList()))
-                .certifications(student.getCertifications() == null ? List.of() : student.getCertifications().stream().map((Certification c) -> StudentProfileResponse.CertificationDto.builder()
-                        .id(c.getId())
-                        .name(c.getName())
-                        .issuer(c.getIssuer())
-                        .issueDate(c.getIssueDate() != null ? c.getIssueDate().toString() : null)
-                        .expirationDate(c.getExpirationDate() != null ? c.getExpirationDate().toString() : null)
-                        .certificateUrl(c.getCertificateUrl())
-                        .build()).collect(Collectors.toList()))
-                .build();
+        List<Project> projects = projectService.getProjectsByStudent(student.getId());
+        StudentProfileResponse response = studentProfileMapper.toResponse(user, student, projects);
 
         return ResponseEntity.ok(ApiResponse.success("Lấy hồ sơ thành công", response));
     }
@@ -282,12 +208,24 @@ public class StudentProfileRestController {
     public ResponseEntity<ApiResponse<String>> updateAvatar(@RequestParam("avatarFile") MultipartFile avatarFile,
                                                            Authentication authentication) {
         Integer studentId = getCurrentStudentId(authentication);
-        if (avatarFile != null && !avatarFile.isEmpty()) {
-            String avatarUrl = storageService.saveAvatar(avatarFile);
-            profileService.updateAvatar(studentId, avatarUrl);
-            return ResponseEntity.ok(ApiResponse.success("Cập nhật ảnh đại diện thành công", avatarUrl));
+        if (avatarFile == null || avatarFile.isEmpty()) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("Vui lòng chọn ảnh", "INVALID_FILE"));
         }
-        return ResponseEntity.badRequest().body(ApiResponse.error("Vui lòng chọn ảnh", "INVALID_FILE"));
+        
+        // Validate dung lượng ảnh (< 5MB)
+        if (avatarFile.getSize() > 5 * 1024 * 1024) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("Dung lượng ảnh không được vượt quá 5MB", "FILE_TOO_LARGE"));
+        }
+        
+        // Validate định dạng ảnh (ContentType)
+        String contentType = avatarFile.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("Chỉ chấp nhận file định dạng ảnh (JPG, PNG...)", "INVALID_FILE_TYPE"));
+        }
+
+        String avatarUrl = storageService.saveAvatar(avatarFile);
+        profileService.updateAvatar(studentId, avatarUrl);
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật ảnh đại diện thành công", avatarUrl));
     }
 
     @GetMapping("/export-pdf")

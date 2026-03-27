@@ -7,6 +7,10 @@ import html2pdf from 'html2pdf.js';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import '../../assets/css/Profile.css';
+import EducationSection from './profile-sections/EducationSection';
+import ExperienceSection from './profile-sections/ExperienceSection';
+import SkillSection from './profile-sections/SkillSection';
+import { EduModal, ExpModal, SkillModal, ProjectModal, ActivityModal, CertModal } from './profile-sections/ProfileModals';
 
 const QUILL_MODULES = {
     toolbar: [
@@ -441,63 +445,19 @@ const Profile = () => {
                 <div className="pf-main-grid">
                     {/* Left Col */}
                     <div className="pf-col-left">
-                        {/* Education */}
-                        <section className="pf-card">
-                            <div className="pf-section-title">
-                                <h2>Quản lý học vấn</h2>
-                                <button className="pf-add-btn" onClick={() => setShowEduForm(true)}>
-                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add_circle</span> Thêm mới
-                                </button>
-                            </div>
-                            <div className="pf-timeline">
-                                {profile.educations?.map(edu => (
-                                    <div key={edu.id} className="pf-item" style={{ position: 'relative' }}>
-                                        <div className="pf-item-icon">
-                                            <span className="material-symbols-outlined">account_balance</span>
-                                        </div>
-                                        <div className="pf-item-content">
-                                            <h4>{edu.schoolName}</h4>
-                                            <p>{edu.major}</p>
-                                            <p className="pf-date">{edu.startDate} - {edu.endDate || 'Hiện tại'}</p>
-                                        </div>
-                                        <button onClick={() => deleteEdu(edu.id)} className="pf-delete-btn-abs">
-                                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>delete</span>
-                                        </button>
-                                    </div>
-                                ))}
-                                {profile.educations?.length === 0 && <p style={{ color: '#94a3b8', fontSize: '14px' }}>Chưa có thông tin học vấn.</p>}
-                            </div>
-                        </section>
+                        {/* Education Section */}
+                        <EducationSection
+                            educations={profile.educations}
+                            onAdd={() => setShowEduForm(true)}
+                            onDelete={deleteEdu}
+                        />
 
-                        {/* Experience */}
-                        <section className="pf-card">
-                            <div className="pf-section-title">
-                                <h2>Kinh nghiệm làm việc</h2>
-                                <button className="pf-add-btn" onClick={() => setShowExpForm(true)}>
-                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add_circle</span> Thêm mới
-                                </button>
-                            </div>
-                            <div className="pf-timeline">
-                                {profile.experiences?.map((exp, idx) => (
-                                    <div key={exp.id} className="pf-timeline-item">
-                                        <div className={`pf-timeline-dot ${idx === 0 ? '' : 'pf-timeline-dot-gray'}`}></div>
-                                        <div className="pf-exp-header">
-                                            <div>
-                                                <h4>{exp.jobTitle}</h4>
-                                                <p style={{ fontWeight: 500, fontSize: '14px' }}>{exp.companyName}</p>
-                                            </div>
-                                            <span className="pf-exp-type">Full-time</span>
-                                        </div>
-                                        <p className="pf-date">{exp.startDate} - {exp.endDate || 'Hiện tại'}</p>
-                                        <p style={{ fontSize: '14px', color: '#475569', marginTop: '0.5rem' }}>{exp.description}</p>
-                                        <button onClick={() => deleteExp(exp.id)} className="pf-delete-btn-abs">
-                                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>delete</span>
-                                        </button>
-                                    </div>
-                                ))}
-                                {profile.experiences?.length === 0 && <p style={{ color: '#94a3b8', fontSize: '14px' }}>Chưa có kinh nghiệm làm việc.</p>}
-                            </div>
-                        </section>
+                        {/* Experience Section */}
+                        <ExperienceSection
+                            experiences={profile.experiences}
+                            onAdd={() => setShowExpForm(true)}
+                            onDelete={deleteExp}
+                        />
 
                         {/* Projects */}
                         <section className="pf-card">
@@ -610,23 +570,12 @@ const Profile = () => {
                             </div>
                         </section>
 
-                        {/* Skills */}
-                        <section className="pf-card">
-                            <div className="pf-section-title">
-                                <h2>Kỹ năng chuyên môn</h2>
-                                <button className="pf-add-btn" onClick={() => setShowSkillForm(true)}>
-                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
-                                </button>
-                            </div>
-                            <div className="pf-skills-list">
-                                {profile.skills?.map(skill => (
-                                    <span key={skill.id} className="pf-skill-tag" onClick={() => deleteSkill(skill.id)} style={{ cursor: 'pointer' }}>
-                                        {skill.name} • {skill.level}
-                                    </span>
-                                ))}
-                                {profile.skills?.length === 0 && <p style={{ color: '#94a3b8', fontSize: '14px' }}>Chưa có kỹ năng.</p>}
-                            </div>
-                        </section>
+                        {/* Skills Section */}
+                        <SkillSection
+                            skills={profile.skills}
+                            onAdd={() => setShowSkillForm(true)}
+                            onDelete={deleteSkill}
+                        />
 
                         {/* Certifications */}
                         <section className="pf-card" style={{ marginTop: '1.5rem' }}>
@@ -798,42 +747,13 @@ const Profile = () => {
                 </div>
             )}
 
-            {showEduForm && (
-                <div className="pf-form-overlay">
-                    <div className="pf-form-container">
-                        <div className="pf-form-header">
-                            <h3>Thêm học vấn</h3>
-                            <button onClick={() => setShowEduForm(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                                <span className="material-symbols-outlined">close</span>
-                            </button>
-                        </div>
-                        <div className="pf-field"><label className="pf-label">Trường</label><input className="pf-input" placeholder="Tên trường" value={eduForm.schoolName} onChange={e => setEduForm({ ...eduForm, schoolName: e.target.value })} /></div>
-                        <div className="pf-field"><label className="pf-label">Ngành</label><input className="pf-input" placeholder="Chuyên ngành" value={eduForm.major} onChange={e => setEduForm({ ...eduForm, major: e.target.value })} /></div>
-                        <div className="pf-field"><label className="pf-label">Bắt đầu</label><input className="pf-input" type="date" value={eduForm.startDate} onChange={e => setEduForm({ ...eduForm, startDate: e.target.value })} /></div>
-                        <div className="pf-field"><label className="pf-label">Kết thúc</label><input className="pf-input" type="date" value={eduForm.endDate} onChange={e => setEduForm({ ...eduForm, endDate: e.target.value })} /></div>
-                        <button className="pf-btn pf-btn-primary" style={{ width: '100%' }} onClick={saveEdu} disabled={saving}>Thêm mới</button>
-                    </div>
-                </div>
-            )}
-
-            {showExpForm && (
-                <div className="pf-form-overlay">
-                    <div className="pf-form-container">
-                        <div className="pf-form-header">
-                            <h3>Thêm kinh nghiệm</h3>
-                            <button onClick={() => setShowExpForm(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-                                <span className="material-symbols-outlined">close</span>
-                            </button>
-                        </div>
-                        <div className="pf-field"><label className="pf-label">Công ty</label><input className="pf-input" value={expForm.companyName} onChange={e => setExpForm({ ...expForm, companyName: e.target.value })} /></div>
-                        <div className="pf-field"><label className="pf-label">Vị trí</label><input className="pf-input" value={expForm.jobTitle} onChange={e => setExpForm({ ...expForm, jobTitle: e.target.value })} /></div>
-                        <div className="pf-field"><label className="pf-label">Bắt đầu</label><input className="pf-input" type="date" value={expForm.startDate} onChange={e => setExpForm({ ...expForm, startDate: e.target.value })} /></div>
-                        <div className="pf-field"><label className="pf-label">Kết thúc</label><input className="pf-input" type="date" value={expForm.endDate} onChange={e => setExpForm({ ...expForm, endDate: e.target.value })} /></div>
-                        <div className="pf-field"><label className="pf-label">Mô tả</label><textarea className="pf-input" rows={3} value={expForm.description} onChange={e => setExpForm({ ...expForm, description: e.target.value })} /></div>
-                        <button className="pf-btn pf-btn-primary" style={{ width: '100%' }} onClick={saveExp} disabled={saving}>Thêm mới</button>
-                    </div>
-                </div>
-            )}
+            {/* === Các Modal Form (đã tách sang ProfileModals.jsx) === */}
+            <EduModal show={showEduForm} form={eduForm} setForm={setEduForm} onSave={saveEdu} onClose={() => setShowEduForm(false)} saving={saving} />
+            <ExpModal show={showExpForm} form={expForm} setForm={setExpForm} onSave={saveExp} onClose={() => setShowExpForm(false)} saving={saving} />
+            <SkillModal show={showSkillForm} skillId={skillId} setSkillId={setSkillId} skillLevel={skillLevel} setSkillLevel={setSkillLevel} allSkills={allSkills} onSave={addSkill} onClose={() => setShowSkillForm(false)} saving={saving} />
+            <ProjectModal show={showProjectForm} form={projectForm} setForm={setProjectForm} onSave={saveProject} onClose={() => { setShowProjectForm(false); setProjectForm(BLANK_PROJECT); }} saving={saving} />
+            <ActivityModal show={showActivityForm} form={activityForm} setForm={setActivityForm} onSave={saveActivity} onClose={() => setShowActivityForm(false)} saving={saving} />
+            <CertModal show={showCertForm} form={certForm} setForm={setCertForm} onSave={saveCert} onClose={() => setShowCertForm(false)} saving={saving} />
 
             {showSkillForm && (
                 <div className="pf-form-overlay">
