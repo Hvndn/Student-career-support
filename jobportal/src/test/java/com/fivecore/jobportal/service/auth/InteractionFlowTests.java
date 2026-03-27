@@ -28,7 +28,6 @@ class InteractionFlowTests {
     @Mock private NotificationRepository notificationRepository;
     @Mock private InterviewRepository interviewRepository;
     @Mock private com.fivecore.jobportal.service.interaction.EmailService emailService;
-    @Mock private NotificationService notificationServiceMock;
 
     @InjectMocks private ApplicationService applicationService;
     @InjectMocks private InterviewService interviewService;
@@ -67,6 +66,32 @@ class InteractionFlowTests {
         User user = new User();
         ns.sendNotification(user, "Title", "Message");
         verify(notificationRepository).save(any(Notification.class));
+    }
+
+    @Test
+    @DisplayName("Lấy danh sách thông báo theo user id")
+    void getNotificationsByUser_Success() {
+        NotificationService ns = new NotificationService(notificationRepository);
+        Notification n1 = Notification.builder().title("Test 1").build();
+        when(notificationRepository.findByUserIdOrderByCreatedAtDesc(1)).thenReturn(java.util.List.of(n1));
+        
+        java.util.List<Notification> result = ns.getNotificationsByUser(1);
+        
+        assertFalse(result.isEmpty());
+        assertEquals("Test 1", result.get(0).getTitle());
+    }
+
+    @Test
+    @DisplayName("Đánh dấu thông báo đã đọc thành công")
+    void markAsRead_Success() {
+        NotificationService ns = new NotificationService(notificationRepository);
+        Notification notification = Notification.builder().id(1).isRead(false).build();
+        when(notificationRepository.findById(1)).thenReturn(Optional.of(notification));
+        
+        ns.markAsRead(1);
+        
+        assertTrue(notification.getIsRead());
+        verify(notificationRepository).save(notification);
     }
 
     @Test
