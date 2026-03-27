@@ -21,7 +21,7 @@ const sidebarStyle = {
   position: 'fixed',
   top: 0, left: 0,
   zIndex: 200,
-  fontFamily: "'Outfit', sans-serif",
+  fontFamily: "'Inter', sans-serif",
 };
 
 const StudentSidebar = () => {
@@ -87,7 +87,7 @@ const StudentSidebar = () => {
             padding: '0.6rem 0.85rem', borderRadius: '10px',
             background: 'none', border: 'none', cursor: 'pointer',
             color: '#ef4444', fontSize: '0.88rem',
-            fontFamily: "'Outfit', sans-serif", width: '100%', textAlign: 'left',
+            fontFamily: "'Inter', sans-serif", width: '100%', textAlign: 'left',
           }}
         >
           <span>🚪</span> Đăng xuất

@@ -42,6 +42,9 @@ public class Student {
     @Column(name = "avatar_url", length = 255)
     private String avatarUrl;
 
+    @Column(length = 100)
+    private String location;
+
     @Column(length = 20)
     private String phone;
 
@@ -74,4 +77,8 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private java.util.List<Experience> experiences = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private java.util.List<Project> projects = new java.util.ArrayList<>();
 }

@@ -45,7 +45,7 @@ const Notifications = () => {
     const unreadCount = notifications.filter(n => !n.isRead).length;
 
     if (loading) return (
-        <div className="min-h-screen flex items-center justify-center" style={{ background: '#f8fafd', fontFamily: "'Outfit', 'Inter', sans-serif" }}>
+        <div className="min-h-screen flex items-center justify-center" style={{ background: '#f8fafd', fontFamily: "'Inter', sans-serif" }}>
             <div className="text-center space-y-3">
                 <span className="material-symbols-outlined animate-spin text-4xl text-blue-600">refresh</span>
                 <p className="text-slate-500 text-sm">Đang tải thông báo...</p>
@@ -54,7 +54,7 @@ const Notifications = () => {
     );
 
     return (
-        <div className="min-h-screen" style={{ background: '#f8fafd', fontFamily: "'Outfit', 'Inter', sans-serif" }}>
+        <div className="min-h-screen" style={{ background: '#f8fafd', fontFamily: "'Inter', sans-serif" }}>
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                 {/* Breadcrumb */}
                 <nav className="flex items-center gap-2 text-xs font-medium text-slate-500 mb-4">

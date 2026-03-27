@@ -112,6 +112,64 @@ const CompanyJobManagement = () => {
     }
   };
 
+  const handleDuplicate = async (jobId) => {
+    try {
+      setLoading(true);
+      await companyApi.duplicateJob(jobId);
+      showToast('Đã sao chép tin tuyển dụng thành công!', 'success');
+      await fetchJobs();
+    } catch (err) {
+      console.error('Duplicate error:', err);
+      showToast('Không thể sao chép tin tuyển dụng.', 'error');
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (jobId) => {
+    if (window.confirm('Bạn có chắc chắn muốn xóa tin tuyển dụng này? Thao tác này không thể hoàn tác.')) {
+      try {
+        setLoading(true);
+        await companyApi.deleteJob(jobId);
+        showToast('Đã xóa tin tuyển dụng thành công!', 'success');
+        await fetchJobs();
+      } catch (err) {
+        console.error('Delete error:', err);
+        showToast('Không thể xóa tin tuyển dụng.', 'error');
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleExtend = async (jobId) => {
+    try {
+      setLoading(true);
+      const detailsRes = await companyApi.getJobDetailsForEdit(jobId);
+      if (detailsRes.data.status === 'success') {
+        const fullJob = detailsRes.data.data;
+        
+        // Extend deadline by 30 days from today or from current deadline if it's in the future
+        const now = new Date();
+        const currentDeadline = fullJob.deadline ? new Date(fullJob.deadline) : now;
+        const baseDate = currentDeadline > now ? currentDeadline : now;
+        
+        const newDeadline = new Date(baseDate);
+        newDeadline.setDate(newDeadline.getDate() + 30);
+        
+        await companyApi.updateJob(jobId, {
+          ...fullJob,
+          deadline: newDeadline.toISOString().split('T')[0]
+        });
+        
+        showToast('Đã gia hạn tin tuyển dụng thêm 30 ngày!', 'success');
+        await fetchJobs();
+      }
+    } catch (err) {
+      console.error('Extend error:', err);
+      showToast('Không thể gia hạn tin tuyển dụng.', 'error');
+      setLoading(false);
+    }
+  };
+
   const getStatusBadge = (status) => {
     switch (status?.toLowerCase()) {
       case 'open': return <span className="status-badge active">Đang hiển thị</span>;
@@ -511,20 +569,20 @@ const CompanyJobManagement = () => {
                                     •••
                                   </button>
                                   <div className={`cjm-dropdown-menu ${openDropdownId === job.id ? 'show' : ''}`}>
-                                    <button className="dropdown-item">
+                                    <button className="dropdown-item" onClick={() => handleDuplicate(job.id)}>
                                       <span className="item-icon">📋</span> Sao chép tin
                                     </button>
                                     <Link to={`/company/jobs/edit/${job.id}`} className="dropdown-item">
                                       <span className="item-icon">✏️</span> Sửa tin
                                     </Link>
-                                    <button className="dropdown-item">
+                                    <button className="dropdown-item" onClick={() => handleExtend(job.id)}>
                                       <span className="item-icon">📅</span> Gia hạn
                                     </button>
-                                    <button className="dropdown-item">
+                                    <Link to={`/jobs/${job.id}`} target="_blank" className="dropdown-item">
                                       <span className="item-icon">👁️</span> Xem lại
-                                    </button>
+                                    </Link>
                                     <div className="dropdown-divider"></div>
-                                    <button className="dropdown-item danger">
+                                    <button className="dropdown-item danger" onClick={() => handleDelete(job.id)}>
                                       <span className="item-icon">🗑️</span> Xóa tin đăng
                                     </button>
                                   </div>

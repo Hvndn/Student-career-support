@@ -16,6 +16,9 @@ public class ApplicationDto {
     private String jobTitle;
     private String companyName;
     private String studentName;
-    private String status; // pending, reviewed, accepted, rejected
+    private String studentAvatar;
+    private Integer matchPercentage; // Tỷ lệ phù hợp (0-100)
+    private Integer studentId;
+    private String status; // pending, review, suitable, interview, accepted, rejected
     private LocalDateTime appliedAt;
 }

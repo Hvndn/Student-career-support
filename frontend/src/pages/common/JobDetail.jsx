@@ -89,7 +89,7 @@ const JobDetail = () => {
     const descParagraphs = job.description ? job.description.split('\n').filter(p => p.trim()) : [];
 
     return (
-        <div className="min-h-screen" style={{ background: '#f8fafd', fontFamily: "'Outfit', 'Inter', sans-serif" }}>
+        <div className="min-h-screen" style={{ background: '#f8fafd', fontFamily: "'Inter', sans-serif" }}>
             <main className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Left Sidebar Navigation (Sticky) */}
                 <aside className="hidden lg:flex flex-col gap-2 py-8 px-4 h-screen sticky top-16 w-64 border-r bg-slate-50 border-slate-100 col-span-2">

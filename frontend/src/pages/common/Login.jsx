@@ -40,7 +40,7 @@ const Login = () => {
             background: '#f8fafd',
             display: 'flex',
             flexDirection: 'column',
-            fontFamily: "'Outfit', sans-serif",
+            fontFamily: "'Inter', sans-serif",
         }}>
             {/* Mini Navbar */}
             <nav style={{
@@ -135,7 +135,7 @@ const Login = () => {
                                     outline: 'none',
                                     background: '#fff',
                                     boxSizing: 'border-box',
-                                    fontFamily: "'Outfit', sans-serif",
+                                    fontFamily: "'Inter', sans-serif",
                                     transition: 'border-color 0.2s',
                                 }}
                                 onFocus={e => e.target.style.borderColor = '#2563eb'}
@@ -163,7 +163,7 @@ const Login = () => {
                                     outline: 'none',
                                     background: '#fff',
                                     boxSizing: 'border-box',
-                                    fontFamily: "'Outfit', sans-serif",
+                                    fontFamily: "'Inter', sans-serif",
                                     transition: 'border-color 0.2s',
                                 }}
                                 onFocus={e => e.target.style.borderColor = '#2563eb'}
@@ -181,7 +181,7 @@ const Login = () => {
                             fontSize: '1rem',
                             fontWeight: 700,
                             cursor: 'pointer',
-                            fontFamily: "'Outfit', sans-serif",
+                            fontFamily: "'Inter', sans-serif",
                             transition: 'background 0.2s',
                         }}
                             onMouseOver={e => e.currentTarget.style.background = '#1d4ed8'}

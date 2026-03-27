@@ -37,6 +37,8 @@ public class JobResponse {
     private String gender;
     private Integer viewsCount;
     private Integer applicantsCount;
+    private Integer applicantsTodayCount;
+    private Integer pendingApplicantsCount;
     private String contactName;
     private String contactEmail;
     private String contactPhone;

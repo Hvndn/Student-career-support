@@ -32,7 +32,7 @@ const Navbar = () => {
                 position: 'sticky',
                 top: 0,
                 zIndex: 1000,
-                fontFamily: "'Outfit', sans-serif",
+                fontFamily: "'Inter', sans-serif",
             }}>
                 <div style={{
                     maxWidth: '1100px',

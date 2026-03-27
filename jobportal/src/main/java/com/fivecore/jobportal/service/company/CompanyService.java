@@ -61,6 +61,9 @@ public class CompanyService {
         company.setAddress(updatedData.getAddress());
         company.setEmail(updatedData.getEmail());
         company.setPhone(updatedData.getPhone());
+        company.setIndustry(updatedData.getIndustry());
+        company.setCompanySize(updatedData.getCompanySize());
+        company.setFoundingYear(updatedData.getFoundingYear());
         
         if (logoFile != null && !logoFile.isEmpty()) {
             String logoUrl = storageService.saveFile(logoFile, "logos");
@@ -225,6 +228,78 @@ public class CompanyService {
     }
 
     /**
+     * Xóa tin tuyển dụng.
+     */
+    @Transactional
+    public void deleteJob(Integer companyId, Integer jobId) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy tin tuyển dụng"));
+        
+        if (!job.getCompany().getId().equals(companyId)) {
+            throw new RuntimeException("Bạn không có quyền xóa tin tuyển dụng này");
+        }
+        
+        jobRepository.delete(job);
+        log.info("Doanh nghiệp id {} đã xóa tin tuyển dụng id {}", companyId, jobId);
+    }
+
+    /**
+     * Sao chép tin tuyển dụng.
+     */
+    @Transactional
+    public JobResponse duplicateJob(Integer companyId, Integer jobId) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy tin tuyển dụng"));
+        
+        if (!job.getCompany().getId().equals(companyId)) {
+            throw new RuntimeException("Bạn không có quyền sao chép tin tuyển dụng này");
+        }
+
+        Job duplicate = Job.builder()
+                .company(job.getCompany())
+                .title("Bản sao của " + job.getTitle())
+                .industry(job.getIndustry())
+                .level(job.getLevel())
+                .description(job.getDescription())
+                .requirements(job.getRequirements())
+                .benefits(job.getBenefits())
+                .jobType(job.getJobType())
+                .quantity(job.getQuantity())
+                .gender(job.getGender())
+                .experience(job.getExperience())
+                .qualification(job.getQualification())
+                .salaryType(job.getSalaryType())
+                .minSalary(job.getMinSalary())
+                .maxSalary(job.getMaxSalary())
+                .region(job.getRegion())
+                .location(job.getLocation())
+                .deadline(job.getDeadline())
+                .contactName(job.getContactName())
+                .contactEmail(job.getContactEmail())
+                .contactPhone(job.getContactPhone())
+                .status(Job.JobStatus.draft) // Luôn để ở dạng nháp
+                .postedAt(java.time.LocalDateTime.now())
+                .build();
+        
+        // Khởi tạo List mới để tránh null
+        duplicate.setSkills(new java.util.ArrayList<>());
+        
+        // Copy skills
+        if (job.getSkills() != null) {
+            for (com.fivecore.jobportal.entity.JobSkill js : job.getSkills()) {
+                duplicate.getSkills().add(com.fivecore.jobportal.entity.JobSkill.builder()
+                        .job(duplicate)
+                        .skill(js.getSkill())
+                        .build());
+            }
+        }
+
+        Job savedJob = jobRepository.save(duplicate);
+        log.info("Doanh nghiệp {} đã sao chép tin id {} thành tin id {}", job.getCompany().getName(), jobId, savedJob.getId());
+        return mapToResponse(savedJob);
+    }
+
+    /**
      * Lấy thông tin chi tiết một công ty.
      */
     public Company getCompanyById(Integer id) {
@@ -264,6 +339,8 @@ public class CompanyService {
                 .gender(job.getGender())
                 .viewsCount(job.getViews() != null ? job.getViews() : 0)
                 .applicantsCount((int) applicationRepository.countByJobId(job.getId()))
+                .applicantsTodayCount((int) applicationRepository.countByJobIdAndAppliedAtAfter(job.getId(), java.time.LocalDateTime.now().with(java.time.LocalTime.MIN)))
+                .pendingApplicantsCount((int) applicationRepository.countByJobIdAndStatus(job.getId(), com.fivecore.jobportal.entity.Application.ApplicationStatus.pending))
                 .contactName(job.getContactName())
                 .contactEmail(job.getContactEmail())
                 .contactPhone(job.getContactPhone())

@@ -18,7 +18,14 @@ public class CompanyDashboardResponse {
     private List<JobResponse> jobs;
     private long activeJobsCount;
     private long totalCandidatesCount;
+    private long pendingCount;
+    private long reviewCount;
+    private long suitableCount;
+    private long interviewCount;
+    private long acceptedCount;
+    private long rejectedCount;
     private long pendingInterviewsCount;
     private long profileViewsCount;
+    private long newCandidatesTodayCount;
     private List<ApplicationDto> recentCandidates;
 }

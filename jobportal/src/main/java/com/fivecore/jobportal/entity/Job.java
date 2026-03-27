@@ -70,6 +70,7 @@ public class Job {
     @Column(length = 255)
     private String location;
 
+    @Builder.Default
     @Column(columnDefinition = "INT DEFAULT 0")
     private Integer views = 0;
 

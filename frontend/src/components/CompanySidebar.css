@@ -105,7 +105,7 @@ body {
 }
 
 .cs-sub-menu-inner {
-  min-width: 200px;
+  min-width: 220px;
   white-space: nowrap;
 }
 
@@ -116,7 +116,7 @@ body {
 
 /* Hover flyout rule */
 .cs-nav-group:hover .cs-sub-menu {
-  width: 200px;
+  width: 220px;
   opacity: 1;
   visibility: visible;
   padding: 0.5rem;
@@ -128,7 +128,7 @@ body {
 
 /* Pinned Sub Menu - Layered Layout (Image 2 style) */
 .company-sidebar.pinned .cs-nav-group:has(.cs-nav-item.active) .cs-sub-menu {
-  width: 200px;
+  width: 220px;
   opacity: 1;
   visibility: visible;
   position: fixed; 
@@ -198,7 +198,7 @@ body {
 }
 
 body.sidebar-pinned .cd-main {
-  margin-left: 270px;
+  margin-left: 300px;
 }
 
 /* Bottom Actions */
