@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import Footer from './Footer';
+import Footer from '../../components/Footer';
 
 describe('Footer Component', () => {
     beforeEach(() => {
