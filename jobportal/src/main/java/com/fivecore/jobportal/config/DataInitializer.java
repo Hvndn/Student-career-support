@@ -95,7 +95,7 @@ public class DataInitializer implements CommandLineRunner {
                 .user(user)
                 .university(university)
                 .major(major)
-                .studentCode(code)
+                .studentIdStr(code)
                 .gpa(3.5)
                 .graduationYear(2025)
                 .build();

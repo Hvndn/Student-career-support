@@ -23,9 +23,8 @@ public class Student {
     @JsonIgnore
     private User user;
 
-
     @Column(name = "student_code", length = 20, unique = true)
-    private String studentCode;
+    private String studentIdStr;
 
     @Column(length = 255)
     private String university;
@@ -42,6 +41,14 @@ public class Student {
     @Column(name = "avatar_url", length = 255)
     private String avatarUrl;
 
+    private java.time.LocalDate dob;
+
+    @Column(name = "github_url", length = 255)
+    private String githubUrl;
+
+    @Column(name = "linkedin_url", length = 255)
+    private String linkedinUrl;
+
     @Column(length = 20)
     private String phone;
 
@@ -57,24 +64,24 @@ public class Student {
     @Column(name = "class_rank", length = 50)
     private String classRank;
 
-    @Column(name = "academic_year", length = 50)
+    @Column(name = "academic_year", length = 20)
     private String academicYear;
 
-    @Column(name = "current_term", length = 50)
+    @Column(name = "current_term", length = 20)
     private String currentTerm;
 
     @Column(length = 255)
     private String address;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private java.util.List<StudentSkill> skills = new java.util.ArrayList<>();
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     @Builder.Default
     private java.util.List<Education> educations = new java.util.ArrayList<>();
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     @Builder.Default
     private java.util.List<Experience> experiences = new java.util.ArrayList<>();
 

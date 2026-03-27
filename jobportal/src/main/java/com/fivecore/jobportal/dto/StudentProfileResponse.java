@@ -16,7 +16,7 @@ public class StudentProfileResponse {
     private Integer id;
     private String fullName;
     private String email;
-    private String studentCode;
+    private String studentIdStr;
     private String university;
     private String major;
     private Integer graduationYear;

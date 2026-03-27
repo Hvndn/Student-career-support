@@ -76,7 +76,7 @@ public class Job {
 
     private LocalDate deadline;
     
-    @Column(name = "posted_at", nullable = false)
+    @Column(name = "posted_at")
     private java.time.LocalDateTime postedAt;
 
     @Column(name = "contact_name", length = 255)

@@ -28,7 +28,7 @@ public class RegisterRequest {
     private String role;
     
     // Thêm các trường cho Sinh viên
-    private String studentCode;
+    private String studentIdStr;
 
     // Thêm các trường cho Nhà tuyển dụng
     private String companyName;

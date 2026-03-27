@@ -73,7 +73,7 @@ class StudentProfileRestControllerTest {
 
         mockStudent = new Student();
         mockStudent.setId(1);
-        mockStudent.setStudentCode("SV001");
+        mockStudent.setStudentIdStr("SV001");
 
         mockUser = new User();
         mockUser.setId(1);

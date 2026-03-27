@@ -58,7 +58,9 @@ class RecommendationServiceTest {
         job.setDescription("Spring Boot Java microservices");
         job.setStatus(Job.JobStatus.open);
         job.setLocation("Ha Noi");
-        job.setSalary("30 triệu");
+        job.setMinSalary(new java.math.BigDecimal("20000000"));
+        job.setMaxSalary(new java.math.BigDecimal("30000000"));
+        job.setSalaryType("range");
         job.setJobType(Job.JobType.fulltime);
         job.setCompany(company);
 

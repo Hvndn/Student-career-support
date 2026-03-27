@@ -27,7 +27,7 @@ class StudentProfileMapperTest {
 
         student = new Student();
         student.setId(1);
-        student.setStudentCode("SV001");
+        student.setStudentIdStr("SV001");
         student.setUniversity("HUST");
         student.setMajor("IT");
         
@@ -82,7 +82,7 @@ class StudentProfileMapperTest {
 
         assertEquals(student.getId(), response.getId());
         assertEquals(user.getFullName(), response.getFullName());
-        assertEquals(student.getStudentCode(), response.getStudentCode());
+        assertEquals(student.getStudentIdStr(), response.getStudentIdStr());
         assertEquals(1, response.getSkills().size());
         assertEquals("Java", response.getSkills().get(0).getName());
         assertEquals("advanced", response.getSkills().get(0).getLevel());

@@ -64,7 +64,7 @@ public class CandidateSearchService {
                 .id(student.getId())
                 .fullName(student.getUser().getFullName())
                 .email(student.getUser().getEmail())
-                .studentCode(student.getStudentCode())
+                .studentIdStr(student.getStudentIdStr())
                 .university(student.getUniversity())
                 .major(student.getMajor())
                 .graduationYear(student.getGraduationYear())

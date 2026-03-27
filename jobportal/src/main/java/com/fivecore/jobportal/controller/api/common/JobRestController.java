@@ -24,11 +24,11 @@ public class JobRestController {
      * API Tìm kiếm công việc.
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<List<JobResponse>>> getAllJobs(
-            @RequestParam(value = "keyword", required = false) String keyword,
-            @RequestParam(value = "location", required = false) String location,
-            @RequestParam(value = "skill", required = false) String skill,
-            @RequestParam(value = "jobType", required = false) String jobType) {
+    public ResponseEntity<ApiResponse<List<JobResponse>>> searchJobs(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) String skill,
+            @RequestParam(required = false) String jobType) {
         
         List<JobResponse> jobs = jobSearchService.searchJobs(keyword, location, skill, jobType);
         return ResponseEntity.ok(ApiResponse.success("Lấy danh sách công việc thành công", jobs));

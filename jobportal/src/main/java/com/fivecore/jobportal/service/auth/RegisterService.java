@@ -73,17 +73,17 @@ public class RegisterService {
      */
     private void initProfile(User user, RegisterRequest request) {
         if (user.getRole() == User.Role.student) {
-            String studentCode = request.getStudentCode();
-            if (studentCode == null || studentCode.trim().isEmpty()) {
+            String studentIdStr = request.getStudentIdStr();
+            if (studentIdStr == null || studentIdStr.trim().isEmpty()) {
                 // Tự động tạo mã sinh viên nếu không được cung cấp
-                studentCode = "SV" + System.currentTimeMillis() % 1000000;
+                studentIdStr = "SV" + System.currentTimeMillis() % 1000000;
             }
             Student student = Student.builder()
                     .user(user)
-                    .studentCode(studentCode)
+                    .studentIdStr(studentIdStr)
                     .build();
             studentRepository.save(student);
-            log.info("Đã khởi tạo hồ sơ Sinh viên với mã: {} cho ID: {}", studentCode, user.getId());
+            log.info("Đã khởi tạo hồ sơ Sinh viên với mã: {} cho ID: {}", studentIdStr, user.getId());
         } else if (user.getRole() == User.Role.company) {
             Company company = Company.builder()
                     .user(user)

@@ -15,7 +15,7 @@ public class StudentProfileMapper {
                 .id(student.getId())
                 .fullName(user.getFullName())
                 .email(user.getEmail())
-                .studentCode(student.getStudentCode())
+                .studentIdStr(student.getStudentIdStr())
                 .university(student.getUniversity())
                 .major(student.getMajor())
                 .graduationYear(student.getGraduationYear())
