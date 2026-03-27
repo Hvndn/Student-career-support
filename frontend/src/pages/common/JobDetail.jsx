@@ -25,7 +25,7 @@ const JobDetail = () => {
         try {
             const res = await studentApi.applyJob(id);
             setMessage(res.data.message);
-            setJob(prev => ({ ...prev, isApplied: true }));
+            setJob(prev => ({ ...prev, isApplied: true, applied: true }));
         } catch (err) {
             setMessage(err.response?.data?.message || 'Bạn cần đăng nhập để ứng tuyển!');
         }
@@ -35,7 +35,7 @@ const JobDetail = () => {
         try {
             const res = await studentApi.cancelApplication(id);
             setMessage(res.data.message);
-            setJob(prev => ({ ...prev, isApplied: false }));
+            setJob(prev => ({ ...prev, isApplied: false, applied: false }));
         } catch (err) {
             setMessage(err.response?.data?.message || 'Có lỗi xảy ra khi hủy ứng tuyển');
         }
@@ -72,7 +72,8 @@ const JobDetail = () => {
         }
         if (user.role === 'ROLE_ADMIN' || user.role === 'ROLE_COMPANY') return null;
         if (user.role === 'ROLE_STUDENT') {
-            return job.isApplied ? (
+            const hasApplied = job.isApplied || job.applied;
+            return hasApplied ? (
                 <button onClick={handleCancel} className="w-full border-2 border-red-500 text-red-500 py-4 rounded-xl font-bold text-sm hover:bg-red-50 transition-all">
                     Hủy ứng tuyển ↩️
                 </button>
@@ -92,7 +93,7 @@ const JobDetail = () => {
         <div className="min-h-screen" style={{ background: '#f8fafd', fontFamily: "'Outfit', 'Inter', sans-serif" }}>
             <main className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Left Sidebar Navigation (Sticky) */}
-                <aside className="hidden lg:flex flex-col gap-2 py-8 px-4 h-screen sticky top-16 w-64 border-r bg-slate-50 border-slate-100 col-span-2">
+                <aside className="hidden lg:flex flex-col gap-2 py-8 px-4 h-screen sticky top-16 border-r bg-slate-50 border-slate-100 col-span-2">
                     <div className="mb-6 flex flex-col items-center text-center">
                         <div className="w-16 h-16 rounded-2xl mb-3 shadow-sm bg-blue-100 flex items-center justify-center text-2xl font-bold text-blue-600">
                             {job.companyName ? job.companyName.charAt(0).toUpperCase() : 'C'}
