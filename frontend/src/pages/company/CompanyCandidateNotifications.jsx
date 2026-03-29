@@ -1,14 +1,14 @@
 import React from 'react';
-import CompanySidebar from '../../components/CompanySidebar';
-import CompanyTopbar from '../../components/CompanyTopbar';
-import '../../assets/css/CompanyCandidateNotifications.css';
+import CompanySidebar from '../../components/company/CompanySidebar';
+import CompanyNavbar from '../../components/company/CompanyNavbar';
+import '../../assets/css/company/CompanyCandidateNotifications.css';
 
 const CompanyCandidateNotifications = () => {
     return (
         <div className="company-dashboard-container">
             <CompanySidebar />
             <div className="company-main-content">
-                <CompanyTopbar title="Ứng viên" />
+                <CompanyNavbar title="Ứng viên" />
                 <main className="cd-main">
                     <div className="candidate-notifications-page">
                         <div className="notif-header">

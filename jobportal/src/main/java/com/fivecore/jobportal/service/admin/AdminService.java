@@ -28,12 +28,28 @@ public class AdminService {
     /**
      * Lấy số liệu thống kê tổng quan cho Dashboard Admin.
      */
-    public Map<String, Long> getSystemStatistics() {
-        Map<String, Long> stats = new HashMap<>();
+    public Map<String, Object> getSystemStatistics() {
+        Map<String, Object> stats = new HashMap<>();
         stats.put("totalJobs", jobRepository.count());
         stats.put("totalApplications", applicationRepository.count());
         stats.put("totalStudents", studentRepository.count());
         stats.put("totalCompanies", companyRepository.count());
+        
+        // Thêm danh sách việc làm mới nhất
+        stats.put("recentJobs", jobRepository.findAll().stream()
+                .filter(job -> job.getPostedAt() != null && job.getCompany() != null)
+                .sorted((j1, j2) -> j2.getPostedAt().compareTo(j1.getPostedAt()))
+                .limit(5)
+                .map(job -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", job.getId());
+                    map.put("title", job.getTitle());
+                    map.put("companyName", job.getCompany().getName());
+                    map.put("postedAt", job.getPostedAt());
+                    return map;
+                })
+                .collect(Collectors.toList()));
+                
         return stats;
     }
 
@@ -62,8 +78,21 @@ public class AdminService {
      */
     public void reviewJobPost(Integer jobId, String status) {
         jobRepository.findById(jobId).ifPresent(job -> {
-            log.info("Admin đã cập nhật trạng thái tin '{}' sang {}", job.getTitle(), status);
+            try {
+                job.setStatus(com.fivecore.jobportal.entity.Job.JobStatus.valueOf(status.toLowerCase()));
+                jobRepository.save(job);
+                log.info("Admin đã cập nhật trạng thái tin '{}' sang {}", job.getTitle(), status);
+            } catch (IllegalArgumentException e) {
+                log.error("Trạng thái job không hợp lệ: {}", status);
+            }
         });
+    }
+
+    /**
+     * Lấy danh sách toàn bộ tin tuyển dụng trong hệ thống.
+     */
+    public List<com.fivecore.jobportal.entity.Job> getAllJobs() {
+        return jobRepository.findAll();
     }
 
     /**

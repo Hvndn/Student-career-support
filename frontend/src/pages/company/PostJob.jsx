@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link, useParams } from 'react-router-dom';
-import CompanySidebar from '../../components/CompanySidebar';
-import CompanyTopbar from '../../components/CompanyTopbar';
-import RichTextEditor from '../../components/RichTextEditor';
+import CompanySidebar from '../../components/company/CompanySidebar';
+import CompanyNavbar from '../../components/company/CompanyNavbar';
+import RichTextEditor from '../../components/common/RichTextEditor';
 import { companyApi } from '../../api';
-import '../../assets/css/PostJob.css';
+import '../../assets/css/company/PostJob.css';
 
 
 const INDUSTRIES = ['Công nghệ thông tin', 'Marketing', 'Tài chính', 'Thiết kế', 'Kế toán/Kiểm toán', 'Giáo dục/Đào tạo', 'Y tế/Dược', 'Kinh doanh/Bán hàng', 'Hành chính/Nhân sự', 'Xây dựng', 'Kiến trúc/Nội thất', 'Du lịch/Nhà hàng', 'Sản xuất/Vận hành'];
@@ -201,7 +201,7 @@ const PostJob = () => {
             <div className="cd-layout">
                 <CompanySidebar />
                 <div className="cd-wrapper">
-                    <CompanyTopbar />
+                    <CompanyNavbar />
                     <main className="cd-main" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
                         <div className="loading-spinner"></div>
                     </main>
@@ -214,7 +214,7 @@ const PostJob = () => {
         <div className="cd-layout">
             <CompanySidebar />
             <div className="cd-wrapper">
-                <CompanyTopbar activeTab="Jobs" />
+                <CompanyNavbar activeTab="Jobs" />
                 <main className="cd-main">
 
                 <div className="pj-header-container">

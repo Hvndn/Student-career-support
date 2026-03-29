@@ -19,6 +19,7 @@ public class JobSkill {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Job job;
 
     @ManyToOne(fetch = FetchType.LAZY)

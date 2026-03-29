@@ -129,7 +129,11 @@ export const adminApi = {
     toggleUserStatus: (userId) => api.post(`/admin/users/${userId}/toggle-status`),
     getSkills: () => api.get('/admin/skills'),
     addSkill: (name) => api.post(`/admin/skills?name=${name}`),
-    deleteSkill: (id) => api.delete(`/admin/skills/${id}`)
+    deleteSkill: (id) => api.delete(`/admin/skills/${id}`),
+    getJobs: () => api.get('/admin/jobs'),
+    updateJobStatus: (id, status) => api.post(`/admin/jobs/${id}/status?status=${status}`),
+    getPendingCompanies: () => api.get('/admin/companies/pending'),
+    approveCompany: (id) => api.post(`/admin/companies/${id}/approve`)
 };
 
 export default api;

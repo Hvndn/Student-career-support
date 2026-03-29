@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import CompanySidebar from '../../components/CompanySidebar';
-import CompanyTopbar from '../../components/CompanyTopbar';
-import CandidateDetailModal from '../../components/CandidateDetailModal';
+import CompanySidebar from '../../components/company/CompanySidebar';
+import CompanyNavbar from '../../components/company/CompanyNavbar';
+import CandidateDetailModal from '../../components/company/CandidateDetailModal';
 import { recruitmentApi, companyApi } from '../../api';
 import { tagService } from '../../utils/tagService';
-import '../../assets/css/CompanyCandidates.css';
+import '../../assets/css/company/CompanyCandidates.css';
 
 const CompanyCandidates = () => {
     const [applications, setApplications] = useState([]);
@@ -106,7 +106,7 @@ const CompanyCandidates = () => {
         <div className="cd-layout">
             <CompanySidebar />
             <div className="cd-main">
-                <CompanyTopbar activeTab="Ứng viên" />
+                <CompanyNavbar activeTab="Ứng viên" />
 
                 <div className="candidates-page">
                     <div className="section-header">

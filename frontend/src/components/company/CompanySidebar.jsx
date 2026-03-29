@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import './CompanySidebar.css';
+import '../../assets/css/company/CompanySidebar.css';
 
 const NAV_ITEMS = [
   { 

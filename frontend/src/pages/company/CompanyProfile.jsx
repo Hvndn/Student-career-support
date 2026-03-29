@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import CompanySidebar from '../../components/CompanySidebar';
-import CompanyTopbar from '../../components/CompanyTopbar';
+import CompanySidebar from '../../components/company/CompanySidebar';
+import CompanyNavbar from '../../components/company/CompanyNavbar';
 import { companyApi } from '../../api';
-import '../../assets/css/CompanyProfile.css';
+import '../../assets/css/company/CompanyProfile.css';
 
 const CompanyProfile = () => {
     const [profile, setProfile] = useState(null);
@@ -133,7 +133,7 @@ const CompanyProfile = () => {
         <div className="cd-layout">
             <CompanySidebar />
             <div className="cd-main">
-                <CompanyTopbar activeTab="Profile" />
+                <CompanyNavbar activeTab="Profile" />
                 
                 <div className="cd-content profile-page">
                     <div className="profile-header-card glass">

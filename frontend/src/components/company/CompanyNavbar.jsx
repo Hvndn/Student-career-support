@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { companyApi } from '../api';
-import './CompanyTopbar.css'; // Will add nested css rules in CompanyDashboard.css
+import { companyApi } from '../../api';
+import '../../assets/css/company/CompanyTopbar.css'; // Will add nested css rules in CompanyDashboard.css
 
 const CompanyTopbar = ({ activeTab = 'Jobs' }) => {
   const navigate = useNavigate();

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import CompanySidebar from '../../components/CompanySidebar';
-import CompanyTopbar from '../../components/CompanyTopbar';
+import CompanySidebar from '../../components/company/CompanySidebar';
+import CompanyNavbar from '../../components/company/CompanyNavbar';
 import { companyApi } from '../../api';
-import '../../assets/css/CompanyDashboard.css';
+import '../../assets/css/company/CompanyDashboard.css';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, LabelList 
 } from 'recharts';
@@ -66,7 +66,7 @@ const CompanyDashboard = () => {
         <div className="cd-layout">
             <CompanySidebar />
             <div className="cd-main">
-                <CompanyTopbar activeTab="Dashboard" />
+                <CompanyNavbar activeTab="Dashboard" />
 
                 <div className="cd-content dashboard-v2">
                     {/* Welcome Header */}

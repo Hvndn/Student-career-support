@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import CompanySidebar from '../../components/CompanySidebar';
-import CompanyTopbar from '../../components/CompanyTopbar';
-import '../../components/PostJobJD.css';
+import CompanySidebar from '../../components/company/CompanySidebar';
+import CompanyNavbar from '../../components/company/CompanyNavbar';
+import '../../assets/css/company/PostJobJD.css';
 
 const PostJobJD = () => {
   const navigate = useNavigate();
@@ -53,7 +53,7 @@ const PostJobJD = () => {
       <CompanySidebar />
 
       <div className="pjjd-main">
-        <CompanyTopbar activeTab="Jobs" />
+        <CompanyNavbar activeTab="Jobs" />
 
         <div className="pjjd-content-wrapper">
           <header className="pjjd-header">
