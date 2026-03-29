@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "saved_jobs", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"student_id", "job_id"})
+        @UniqueConstraint(columnNames = { "student_id", "job_id" })
 })
 @Data
 @NoArgsConstructor

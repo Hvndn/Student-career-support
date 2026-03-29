@@ -26,7 +26,6 @@ public class Experience {
     @JsonIgnore
     private Student student;
 
-
     @Column(name = "company_name", nullable = false, length = 255)
     private String companyName;
 

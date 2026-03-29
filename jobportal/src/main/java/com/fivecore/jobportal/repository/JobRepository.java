@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface JobRepository extends JpaRepository<Job, Integer>, JpaSpecificationExecutor<Job> {
     List<Job> findByCompanyId(Integer companyId);
+
     long countByCompanyId(Integer companyId);
 }

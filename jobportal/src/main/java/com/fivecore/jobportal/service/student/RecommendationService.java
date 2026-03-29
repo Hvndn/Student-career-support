@@ -46,7 +46,8 @@ public class RecommendationService {
                 .filter(j -> j.getStatus() == Job.JobStatus.open)
                 .collect(Collectors.toList());
 
-        // Thuật toán: Sắp xếp theo số lượng kỹ năng trùng khớp (Giả lập logic thông minh)
+        // Thuật toán: Sắp xếp theo số lượng kỹ năng trùng khớp (Giả lập logic thông
+        // minh)
         return allJobs.stream()
                 .sorted((j1, j2) -> {
                     long count1 = countMatchingSkills(j1, studentSkillNames);
@@ -72,10 +73,11 @@ public class RecommendationService {
     }
 
     private long countMatchingSkills(Job job, Set<String> studentSkills) {
-        // Trong thực tế, Job sẽ có JobSkill. Ở đây ta giả lập search keyword trong description
+        // Trong thực tế, Job sẽ có JobSkill. Ở đây ta giả lập search keyword trong
+        // description
         return studentSkills.stream()
-                .filter(skill -> job.getTitle().toLowerCase().contains(skill) || 
-                                 job.getDescription().toLowerCase().contains(skill))
+                .filter(skill -> job.getTitle().toLowerCase().contains(skill) ||
+                        job.getDescription().toLowerCase().contains(skill))
                 .count();
     }
 }

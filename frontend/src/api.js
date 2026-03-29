@@ -54,10 +54,13 @@ export const recruitmentApi = {
 
 export const adminApi = {
     getStats: () => api.get('/admin/statistics'),
-    getUsers: () => api.get('/admin/users'),
+    getUsers: (params) => api.get('/admin/users', { params }),
+    getUserDetail: (id) => api.get(`/admin/users/${id}`),
     toggleUserStatus: (userId) => api.post(`/admin/users/${userId}/toggle-status`),
+    updateUserRole: (userId, role) => api.patch(`/admin/users/${userId}/role?role=${role}`),
     getSkills: () => api.get('/admin/skills'),
-    addSkill: (name) => api.post(`/admin/skills?name=${name}`),
+    addSkill: (name, category) => api.post(`/admin/skills?name=${name}&category=${category}`),
+    updateSkill: (id, name, category) => api.put(`/admin/skills/${id}?name=${name}&category=${category}`),
     deleteSkill: (id) => api.delete(`/admin/skills/${id}`)
 };
 

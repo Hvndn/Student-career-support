@@ -11,7 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * REST API Controller cho các hành động của Sinh viên (Ứng tuyển, Lưu việc, Thông báo).
+ * REST API Controller cho các hành động của Sinh viên (Ứng tuyển, Lưu việc,
+ * Thông báo).
  */
 @RestController
 @RequestMapping("/api/student")
@@ -39,9 +40,11 @@ public class StudentActionRestController {
      * API Ứng tuyển công việc.
      */
     @PostMapping("/jobs/{jobId}/apply")
-    public ResponseEntity<ApiResponse<Object>> applyJob(@PathVariable("jobId") Integer jobId, Authentication authentication) {
+    public ResponseEntity<ApiResponse<Object>> applyJob(@PathVariable("jobId") Integer jobId,
+            Authentication authentication) {
         Integer studentId = getCurrentStudentId(authentication);
-        if (studentId == null) return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+        if (studentId == null)
+            return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
 
         try {
             applicationService.applyForJob(studentId, jobId);
@@ -55,9 +58,11 @@ public class StudentActionRestController {
      * API Hủy ứng tuyển công việc.
      */
     @DeleteMapping("/jobs/{jobId}/apply")
-    public ResponseEntity<ApiResponse<Object>> cancelApply(@PathVariable("jobId") Integer jobId, Authentication authentication) {
+    public ResponseEntity<ApiResponse<Object>> cancelApply(@PathVariable("jobId") Integer jobId,
+            Authentication authentication) {
         Integer studentId = getCurrentStudentId(authentication);
-        if (studentId == null) return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+        if (studentId == null)
+            return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
 
         try {
             applicationService.cancelApplication(studentId, jobId);
@@ -73,7 +78,8 @@ public class StudentActionRestController {
     @PostMapping("/jobs/{jobId}/save")
     public ResponseEntity<ApiResponse<Object>> saveJob(@PathVariable Integer jobId, Authentication authentication) {
         Integer studentId = getCurrentStudentId(authentication);
-        if (studentId == null) return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+        if (studentId == null)
+            return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
 
         try {
             savedJobService.saveJob(studentId, jobId);
@@ -89,7 +95,8 @@ public class StudentActionRestController {
     @GetMapping("/jobs/saved")
     public ResponseEntity<ApiResponse<Object>> getSavedJobs(Authentication authentication) {
         Integer studentId = getCurrentStudentId(authentication);
-        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách đã lưu thành công", savedJobService.getSavedJobs(studentId)));
+        return ResponseEntity
+                .ok(ApiResponse.success("Lấy danh sách đã lưu thành công", savedJobService.getSavedJobs(studentId)));
     }
 
     /**
@@ -98,7 +105,8 @@ public class StudentActionRestController {
     @GetMapping("/applications")
     public ResponseEntity<ApiResponse<Object>> getMyApplications(Authentication authentication) {
         Integer studentId = getCurrentStudentId(authentication);
-        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách ứng tuyển thành công", applicationService.getApplicationsByStudent(studentId)));
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách ứng tuyển thành công",
+                applicationService.getApplicationsByStudent(studentId)));
     }
 
     /**
@@ -107,6 +115,7 @@ public class StudentActionRestController {
     @GetMapping("/notifications")
     public ResponseEntity<ApiResponse<Object>> getNotifications(Authentication authentication) {
         Integer userId = getCurrentUserId(authentication);
-        return ResponseEntity.ok(ApiResponse.success("Lấy thông báo thành công", notificationService.getNotificationsByUser(userId)));
+        return ResponseEntity.ok(
+                ApiResponse.success("Lấy thông báo thành công", notificationService.getNotificationsByUser(userId)));
     }
 }

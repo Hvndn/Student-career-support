@@ -61,11 +61,11 @@ public class ApplicationService {
 
         Application savedApp = applicationRepository.save(application);
         log.info("Sinh viên {} đã ứng tuyển vào vị trí {}", student.getUser().getFullName(), job.getTitle());
-        
+
         // Bắn thông báo nội sinh cho Student (US-019)
-        notificationService.sendNotification(student.getUser(), 
-            "Ứng tuyển thành công", 
-            "Hồ sơ của bạn đã được chuyển tới " + job.getCompany().getName());
+        notificationService.sendNotification(student.getUser(),
+                "Ứng tuyển thành công",
+                "Hồ sơ của bạn đã được chuyển tới " + job.getCompany().getName());
 
         return mapToDto(savedApp);
     }
@@ -89,7 +89,7 @@ public class ApplicationService {
     public void updateApplicationStatus(Integer applicationId, Application.ApplicationStatus status) {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn ứng tuyển"));
-        
+
         application.setStatus(status);
         applicationRepository.save(application);
         log.info("Đã cập nhật trạng thái đơn ứng tuyển ID {} sang {}", applicationId, status);
@@ -124,6 +124,26 @@ public class ApplicationService {
     }
 
     public long countPendingInterviewsByCompany(Integer companyId) {
-        return applicationRepository.countByJobCompanyId(companyId); 
+        return applicationRepository.countByJobCompanyId(companyId);
+    }
+
+    /**
+     * Hủy đơn ứng tuyển (US-008).
+     */
+    @Transactional
+    public void cancelApplication(Integer applicationId, Integer studentId) {
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn ứng tuyển"));
+
+        if (!application.getStudent().getId().equals(studentId)) {
+            throw new RuntimeException("Bạn không có quyền hủy đơn ứng tuyển này");
+        }
+
+        if (application.getStatus() != Application.ApplicationStatus.pending) {
+            throw new RuntimeException("Chỉ có thể hủy đơn ứng tuyển đang ở trạng thái chờ duyệt");
+        }
+
+        applicationRepository.delete(application);
+        log.info("Sinh viên ID {} đã hủy đơn ứng tuyển ID {}", studentId, applicationId);
     }
 }

@@ -4,7 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 /**
- * Thực thể Kỹ năng Công việc - Các kỹ năng được yêu cầu cho một công việc cụ thể.
+ * Thực thể Kỹ năng Công việc - Các kỹ năng được yêu cầu cho một công việc cụ
+ * thể.
  */
 @Entity
 @Table(name = "job_skills")

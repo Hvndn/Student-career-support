@@ -14,3 +14,4 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     List<Application> findByJobCompanyIdOrderByAppliedAtDesc(Integer companyId);
     long countByJobCompanyId(Integer companyId);
 }
+

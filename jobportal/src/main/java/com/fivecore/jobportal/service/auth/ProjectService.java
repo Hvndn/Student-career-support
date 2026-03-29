@@ -37,13 +37,13 @@ public class ProjectService {
     public Project addProject(Integer studentId, Project projectData) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
-        
+
         if (projectData.getRepositoryUrl() != null && !projectData.getRepositoryUrl().isEmpty()) {
             if (!projectData.getRepositoryUrl().matches("^(https?://)?(www\\.)?github\\.com/.*$")) {
                 throw new IllegalArgumentException("Link Repository không đúng định dạng URL");
             }
         }
-        
+
         projectData.setStudent(student);
         Project savedProject = projectRepository.save(projectData);
         log.info("Đã thêm dự án mới: {} cho sinh viên ID: {}", savedProject.getName(), studentId);
@@ -57,7 +57,7 @@ public class ProjectService {
     public void deleteProject(Integer projectId, Integer studentId) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy dự án"));
-        
+
         if (!project.getStudent().getId().equals(studentId)) {
             throw new RuntimeException("Bạn không có quyền xóa dự án này");
         }

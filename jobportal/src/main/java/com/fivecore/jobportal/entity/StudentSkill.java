@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-
 /**
  * Thực thể Kỹ năng Sinh viên - Bảng liên kết sinh viên và kỹ năng kém trình độ.
  */
@@ -23,7 +22,6 @@ public class StudentSkill {
     @JoinColumn(name = "student_id", nullable = false)
     @JsonIgnore
     private Student student;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "skill_id", nullable = false)

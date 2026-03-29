@@ -40,7 +40,7 @@ public class SavedJobService {
                 .student(student)
                 .job(job)
                 .build();
-        
+
         savedJobRepository.save(savedJob);
         log.info("Sinh vien {} da luu job {}", student.getUser().getFullName(), job.getTitle());
     }
@@ -48,7 +48,7 @@ public class SavedJobService {
     public List<SavedJob> getSavedJobs(Integer studentId) {
         return savedJobRepository.findByStudentIdOrderBySavedAtDesc(studentId);
     }
-    
+
     @Transactional
     public void unsaveJob(Integer studentId, Integer jobId) {
         savedJobRepository.deleteByStudentIdAndJobId(studentId, jobId);

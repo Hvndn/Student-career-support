@@ -5,7 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 /**
- * Thực thể Sinh viên - Chứa thông tin chi tiết của người dùng có vai trò là sinh viên.
+ * Thực thể Sinh viên - Chứa thông tin chi tiết của người dùng có vai trò là
+ * sinh viên.
  */
 @Entity
 @Table(name = "students")
@@ -22,7 +23,6 @@ public class Student {
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
-
 
     @Column(name = "student_code", length = 20, unique = true)
     private String studentCode;
@@ -45,6 +45,24 @@ public class Student {
     @Column(length = 20)
     private String phone;
 
+    @Column(name = "gpa")
+    private Double gpa;
+
+    @Column(name = "total_credits")
+    private Integer totalCredits;
+
+    @Column(name = "earned_credits")
+    private Integer earnedCredits;
+
+    @Column(name = "class_rank")
+    private String classRank;
+
+    @Column(name = "academic_year")
+    private String academicYear;
+
+    @Column(name = "current_term")
+    private String currentTerm;
+
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private java.util.List<StudentSkill> skills;
 
@@ -53,4 +71,7 @@ public class Student {
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<Experience> experiences;
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<Application> applications;
 }

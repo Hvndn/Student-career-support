@@ -18,15 +18,23 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CorePortfolioTests {
 
-    @Mock private SkillRepository skillRepository;
-    @Mock private StudentSkillRepository studentSkillRepository;
-    @Mock private StudentRepository studentRepository;
-    @Mock private ProjectRepository projectRepository;
-    @Mock private CertificateRepository certificateRepository;
+    @Mock
+    private SkillRepository skillRepository;
+    @Mock
+    private StudentSkillRepository studentSkillRepository;
+    @Mock
+    private StudentRepository studentRepository;
+    @Mock
+    private ProjectRepository projectRepository;
+    @Mock
+    private CertificateRepository certificateRepository;
 
-    @InjectMocks private SkillService skillService;
-    @InjectMocks private ProjectService projectService;
-    @InjectMocks private ProfileService profileService;
+    @InjectMocks
+    private SkillService skillService;
+    @InjectMocks
+    private ProjectService projectService;
+    @InjectMocks
+    private ProfileService profileService;
 
     @Test
     @DisplayName("Thêm kỹ năng cho sinh viên thành công")

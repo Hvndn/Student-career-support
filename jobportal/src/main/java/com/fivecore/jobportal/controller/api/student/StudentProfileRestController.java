@@ -66,42 +66,52 @@ public class StudentProfileRestController {
                 .currentTerm(student.getCurrentTerm())
                 .bio(student.getBio())
                 .avatarUrl(student.getAvatarUrl())
-                .skills(student.getSkills() == null ? List.of() : student.getSkills().stream().map((StudentSkill s) -> StudentProfileResponse.SkillDto.builder()
-                        .id(s.getSkill().getId())
-                        .name(s.getSkill().getName())
-                        .level(s.getLevel() == null ? null : s.getLevel().name())
-                        .build()).collect(Collectors.toList()))
-                .educations(student.getEducations() == null ? List.of() : student.getEducations().stream().map((Education e) -> StudentProfileResponse.EducationDto.builder()
-                        .id(e.getId())
-                        .schoolName(e.getSchoolName())
-                        .major(e.getMajor())
-                        .degree(e.getDegree())
-                        .startDate(e.getStartDate())
-                        .endDate(e.getEndDate())
-                        .description(e.getDescription())
-                        .build()).collect(Collectors.toList()))
-                .experiences(student.getExperiences() == null ? List.of() : student.getExperiences().stream().map((Experience exp) -> StudentProfileResponse.ExperienceDto.builder()
-                        .id(exp.getId())
-                        .companyName(exp.getCompanyName())
-                        .jobTitle(exp.getJobTitle())
-                        .startDate(exp.getStartDate())
-                        .endDate(exp.getEndDate())
-                        .description(exp.getDescription())
-                        .build()).collect(Collectors.toList()))
-                .projects(projectService.getProjectsByStudent(student.getId()).stream().map((Project p) -> StudentProfileResponse.ProjectDto.builder()
-                        .id(p.getId())
-                        .name(p.getName())
-                        .description(p.getDescription())
-                        .repositoryUrl(p.getRepositoryUrl())
-                        .demoUrl(p.getDemoUrl())
-                        .build()).collect(Collectors.toList()))
+                .skills(student.getSkills() == null ? List.of()
+                        : student.getSkills().stream().map((StudentSkill s) -> StudentProfileResponse.SkillDto.builder()
+                                .id(s.getSkill().getId())
+                                .name(s.getSkill().getName())
+                                .level(s.getLevel() == null ? null : s.getLevel().name())
+                                .build()).collect(Collectors.toList()))
+                .educations(student.getEducations() == null ? List.of()
+                        : student.getEducations().stream()
+                                .map((Education e) -> StudentProfileResponse.EducationDto.builder()
+                                        .id(e.getId())
+                                        .schoolName(e.getSchoolName())
+                                        .major(e.getMajor())
+                                        .degree(e.getDegree())
+                                        .startDate(e.getStartDate())
+                                        .endDate(e.getEndDate())
+                                        .description(e.getDescription())
+                                        .build())
+                                .collect(Collectors.toList()))
+                .experiences(student.getExperiences() == null ? List.of()
+                        : student.getExperiences().stream()
+                                .map((Experience exp) -> StudentProfileResponse.ExperienceDto.builder()
+                                        .id(exp.getId())
+                                        .companyName(exp.getCompanyName())
+                                        .jobTitle(exp.getJobTitle())
+                                        .startDate(exp.getStartDate())
+                                        .endDate(exp.getEndDate())
+                                        .description(exp.getDescription())
+                                        .build())
+                                .collect(Collectors.toList()))
+                .projects(projectService.getProjectsByStudent(student.getId()).stream()
+                        .map((Project p) -> StudentProfileResponse.ProjectDto.builder()
+                                .id(p.getId())
+                                .name(p.getName())
+                                .description(p.getDescription())
+                                .repositoryUrl(p.getRepositoryUrl())
+                                .demoUrl(p.getDemoUrl())
+                                .build())
+                        .collect(Collectors.toList()))
                 .build();
 
         return ResponseEntity.ok(ApiResponse.success("Lấy hồ sơ thành công", response));
     }
 
     @PutMapping
-    public ResponseEntity<ApiResponse<Object>> updateProfile(@RequestBody StudentProfileRequest request, Authentication authentication) {
+    public ResponseEntity<ApiResponse<Object>> updateProfile(@RequestBody StudentProfileRequest request,
+            Authentication authentication) {
         try {
             Integer studentId = getCurrentStudentId(authentication);
             if (studentId == null) {
@@ -111,13 +121,15 @@ public class StudentProfileRestController {
             return ResponseEntity.ok(ApiResponse.success("Cập nhật thông tin thành công", null));
         } catch (Exception e) {
             log.error("Lỗi khi cập nhật hồ sơ: {}", e.getMessage(), e);
-            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi cập nhật hồ sơ: " + e.getMessage(), "SERVER_ERROR"));
+            return ResponseEntity.status(500)
+                    .body(ApiResponse.error("Lỗi khi cập nhật hồ sơ: " + e.getMessage(), "SERVER_ERROR"));
         }
     }
 
     /* ---- Education ---- */
     @PostMapping("/educations")
-    public ResponseEntity<ApiResponse<Object>> addEducation(@Valid @RequestBody EducationRequest request, Authentication authentication) {
+    public ResponseEntity<ApiResponse<Object>> addEducation(@Valid @RequestBody EducationRequest request,
+            Authentication authentication) {
         try {
             Integer studentId = getCurrentStudentId(authentication);
             if (studentId == null) {
@@ -133,46 +145,52 @@ public class StudentProfileRestController {
             return ResponseEntity.ok(ApiResponse.success("Thêm học vấn thành công", null));
         } catch (Exception e) {
             log.error("Lỗi khi thêm học vấn: {}", e.getMessage(), e);
-            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi thêm học vấn: " + e.getMessage(), "SERVER_ERROR"));
+            return ResponseEntity.status(500)
+                    .body(ApiResponse.error("Lỗi khi thêm học vấn: " + e.getMessage(), "SERVER_ERROR"));
         }
     }
 
     @PutMapping("/educations/{id}")
-    public ResponseEntity<ApiResponse<Object>> updateEducation(@PathVariable Integer id, @Valid @RequestBody EducationRequest request, Authentication authentication) {
+    public ResponseEntity<ApiResponse<Object>> updateEducation(@PathVariable Integer id,
+            @Valid @RequestBody EducationRequest request, Authentication authentication) {
         try {
             Integer studentId = getCurrentStudentId(authentication);
             profileService.updateEducation(id, studentId, request);
             return ResponseEntity.ok(ApiResponse.success("Cập nhật học vấn thành công", null));
         } catch (Exception e) {
             log.error("Lỗi khi cập nhật học vấn: {}", e.getMessage(), e);
-            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi cập nhật học vấn: " + e.getMessage(), "SERVER_ERROR"));
+            return ResponseEntity.status(500)
+                    .body(ApiResponse.error("Lỗi khi cập nhật học vấn: " + e.getMessage(), "SERVER_ERROR"));
         }
     }
 
     @DeleteMapping("/educations/{id}")
-    public ResponseEntity<ApiResponse<Object>> deleteEducation(@PathVariable Integer id, Authentication authentication) {
+    public ResponseEntity<ApiResponse<Object>> deleteEducation(@PathVariable Integer id,
+            Authentication authentication) {
         try {
             Integer studentId = getCurrentStudentId(authentication);
             profileService.deleteEducation(id, studentId);
             return ResponseEntity.ok(ApiResponse.success("Xóa học vấn thành công", null));
         } catch (Exception e) {
             log.error("Lỗi khi xóa học vấn: {}", e.getMessage(), e);
-            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi xóa học vấn: " + e.getMessage(), "SERVER_ERROR"));
+            return ResponseEntity.status(500)
+                    .body(ApiResponse.error("Lỗi khi xóa học vấn: " + e.getMessage(), "SERVER_ERROR"));
         }
     }
 
     /* ---- Experience ---- */
     @PostMapping("/experiences")
-    public ResponseEntity<ApiResponse<Object>> addExperience(@Valid @RequestBody ExperienceRequest request, Authentication authentication) {
+    public ResponseEntity<ApiResponse<Object>> addExperience(@Valid @RequestBody ExperienceRequest request,
+            Authentication authentication) {
         try {
             Integer studentId = getCurrentStudentId(authentication);
             if (studentId == null) {
-                return ResponseEntity.status(401).body(ApiResponse.error("Bạn không phải là sinh viên hoặc hồ sơ sinh viên chưa được khởi tạo", "UNAUTHORIZED"));
+                return ResponseEntity.status(401).body(ApiResponse
+                        .error("Bạn không phải là sinh viên hoặc hồ sơ sinh viên chưa được khởi tạo", "UNAUTHORIZED"));
             }
             profileService.addExperience(studentId, Experience.builder()
                     .companyName(request.getCompanyName())
                     .jobTitle(request.getJobTitle())
-                    .position(request.getJobTitle()) // Giải quyết lỗi [Field 'position' doesn't have a default value]
                     .startDate(request.getStartDate())
                     .endDate(request.getEndDate())
                     .description(request.getDescription())
@@ -180,19 +198,22 @@ public class StudentProfileRestController {
             return ResponseEntity.ok(ApiResponse.success("Thêm kinh nghiệm thành công", null));
         } catch (Exception e) {
             log.error("Lỗi khi thêm kinh nghiệm: {}", e.getMessage(), e);
-            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi thêm kinh nghiệm: " + e.getMessage(), "SERVER_ERROR"));
+            return ResponseEntity.status(500)
+                    .body(ApiResponse.error("Lỗi khi thêm kinh nghiệm: " + e.getMessage(), "SERVER_ERROR"));
         }
     }
 
     @PutMapping("/experiences/{id}")
-    public ResponseEntity<ApiResponse<Object>> updateExperience(@PathVariable Integer id, @Valid @RequestBody ExperienceRequest request, Authentication authentication) {
+    public ResponseEntity<ApiResponse<Object>> updateExperience(@PathVariable Integer id,
+            @Valid @RequestBody ExperienceRequest request, Authentication authentication) {
         Integer studentId = getCurrentStudentId(authentication);
         profileService.updateExperience(id, studentId, request);
         return ResponseEntity.ok(ApiResponse.success("Cập nhật kinh nghiệm thành công", null));
     }
 
     @DeleteMapping("/experiences/{id}")
-    public ResponseEntity<ApiResponse<Object>> deleteExperience(@PathVariable Integer id, Authentication authentication) {
+    public ResponseEntity<ApiResponse<Object>> deleteExperience(@PathVariable Integer id,
+            Authentication authentication) {
         Integer studentId = getCurrentStudentId(authentication);
         profileService.deleteExperience(id, studentId);
         return ResponseEntity.ok(ApiResponse.success("Xóa kinh nghiệm thành công", null));
@@ -201,36 +222,42 @@ public class StudentProfileRestController {
     /* ---- Skills ---- */
     @PostMapping("/skills")
     public ResponseEntity<ApiResponse<Object>> addSkill(@RequestBody SkillAddRequest request,
-                                                       Authentication authentication) {
+            Authentication authentication) {
         try {
             log.info("Bắt đầu thêm kỹ năng: skillId={}, level={}", request.getSkillId(), request.getLevel());
             if (request.getLevel() == null) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("Cấp độ kỹ năng không được để trống", "BAD_REQUEST"));
+                return ResponseEntity.badRequest()
+                        .body(ApiResponse.error("Cấp độ kỹ năng không được để trống", "BAD_REQUEST"));
             }
             Integer studentId = getCurrentStudentId(authentication);
             if (studentId == null) {
                 return ResponseEntity.status(401).body(ApiResponse.error("Không tìm thấy sinh viên", "UNAUTHORIZED"));
             }
-            skillService.addSkillToStudent(studentId, request.getSkillId(), StudentSkill.SkillLevel.valueOf(request.getLevel().toLowerCase()));
+            skillService.addSkillToStudent(studentId, request.getSkillId(),
+                    StudentSkill.SkillLevel.valueOf(request.getLevel().toLowerCase()));
             return ResponseEntity.ok(ApiResponse.success("Thêm kỹ năng thành công", null));
         } catch (IllegalArgumentException e) {
             log.error("Lỗi dữ liệu khi thêm kỹ năng: {}", e.getMessage());
-            return ResponseEntity.status(400).body(ApiResponse.error("Dữ liệu không hợp lệ: " + e.getMessage(), "BAD_REQUEST"));
+            return ResponseEntity.status(400)
+                    .body(ApiResponse.error("Dữ liệu không hợp lệ: " + e.getMessage(), "BAD_REQUEST"));
         } catch (Exception e) {
             log.error("Lỗi hệ thống khi thêm kỹ năng: {}", e.getMessage(), e);
-            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi hệ thống khi thêm kỹ năng: " + e.getMessage(), "SERVER_ERROR"));
+            return ResponseEntity.status(500)
+                    .body(ApiResponse.error("Lỗi hệ thống khi thêm kỹ năng: " + e.getMessage(), "SERVER_ERROR"));
         }
     }
 
     @DeleteMapping("/skills/{skillId}")
-    public ResponseEntity<ApiResponse<Object>> deleteSkill(@PathVariable Integer skillId, Authentication authentication) {
+    public ResponseEntity<ApiResponse<Object>> deleteSkill(@PathVariable Integer skillId,
+            Authentication authentication) {
         try {
             Integer studentId = getCurrentStudentId(authentication);
             skillService.removeSkillFromStudent(studentId, skillId);
             return ResponseEntity.ok(ApiResponse.success("Xóa kỹ năng thành công", null));
         } catch (Exception e) {
             log.error("Lỗi khi xóa kỹ năng: {}", e.getMessage(), e);
-            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi xóa kỹ năng: " + e.getMessage(), "SERVER_ERROR"));
+            return ResponseEntity.status(500)
+                    .body(ApiResponse.error("Lỗi khi xóa kỹ năng: " + e.getMessage(), "SERVER_ERROR"));
         }
     }
 
@@ -241,7 +268,7 @@ public class StudentProfileRestController {
 
     @PostMapping("/avatar")
     public ResponseEntity<ApiResponse<String>> updateAvatar(@RequestParam("avatarFile") MultipartFile avatarFile,
-                                                           Authentication authentication) {
+            Authentication authentication) {
         Integer studentId = getCurrentStudentId(authentication);
         if (avatarFile != null && !avatarFile.isEmpty()) {
             String avatarUrl = storageService.saveAvatar(avatarFile);

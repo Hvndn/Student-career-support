@@ -28,7 +28,7 @@ public class RecruitmentRestController {
      */
     @GetMapping("/jobs/{jobId}/applicants")
     public ResponseEntity<ApiResponse<Object>> getApplicants(@PathVariable Integer jobId) {
-        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách ứng viên thành công", 
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách ứng viên thành công",
                 applicationService.getApplicantsByJob(jobId)));
     }
 
@@ -36,9 +36,11 @@ public class RecruitmentRestController {
      * API Cập nhật trạng thái ứng viên.
      */
     @PatchMapping("/applications/{appId}/status")
-    public ResponseEntity<ApiResponse<Object>> updateStatus(@PathVariable Integer appId, @RequestParam("status") String status) {
+    public ResponseEntity<ApiResponse<Object>> updateStatus(@PathVariable Integer appId,
+            @RequestParam("status") String status) {
         try {
-            applicationService.updateApplicationStatus(appId, Application.ApplicationStatus.valueOf(status.toUpperCase()));
+            applicationService.updateApplicationStatus(appId,
+                    Application.ApplicationStatus.valueOf(status.toUpperCase()));
             return ResponseEntity.ok(ApiResponse.success("Cập nhật trạng thái thành công", null));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(ApiResponse.error("Trạng thái không hợp lệ", "INVALID_STATUS"));
@@ -49,8 +51,9 @@ public class RecruitmentRestController {
      * API Tìm kiếm ứng viên theo kỹ năng.
      */
     @GetMapping("/candidates/search")
-    public ResponseEntity<ApiResponse<Object>> searchCandidates(@RequestParam(value = "skill", required = false) String skill) {
-        return ResponseEntity.ok(ApiResponse.success("Tìm kiếm ứng viên thành công", 
+    public ResponseEntity<ApiResponse<Object>> searchCandidates(
+            @RequestParam(value = "skill", required = false) String skill) {
+        return ResponseEntity.ok(ApiResponse.success("Tìm kiếm ứng viên thành công",
                 candidateSearchService.searchStudentsBySkill(skill)));
     }
 
@@ -59,12 +62,13 @@ public class RecruitmentRestController {
      */
     @PostMapping("/applications/{appId}/schedule")
     public ResponseEntity<ApiResponse<Object>> scheduleInterview(@PathVariable Integer appId,
-                                                               @RequestParam("time") String timeStr,
-                                                               @RequestParam("location") String location) {
+            @RequestParam("time") String timeStr,
+            @RequestParam("location") String location) {
         // Giả định logic đặt lịch (trong thực tế cần parse timeStr)
         Application appEntity = applicationService.getApplicationEntity(appId);
-        if (appEntity == null) return ResponseEntity.status(404).body(ApiResponse.error("Không tìm thấy hồ sơ ứng tuyển", "NOT_FOUND"));
-        
+        if (appEntity == null)
+            return ResponseEntity.status(404).body(ApiResponse.error("Không tìm thấy hồ sơ ứng tuyển", "NOT_FOUND"));
+
         interviewService.scheduleInterview(appEntity, LocalDateTime.now().plusDays(1), location);
         return ResponseEntity.ok(ApiResponse.success("Đặt lịch phỏng vấn thành công", null));
     }

@@ -14,12 +14,18 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 
+import com.fivecore.jobportal.service.auth.CustomOAuth2UserService;
+import lombok.RequiredArgsConstructor;
+
 /**
  * Cấu hình bảo mật Spring Security.
  */
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public SecurityContextRepository securityContextRepository() {
@@ -67,6 +73,15 @@ public class SecurityConfig {
                 .sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.IF_REQUIRED)
             )
             .formLogin(AbstractHttpConfigurer::disable)
+            .oauth2Login(oauth2 -> oauth2
+                .userInfoEndpoint(userInfo -> userInfo
+                    .userService(customOAuth2UserService)
+                )
+                .successHandler((request, response, authentication) -> {
+                    // Redirect tới frontend handle việc lấy thông tin user
+                    response.sendRedirect("http://localhost:5173/login-success");
+                })
+            )
             .logout(logout -> logout
                 .logoutUrl("/api/auth/logout")
                 .logoutSuccessHandler((request, response, authentication) -> {

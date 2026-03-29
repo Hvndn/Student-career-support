@@ -26,7 +26,6 @@ public class Education {
     @JsonIgnore
     private Student student;
 
-
     @Column(name = "school_name", nullable = false, length = 255)
     private String schoolName;
 

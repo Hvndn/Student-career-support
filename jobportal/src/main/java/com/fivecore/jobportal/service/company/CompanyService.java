@@ -50,19 +50,19 @@ public class CompanyService {
     public void updateCompanyInfo(Integer companyId, Company updatedData, MultipartFile logoFile) {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy doanh nghiệp"));
-        
+
         company.setName(updatedData.getName());
         company.setDescription(updatedData.getDescription());
         company.setWebsite(updatedData.getWebsite());
         company.setAddress(updatedData.getAddress());
         company.setEmail(updatedData.getEmail());
         company.setPhone(updatedData.getPhone());
-        
+
         if (logoFile != null && !logoFile.isEmpty()) {
             String logoUrl = storageService.saveFile(logoFile, "logos");
             company.setLogoUrl(logoUrl);
         }
-        
+
         companyRepository.save(company);
         log.info("Đã cập nhật thông tin cho doanh nghiệp: {}", company.getName());
     }
@@ -74,7 +74,7 @@ public class CompanyService {
     public JobResponse postJob(Integer companyId, JobRequest request) {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy doanh nghiệp"));
-        
+
         Job job = Job.builder()
                 .company(company)
                 .title(request.getTitle())
@@ -88,7 +88,7 @@ public class CompanyService {
 
         Job savedJob = jobRepository.save(job);
         log.info("Doanh nghiệp {} đã đăng tin mới: {}", company.getName(), savedJob.getTitle());
-        
+
         return JobResponse.builder()
                 .id(savedJob.getId())
                 .title(savedJob.getTitle())
@@ -123,6 +123,43 @@ public class CompanyService {
      */
     public List<Company> getAllCompanies() {
         return companyRepository.findAll();
+    }
+
+    /**
+     * Lấy tin tuyển dụng để chỉnh sửa (US-005).
+     */
+    public JobResponse getJobByIdForEdit(Integer jobId, Integer companyId) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy tin tuyển dụng"));
+
+        if (!job.getCompany().getId().equals(companyId)) {
+            throw new RuntimeException("Bạn không có quyền chỉnh sửa tin tuyển dụng này");
+        }
+
+        return mapToResponse(job);
+    }
+
+    /**
+     * Cập nhật tin tuyển dụng (US-005).
+     */
+    @Transactional
+    public void updateJob(Integer jobId, Integer companyId, JobRequest request) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy tin tuyển dụng"));
+
+        if (!job.getCompany().getId().equals(companyId)) {
+            throw new RuntimeException("Bạn không có quyền chỉnh sửa tin tuyển dụng này");
+        }
+
+        job.setTitle(request.getTitle());
+        job.setDescription(request.getDescription());
+        job.setLocation(request.getLocation());
+        job.setSalary(request.getSalary());
+        job.setJobType(Job.JobType.valueOf(request.getJobType().toLowerCase()));
+        job.setDeadline(request.getDeadline());
+
+        jobRepository.save(job);
+        log.info("Đã cập nhật tin tuyển dụng ID {}: {}", jobId, job.getTitle());
     }
 
     private JobResponse mapToResponse(Job job) {

@@ -43,20 +43,25 @@ public class ProfileService {
     public void updateProfile(Integer studentId, com.fivecore.jobportal.dto.StudentProfileRequest request) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
-        
+
         // Cập nhật thông tin trong User entity
         com.fivecore.jobportal.entity.User user = student.getUser();
         if (request.getFullName() != null) {
             user.setFullName(request.getFullName());
         }
-        
+
         // Cập nhật thông tin trong Student entity
-        if (request.getUniversity() != null) student.setUniversity(request.getUniversity());
-        if (request.getMajor() != null) student.setMajor(request.getMajor());
-        if (request.getGraduationYear() != null) student.setGraduationYear(request.getGraduationYear());
-        if (request.getBio() != null) student.setBio(request.getBio());
-        if (request.getPhone() != null) student.setPhone(request.getPhone());
-        
+        if (request.getUniversity() != null)
+            student.setUniversity(request.getUniversity());
+        if (request.getMajor() != null)
+            student.setMajor(request.getMajor());
+        if (request.getGraduationYear() != null)
+            student.setGraduationYear(request.getGraduationYear());
+        if (request.getBio() != null)
+            student.setBio(request.getBio());
+        if (request.getPhone() != null)
+            student.setPhone(request.getPhone());
+
         studentRepository.save(student);
         log.info("Đã cập nhật thông tin hồ sơ cho sinh viên ID: {}", studentId);
     }
@@ -72,15 +77,16 @@ public class ProfileService {
      * Cập nhật thông tin học vấn cơ bản của sinh viên.
      */
     @Transactional
-    public void updateEducation(Integer studentId, String university, String major, Integer gradYear, String avatarUrl) {
+    public void updateEducation(Integer studentId, String university, String major, Integer gradYear,
+            String avatarUrl) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
-        
+
         student.setUniversity(university);
         student.setMajor(major);
         student.setGraduationYear(gradYear);
         student.setAvatarUrl(avatarUrl);
-        
+
         studentRepository.save(student);
         log.info("Đã cập nhật hồ sơ (bao gồm avatar) cho sinh viên ID: {}", studentId);
     }
@@ -104,7 +110,7 @@ public class ProfileService {
     public void addCertificate(Integer studentId, Certificate certificate) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
-        
+
         certificate.setStudent(student);
         certificateRepository.save(certificate);
         log.info("Đã thêm chứng chỉ {} cho sinh viên ID: {}", certificate.getName(), studentId);

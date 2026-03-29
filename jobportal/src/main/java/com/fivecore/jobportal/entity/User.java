@@ -33,7 +33,6 @@ public class User {
     @JsonIgnore
     private String password;
 
-
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
@@ -63,7 +62,6 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Company company;
-
 
     /**
      * Các vai trò trong hệ thống.

@@ -35,9 +35,10 @@ public class SkillService {
 
     /**
      * Cập nhật kỹ năng cho sinh viên.
+     * 
      * @param studentId ID sinh viên
-     * @param skillId ID kỹ năng
-     * @param level Trình độ (Beginner, Intermediate, Advanced)
+     * @param skillId   ID kỹ năng
+     * @param level     Trình độ (Beginner, Intermediate, Advanced)
      */
     @Transactional
     public void addSkillToStudent(Integer studentId, Integer skillId, StudentSkill.SkillLevel level) {
@@ -78,7 +79,7 @@ public class SkillService {
                 .name(name)
                 .category(category)
                 .build();
-        
+
         return skillRepository.save(skill);
     }
 

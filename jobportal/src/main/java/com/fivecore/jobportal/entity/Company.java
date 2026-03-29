@@ -5,7 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 /**
- * Thực thể Công ty/Nhà tuyển dụng - Chứa thông tin chi tiết của người dùng có vai trò là công ty.
+ * Thực thể Công ty/Nhà tuyển dụng - Chứa thông tin chi tiết của người dùng có
+ * vai trò là công ty.
  */
 @Entity
 @Table(name = "companies")
@@ -22,7 +23,6 @@ public class Company {
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
-
 
     @Column(nullable = false, length = 255)
     private String name;
@@ -44,4 +44,7 @@ public class Company {
 
     @Column(name = "logo_url", length = 255)
     private String logoUrl;
+
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<Job> jobs;
 }

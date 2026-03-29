@@ -19,6 +19,16 @@ import java.util.stream.Collectors;
 public class JobSearchService {
 
     private final JobRepository jobRepository;
+    private final com.fivecore.jobportal.repository.UserRepository userRepository;
+
+    /**
+     * Lấy studentId từ Email (US-006 support).
+     */
+    public Integer getStudentIdByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .map(user -> user.getStudent() != null ? user.getStudent().getId() : null)
+                .orElse(null);
+    }
 
     /**
      * Tìm kiếm việc làm với nhiều bộ lọc (US-006).
@@ -28,27 +38,20 @@ public class JobSearchService {
         Specification<Job> spec = (root, query, cb) -> cb.conjunction();
 
         if (keyword != null && !keyword.isEmpty()) {
-            spec = spec.and((root, query, cb) -> 
-                cb.or(
+            spec = spec.and((root, query, cb) -> cb.or(
                     cb.like(cb.lower(root.get("title")), "%" + keyword.toLowerCase() + "%"),
-                    cb.like(cb.lower(root.get("description")), "%" + keyword.toLowerCase() + "%")
-                )
-            );
+                    cb.like(cb.lower(root.get("description")), "%" + keyword.toLowerCase() + "%")));
         }
 
         if (skill != null && !skill.isEmpty()) {
-            spec = spec.and((root, query, cb) -> 
-                cb.or(
+            spec = spec.and((root, query, cb) -> cb.or(
                     cb.like(cb.lower(root.get("title")), "%" + skill.toLowerCase() + "%"),
-                    cb.like(cb.lower(root.get("description")), "%" + skill.toLowerCase() + "%")
-                )
-            );
+                    cb.like(cb.lower(root.get("description")), "%" + skill.toLowerCase() + "%")));
         }
 
         if (location != null && !location.isEmpty()) {
-            spec = spec.and((root, query, cb) -> 
-                cb.like(cb.lower(root.get("location")), "%" + location.toLowerCase() + "%")
-            );
+            spec = spec.and(
+                    (root, query, cb) -> cb.like(cb.lower(root.get("location")), "%" + location.toLowerCase() + "%"));
         }
 
         if (jobType != null && !jobType.isEmpty()) {
@@ -73,6 +76,14 @@ public class JobSearchService {
      * Lấy thông tin chi tiết một công việc theo ID.
      */
     public JobResponse getJobById(Integer id) {
+        return getJobById(id, null);
+    }
+
+    /**
+     * Lấy thông tin chi tiết một công việc theo ID, có kèm studentId để kiểm tra
+     * trạng thái (US-006).
+     */
+    public JobResponse getJobById(Integer id, Integer studentId) {
         return jobRepository.findById(id)
                 .map(this::mapToResponse)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy công việc với ID: " + id));

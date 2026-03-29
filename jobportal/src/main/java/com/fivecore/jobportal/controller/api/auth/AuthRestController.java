@@ -115,4 +115,51 @@ public class AuthRestController {
                     .body(ApiResponse.error("Token không hợp lệ hoặc đã hết hạn", "INVALID_TOKEN"));
         }
     }
+
+    /**
+     * API Lấy thông tin người dùng hiện tại (dùng cho OAuth2 và kiểm tra session).
+     */
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<Object>> getCurrentUser(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).body(ApiResponse.error("Chưa đăng nhập", "UNAUTHORIZED"));
+        }
+
+        String email = authentication.getName();
+        if (authentication.getPrincipal() instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
+            email = oauth2User.getAttribute("email");
+        }
+
+        var userOpt = userRepository.findByEmail(email);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(404).body(ApiResponse.error("Người dùng không tồn tại", "USER_NOT_FOUND"));
+        }
+
+        var user = userOpt.get();
+        String role = user.getRole().toString().toUpperCase();
+        if (!role.startsWith("ROLE_")) {
+            role = "ROLE_" + role;
+        }
+
+        Map<String, Object> data = Map.of(
+                "email", user.getEmail(),
+                "role", role,
+                "fullName", user.getFullName(),
+                "message", "Lấy thông tin thành công"
+        );
+
+        return ResponseEntity.ok(ApiResponse.success("Thành công", data));
+    }
+
+    /**
+     * Endpoint khởi động đăng nhập Google với vai trò được chọn.
+     */
+    @GetMapping("/google/login")
+    public void googleLogin(@RequestParam("role") String role, 
+                            HttpServletRequest request, 
+                            HttpServletResponse response) throws java.io.IOException {
+        request.getSession().setAttribute("oauth2_role", role);
+        // Redirect tới endpoint mặc định của Spring Security OAuth2
+        response.sendRedirect("/oauth2/authorization/google");
+    }
 }

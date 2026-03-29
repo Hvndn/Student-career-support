@@ -5,7 +5,8 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 /**
- * Thực thể Token Khôi phục Mật khẩu - Đảm bảo bảo mật cho quy trình đặt lại mật khẩu.
+ * Thực thể Token Khôi phục Mật khẩu - Đảm bảo bảo mật cho quy trình đặt lại mật
+ * khẩu.
  */
 @Entity
 @Table(name = "password_reset_tokens")

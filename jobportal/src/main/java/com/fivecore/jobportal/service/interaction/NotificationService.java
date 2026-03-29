@@ -32,7 +32,7 @@ public class NotificationService {
                 .message(message)
                 .isRead(false)
                 .build();
-        
+
         notificationRepository.save(notification);
         log.info("Đã gửi thông báo mới tới người dùng: {}", user.getEmail());
     }

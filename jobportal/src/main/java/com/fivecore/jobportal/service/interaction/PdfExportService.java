@@ -66,7 +66,8 @@ public class PdfExportService {
         // Personal Info
         document.add(new Paragraph("THÔNG TIN CÁ NHÂN", fontSubtitle));
         document.add(new Paragraph("Email: " + student.getUser().getEmail(), fontBody));
-        document.add(new Paragraph("Trường: " + (student.getUniversity() != null ? student.getUniversity() : "N/A"), fontBody));
+        document.add(new Paragraph("Trường: " + (student.getUniversity() != null ? student.getUniversity() : "N/A"),
+                fontBody));
         document.add(new Paragraph("Ngành: " + (student.getMajor() != null ? student.getMajor() : "N/A"), fontBody));
         document.add(new Paragraph("Giới thiệu: " + (student.getBio() != null ? student.getBio() : ""), fontBody));
         document.add(new Paragraph("\n"));
@@ -79,7 +80,8 @@ public class PdfExportService {
             student.getSkills().forEach(ss -> {
                 try {
                     document.add(new Paragraph("- " + ss.getSkill().getName() + " (" + ss.getLevel() + ")", fontBody));
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
             });
         }
         document.add(new Paragraph("\n"));
@@ -92,9 +94,12 @@ public class PdfExportService {
         } else {
             educations.forEach(edu -> {
                 try {
-                    String eduInfo = "- " + edu.getSchoolName() + " | " + (edu.getDegree() != null ? edu.getDegree() + " - " : "") + edu.getMajor();
-                    document.add(new Paragraph(eduInfo + " (" + edu.getStartDate() + " to " + (edu.getEndDate() != null ? edu.getEndDate() : "Nay") + ")", fontBody));
-                } catch (Exception e) {}
+                    String eduInfo = "- " + edu.getSchoolName() + " | "
+                            + (edu.getDegree() != null ? edu.getDegree() + " - " : "") + edu.getMajor();
+                    document.add(new Paragraph(eduInfo + " (" + edu.getStartDate() + " to "
+                            + (edu.getEndDate() != null ? edu.getEndDate() : "Nay") + ")", fontBody));
+                } catch (Exception e) {
+                }
             });
         }
         document.add(new Paragraph("\n"));
@@ -107,8 +112,13 @@ public class PdfExportService {
         } else {
             experiences.forEach(exp -> {
                 try {
-                    document.add(new Paragraph("- " + exp.getCompanyName() + " | " + exp.getJobTitle() + " (" + exp.getStartDate() + " to " + (exp.getEndDate() != null ? exp.getEndDate() : "Nay") + ")", fontBody));
-                } catch (Exception e) {}
+                    document.add(
+                            new Paragraph(
+                                    "- " + exp.getCompanyName() + " | " + exp.getJobTitle() + " (" + exp.getStartDate()
+                                            + " to " + (exp.getEndDate() != null ? exp.getEndDate() : "Nay") + ")",
+                                    fontBody));
+                } catch (Exception e) {
+                }
             });
         }
         document.add(new Paragraph("\n"));
@@ -122,12 +132,14 @@ public class PdfExportService {
             projects.forEach(proj -> {
                 try {
                     document.add(new Paragraph("- " + proj.getName(), fontBody));
-                    document.add(new Paragraph("  Mô tả: " + (proj.getDescription() != null ? proj.getDescription() : ""), fontBody));
-                    document.add(new Paragraph("  Github: " + (proj.getRepositoryUrl() != null ? proj.getRepositoryUrl() : ""), fontBody));
-                } catch (Exception e) {}
+                    document.add(new Paragraph(
+                            "  Mô tả: " + (proj.getDescription() != null ? proj.getDescription() : ""), fontBody));
+                    document.add(new Paragraph(
+                            "  Github: " + (proj.getRepositoryUrl() != null ? proj.getRepositoryUrl() : ""), fontBody));
+                } catch (Exception e) {
+                }
             });
         }
-
 
         document.close();
     }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { adminApi } from '../api';
+import { adminApi } from '../../api';
 import './AdminDashboard.css';
 
 const JobApproval = () => {
@@ -41,7 +41,7 @@ const JobApproval = () => {
                 <div className="sidebar-brand">
                     <div className="brand-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+                            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
                         </svg>
                     </div>
                     <div className="brand-text-container">
@@ -95,9 +95,9 @@ const JobApproval = () => {
                 <header className="admin-header" style={{ background: '#fff', borderBottom: '1px solid #eef0f4' }}>
                     <div className="header-search">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                        <input type="text" placeholder="Tìm kiếm tin tuyển dụng..." style={{ fontSize: '0.9rem' }}/>
+                        <input type="text" placeholder="Tìm kiếm tin tuyển dụng..." style={{ fontSize: '0.9rem' }} />
                     </div>
-                    
+
                     <div className="header-actions">
                         <div className="action-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
@@ -116,7 +116,7 @@ const JobApproval = () => {
                 </header>
 
                 <div className="admin-content" style={{ padding: '2.5rem', background: '#f8f9fc', overflowY: 'auto' }}>
-                    
+
                     <div className="page-header" style={{ marginBottom: '2.5rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                         <h1 style={{ fontSize: '2rem', fontWeight: '700', color: '#111827', margin: 0 }}>Kiểm duyệt việc làm</h1>
                         <p style={{ color: '#4b5563', fontSize: '1rem', margin: '0.5rem 0 0', maxWidth: '600px', lineHeight: 1.5 }}>
@@ -154,7 +154,7 @@ const JobApproval = () => {
                         <div style={{ background: '#fff', borderRadius: '12px', padding: '1.8rem', border: '1px solid #eef0f4', boxShadow: '0 2px 4px rgba(0,0,0,0.01)', borderLeft: '6px solid #dc2626' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
                                 <div style={{ background: '#fee2e2', color: '#dc2626', width: '42px', height: '42px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>
                                 </div>
                                 <span style={{ color: '#dc2626', background: '#fee2e2', padding: '0.3rem 0.8rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Từ chối</span>
                             </div>
@@ -205,9 +205,9 @@ const JobApproval = () => {
                                             <td style={{ padding: '1.5rem 1.5rem', color: '#6b7280', fontSize: '0.9rem' }}>{job.date}</td>
                                             <td style={{ padding: '1.5rem 1.5rem', color: '#374151', fontSize: '0.9rem', fontWeight: 600 }}>{job.salary}</td>
                                             <td style={{ padding: '1.5rem 1.5rem' }}>
-                                                <span style={{ 
-                                                    padding: '0.4rem 1.2rem', 
-                                                    borderRadius: '20px', 
+                                                <span style={{
+                                                    padding: '0.4rem 1.2rem',
+                                                    borderRadius: '20px',
                                                     fontSize: '0.8rem',
                                                     fontWeight: 700,
                                                     background: '#ffedd5',
@@ -234,7 +234,7 @@ const JobApproval = () => {
                                 </tbody>
                             </table>
                         </div>
-                        
+
                         {/* Pagination Area */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem 2rem', borderTop: '1px solid #eef0f4' }}>
                             <div style={{ color: '#9ca3af', fontSize: '0.85rem', fontStyle: 'italic' }}>
@@ -259,7 +259,7 @@ const JobApproval = () => {
                     {/* BOTTOM INFO BANNER */}
                     <div style={{ background: '#eff6ff', borderRadius: '12px', padding: '1.5rem', display: 'flex', alignItems: 'flex-start', gap: '1rem', marginTop: '2rem', border: '1px solid #e0ebff' }}>
                         <div style={{ color: '#0d5cda', marginTop: '0.2rem' }}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7.58 2 4 5.58 4 10c0 2.9 1.54 5.43 3.9 6.84V19c0 1.1.9 2 2 2h4c1.1 0 2-.9 2-2v-2.16c2.36-1.41 3.9-3.94 3.9-6.84 0-4.42-3.58-8-8-8zm-1 19c0 .55.45 1 1 1h.5a1.5 1.5 0 0 1-1.5-1v-1h2v1A1.5 1.5 0 0 1 11 21zm4.5-4h-7v-1h7v1zm-.72-2.31l-.28.16v1.15h-5v-1.15l-.28-.16a6.002 6.002 0 0 1-3.22-5.32c0-3.31 2.69-6 6-6s6 2.69 6 6c0 2.21-1.2 4.19-3.22 5.32z"/></svg>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7.58 2 4 5.58 4 10c0 2.9 1.54 5.43 3.9 6.84V19c0 1.1.9 2 2 2h4c1.1 0 2-.9 2-2v-2.16c2.36-1.41 3.9-3.94 3.9-6.84 0-4.42-3.58-8-8-8zm-1 19c0 .55.45 1 1 1h.5a1.5 1.5 0 0 1-1.5-1v-1h2v1A1.5 1.5 0 0 1 11 21zm4.5-4h-7v-1h7v1zm-.72-2.31l-.28.16v1.15h-5v-1.15l-.28-.16a6.002 6.002 0 0 1-3.22-5.32c0-3.31 2.69-6 6-6s6 2.69 6 6c0 2.21-1.2 4.19-3.22 5.32z" /></svg>
                         </div>
                         <div>
                             <h4 style={{ color: '#1e3a8a', fontSize: '1rem', fontWeight: 700, margin: '0 0 0.5rem 0' }}>Mẹo kiểm duyệt nhanh</h4>

@@ -70,7 +70,8 @@ public class CompanyRestController {
      * API Đăng tin tuyển dụng.
      */
     @PostMapping("/jobs")
-    public ResponseEntity<ApiResponse<Object>> postJob(@RequestBody JobRequest jobRequest, Authentication authentication) {
+    public ResponseEntity<ApiResponse<Object>> postJob(@RequestBody JobRequest jobRequest,
+            Authentication authentication) {
         Integer companyId = getCurrentCompanyId(authentication);
         companyService.postJob(companyId, jobRequest);
         return ResponseEntity.ok(ApiResponse.success("Đăng tin tuyển dụng thành công", null));
@@ -80,19 +81,20 @@ public class CompanyRestController {
      * API Lấy chi tiết tin đăng cấp doanh nghiệp (để sửa).
      */
     @GetMapping("/jobs/{id}")
-    public ResponseEntity<ApiResponse<Object>> getJobForEdit(@PathVariable("id") Integer id, Authentication authentication) {
+    public ResponseEntity<ApiResponse<Object>> getJobForEdit(@PathVariable("id") Integer id,
+            Authentication authentication) {
         Integer companyId = getCurrentCompanyId(authentication);
-        return ResponseEntity.ok(ApiResponse.success("Lấy thông tin tin đăng thành công", 
-                                companyService.getJobByIdForEdit(companyId, id)));
+        return ResponseEntity.ok(ApiResponse.success("Lấy thông tin tin đăng thành công",
+                companyService.getJobByIdForEdit(companyId, id)));
     }
 
     /**
      * API Cập nhật tin tuyển dụng.
      */
     @PutMapping("/jobs/{id}")
-    public ResponseEntity<ApiResponse<Object>> updateJob(@PathVariable("id") Integer id, 
-                                                       @RequestBody JobRequest jobRequest, 
-                                                       Authentication authentication) {
+    public ResponseEntity<ApiResponse<Object>> updateJob(@PathVariable("id") Integer id,
+            @RequestBody JobRequest jobRequest,
+            Authentication authentication) {
         Integer companyId = getCurrentCompanyId(authentication);
         companyService.updateJob(companyId, id, jobRequest);
         return ResponseEntity.ok(ApiResponse.success("Cập nhật tin tuyển dụng thành công", null));
@@ -107,9 +109,11 @@ public class CompanyRestController {
         if (companyId == null) {
             // Trường hợp user có role company nhưng chưa tạo bản ghi Company
             log.warn("Người dùng {} có role company nhưng chưa có thông tin Company", authentication.getName());
-            return ResponseEntity.ok(ApiResponse.success("Chưa có thông tin doanh nghiệp", java.util.Collections.emptyList()));
+            return ResponseEntity
+                    .ok(ApiResponse.success("Chưa có thông tin doanh nghiệp", java.util.Collections.emptyList()));
         }
-        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách tin đăng thành công", companyService.getJobsByCompany(companyId)));
+        return ResponseEntity.ok(
+                ApiResponse.success("Lấy danh sách tin đăng thành công", companyService.getJobsByCompany(companyId)));
     }
 
     /**
@@ -121,7 +125,7 @@ public class CompanyRestController {
         if (company == null) {
             return ResponseEntity.status(404).body(ApiResponse.error("Không tìm thấy thông tin công ty", "NOT_FOUND"));
         }
-        
+
         CompanyResponse response = CompanyResponse.builder()
                 .id(company.getId())
                 .name(company.getName())
@@ -140,8 +144,8 @@ public class CompanyRestController {
      */
     @PutMapping("/profile")
     public ResponseEntity<ApiResponse<Object>> updateProfile(@ModelAttribute Company company,
-                                                            @RequestParam(value = "logoFile", required = false) MultipartFile logoFile,
-                                                            Authentication authentication) {
+            @RequestParam(value = "logoFile", required = false) MultipartFile logoFile,
+            Authentication authentication) {
         Integer companyId = getCurrentCompanyId(authentication);
         companyService.updateCompanyInfo(companyId, company, logoFile);
         return ResponseEntity.ok(ApiResponse.success("Cập nhật thông tin thành công", null));

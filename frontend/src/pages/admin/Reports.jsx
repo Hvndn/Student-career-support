@@ -1,18 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { adminApi } from '../../api';
 import './AdminDashboard.css';
 
 const Reports = () => {
+    const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
         document.body.style.paddingTop = '0';
-        setTimeout(() => setLoading(false), 500);
+        loadStats();
         return () => {
             document.body.style.paddingTop = '';
         };
     }, []);
+
+    const loadStats = async () => {
+        try {
+            const res = await adminApi.getStats();
+            setStats(res.data.data);
+            setLoading(false);
+        } catch (err) {
+            console.error('Lấy thống kê thất bại:', err);
+            setLoading(false);
+        }
+    };
 
     const handleLogout = () => {
         localStorage.removeItem('user');
@@ -138,7 +151,7 @@ const Reports = () => {
                                 </span>
                             </div>
                             <div style={{ color: '#4b5563', fontSize: '0.95rem', fontWeight: 600, marginBottom: '0.5rem' }}>Sinh viên đăng ký</div>
-                            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#111827', lineHeight: 1 }}>24,582</div>
+                            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#111827', lineHeight: 1 }}>{stats?.totalStudents?.toLocaleString() || '24,582'}</div>
                         </div>
 
                         {/* Card 2 */}
@@ -153,7 +166,7 @@ const Reports = () => {
                                 </span>
                             </div>
                             <div style={{ color: '#4b5563', fontSize: '0.95rem', fontWeight: 600, marginBottom: '0.5rem' }}>Doanh nghiệp xác thực</div>
-                            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#111827', lineHeight: 1 }}>1,890</div>
+                            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#111827', lineHeight: 1 }}>{stats?.totalCompanies?.toLocaleString() || '1,890'}</div>
                         </div>
 
                         {/* Card 3 */}
@@ -168,7 +181,7 @@ const Reports = () => {
                                 </span>
                             </div>
                             <div style={{ color: '#4b5563', fontSize: '0.95rem', fontWeight: 600, marginBottom: '0.5rem' }}>Tin tuyển dụng mới</div>
-                            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#111827', lineHeight: 1 }}>3,421</div>
+                            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#111827', lineHeight: 1 }}>{stats?.totalJobs?.toLocaleString() || '3,421'}</div>
                         </div>
 
                         {/* Card 4 */}
@@ -182,8 +195,8 @@ const Reports = () => {
                                     8.7%
                                 </span>
                             </div>
-                            <div style={{ color: '#4b5563', fontSize: '0.95rem', fontWeight: 600, marginBottom: '0.5rem' }}>Tỷ lệ kết nối thành công</div>
-                            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#111827', lineHeight: 1 }}>72.4%</div>
+                            <div style={{ color: '#4b5563', fontSize: '0.95rem', fontWeight: 600, marginBottom: '0.5rem' }}>Số lượng hồ sơ</div>
+                            <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#111827', lineHeight: 1 }}>{stats?.totalApplications || '0'}</div>
                         </div>
                     </div>
 
@@ -235,42 +248,34 @@ const Reports = () => {
                             
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '2rem', flex: 1 }}>
                                 {/* Donut representation */}
-                                <div style={{ position: 'relative', width: '180px', height: '180px', borderRadius: '50%', background: 'conic-gradient(#0d5cda 0% 42%, #ea580c 42% 70%, #4b5563 70% 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <div style={{ position: 'relative', width: '180px', height: '180px', borderRadius: '50%', background: 'conic-gradient(#0d5cda 0% 40%, #ea580c 40% 75%, #4b5563 75% 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     <div style={{ width: '130px', height: '130px', borderRadius: '50%', background: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                                        <span style={{ fontSize: '1.8rem', fontWeight: 800, color: '#111827', lineHeight: 1 }}>12+</span>
+                                        <span style={{ fontSize: '1.8rem', fontWeight: 800, color: '#111827', lineHeight: 1 }}>{Object.keys(stats?.skillDistribution || {}).length}+</span>
                                         <span style={{ fontSize: '0.6rem', fontWeight: 700, color: '#6b7280', letterSpacing: '0.05em' }}>NGÀNH NGHỀ</span>
                                     </div>
                                 </div>
                                 
                                 {/* Legends */}
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', flex: 1 }}>
-                                    <div>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', color: '#111827', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem' }}>
-                                            <span>Công nghệ thông tin</span>
-                                            <span style={{ color: '#0d5cda' }}>42%</span>
-                                        </div>
-                                        <div style={{ width: '100%', background: '#e5e7eb', height: '6px', borderRadius: '3px' }}>
-                                            <div style={{ width: '42%', background: '#0d5cda', height: '100%', borderRadius: '3px' }}></div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', color: '#111827', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem' }}>
-                                            <span>Marketing & Sales</span>
-                                            <span style={{ color: '#ea580c' }}>28%</span>
-                                        </div>
-                                        <div style={{ width: '100%', background: '#e5e7eb', height: '6px', borderRadius: '3px' }}>
-                                            <div style={{ width: '28%', background: '#ea580c', height: '100%', borderRadius: '3px' }}></div>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', color: '#111827', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem' }}>
-                                            <span>Thiết kế sáng tạo</span>
-                                            <span style={{ color: '#4b5563' }}>15%</span>
-                                        </div>
-                                        <div style={{ width: '100%', background: '#e5e7eb', height: '6px', borderRadius: '3px' }}>
-                                            <div style={{ width: '15%', background: '#4b5563', height: '100%', borderRadius: '3px' }}></div>
-                                        </div>
-                                    </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flex: 1, maxHeight: '200px', overflowY: 'auto' }}>
+                                    {stats?.skillDistribution && Object.entries(stats.skillDistribution).map(([category, count], idx) => {
+                                        const total = Object.values(stats.skillDistribution).reduce((a, b) => a + b, 0);
+                                        const percentage = Math.round((count / total) * 100);
+                                        const colors = ['#0d5cda', '#ea580c', '#4b5563', '#8b5cf6', '#ec4899'];
+                                        return (
+                                            <div key={category}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#111827', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem' }}>
+                                                    <span>{category}</span>
+                                                    <span style={{ color: colors[idx % colors.length] }}>{percentage}%</span>
+                                                </div>
+                                                <div style={{ width: '100%', background: '#e5e7eb', height: '6px', borderRadius: '3px' }}>
+                                                    <div style={{ width: `${percentage}%`, background: colors[idx % colors.length], height: '100%', borderRadius: '3px' }}></div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                    {(!stats?.skillDistribution || Object.keys(stats.skillDistribution).length === 0) && (
+                                        <div style={{ color: '#6b7280', fontSize: '0.9rem', textAlign: 'center' }}>Chưa có dữ liệu ngành nghề</div>
+                                    )}
                                 </div>
                             </div>
                         </div>

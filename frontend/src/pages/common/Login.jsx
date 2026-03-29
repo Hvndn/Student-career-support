@@ -1,30 +1,56 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { authApi } from '../../api';
+import '../Auth.css';
 
 const Login = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const [successMessage, setSuccessMessage] = useState(location.state?.message || '');
+
+    useEffect(() => {
+        document.body.style.paddingTop = '0';
+
+        // Clear message from location state after initial load
+        if (location.state?.message) {
+            window.history.replaceState({}, document.title);
+        }
+
+        return () => {
+            document.body.style.paddingTop = '';
+        };
+    }, [location]);
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const navigate = useNavigate();
+    const [role, setRole] = useState('student'); // Default role is student
+
+    const handleGoogleLogin = () => {
+        // Gọi tới endpoint backend để bắt đầu OAuth2 flow với vai trò đã chọn
+        window.location.href = `http://localhost:8080/api/auth/google/login?role=${role}`;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const res = await authApi.login({ email, password });
-
             if (res.data.status === 'success') {
-                const user = res.data.data;
-                localStorage.setItem('user', JSON.stringify(user));
-                const role = user.role;
-                if (role === 'ROLE_COMPANY') {
-                    navigate('/company/dashboard');
-                } else if (role === 'ROLE_STUDENT') {
-                    navigate('/');
-                } else if (role === 'ROLE_ADMIN') {
-                    navigate('/admin/dashboard');
+                const userData = res.data.data;
+                localStorage.setItem('user', JSON.stringify(userData));
+
+                // Redirect based on role
+                const userRole = userData.role ? userData.role.toUpperCase() : '';
+                const loginSuccessMsg = { state: { message: 'Đăng nhập thành công! Chào mừng bạn quay trở lại.' } };
+
+                if (userRole === 'ADMIN' || userRole === 'ROLE_ADMIN') {
+                    navigate('/admin/dashboard', loginSuccessMsg);
+                } else if (userRole === 'COMPANY' || userRole === 'ROLE_COMPANY') {
+                    navigate('/company/dashboard', loginSuccessMsg);
+                } else if (userRole === 'STUDENT' || userRole === 'ROLE_STUDENT') {
+                    navigate('/', loginSuccessMsg);
                 } else {
-                    navigate('/');
+                    navigate('/', loginSuccessMsg);
                 }
             } else {
                 setError(res.data.message);
@@ -35,174 +61,137 @@ const Login = () => {
     };
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            background: '#f8fafd',
-            display: 'flex',
-            flexDirection: 'column',
-            fontFamily: "'Outfit', sans-serif",
-        }}>
-            {/* Mini Navbar */}
-            <nav style={{
-                background: '#fff',
-                borderBottom: '1px solid #e5e7eb',
-                padding: '0 2rem',
-                height: '64px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-            }}>
-                <Link to="/" style={{ fontWeight: 800, fontSize: '1.1rem', color: '#111827' }}>
-                    Nexus Talent
-                </Link>
-                <p style={{ fontSize: '0.9rem', color: '#6b7280', margin: 0 }}>
-                    Chưa có tài khoản?{' '}
-                    <Link to="/register" style={{ color: '#2563eb', fontWeight: 600 }}>Đăng ký miễn phí</Link>
+        <div className="auth-container">
+            {/* Left Panel */}
+            <div className="auth-left">
+                <h1 className="brand-title">Five core</h1>
+                <p className="brand-desc">
+                    Nơi tri thức gặp gỡ cơ hội. Khởi đầu hành trình nghề nghiệp của bạn cùng mạng lưới chuyên gia hàng đầu.
                 </p>
-            </nav>
 
-            {/* Main Content */}
-            <div style={{
-                flex: 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '3rem 1rem',
-            }}>
-                <div style={{
-                    background: '#fff',
-                    border: '1.5px solid #e5e7eb',
-                    borderRadius: '20px',
-                    padding: '3rem 2.5rem',
-                    width: '100%',
-                    maxWidth: '420px',
-                    boxShadow: '0 10px 40px rgba(0,0,0,0.06)',
-                }}>
-                    {/* Header */}
-                    <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                        <div style={{
-                            width: '52px', height: '52px',
-                            background: '#eff6ff',
-                            borderRadius: '14px',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: '1.5rem',
-                            margin: '0 auto 1rem',
-                        }}>🔑</div>
-                        <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#111827', margin: '0 0 0.4rem' }}>
-                            Chào mừng trở lại
-                        </h2>
-                        <p style={{ color: '#6b7280', fontSize: '0.95rem', margin: 0 }}>
-                            Đăng nhập để tiếp tục hành trình của bạn.
-                        </p>
+                <div className="feature-list">
+                    <div className="feature-item">
+                        <div className="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c3 3 9 3 12 0v-5" />
+                            </svg>
+                        </div>
+                        <div className="feature-text">
+                            <h4>Dành cho Sinh viên</h4>
+                            <p>Tiếp cận thực tập và việc làm từ các tập đoàn lớn.</p>
+                        </div>
                     </div>
 
-                    {/* Error */}
+                    <div className="feature-item">
+                        <div className="feature-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                            </svg>
+                        </div>
+                        <div className="feature-text">
+                            <h4>Dành cho Doanh nghiệp</h4>
+                            <p>Tìm kiếm và nuôi dưỡng nhân tài ngay từ khi còn trên ghế nhà trường.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="copyright">
+                    &copy; 2024 ScholarBridge. Nền tảng kết nối tri thức và sự nghiệp.
+                </div>
+            </div>
+
+            {/* Right Panel */}
+            <div className="auth-right">
+                <div className="auth-form-box">
+                    <div className="form-header">
+                        <h2>Chào mừng Trở lại</h2>
+                        <p>Đăng nhập để tiếp tục hành trình của bạn.</p>
+                    </div>
+
+                    <div className="role-selection">
+                        <button 
+                            type="button" 
+                            className={`role-tab ${role === 'student' ? 'active' : ''}`}
+                            onClick={() => setRole('student')}
+                        >
+                            Tôi là Sinh viên
+                        </button>
+                        <button 
+                            type="button" 
+                            className={`role-tab ${role === 'company' ? 'active' : ''}`}
+                            onClick={() => setRole('company')}
+                        >
+                            Tôi là Doanh nghiệp
+                        </button>
+                    </div>
+
+                    {successMessage && (
+                        <div style={{ backgroundColor: '#dcfce7', color: '#15803d', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', fontSize: '0.9rem', border: '1px solid #bbf7d0', textAlign: 'center' }}>
+                            {successMessage}
+                        </div>
+                    )}
+
                     {error && (
-                        <div style={{
-                            background: '#fef2f2',
-                            color: '#dc2626',
-                            border: '1px solid #fecaca',
-                            padding: '0.8rem 1rem',
-                            borderRadius: '10px',
-                            marginBottom: '1.5rem',
-                            fontSize: '0.9rem',
-                            textAlign: 'center',
-                        }}>
+                        <div style={{ backgroundColor: '#fee2e2', color: '#dc2626', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', fontSize: '0.9rem', border: '1px solid #fecaca' }}>
                             {error}
                         </div>
                     )}
 
-                    {/* Form */}
                     <form onSubmit={handleSubmit}>
-                        <div style={{ marginBottom: '1.2rem' }}>
-                            <label style={{
-                                display: 'block', marginBottom: '0.5rem',
-                                color: '#374151', fontSize: '0.9rem', fontWeight: 600,
-                            }}>Email của bạn</label>
+                        <div className="form-group">
+                            <label>EMAIL CỦA BẠN</label>
                             <input
                                 type="email"
+                                className="form-input"
                                 placeholder="name@example.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
-                                style={{
-                                    width: '100%',
-                                    padding: '0.85rem 1rem',
-                                    border: '1.5px solid #e5e7eb',
-                                    borderRadius: '10px',
-                                    fontSize: '0.95rem',
-                                    color: '#111827',
-                                    outline: 'none',
-                                    background: '#fff',
-                                    boxSizing: 'border-box',
-                                    fontFamily: "'Outfit', sans-serif",
-                                    transition: 'border-color 0.2s',
-                                }}
-                                onFocus={e => e.target.style.borderColor = '#2563eb'}
-                                onBlur={e => e.target.style.borderColor = '#e5e7eb'}
                             />
                         </div>
-                        <div style={{ marginBottom: '1.8rem' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                                <label style={{ color: '#374151', fontSize: '0.9rem', fontWeight: 600 }}>Mật khẩu</label>
-                                <a href="#" style={{ color: '#2563eb', fontSize: '0.85rem' }}>Quên mật khẩu?</a>
+                        <div className="form-group" style={{ marginBottom: '2.5rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                                <label style={{ marginBottom: 0 }}>MẬT KHẨU</label>
+                                <Link to="/forgot-password" style={{ fontSize: '0.8rem', color: '#0d5cda', fontWeight: '600' }}>Quên mật khẩu?</Link>
                             </div>
                             <input
                                 type="password"
+                                className="form-input"
                                 placeholder="••••••••"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
-                                style={{
-                                    width: '100%',
-                                    padding: '0.85rem 1rem',
-                                    border: '1.5px solid #e5e7eb',
-                                    borderRadius: '10px',
-                                    fontSize: '0.95rem',
-                                    color: '#111827',
-                                    outline: 'none',
-                                    background: '#fff',
-                                    boxSizing: 'border-box',
-                                    fontFamily: "'Outfit', sans-serif",
-                                    transition: 'border-color 0.2s',
-                                }}
-                                onFocus={e => e.target.style.borderColor = '#2563eb'}
-                                onBlur={e => e.target.style.borderColor = '#e5e7eb'}
                             />
                         </div>
 
-                        <button type="submit" style={{
-                            width: '100%',
-                            padding: '0.9rem',
-                            background: '#2563eb',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '10px',
-                            fontSize: '1rem',
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            fontFamily: "'Outfit', sans-serif",
-                            transition: 'background 0.2s',
-                        }}
-                            onMouseOver={e => e.currentTarget.style.background = '#1d4ed8'}
-                            onMouseOut={e => e.currentTarget.style.background = '#2563eb'}
-                        >
-                            Đăng nhập
+                        <button type="submit" className="btn-submit">
+                            Đăng nhập ngay
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
                         </button>
 
-                        <div style={{
-                            display: 'flex', alignItems: 'center', gap: '1rem',
-                            margin: '1.5rem 0',
-                        }}>
-                            <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }} />
-                            <span style={{ color: '#9ca3af', fontSize: '0.85rem' }}>hoặc</span>
-                            <div style={{ flex: 1, height: '1px', background: '#e5e7eb' }} />
+                        <div className="auth-prompt">
+                            Chưa có tài khoản? <Link to="/register" className="auth-link">Đăng ký miễn phí</Link>
                         </div>
 
-                        <p style={{ textAlign: 'center', fontSize: '0.9rem', color: '#6b7280', margin: 0 }}>
-                            Chưa có tài khoản?{' '}
-                            <Link to="/register" style={{ color: '#2563eb', fontWeight: 700 }}>Đăng ký miễn phí</Link>
-                        </p>
+                        <div className="divider">HOẶC ĐĂNG NHẬP BẰNG</div>
+
+                        <div className="google-login-row">
+                            <button 
+                                type="button" 
+                                className="google-icon-btn" 
+                                aria-label="Đăng nhập bằng Google"
+                                onClick={handleGoogleLogin}
+                            >
+                                <svg viewBox="0 0 24 24" width="32" height="32">
+                                    <path fill="#EA4335" d="M12 5.04c1.74 0 3.3.6 4.53 1.76l3.39-3.39C17.85 1.48 15.11 0 12 0 7.31 0 3.32 2.69 1.4 6.65L5.4 9.75c.94-2.73 3.5-4.71 6.6-4.71z" />
+                                    <path fill="#4285F4" d="M23.49 12.27c0-.82-.07-1.61-.21-2.37H12v4.51h6.48c-.28 1.48-1.12 2.73-2.38 3.58l3.7 2.87c2.16-1.99 3.69-4.92 3.69-8.59z" />
+                                    <path fill="#FBBC05" d="M5.4 14.25c-.24-.72-.38-1.49-.38-2.25s.14-1.53.38-2.25L1.4 6.65C.51 8.26 0 10.07 0 12s.51 3.74 1.4 5.35l4-3.1z" />
+                                    <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.7-2.87c-1.03.69-2.35 1.1-4.23 1.1-3.1 0-5.66-2.11-6.6-4.96l-4 3.1C3.32 21.31 7.31 24 12 24z" />
+                                </svg>
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
