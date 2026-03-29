@@ -65,7 +65,7 @@ public class RecommendationService {
                 .title(job.getTitle())
                 .companyName(job.getCompany().getName())
                 .location(job.getLocation())
-                .salary(job.getSalary())
+                .salary(job.getMinSalary() != null ? job.getMinSalary().toString() + (job.getMaxSalary() != null ? " - " + job.getMaxSalary().toString() : "") : "Thỏa thuận")
                 .jobType(job.getJobType().name())
                 .status(job.getStatus().name())
                 .deadline(job.getDeadline())

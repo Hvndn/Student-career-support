@@ -27,12 +27,24 @@ const NAV_ITEMS = [
     label: 'Ứng viên', to: '/company/management/candidates',
     subItems: [
       { 
-        label: 'Quản lý ứng viên', to: '/company/management/candidates',
-        icon: <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+        label: 'Hồ sơ ứng tuyển', to: '/company/management/candidates',
+        icon: <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
       },
       { 
-        label: 'Tìm kiếm ứng viên', to: '/company/candidates/search',
-        icon: <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        label: 'Hồ sơ đã lưu', to: '/company/candidates/saved',
+        icon: <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+      },
+      { 
+        label: 'Tìm ứng viên mới', to: '/company/candidates/search',
+        icon: <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><path d="M11 8v6"></path><path d="M8 11h6"></path></svg>
+      },
+      { 
+        label: 'Quản lý thẻ', to: '/company/candidates/tags',
+        icon: <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+      },
+      { 
+        label: 'Thông báo hồ sơ phù hợp', to: '/company/candidates/notifications',
+        icon: <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path><path d="M12 2v2"></path></svg>
       }
     ]
   },
@@ -57,7 +69,10 @@ const CompanySidebar = () => {
   const [activeCategory, setActiveCategory] = useState('');
 
   React.useEffect(() => {
-    const currentItem = NAV_ITEMS.find(item => {
+    // Sort items by 'to' length descending to find the most specific match first
+    const sortedItems = [...NAV_ITEMS].sort((a, b) => (b.to?.length || 0) - (a.to?.length || 0));
+
+    const currentItem = sortedItems.find(item => {
       if (location.pathname === item.to) return true;
       if (item.to !== '/company/dashboard' && item.to !== '#' && location.pathname.startsWith(item.to)) return true;
       if (item.subItems?.some(sub => location.pathname.startsWith(sub.to))) return true;
@@ -71,8 +86,8 @@ const CompanySidebar = () => {
     const categoryKey = currentItem?.label || '';
     setActiveCategory(categoryKey);
 
-    // If the category has sub-items, ensure it's pinned when we arrive
-    if (currentItem?.subItems) {
+    // If the category has sub-items or we are on dashboard, ensure it's pinned
+    if (currentItem?.subItems || location.pathname === '/company/dashboard') {
       setIsPinned(true);
     }
   }, [location.pathname]);

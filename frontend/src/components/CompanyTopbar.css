@@ -11,7 +11,10 @@
   left: 70px;
   right: 0;
   z-index: 480;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* Stopped topbar from shifting as per user request */
 
 .cd-topbar-left {
   display: flex;
@@ -105,6 +108,18 @@
 
 .cd-company-icon {
   font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cd-topbar-avatar {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  border-radius: 4px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
 }
 
 .cd-user-info {

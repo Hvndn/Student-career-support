@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
   /* Core */
@@ -45,7 +45,7 @@
 
 /* Body */
 body {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
   background-color: var(--bg);
   background-image:
     radial-gradient(circle at 20% 20%, rgba(107, 112, 92, 0.08) 0%, transparent 50%),
@@ -116,7 +116,7 @@ button {
   cursor: pointer;
   border: none;
   outline: none;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 .btn {
@@ -231,3 +231,146 @@ button {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 0, 0, 0.25);
 }
+.skill-tag {
+  transition: all 0.3s ease;
+}
+
+.skill-tag:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  transform: scale(1.02);
+}
+
+/* ── Company Module Shared Styles ── */
+.cd-topbar {
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0 2rem;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+  width: 100%;
+  box-sizing: border-box;
+}
+.cd-topbar-left { display: flex; gap: 1.5rem; align-items: center; }
+.cd-tab { font-size: 0.88rem; color: #6b7280; font-weight: 500; cursor: pointer; }
+.cd-tab.active { color: #2563eb; font-weight: 700; }
+.cd-topbar-right { display: flex; align-items: center; gap: 0.8rem; }
+.cd-search {
+  display: flex; align-items: center; gap: 0.5rem;
+  background: #f3f4f6; border-radius: 8px; padding: 0.4rem 0.8rem;
+}
+.cd-search input {
+  border: none; background: transparent; outline: none;
+  font-size: 0.82rem; width: 180px; color: #374151; font-family: 'Inter', sans-serif;
+}
+.cd-search input::placeholder { color: #9ca3af; }
+.cd-icon-btn {
+  background: none; border: none; font-size: 1rem;
+  cursor: pointer; padding: 0.3rem; border-radius: 8px; transition: background 0.2s;
+}
+.cd-icon-btn:hover { background: #f3f4f6; }
+.cd-user { display: flex; align-items: center; gap: 0.6rem; }
+.cd-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: #2563eb; color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.95rem;
+}
+.cd-uname { font-weight: 700; font-size: 0.82rem; color: #111827; margin: 0; }
+.cd-urole { font-size: 0.65rem; color: #6b7280; margin: 0; }
+
+
+
+/* ── Premium Toast Styling ── */
+.react-hot-toast {
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(10px);
+  border-radius: 16px !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+  padding: 12px 20px !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  max-width: 400px !important;
+}
+
+.toast-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.toast-title {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.95rem;
+  display: block;
+}
+
+.toast-desc {
+  font-size: 0.85rem;
+  color: #64748b;
+  display: block;
+}
+
+/* Success variant */
+.react-hot-toast-success {
+  border-left: 5px solid var(--accent) !important;
+}
+
+/* Error variant */
+.react-hot-toast-error {
+  border-left: 5px solid #ef4444 !important;
+}
+
+/* ── Centered Loading Spinner ── */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.premium-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(122, 128, 96, 0.1);
+  border-top: 4px solid var(--accent);
+  border-radius: 50%;
+  animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.loading-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+

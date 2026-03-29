@@ -11,22 +11,29 @@ const CompanyTopbar = ({ activeTab = 'Jobs' }) => {
     email: user.email || '...'
   });
 
-  useEffect(() => {
-    const fetchCompanyProfile = async () => {
-      try {
-        const response = await companyApi.getProfile();
-        if (response.data.status === 'success') {
-          setCompanyData(response.data.data);
-        }
-      } catch (error) {
-        console.error('Error fetching company profile:', error);
+  const fetchCompanyProfile = async () => {
+    try {
+      const response = await companyApi.getProfile();
+      if (response.data.status === 'success') {
+        setCompanyData(response.data.data);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching company profile:', error);
+    }
+  };
+
+  useEffect(() => {
     fetchCompanyProfile();
+
+    // Listen for profile updates from other components
+    window.addEventListener('companyProfileUpdated', fetchCompanyProfile);
+    return () => {
+      window.removeEventListener('companyProfileUpdated', fetchCompanyProfile);
+    };
   }, []);
 
-  const companyName = companyData.name || 'CHI NHÁNH CÔNG TY CỔ PHẦN DỊCH VỤ VÀ ĐẦU TƯ BẤT ĐỘNG SẢN...';
-  const userEmail = companyData.email || user.email || 'dien_2251220214@dau.edu.vn';
+  const companyName = companyData.name || 'Nexus Talent';
+  const userEmail = companyData.email || user.email || '...';
 
   return (
     <header className="cd-topbar">
@@ -51,7 +58,11 @@ const CompanyTopbar = ({ activeTab = 'Jobs' }) => {
         <div className="cd-user-container">
           <div className="cd-user">
             <div className="cd-company-icon">
-              <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="12"></line><line x1="15" y1="22" x2="15" y2="12"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
+              {companyData.logoUrl ? (
+                <img src={companyData.logoUrl} alt="Logo" className="cd-topbar-avatar" />
+              ) : (
+                <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="12"></line><line x1="15" y1="22" x2="15" y2="12"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
+              )}
             </div>
             <div className="cd-user-info">
               <p className="cd-uname" title={companyName}>
@@ -94,6 +105,12 @@ const CompanyTopbar = ({ activeTab = 'Jobs' }) => {
                   <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                 </span> 
                 Trang quản lý Nhà Tuyển Dụng
+              </a>
+              <a href="#" className="cd-dropdown-link" onClick={(e) => { e.preventDefault(); navigate('/company/profile'); }}>
+                <span className="link-icon">
+                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><path d="M9 22v-4h6v4"></path><path d="M8 7h8"></path><path d="M8 12h8"></path></svg>
+                </span> 
+                Cập nhật thông tin công ty
               </a>
               <a href="#" className="cd-dropdown-link text-danger" onClick={(e) => {
                 e.preventDefault();

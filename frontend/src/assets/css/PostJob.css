@@ -1,18 +1,4 @@
-/* ── Post Job Page Premium Style ── */
-.pj-layout {
-  display: flex;
-  min-height: 100vh;
-  background: #f8fafc;
-  font-family: 'Inter', 'Outfit', sans-serif;
-  color: #1e293b;
-}
-
-.pj-main {
-  flex: 1;
-  margin-left: 260px;
-  display: flex;
-  flex-direction: column;
-}
+/* PostJob uses standard cd-layout and cd-main */
 
 /* ── Custom Scrollbar ── */
 .pj-main::-webkit-scrollbar { width: 6px; }
@@ -25,7 +11,7 @@
   border-bottom: 1px solid #f1f5f9;
   width: 100%;
   position: sticky;
-  top: 60px; /* Sau Topbar */
+  top: 70px; /* Sau Topbar 70px */
   z-index: 10;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.02);
 }

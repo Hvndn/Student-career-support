@@ -5,20 +5,21 @@ import com.fivecore.jobportal.dto.ApiResponse;
 import com.fivecore.jobportal.dto.CompanyDashboardResponse;
 import com.fivecore.jobportal.dto.CompanyResponse;
 import com.fivecore.jobportal.dto.JobRequest;
-import com.fivecore.jobportal.entity.Company;
-import com.fivecore.jobportal.entity.User;
-import com.fivecore.jobportal.repository.ApplicationRepository;
-import com.fivecore.jobportal.repository.JobRepository;
-import com.fivecore.jobportal.repository.UserRepository;
+import com.fivecore.jobportal.entity.*;
+import com.fivecore.jobportal.repository.*;
 import com.fivecore.jobportal.service.auth.ApplicationService;
 import com.fivecore.jobportal.service.company.CompanyService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * REST API Controller cho Doanh nghiệp.
@@ -34,6 +35,9 @@ public class CompanyRestController {
     private final JobRepository jobRepository;
     private final ApplicationRepository applicationRepository;
     private final ApplicationService applicationService;
+    private final SavedCandidateRepository savedCandidateRepository;
+    private final StudentRepository studentRepository;
+    private final CompanyRepository companyRepository;
 
     private Integer getCurrentCompanyId(Authentication authentication) {
         return userRepository.findByEmail(authentication.getName())
@@ -58,8 +62,15 @@ public class CompanyRestController {
                 .jobs(companyService.getJobsByCompany(company.getId()))
                 .activeJobsCount(jobRepository.countByCompanyId(company.getId()))
                 .totalCandidatesCount(applicationRepository.countByJobCompanyId(company.getId()))
+                .pendingCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(), com.fivecore.jobportal.entity.Application.ApplicationStatus.pending))
+                .reviewCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(), com.fivecore.jobportal.entity.Application.ApplicationStatus.review))
+                .suitableCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(), com.fivecore.jobportal.entity.Application.ApplicationStatus.suitable))
+                .interviewCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(), com.fivecore.jobportal.entity.Application.ApplicationStatus.interview))
+                .acceptedCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(), com.fivecore.jobportal.entity.Application.ApplicationStatus.accepted))
+                .rejectedCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(), com.fivecore.jobportal.entity.Application.ApplicationStatus.rejected))
                 .pendingInterviewsCount(0) // Mock
                 .profileViewsCount(0) // Mock
+                .newCandidatesTodayCount(applicationRepository.countByJobCompanyIdAndAppliedAtAfter(company.getId(), java.time.LocalDateTime.now().with(java.time.LocalTime.MIN)))
                 .recentCandidates(applicationService.getRecentApplicationsByCompany(company.getId()))
                 .build();
 
@@ -101,6 +112,26 @@ public class CompanyRestController {
     }
 
     /**
+     * API Xóa tin tuyển dụng.
+     */
+    @DeleteMapping("/jobs/{id}")
+    public ResponseEntity<ApiResponse<Object>> deleteJob(@PathVariable("id") Integer id, Authentication authentication) {
+        Integer companyId = getCurrentCompanyId(authentication);
+        companyService.deleteJob(companyId, id);
+        return ResponseEntity.ok(ApiResponse.success("Xóa tin tuyển dụng thành công", null));
+    }
+
+    /**
+     * API Sao chép tin tuyển dụng.
+     */
+    @PostMapping("/jobs/{id}/duplicate")
+    public ResponseEntity<ApiResponse<Object>> duplicateJob(@PathVariable("id") Integer id, Authentication authentication) {
+        Integer companyId = getCurrentCompanyId(authentication);
+        return ResponseEntity.ok(ApiResponse.success("Sao chép tin tuyển dụng thành công", 
+                                 companyService.duplicateJob(companyId, id)));
+    }
+
+    /**
      * API Lấy danh sách tin tuyển dụng của công ty hiện tại.
      */
     @GetMapping("/jobs")
@@ -134,6 +165,10 @@ public class CompanyRestController {
                 .address(company.getAddress())
                 .logoUrl(company.getLogoUrl())
                 .email(authentication.getName())
+                .phone(company.getPhone())
+                .industry(company.getIndustry())
+                .companySize(company.getCompanySize())
+                .foundingYear(company.getFoundingYear())
                 .build();
 
         return ResponseEntity.ok(ApiResponse.success("Lấy hồ sơ công ty thành công", response));
@@ -151,3 +186,4 @@ public class CompanyRestController {
         return ResponseEntity.ok(ApiResponse.success("Cập nhật thông tin thành công", null));
     }
 }
+

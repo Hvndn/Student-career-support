@@ -36,6 +36,6 @@ public class Application {
     private LocalDateTime appliedAt;
 
     public enum ApplicationStatus {
-        pending, review, interview, accepted, rejected
+        pending, review, suitable, interview, accepted, rejected
     }
 }

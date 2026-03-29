@@ -77,9 +77,21 @@ public class ApplicationService {
                 .jobTitle(app.getJob().getTitle())
                 .companyName(app.getJob().getCompany().getName())
                 .studentName(app.getStudent().getUser().getFullName())
+                .studentAvatar(((com.fivecore.jobportal.entity.Student) app.getStudent()).getAvatarUrl())
+                .studentId(app.getStudent().getId())
+                .matchPercentage(70 + (app.getId() % 26)) // Giả lập tỷ lệ phù hợp từ 70-95%
                 .status(app.getStatus().name())
                 .appliedAt(app.getAppliedAt())
                 .build();
+    }
+
+    /**
+     * Lấy toàn bộ danh sách đơn ứng tuyển của một doanh nghiệp.
+     */
+    public List<ApplicationDto> getApplicationsByCompany(Integer companyId) {
+        return applicationRepository.findByJobCompanyIdOrderByAppliedAtDesc(companyId).stream()
+                .map(this::mapToDto)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     /**

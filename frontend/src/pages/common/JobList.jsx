@@ -48,7 +48,7 @@ const JobList = () => {
     const displayAvatar = profile?.avatarUrl || user?.avatar || "https://vectorified.com/images/default-avatar-icon-33.png";
 
     return (
-        <div className="min-h-screen" style={{ background: '#f8fafd', fontFamily: "'Outfit', 'Inter', sans-serif" }}>
+        <div className="min-h-screen" style={{ background: '#f8fafd', fontFamily: "'Inter', sans-serif" }}>
 
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Breadcrumbs & Header */}

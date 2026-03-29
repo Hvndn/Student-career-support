@@ -198,9 +198,9 @@ const PostJob = () => {
 
     if (loadingJob) {
         return (
-            <div className="company-dashboard-container">
+            <div className="cd-layout">
                 <CompanySidebar />
-                <div className="company-main-content">
+                <div className="cd-wrapper">
                     <CompanyTopbar />
                     <main className="cd-main" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
                         <div className="loading-spinner"></div>
@@ -211,10 +211,11 @@ const PostJob = () => {
     }
 
     return (
-        <div className="pj-layout">
+        <div className="cd-layout">
             <CompanySidebar />
-            <div className="pj-main">
+            <div className="cd-wrapper">
                 <CompanyTopbar activeTab="Jobs" />
+                <main className="cd-main">
 
                 <div className="pj-header-container">
                     <header className="pj-page-header">
@@ -581,7 +582,8 @@ const PostJob = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </main>
+        </div>
 
             {toast.show && (
                 <div className={`pj-toast ${toast.type} animate-slide-down`}>

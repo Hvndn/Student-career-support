@@ -1,4 +1,5 @@
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const api = axios.create({
     baseURL: '/api',
@@ -7,6 +8,36 @@ const api = axios.create({
         'Content-Type': 'application/json'
     }
 });
+
+// Thêm interceptor để xử lý lỗi 401 (Thần thêm vào để tự động điều hướng khi hết hạn phiên làm việc)
+api.interceptors.response.use(
+    (response) => {
+        // Có thể thêm NProgress.done() ở đây nếu muốn theo dõi từng request
+        return response;
+    },
+    (error) => {
+        const message = error.response?.data?.message || "Đã có lỗi xảy ra. Vui lòng thử lại!";
+        
+        if (error.response) {
+            if (error.response.status === 401) {
+                toast.error("Phiên làm việc hết hạn. Vui lòng đăng nhập lại!");
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';
+            } else if (error.response.status === 403) {
+                toast.error("Bạn không có quyền thực hiện hành động này!");
+            } else if (error.response.status >= 500) {
+                toast.error("Lỗi hệ thống! Vui lòng liên hệ quản trị viên.");
+            } else {
+                toast.error(message);
+            }
+        } else {
+            toast.error("Không thể kết nối tới máy chủ!");
+        }
+        return Promise.reject(error);
+    }
+);
+
 
 export const authApi = {
     login: (credentials) => api.post('/auth/login', credentials),
@@ -41,14 +72,32 @@ export const studentApi = {
 export const companyApi = {
     getDashboard: () => api.get('/company/dashboard'),
     getProfile: () => api.get('/company/profile'),
-    updateProfile: (data) => api.put('/company/profile', data),
-    postJob: (jobData) => api.post('/company/jobs', jobData)
+    updateProfile: (data) => {
+        if (data instanceof FormData) {
+            return api.put('/company/profile', data, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+        }
+        return api.put('/company/profile', data);
+    },
+    postJob: (jobData) => api.post('/company/jobs', jobData),
+    updateJob: (id, jobData) => api.put(`/company/jobs/${id}`, jobData),
+    getJobDetailsForEdit: (id) => api.get(`/company/jobs/${id}`),
+    getJobs: () => api.get('/company/jobs'),
+    deleteJob: (id) => api.delete(`/company/jobs/${id}`),
+    duplicateJob: (id) => api.post(`/company/jobs/${id}/duplicate`),
+    saveCandidate: (studentId) => api.post(`/company/saved-candidates/${studentId}`),
+    unsaveCandidate: (studentId) => api.delete(`/company/saved-candidates/${studentId}`),
+    getSavedCandidates: () => api.get('/company/saved-candidates'),
+    getCandidateDetail: (studentId) => api.get(`/company/saved-candidates/${studentId}/detail`),
+    downloadCv: (studentId) => api.get(`/company/saved-candidates/${studentId}/cv`, { responseType: 'blob' })
 };
 
 export const recruitmentApi = {
+    getApplications: () => api.get('/company/management/applications'),
     getApplicants: (jobId) => api.get(`/company/management/jobs/${jobId}/applicants`),
     updateStatus: (appId, status) => api.patch(`/company/management/applications/${appId}/status?status=${status}`),
-    searchCandidates: (skill) => api.get('/company/management/candidates/search', { params: { skill } }),
+    searchCandidates: (params) => api.get('/company/management/candidates/search', { params }),
     scheduleInterview: (appId, data) => api.post(`/company/management/applications/${appId}/schedule`, null, { params: data })
 };
 

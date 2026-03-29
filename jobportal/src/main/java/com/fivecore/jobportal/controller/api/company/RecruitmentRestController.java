@@ -5,8 +5,10 @@ import com.fivecore.jobportal.entity.Application;
 import com.fivecore.jobportal.service.auth.ApplicationService;
 import com.fivecore.jobportal.service.company.CandidateSearchService;
 import com.fivecore.jobportal.service.company.InterviewService;
+import com.fivecore.jobportal.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -22,6 +24,24 @@ public class RecruitmentRestController {
     private final ApplicationService applicationService;
     private final CandidateSearchService candidateSearchService;
     private final InterviewService interviewService;
+    private final UserRepository userRepository;
+
+    private Integer getCurrentCompanyId(Authentication authentication) {
+        return userRepository.findByEmail(authentication.getName())
+                .map(u -> u.getCompany() != null ? u.getCompany().getId() : null)
+                .orElse(null);
+    }
+
+    /**
+     * API Xem toàn bộ danh sách hồ sơ ứng tuyển của doanh nghiệp (US-018 mở rộng).
+     */
+    @GetMapping("/applications")
+    public ResponseEntity<ApiResponse<Object>> getApplications(Authentication authentication) {
+        Integer companyId = getCurrentCompanyId(authentication);
+        if (companyId == null) return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách ứng tuyển thành công", 
+                applicationService.getApplicationsByCompany(companyId)));
+    }
 
     /**
      * API Xem danh sách ứng viên cho một tin tuyển dụng.
@@ -48,13 +68,15 @@ public class RecruitmentRestController {
     }
 
     /**
-     * API Tìm kiếm ứng viên theo kỹ năng.
+     * API Tìm kiếm ứng viên với bộ lọc đa dạng (US-014 mở rộng).
      */
     @GetMapping("/candidates/search")
     public ResponseEntity<ApiResponse<Object>> searchCandidates(
+            @RequestParam(value = "query", required = false) String query,
+            @RequestParam(value = "location", required = false) String location,
             @RequestParam(value = "skill", required = false) String skill) {
-        return ResponseEntity.ok(ApiResponse.success("Tìm kiếm ứng viên thành công",
-                candidateSearchService.searchStudentsBySkill(skill)));
+        return ResponseEntity.ok(ApiResponse.success("Tìm kiếm ứng viên thành công", 
+                candidateSearchService.searchStudents(query, location, skill)));
     }
 
     /**

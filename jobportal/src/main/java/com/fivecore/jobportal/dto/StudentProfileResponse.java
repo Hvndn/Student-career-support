@@ -28,6 +28,7 @@ public class StudentProfileResponse {
     private String currentTerm;
     private String bio;
     private String avatarUrl;
+    private String location;
     private List<SkillDto> skills;
     private List<EducationDto> educations;
     private List<ExperienceDto> experiences;

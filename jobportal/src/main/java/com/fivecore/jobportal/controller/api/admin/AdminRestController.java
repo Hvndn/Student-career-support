@@ -133,7 +133,7 @@ public class AdminRestController {
         adminService.deleteUser(id);
         // Redirect về trang quản lý người dùng ở frontend
         return ResponseEntity.status(302)
-                .header("Location", "http://localhost:5173/admin/users")
+                .header("Location", "http://localhost:5174/admin/users")
                 .build();
     }
 }

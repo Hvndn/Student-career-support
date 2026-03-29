@@ -57,7 +57,9 @@ public class CompanyService {
         company.setAddress(updatedData.getAddress());
         company.setEmail(updatedData.getEmail());
         company.setPhone(updatedData.getPhone());
-
+        company.setIndustry(updatedData.getIndustry());
+        company.setCompanySize(updatedData.getCompanySize());
+        company.setFoundingYear(updatedData.getFoundingYear());
         if (logoFile != null && !logoFile.isEmpty()) {
             String logoUrl = storageService.saveFile(logoFile, "logos");
             company.setLogoUrl(logoUrl);
@@ -80,7 +82,8 @@ public class CompanyService {
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .location(request.getLocation())
-                .salary(request.getSalary())
+                .minSalary(request.getMinSalary())
+                .maxSalary(request.getMaxSalary())
                 .jobType(Job.JobType.valueOf(request.getJobType().toLowerCase()))
                 .deadline(request.getDeadline())
                 .status(Job.JobStatus.open)
@@ -94,7 +97,7 @@ public class CompanyService {
                 .title(savedJob.getTitle())
                 .companyName(company.getName())
                 .location(savedJob.getLocation())
-                .salary(savedJob.getSalary())
+                .salary(savedJob.getMinSalary() != null ? savedJob.getMinSalary().toString() + (savedJob.getMaxSalary() != null ? " - " + savedJob.getMaxSalary().toString() : "") : "Thỏa thuận")
                 .jobType(savedJob.getJobType().name())
                 .status(savedJob.getStatus().name())
                 .deadline(savedJob.getDeadline())
@@ -108,6 +111,145 @@ public class CompanyService {
         return jobRepository.findByCompanyId(companyId).stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Lấy chi tiết một tin đăng phục vụ chỉnh sửa.
+     */
+    public JobResponse getJobByIdForEdit(Integer companyId, Integer jobId) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy tin tuyển dụng"));
+        
+        if (!job.getCompany().getId().equals(companyId)) {
+            throw new RuntimeException("Bạn không có quyền truy cập tin tuyển dụng này");
+        }
+        
+        return mapToResponse(job);
+    }
+
+    /**
+     * Cập nhật tin tuyển dụng.
+     */
+    @Transactional
+    public JobResponse updateJob(Integer companyId, Integer jobId, JobRequest request) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy tin tuyển dụng"));
+        
+        if (!job.getCompany().getId().equals(companyId)) {
+            throw new RuntimeException("Bạn không có quyền chỉnh sửa tin tuyển dụng này");
+        }
+
+        job.setTitle(request.getTitle() != null ? request.getTitle() : job.getTitle());
+        job.setIndustry(request.getIndustry());
+        job.setLevel(request.getLevel());
+        job.setDescription(request.getDescription() != null ? request.getDescription() : job.getDescription());
+        job.setRequirements(request.getRequirements());
+        job.setBenefits(request.getBenefits());
+        job.setJobType(Job.JobType.valueOf(request.getJobType().toLowerCase()));
+        job.setQuantity(request.getQuantity());
+        job.setGender(request.getGender());
+        job.setExperience(request.getExperience());
+        job.setQualification(request.getQualification());
+        job.setSalaryType(request.getSalaryType());
+        job.setMinSalary(request.getMinSalary());
+        job.setMaxSalary(request.getMaxSalary());
+        job.setRegion(request.getRegion());
+        job.setLocation(request.getLocation());
+        job.setDeadline(request.getDeadline());
+        job.setContactName(request.getContactName());
+        job.setContactEmail(request.getContactEmail());
+        job.setContactPhone(request.getContactPhone());
+        job.setStatus(Job.JobStatus.valueOf(request.getStatus().toLowerCase()));
+        job.setPostedAt(java.time.LocalDateTime.now()); // Cập nhật thời gian thực tế khi có bất kỳ thay đổi nào
+
+        // Cập nhật kỹ năng
+        if (request.getSkills() != null) {
+            job.getSkills().clear();
+            for (String skillName : request.getSkills()) {
+                com.fivecore.jobportal.entity.Skill skill = com.fivecore.jobportal.entity.Skill.builder().name(skillName).build(); // Assuming Skill has this builder
+                
+                job.getSkills().add(com.fivecore.jobportal.entity.JobSkill.builder()
+                    .job(job)
+                    .skill(skill)
+                    .build());
+            }
+        }
+
+        Job updatedJob = jobRepository.save(job);
+        log.info("Đã cập nhật tin tuyển dụng: {}", updatedJob.getTitle());
+        return mapToResponse(updatedJob);
+    }
+
+    /**
+     * Xóa tin tuyển dụng.
+     */
+    @Transactional
+    public void deleteJob(Integer companyId, Integer jobId) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy tin tuyển dụng"));
+        
+        if (!job.getCompany().getId().equals(companyId)) {
+            throw new RuntimeException("Bạn không có quyền xóa tin tuyển dụng này");
+        }
+        
+        jobRepository.delete(job);
+        log.info("Doanh nghiệp id {} đã xóa tin tuyển dụng id {}", companyId, jobId);
+    }
+
+    /**
+     * Sao chép tin tuyển dụng.
+     */
+    @Transactional
+    public JobResponse duplicateJob(Integer companyId, Integer jobId) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy tin tuyển dụng"));
+        
+        if (!job.getCompany().getId().equals(companyId)) {
+            throw new RuntimeException("Bạn không có quyền sao chép tin tuyển dụng này");
+        }
+
+        Job duplicate = Job.builder()
+                .company(job.getCompany())
+                .title("Bản sao của " + job.getTitle())
+                .industry(job.getIndustry())
+                .level(job.getLevel())
+                .description(job.getDescription())
+                .requirements(job.getRequirements())
+                .benefits(job.getBenefits())
+                .jobType(job.getJobType())
+                .quantity(job.getQuantity())
+                .gender(job.getGender())
+                .experience(job.getExperience())
+                .qualification(job.getQualification())
+                .salaryType(job.getSalaryType())
+                .minSalary(job.getMinSalary())
+                .maxSalary(job.getMaxSalary())
+                .region(job.getRegion())
+                .location(job.getLocation())
+                .deadline(job.getDeadline())
+                .contactName(job.getContactName())
+                .contactEmail(job.getContactEmail())
+                .contactPhone(job.getContactPhone())
+                .status(Job.JobStatus.draft) // Luôn để ở dạng nháp
+                .postedAt(java.time.LocalDateTime.now())
+                .build();
+        
+        // Khởi tạo List mới để tránh null
+        duplicate.setSkills(new java.util.ArrayList<>());
+        
+        // Copy skills
+        if (job.getSkills() != null) {
+            for (com.fivecore.jobportal.entity.JobSkill js : job.getSkills()) {
+                duplicate.getSkills().add(com.fivecore.jobportal.entity.JobSkill.builder()
+                        .job(duplicate)
+                        .skill(js.getSkill())
+                        .build());
+            }
+        }
+
+        Job savedJob = jobRepository.save(duplicate);
+        log.info("Doanh nghiệp {} đã sao chép tin id {} thành tin id {}", job.getCompany().getName(), jobId, savedJob.getId());
+        return mapToResponse(savedJob);
     }
 
     /**
@@ -125,53 +267,26 @@ public class CompanyService {
         return companyRepository.findAll();
     }
 
-    /**
-     * Lấy tin tuyển dụng để chỉnh sửa (US-005).
-     */
-    public JobResponse getJobByIdForEdit(Integer jobId, Integer companyId) {
-        Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy tin tuyển dụng"));
-
-        if (!job.getCompany().getId().equals(companyId)) {
-            throw new RuntimeException("Bạn không có quyền chỉnh sửa tin tuyển dụng này");
-        }
-
-        return mapToResponse(job);
-    }
-
-    /**
-     * Cập nhật tin tuyển dụng (US-005).
-     */
-    @Transactional
-    public void updateJob(Integer jobId, Integer companyId, JobRequest request) {
-        Job job = jobRepository.findById(jobId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy tin tuyển dụng"));
-
-        if (!job.getCompany().getId().equals(companyId)) {
-            throw new RuntimeException("Bạn không có quyền chỉnh sửa tin tuyển dụng này");
-        }
-
-        job.setTitle(request.getTitle());
-        job.setDescription(request.getDescription());
-        job.setLocation(request.getLocation());
-        job.setSalary(request.getSalary());
-        job.setJobType(Job.JobType.valueOf(request.getJobType().toLowerCase()));
-        job.setDeadline(request.getDeadline());
-
-        jobRepository.save(job);
-        log.info("Đã cập nhật tin tuyển dụng ID {}: {}", jobId, job.getTitle());
-    }
-
     private JobResponse mapToResponse(Job job) {
         return JobResponse.builder()
                 .id(job.getId())
                 .title(job.getTitle())
                 .companyName(job.getCompany().getName())
                 .location(job.getLocation())
-                .salary(job.getSalary())
+                .salary(job.getMaxSalary() != null ? job.getMinSalary() + " - " + job.getMaxSalary() : (job.getMinSalary() != null ? job.getMinSalary().toString() : "Thỏa thuận"))
                 .jobType(job.getJobType().name())
                 .status(job.getStatus().name())
                 .deadline(job.getDeadline())
+                .postedAt(job.getPostedAt()) // Trả về đầy đủ LocalDateTime
+                .quantity(job.getQuantity())
+                .gender(job.getGender())
+                .viewsCount(job.getViews() != null ? job.getViews() : 0)
+                .contactName(job.getContactName())
+                .contactEmail(job.getContactEmail())
+                .contactPhone(job.getContactPhone())
+                .skills(job.getSkills().stream()
+                        .map(js -> js.getSkill().getName())
+                        .collect(Collectors.toList()))
                 .build();
     }
 }

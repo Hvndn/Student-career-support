@@ -147,6 +147,7 @@ const Login = () => {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
+
                             />
                         </div>
                         <div className="form-group" style={{ marginBottom: '2.5rem' }}>
