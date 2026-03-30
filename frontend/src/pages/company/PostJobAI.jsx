@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import CompanySidebar from '../../components/CompanySidebar';
-import CompanyTopbar from '../../components/CompanyTopbar';
-import '../../assets/css/PostJobAI.css';
+import CompanySidebar from '../../components/company/CompanySidebar';
+import CompanyNavbar from '../../components/company/CompanyNavbar';
+import '../../assets/css/company/PostJobAI.css';
 
 const INDUSTRIES = ['Công nghệ thông tin', 'Marketing', 'Tài chính', 'Thiết kế', 'Kế toán', 'Giáo dục', 'Y tế'];
 
@@ -38,7 +38,7 @@ const PostJobAI = () => {
       <CompanySidebar />
 
       <div className="pjai-main">
-        <CompanyTopbar activeTab="Jobs" />
+        <CompanyNavbar activeTab="Jobs" />
 
         <div className="pjai-content-wrapper">
           <header className="pjai-header">

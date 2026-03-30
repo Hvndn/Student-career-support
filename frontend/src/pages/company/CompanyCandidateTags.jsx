@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import CompanySidebar from '../../components/CompanySidebar';
-import CompanyTopbar from '../../components/CompanyTopbar';
+import CompanySidebar from '../../components/company/CompanySidebar';
+import CompanyNavbar from '../../components/company/CompanyNavbar';
 import { tagService } from '../../utils/tagService';
 import toast from 'react-hot-toast';
-import '../../assets/css/CompanyCandidateTags.css';
+import '../../assets/css/company/CompanyCandidateTags.css';
 
 const CompanyCandidateTags = () => {
     const [tags, setTags] = useState([]);
@@ -54,7 +54,7 @@ const CompanyCandidateTags = () => {
         <div className="company-dashboard-container">
             <CompanySidebar />
             <div className="company-main-content">
-                <CompanyTopbar title="Ứng viên" />
+                <CompanyNavbar title="Ứng viên" />
                 <main className="cd-main">
                     <div className="candidate-tags-page">
                         <div className="tags-header">

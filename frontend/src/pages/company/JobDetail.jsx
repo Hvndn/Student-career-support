@@ -68,23 +68,19 @@ const JobDetail = () => {
             );
         }
 
-        if (user.role === 'ROLE_ADMIN' || user.role === 'ROLE_COMPANY') {
+        if (user.role !== 'ROLE_STUDENT') {
             return null;
         }
 
-        if (user.role === 'ROLE_STUDENT') {
-            return job.isApplied ? (
-                <button onClick={handleCancel} className="btn glass" style={{ flex: 3, height: '3.5rem', fontSize: '1.1rem', justifyContent: 'center', color: 'var(--error)', border: '1px solid var(--error)' }}>
-                    Hủy ứng tuyển ↩️
-                </button>
-            ) : (
-                <button onClick={handleApply} className="btn btn-primary" style={{ flex: 3, height: '3.5rem', fontSize: '1.1rem', justifyContent: 'center' }}>
-                    Ứng tuyển ngay 🚀
-                </button>
-            );
-        }
-
-        return null;
+        return job.isApplied ? (
+            <button onClick={handleCancel} className="btn glass" style={{ flex: 3, height: '3.5rem', fontSize: '1.1rem', justifyContent: 'center', color: 'var(--error)', border: '1px solid var(--error)' }}>
+                Hủy ứng tuyển ↩️
+            </button>
+        ) : (
+            <button onClick={handleApply} className="btn btn-primary" style={{ flex: 3, height: '3.5rem', fontSize: '1.1rem', justifyContent: 'center' }}>
+                Ứng tuyển ngay 🚀
+            </button>
+        );
     };
 
     return (

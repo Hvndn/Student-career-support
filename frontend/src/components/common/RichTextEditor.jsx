@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import './RichTextEditor.css';
+import '../../assets/css/common/RichTextEditor.css';
 
 const RichTextEditor = ({ value, onChange, placeholder, label }) => {
   const editorRef = useRef(null);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { jobApi, studentApi } from '../../api';
-import '../../assets/css/Home.css';
+import '../../assets/css/student/Home.css';
 
 const CATEGORIES = [
   { icon: '💻', label: 'IT & Software', count: '1.2k+' },
@@ -24,10 +24,56 @@ const HOW_IT_WORKS_RECRUITER = [
 
 const JOB_COLORS = ['#f59e0b', '#3b82f6', '#10b981', '#8b5cf6', '#ec4899', '#06b6d4'];
 
+const SkillRadar = ({ skills }) => {
+  const size = 300;
+  const centerX = size / 2;
+  const centerY = size / 2;
+  const radius = 100;
+  const angleStep = (Math.PI * 2) / skills.length;
+
+  const points = skills.map((s, i) => {
+    const r = (s.value / 100) * radius;
+    const x = centerX + r * Math.cos(i * angleStep - Math.PI / 2);
+    const y = centerY + r * Math.sin(i * angleStep - Math.PI / 2);
+    return `${x},${y}`;
+  }).join(' ');
+
+  const gridLevels = [0.2, 0.4, 0.6, 0.8, 1];
+
+  return (
+    <svg viewBox={`0 0 ${size} ${size}`} className="sbd-skill-radar-svg">
+      {gridLevels.map(level => {
+        const levelPoints = skills.map((_, i) => {
+          const r = level * radius;
+          const x = centerX + r * Math.cos(i * angleStep - Math.PI / 2);
+          const y = centerY + r * Math.sin(i * angleStep - Math.PI / 2);
+          return `${x},${y}`;
+        }).join(' ');
+        return <polygon key={level} points={levelPoints} fill="none" stroke="#e2e8f0" strokeWidth="1" />;
+      })}
+      {skills.map((_, i) => {
+        const x = centerX + radius * Math.cos(i * angleStep - Math.PI / 2);
+        const y = centerY + radius * Math.sin(i * angleStep - Math.PI / 2);
+        return <line key={i} x1={centerX} y1={centerY} x2={x} y2={y} stroke="#e2e8f0" strokeWidth="1" />;
+      })}
+      <polygon points={points} fill="rgba(37, 99, 235, 0.2)" stroke="#2563eb" strokeWidth="2" />
+      {skills.map((s, i) => {
+        const r = radius + 25;
+        const x = centerX + r * Math.cos(i * angleStep - Math.PI / 2);
+        const y = centerY + r * Math.sin(i * angleStep - Math.PI / 2);
+        return (
+          <text key={i} x={x} y={y} textAnchor="middle" fontSize="12" fill="#64748b" fontWeight="600">
+            {s.name}
+          </text>
+        );
+      })}
+    </svg>
+  );
+};
+
 const StudentDashboard = ({ user, handleLogout }) => {
   const [profile, setProfile] = useState(null);
   const [notifications, setNotifications] = useState([]);
-  const [notifLoading, setNotifLoading] = useState(true);
 
   useEffect(() => {
     studentApi.getProfile()
@@ -35,223 +81,132 @@ const StudentDashboard = ({ user, handleLogout }) => {
       .catch(console.error);
 
     studentApi.getNotifications()
-      .then(res => {
-        setNotifications(res.data.data || []);
-        setNotifLoading(false);
-      })
-      .catch(() => setNotifLoading(false));
+      .then(res => setNotifications(res.data.data || []))
+      .catch(console.error);
   }, []);
 
-  const getIcon = (title) => {
-    const t = (title || '').toLowerCase();
-    if (t.includes('chấp nhận') || t.includes('accepted')) return { icon: 'check_circle', color: 'bg-emerald-500', bg: '#10b981' };
-    if (t.includes('từ chối') || t.includes('rejected')) return { icon: 'cancel', color: 'bg-red-500', bg: '#ef4444' };
-    if (t.includes('ứng tuyển') || t.includes('apply')) return { icon: 'send', color: 'bg-blue-500', bg: '#3b82f6' };
-    return { icon: 'notifications', color: 'bg-amber-500', bg: '#f59e0b' };
-  };
-
   const displayName = profile?.fullName || user?.fullName || 'Người dùng';
+  
+  const skillsData = [
+    { name: 'React', value: 85 },
+    { name: 'Node.js', value: 70 },
+    { name: 'Design', value: 90 },
+    { name: 'SQL', value: 60 },
+    { name: 'Git', value: 80 },
+  ];
+
+  const roadmapData = [
+    { title: 'Thực tập sinh', time: 'Đã hoàn thành', active: true },
+    { title: 'Junior Dev', time: 'Hiện tại', active: true },
+    { title: 'Senior Dev', time: 'Dự kiến 2026', active: false },
+    { title: 'Tech Lead', time: 'Mục tiêu xa', active: false },
+  ];
 
   return (
-    <div className="sd-main" style={{ background: '#f8fafd', minHeight: '100vh', padding: '2rem 3rem' }}>
-        <div style={{ padding: '0 0 2rem 0' }}>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0f172a', marginBottom: '0.25rem' }}>
-            Chào mừng trở lại, {displayName.split(' ').pop()} 👋
-          </h1>
-          <p style={{ color: '#64748b' }}>Hôm nay là một ngày tuyệt vời để phát triển sự nghiệp của bạn.</p>
-        </div>
-        <div className="sd-grid">
-          {/* Left Column */}
-          <div className="sd-content-left">
-            {/* Profile Progress */}
-            <div className="sd-card">
-              <div className="sd-progress-header">
-                <div className="sd-progress-title">
-                  <h3>Tiến độ hồ sơ chuyên nghiệp</h3>
-                  <p>Hồ sơ của bạn đạt mức: <span style={{ color: '#2563eb', fontWeight: 600 }}>Khá</span></p>
-                </div>
-                <span className="sd-progress-percent">75%</span>
-              </div>
-              <div className="sd-progress-bar-bg">
-                <div className="sd-progress-bar-fill" style={{ width: '75%' }}></div>
-              </div>
-              <div className="sd-suggestion-box">
-                <p className="sd-suggestion-title">
-                  <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>lightbulb</span>
-                  Gợi ý hoàn thiện
-                </p>
-                <div className="sd-suggestion-list">
-                  <div className="sd-suggestion-item">
-                    <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#3b82f6' }}>add_circle</span>
-                    Bổ sung chứng chỉ ngoại ngữ (IELTS/TOEIC)
-                  </div>
-                  <div className="sd-suggestion-item">
-                    <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#3b82f6' }}>add_circle</span>
-                    Thêm liên kết Portfolio hoặc GitHub
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Stats */}
-            <div className="sd-stats-grid">
-              <div className="sd-card sd-stat-card">
-                <div className="sd-stat-icon emerald">
-                  <span className="material-symbols-outlined">verified_user</span>
-                </div>
-                <p className="sd-stat-label">Kỹ năng</p>
-                <p className="sd-stat-value">12</p>
-                <p className="sd-stat-trend emerald">
-                  <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>trending_up</span> +2 tháng này
-                </p>
-              </div>
-              <div className="sd-card sd-stat-card">
-                <div className="sd-stat-icon blue">
-                  <span className="material-symbols-outlined">terminal</span>
-                </div>
-                <p className="sd-stat-label">Dự án</p>
-                <p className="sd-stat-value">08</p>
-                <p className="sd-stat-trend blue">
-                  <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>check_circle</span> 3 đã hoàn thành
-                </p>
-              </div>
-              <div className="sd-card sd-stat-card">
-                <div className="sd-stat-icon purple">
-                  <span className="material-symbols-outlined">send</span>
-                </div>
-                <p className="sd-stat-label">Đơn ứng tuyển</p>
-                <p className="sd-stat-value">05</p>
-                <p className="sd-stat-trend purple">
-                  <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>visibility</span> 2 đang xem xét
-                </p>
-              </div>
-            </div>
-
-            {/* Recommended Jobs */}
-            <section>
-              <div className="sd-section-header">
-                <h3>
-                  <span className="material-symbols-outlined" style={{ color: '#2563eb' }}>auto_awesome</span>
-                  Việc làm gợi ý cho bạn
-                </h3>
-                <Link to="/jobs" className="sd-view-link">Xem tất cả</Link>
-              </div>
-              <div className="sd-job-list">
-                <div className="sd-card sd-job-card">
-                  <div className="sd-job-content">
-                    <div className="sd-company-logo">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/Figma-logo.svg" alt="Figma" />
-                    </div>
-                    <div className="sd-job-info">
-                      <div className="sd-job-title-row">
-                        <div>
-                          <p className="sd-job-title">UI/UX Designer Intern</p>
-                          <p className="sd-job-company">Figma Vietnam • TP. Hồ Chí Minh</p>
-                        </div>
-                        <span className="sd-job-badge">Mới</span>
-                      </div>
-                      <div className="sd-job-tags">
-                        <span className="sd-job-tag">Figma</span>
-                        <span className="sd-job-tag">Design System</span>
-                        <span className="sd-job-tag sd-job-match">Trùng khớp 95%</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="sd-card sd-job-card">
-                  <div className="sd-job-content">
-                    <div className="sd-company-logo">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" />
-                    </div>
-                    <div className="sd-job-info">
-                      <div className="sd-job-title-row">
-                        <div>
-                          <p className="sd-job-title">Frontend Developer (React)</p>
-                          <p className="sd-job-company">Google Operations • Từ xa</p>
-                        </div>
-                        <span className="sd-job-badge" style={{ background: '#f1f5f9', color: '#64748b' }}>2 ngày trước</span>
-                      </div>
-                      <div className="sd-job-tags">
-                        <span className="sd-job-tag">ReactJS</span>
-                        <span className="sd-job-tag">TailwindCSS</span>
-                        <span className="sd-job-tag sd-job-match">Trùng khớp 88%</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
+    <div className="student-home" style={{ paddingBottom: '4rem', background: '#f8fafc', minHeight: '100vh' }}>
+      <div className="sbd-container">
+        <header style={{ marginBottom: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <div>
+            <h1 style={{ fontSize: '2.2rem', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.02em', margin: 0 }}>
+              Xin chào, {displayName.split(' ').pop()} ✨
+            </h1>
+            <p style={{ color: '#64748b', fontSize: '1.1rem', margin: '0.5rem 0 0' }}>Bảng điều khiển nghề nghiệp thông minh của bạn.</p>
           </div>
+          <button onClick={handleLogout} style={{ 
+            background: 'none', border: '1px solid #e2e8f0', padding: '0.5rem 1rem', 
+            borderRadius: '8px', color: '#64748b', fontSize: '0.9rem', cursor: 'pointer' 
+          }}>
+            Đăng xuất
+          </button>
+        </header>
 
-          {/* Right Column */}
-          <div className="sd-content-right">
-            {/* Notifications */}
-            <div className="sd-card sd-notifications">
-              <div className="sd-section-header" style={{ marginBottom: '1.5rem' }}>
-                <h3 style={{ fontSize: '1.125rem' }}>Thông báo</h3>
-                <Link to="/student/notifications" className="sd-view-link" style={{ textDecoration: 'none', fontSize: '0.75rem' }}>Cài đặt</Link>
+        <div className="sbd-grid">
+          <div className="sbd-card sbd-profile">
+            <div className="sbd-profile-header">
+              <div className="sbd-avatar-wrapper">
+                <svg className="sbd-progress-ring">
+                  <circle cx="68" cy="68" r="64" fill="none" stroke="#e2e8f0" strokeWidth="8" />
+                  <circle cx="68" cy="68" r="64" fill="none" stroke="#2563eb" strokeWidth="8" 
+                    strokeDasharray="402" strokeDashoffset="100" strokeLinecap="round" />
+                </svg>
+                <img src={profile?.avatar || "https://ui-avatars.com/api/?name=" + displayName} alt={displayName} className="sbd-avatar-circle" />
               </div>
-              <div className="sd-notif-list">
-                {notifLoading ? (
-                  <div style={{ textAlign: 'center', padding: '1rem', color: '#64748b', fontSize: '0.875rem' }}>Đang tải...</div>
-                ) : notifications.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '1rem', color: '#64748b', fontSize: '0.875rem' }}>Không có thông báo mới</div>
-                ) : (
-                  notifications.slice(0, 3).map(n => {
-                    const iconConfig = getIcon(n.title);
-                    return (
-                      <div className="sd-notif-item" key={n.id}>
-                        <div className="sd-notif-line"></div>
-                        <div className={`sd-notif-icon ${iconConfig.color}`} style={{ background: iconConfig.bg }}>
-                          <span className="material-symbols-outlined" style={{ fontSize: '12px' }}>{iconConfig.icon}</span>
-                        </div>
-                        <div className="sd-notif-text">
-                          <p>{n.title || 'Thông báo mới'}</p>
-                          <p>{n.content || n.message}</p>
-                          <p className="sd-notif-time">{n.createdAt || 'Vừa xong'}</p>
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
+              <div className="sbd-profile-info">
+                <span className="sbd-profile-tag">Professional Level</span>
+                <h3>{displayName}</h3>
+                <p style={{ color: '#64748b', fontSize: '0.95rem' }}>{profile?.bio || 'Hồ sơ của bạn đã hoàn thành 75%.'}</p>
               </div>
-              <Link to="/student/notifications" className="sd-upgrade-btn" style={{ 
-                textDecoration: 'none', textAlign: 'center', display: 'block',
-                background: 'transparent', border: '1px solid #e2e8f0', color: '#475569', marginTop: '1.5rem' 
-              }}>
-                Xem tất cả thông báo
+              <Link to="/student/profile" className="sh-how-btn sh-how-btn-blue" style={{ width: 'auto', padding: '0.6rem 2rem' }}>
+                Chỉnh sửa hồ sơ
               </Link>
             </div>
+          </div>
 
-            {/* Events */}
-            <div className="sd-card sd-event-card">
-              <div className="sd-event-title">Sự kiện sắp tới</div>
-              <div className="sd-event-list">
-                <div className="sd-event-item">
-                  <div className="sd-event-date">
-                    <span>15</span>
-                    <span>THG 10</span>
-                  </div>
-                  <div className="sd-event-info">
-                    <p>Career Fair 2024</p>
-                    <p>Đại học Bách Khoa</p>
-                  </div>
-                </div>
-                <div className="sd-event-item">
-                  <div className="sd-event-date">
-                    <span>18</span>
-                    <span>THG 10</span>
-                  </div>
-                  <div className="sd-event-info">
-                    <p>Workshop: CV Writing</p>
-                    <p>Online qua Zoom</p>
-                  </div>
-                </div>
+          <div className="sbd-card sbd-stats-1">
+            <div className="sbd-stat-box">
+              <span className="sbd-stat-value">12</span>
+              <span className="sbd-stat-label">Kỹ năng xác thực</span>
+              <div style={{ marginTop: '1rem', color: '#16a34a', fontSize: '0.8rem', fontWeight: 700 }}>
+                ↑ 2 mới tuần này
               </div>
-              <div className="sd-event-deco"></div>
+            </div>
+          </div>
+
+          <div className="sbd-card sbd-stats-2">
+            <div className="sbd-stat-box">
+              <span className="sbd-stat-value">05</span>
+              <span className="sbd-stat-label">Đang ứng tuyển</span>
+              <div style={{ marginTop: '1rem', color: '#3b82f6', fontSize: '0.8rem', fontWeight: 700 }}>
+                2 đang được xem xét
+              </div>
+            </div>
+          </div>
+
+          <div className="sbd-card sbd-skills">
+            <div className="sbd-skills-visual">
+              <h4 className="footer-section-title" style={{ color: '#1e293b', marginBottom: '1rem' }}>Phân tích kỹ năng</h4>
+              <div className="sbd-radar-container">
+                <SkillRadar skills={skillsData} />
+              </div>
+            </div>
+          </div>
+
+          <div className="sbd-card sbd-jobs">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h4 className="footer-section-title" style={{ color: '#1e293b', marginBottom: 0 }}>Gợi ý cho bạn</h4>
+              <Link to="/jobs" style={{ fontSize: '0.8rem', color: '#2563eb', fontWeight: 700 }}>Xem tất cả</Link>
+            </div>
+            <div className="sbd-job-list">
+              {[
+                { title: 'Senior React Developer', co: 'TechFlow', match: 98 },
+                { title: 'Product Designer', co: 'CreativeBox', match: 85 },
+                { title: 'Frontend Intern', co: 'Startup Hub', match: 92 }
+              ].map((job, i) => (
+                <div key={i} className="sbd-job-item">
+                  <div>
+                    <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#1e293b' }}>{job.title}</div>
+                    <div style={{ fontSize: '0.8rem', color: '#64748b' }}>{job.co}</div>
+                  </div>
+                  <span className="sbd-job-match">{job.match}% Match</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="sbd-card sbd-roadmap">
+            <h4 className="footer-section-title" style={{ color: '#1e293b', marginBottom: '1rem' }}>Lộ trình sự nghiệp</h4>
+            <div className="sbd-roadmap-track">
+              {roadmapData.map((step, i) => (
+                <div key={i} className={`sbd-roadmap-node ${step.active ? 'active' : ''}`}>
+                  <div className="sbd-node-dot" />
+                  <div className="sbd-node-title">{step.title}</div>
+                  <div className="sbd-node-time">{step.time}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
+      </div>
     </div>
   );
 };
@@ -483,7 +438,7 @@ const Home = () => {
                   </div>
                 ))}
               </div>
-              <Link to="/employer" className="sh-how-btn sh-how-btn-green">
+              <Link to="/login?role=company" className="sh-how-btn sh-how-btn-green">
                 Đăng tin tuyển dụng ngay
               </Link>
             </div>
@@ -504,56 +459,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-
-      {/* ── FOOTER ── */}
-      <footer className="sh-footer">
-        <div className="sh-container">
-          <div className="sh-footer-grid">
-            <div className="sh-footer-brand">
-              <strong className="sh-footer-logo">Nexus Talent</strong>
-              <p>Kết nối tài năng với cơ hội từ hàng trăm doanh nghiệp hàng đầu Việt Nam.</p>
-              <div className="sh-socials">
-                {['𝕏', 'in', 'f', '▶'].map((s, i) => (
-                  <a key={i} href="#" className="sh-social-icon">{s}</a>
-                ))}
-              </div>
-            </div>
-            <div className="sh-footer-col">
-              <h4>SINH VIÊN</h4>
-              <ul>
-                <li><Link to="/jobs">Tìm việc làm</Link></li>
-                <li>{user ? <Link to="/student/profile">Hồ sơ cá nhân</Link> : <Link to="/register">Tạo hồ sơ</Link>}</li>
-                {!user && (
-                  <>
-                    <li><Link to="/login">Đăng nhập</Link></li>
-                    <li><Link to="/register">Đăng ký miễn phí</Link></li>
-                  </>
-                )}
-                {user && <li><button onClick={handleLogout} style={{ background: 'none', border: 'none', color: '#374151', fontSize: '0.9rem', cursor: 'pointer', padding: 0 }}>Đăng xuất</button></li>}
-              </ul>
-            </div>
-            <div className="sh-footer-col">
-              <h4>NHÀ TUYỂN DỤNG</h4>
-              <ul>
-                <li><Link to="/employer">Đăng tin tuyển dụng</Link></li>
-                <li><Link to="/employer#pricing">Bảng giá dịch vụ</Link></li>
-                <li><Link to="/employer">Tìm ứng viên</Link></li>
-              </ul>
-            </div>
-            <div className="sd-footer-col">
-              <h4>VỀ CHÚNG TÔI</h4>
-              <ul>
-                <li><a href="#">Trung tâm hỗ trợ</a></li>
-                <li><a href="#">Liên hệ</a></li>
-                <li><a href="#">Điều khoản sử dụng</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="sh-footer-bottom">
-            <p>© 2024 Nexus Talent. Bảo lưu mọi quyền.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };

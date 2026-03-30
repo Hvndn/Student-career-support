@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { jobApi, studentApi } from '../../api';
-import Navbar from '../../components/Navbar';
-import CVTemplate from '../../components/CVTemplate';
+import NavbarSelector from '../../components/common/NavbarSelector';
+import CVTemplate from '../../components/student/CVTemplate';
 import html2pdf from 'html2pdf.js';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
-import '../../assets/css/Profile.css';
+import '../../assets/css/student/Profile.css';
 import EducationSection from './profile-sections/EducationSection';
 import ExperienceSection from './profile-sections/ExperienceSection';
 import SkillSection from './profile-sections/SkillSection';

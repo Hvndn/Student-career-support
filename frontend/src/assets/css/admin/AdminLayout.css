@@ -1,0 +1,50 @@
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #f8fafc;
+}
+
+.admin-main-content {
+    flex: 1;
+    margin-left: 280px; /* Space for sidebar */
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+}
+
+.admin-body {
+    padding: 3rem;
+    flex: 1;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Scrollbar styling for admin areas */
+.admin-main-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.admin-main-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.admin-main-content::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+}
+
+.admin-main-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.admin-main-content .card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-main-content .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}

@@ -1,16 +1,15 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
-import LoadingSpinner from './components/LoadingSpinner';
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+import LoadingSpinner from './components/common/LoadingSpinner';
+import NavbarSelector from './components/common/NavbarSelector';
 import Home from './pages/common/Home'
 
 import Login from './pages/common/Login'
 import Register from './pages/common/Register'
 import JobDetail from './pages/common/JobDetail'
 import JobList from './pages/common/JobList'
-import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRoute from './components/common/ProtectedRoute';
 
 // student
 import Profile from './pages/student/Profile'
@@ -32,13 +31,14 @@ import CompanySearchCandidates from './pages/company/CompanySearchCandidates'
 import CompanySavedCandidates from './pages/company/CompanySavedCandidates'
 import CompanyCandidateTags from './pages/company/CompanyCandidateTags'
 import CompanyCandidateNotifications from './pages/company/CompanyCandidateNotifications'
-import EmployerHome from './pages/company/EmployerHome'
-import EmployerPricing from './pages/company/EmployerPricing'
+// Removed EmployerHome and EmployerPricing as requested
 
 // admin
 import AdminDashboard from './pages/admin/AdminDashboard'
 import SkillManagement from './pages/admin/SkillManagement'
 import UserManagement from './pages/admin/UserManagement'
+import JobManagement from './pages/admin/JobManagement'
+import CompanyApproval from './pages/admin/CompanyApproval'
 // Thành phần xử lý hiệu ứng load trang khi chuyển route
 const RouteChangeHandler = ({ setIsLoading }) => {
   const location = useLocation();
@@ -91,12 +91,10 @@ function App() {
       />
       <RouteChangeHandler setIsLoading={setIsLoading} />
       {isLoading && <LoadingSpinner />}
-      <Navbar />
+      <NavbarSelector />
       <Routes>
         {/* Công khai */}
         <Route path="/" element={<Home />} />
-        <Route path="/employer" element={<EmployerHome />} />
-        <Route path="/employer/pricing" element={<EmployerPricing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/jobs" element={<JobList />} />
@@ -143,11 +141,12 @@ function App() {
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="skills" element={<SkillManagement />} />
               <Route path="users" element={<UserManagement />} />
+              <Route path="jobs" element={<JobManagement />} />
+              <Route path="companies/pending" element={<CompanyApproval />} />
             </Routes>
           </ProtectedRoute>
         } />
       </Routes>
-      <Footer />
     </Router>
   )
 }

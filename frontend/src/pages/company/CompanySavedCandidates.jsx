@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import CompanySidebar from '../../components/CompanySidebar';
-import CompanyTopbar from '../../components/CompanyTopbar';
-import ConfirmModal from '../../components/ConfirmModal';
-import CandidateDetailModal from '../../components/CandidateDetailModal';
+import CompanySidebar from '../../components/company/CompanySidebar';
+import CompanyNavbar from '../../components/company/CompanyNavbar';
+import ConfirmModal from '../../components/common/ConfirmModal';
+import CandidateDetailModal from '../../components/company/CandidateDetailModal';
 import { companyApi } from '../../api';
-import '../../assets/css/CompanySavedCandidates.css';
+import '../../assets/css/company/CompanySavedCandidates.css';
 
 const CompanySavedCandidates = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -126,7 +126,7 @@ const CompanySavedCandidates = () => {
         <div className="company-dashboard-container">
             <CompanySidebar />
             <div className="company-main-content">
-                <CompanyTopbar title="Ứng viên" />
+                <CompanyNavbar title="Ứng viên" />
                 <main className="cd-main">
                     <div className="saved-candidates-page">
                         <div className="header-flex">

@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import CompanySidebar from '../../components/CompanySidebar';
-import CompanyTopbar from '../../components/CompanyTopbar';
+import CompanySidebar from '../../components/company/CompanySidebar';
+import CompanyNavbar from '../../components/company/CompanyNavbar';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { companyApi } from '../../api';
-import '../../assets/css/CompanyProfile.css';
+import '../../assets/css/company/CompanyProfile.css';
 
 const QUILL_MODULES = {
     toolbar: [
@@ -149,7 +149,7 @@ const CompanyProfile = () => {
         <div className="cd-layout">
             <CompanySidebar />
             <div className="cd-main">
-                <CompanyTopbar activeTab="Profile" />
+                <CompanyNavbar activeTab="Profile" />
                 
                 <div className="cd-content profile-page">
                     <div className="profile-header-card glass">

@@ -1,5 +1,5 @@
 import React from 'react';
-import '../assets/css/ConfirmModal.css';
+import '../../assets/css/common/ConfirmModal.css';
 
 const ConfirmModal = ({ show, title, message, onConfirm, onCancel, confirmText = 'Xác nhận', cancelText = 'Hủy', type = 'danger' }) => {
     if (!show) return null;

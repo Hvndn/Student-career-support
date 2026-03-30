@@ -25,7 +25,7 @@ public class AdminRestController {
      * API Thống kê hệ thống.
      */
     @GetMapping("/statistics")
-    public ResponseEntity<ApiResponse<Map<String, Long>>> getStatistics() {
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getStatistics() {
         return ResponseEntity.ok(ApiResponse.success("Lấy thống kê thành công", adminService.getSystemStatistics()));
     }
 
@@ -71,6 +71,31 @@ public class AdminRestController {
     public ResponseEntity<ApiResponse<Object>> deleteSkill(@PathVariable Integer id) {
         skillService.deleteSkill(id);
         return ResponseEntity.ok(ApiResponse.success("Xóa kỹ năng thành công", null));
+    }
+
+    /**
+     * API Lấy danh sách toàn bộ tin tuyển dụng.
+     */
+    @GetMapping("/jobs")
+    public ResponseEntity<ApiResponse<java.util.List<com.fivecore.jobportal.entity.Job>>> getAllJobs() {
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách việc làm thành công", adminService.getAllJobs()));
+    }
+
+    /**
+     * API Lấy danh sách doanh nghiệp chờ phê duyệt.
+     */
+    @GetMapping("/companies/pending")
+    public ResponseEntity<ApiResponse<java.util.List<com.fivecore.jobportal.entity.Company>>> getPendingCompanies() {
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách doanh nghiệp chờ duyệt thành công", adminService.getPendingCompanies()));
+    }
+
+    /**
+     * API Phê duyệt hoặc Từ chối tin tuyển dụng.
+     */
+    @PostMapping("/jobs/{id}/status")
+    public ResponseEntity<ApiResponse<Object>> updateJobStatus(@PathVariable Integer id, @RequestParam("status") String status) {
+        adminService.reviewJobPost(id, status);
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật trạng thái tin tuyển dụng thành công", null));
     }
 
     /**

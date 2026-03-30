@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import '../../assets/css/CompanyJobManagement.css';
-import CompanySidebar from '../../components/CompanySidebar';
-import CompanyTopbar from '../../components/CompanyTopbar';
+import '../../assets/css/company/CompanyJobManagement.css';
+import CompanySidebar from '../../components/company/CompanySidebar';
+import CompanyNavbar from '../../components/company/CompanyNavbar';
 import { Link } from 'react-router-dom';
 import { companyApi } from '../../api';
 
@@ -351,7 +351,7 @@ const CompanyJobManagement = () => {
     <div className="company-dashboard-container">
       <CompanySidebar />
       <div className="company-main-content">
-        <CompanyTopbar />
+        <CompanyNavbar />
         <main className="cd-main">
           <div className="cjm-content">
             <div className="cjm-header">

@@ -70,20 +70,20 @@ const JobDetail = () => {
                 </>
             );
         }
-        if (user.role === 'ROLE_ADMIN' || user.role === 'ROLE_COMPANY') return null;
-        if (user.role === 'ROLE_STUDENT') {
-            const hasApplied = job.isApplied || job.applied;
-            return hasApplied ? (
-                <button onClick={handleCancel} className="w-full border-2 border-red-500 text-red-500 py-4 rounded-xl font-bold text-sm hover:bg-red-50 transition-all">
-                    Hủy ứng tuyển ↩️
-                </button>
-            ) : (
-                <button onClick={handleApply} className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-sm hover:shadow-xl hover:shadow-blue-600/30 transition-all">
-                    Ứng tuyển ngay 🚀
-                </button>
-            );
-        }
-        return null;
+        
+        // Hide for non-student roles (Company, Admin, etc.)
+        if (user.role !== 'ROLE_STUDENT') return null;
+
+        const hasApplied = job.isApplied || job.applied;
+        return hasApplied ? (
+            <button onClick={handleCancel} className="w-full border-2 border-red-500 text-red-500 py-4 rounded-xl font-bold text-sm hover:bg-red-50 transition-all">
+                Hủy ứng tuyển ↩️
+            </button>
+        ) : (
+            <button onClick={handleApply} className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-sm hover:shadow-xl hover:shadow-blue-600/30 transition-all">
+                Ứng tuyển ngay 🚀
+            </button>
+        );
     };
 
     // Parse description into paragraphs

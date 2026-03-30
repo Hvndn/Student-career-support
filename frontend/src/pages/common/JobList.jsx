@@ -240,7 +240,9 @@ const JobList = () => {
                                                 </div>
                                                 <div className="flex items-center justify-end gap-3 mt-6 border-t border-slate-100 dark:border-slate-700 pt-4">
                                                     <Link to={`/jobs/${job.id}`} className="px-4 py-2 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-colors border border-slate-200 dark:border-slate-700">Chi tiết</Link>
-                                                    <Link to={`/jobs/${job.id}`} className="px-6 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 transition-all shadow-sm shadow-blue-600/20">Ứng tuyển nhanh</Link>
+                                                    {(!user || user?.role === 'ROLE_STUDENT') && (
+                                                        <Link to={`/jobs/${job.id}`} className="px-6 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 transition-all shadow-sm shadow-blue-600/20">Ứng tuyển nhanh</Link>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
