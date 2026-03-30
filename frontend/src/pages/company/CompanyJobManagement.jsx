@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import '../../components/CompanyJobManagement.css';
+import '../../assets/css/CompanyJobManagement.css';
 import CompanySidebar from '../../components/CompanySidebar';
 import CompanyTopbar from '../../components/CompanyTopbar';
 import { Link } from 'react-router-dom';

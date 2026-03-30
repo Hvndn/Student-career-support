@@ -199,6 +199,77 @@
     line-height: 1.6;
 }
 
+/* --- Rich Editor Styling --- */
+.rich-editor-wrapper {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1.5px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.rich-editor-wrapper:focus-within {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+}
+
+.rich-editor-wrapper .ql-toolbar.ql-snow {
+    border: none;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+    padding: 8px 12px;
+}
+
+.rich-editor-wrapper .ql-container.ql-snow {
+    border: none;
+    min-height: 200px;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.description-preview {
+    min-height: 150px;
+    padding: 1.5rem;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    line-height: 1.8;
+    color: #334155;
+}
+
+/* Fix Quill internal padding for preview */
+.description-preview.ql-editor {
+    padding: 1.5rem;
+}
+
+.description-preview h1 {
+    font-size: 2rem !important;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.description-preview h2 {
+    font-size: 1.75rem !important;
+    margin-bottom: 0.8rem;
+    font-weight: 700;
+}
+
+.description-preview h3 {
+    font-size: 1.5rem !important;
+    margin-bottom: 0.6rem;
+    font-weight: 600;
+}
+
+.description-preview ul, 
+.description-preview ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.description-preview p {
+    margin-bottom: 0.5rem;
+}
+
 .form-actions {
     margin-top: 1.5rem;
     display: flex;

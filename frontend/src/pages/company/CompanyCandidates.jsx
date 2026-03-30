@@ -14,6 +14,7 @@ const CompanyCandidates = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedJobId, setSelectedJobId] = useState('all');
     const [activeTab, setActiveTab] = useState('all');
+    const [selectedTagId, setSelectedTagId] = useState('all');
     
     // State for Tagging
     const [allTags, setAllTags] = useState([]);
@@ -68,8 +69,9 @@ const CompanyCandidates = () => {
                              app.jobTitle.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesJob = selectedJobId === 'all' || app.jobId.toString() === selectedJobId;
         const matchesTab = activeTab === 'all' || app.status.toLowerCase() === activeTab.toLowerCase();
+        const matchesTag = selectedTagId === 'all' || (tagMappings[app.studentId] || []).includes(Number(selectedTagId));
         
-        return matchesSearch && matchesJob && matchesTab;
+        return matchesSearch && matchesJob && matchesTab && matchesTag;
     });
 
     const getStatusLabel = (status) => {
@@ -137,6 +139,19 @@ const CompanyCandidates = () => {
                                         <option value="all">Tất cả tin tuyển dụng</option>
                                         {jobs.map(job => (
                                             <option key={job.id} value={job.id}>{job.title}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="filter-group">
+                                    <label>Lọc theo thẻ</label>
+                                    <select 
+                                        className="filter-control"
+                                        value={selectedTagId}
+                                        onChange={(e) => setSelectedTagId(e.target.value)}
+                                    >
+                                        <option value="all">Tất cả các thẻ</option>
+                                        {allTags.map(tag => (
+                                            <option key={tag.id} value={tag.id}>{tag.name}</option>
                                         ))}
                                     </select>
                                 </div>

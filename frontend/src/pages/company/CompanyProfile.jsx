@@ -1,8 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import CompanySidebar from '../../components/CompanySidebar';
 import CompanyTopbar from '../../components/CompanyTopbar';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 import { companyApi } from '../../api';
 import '../../assets/css/CompanyProfile.css';
+
+const QUILL_MODULES = {
+    toolbar: [
+        [{ 'header': [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'color': [] }, { 'background': [] }],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+        ['clean']
+    ],
+};
 
 const CompanyProfile = () => {
     const [profile, setProfile] = useState(null);
@@ -65,6 +77,10 @@ const CompanyProfile = () => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleDescriptionChange = (content) => {
+        setFormData(prev => ({ ...prev, description: content }));
     };
 
     const handleLogoClick = () => {
@@ -266,13 +282,24 @@ const CompanyProfile = () => {
                                 <div className="profile-section-card glass">
                                     <h3><span className="icon">📝</span> Giới thiệu doanh nghiệp</h3>
                                     <div className="form-group full-width">
-                                        <textarea 
-                                            name="description" 
-                                            rows="8"
-                                            value={formData.description} onChange={handleChange} 
-                                            disabled={!isEditing}
-                                            placeholder="Mô tả về văn hóa, sứ mệnh và giá trị của công ty..."
-                                        />
+                                        {isEditing ? (
+                                            <div className="rich-editor-wrapper">
+                                                <ReactQuill 
+                                                    theme="snow" 
+                                                    value={formData.description} 
+                                                    onChange={handleDescriptionChange} 
+                                                    modules={QUILL_MODULES} 
+                                                    placeholder="Mô tả về văn hóa, sứ mệnh và giá trị của công ty..." 
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div className="ql-container ql-snow" style={{ border: 'none' }}>
+                                                <div 
+                                                    className="description-preview ql-editor"
+                                                    dangerouslySetInnerHTML={{ __html: profile.description || 'Chưa có mô tả' }}
+                                                />
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { companyApi } from '../api';
 import toast from 'react-hot-toast';
 import { tagService } from '../utils/tagService';
-import './CandidateDetailModal.css';
+import '../assets/css/CandidateDetailModal.css';
 
 const CandidateDetailModal = ({ show, studentId, onClose }) => {
     const [candidate, setCandidate] = useState(null);

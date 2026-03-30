@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import '../../components/EmployerPricing.css';
+import '../../assets/css/EmployerPricing.css';
 
 const EmployerPricing = () => {
   const [cartQuantities, setCartQuantities] = useState({

@@ -13,7 +13,7 @@ const Navbar = () => {
     const isStudentRoute = location.pathname.startsWith('/student/') || (isHome && user?.role === 'ROLE_STUDENT');
     const isJobRoute = location.pathname === '/jobs' || location.pathname.startsWith('/jobs/');
 
-    if (location.pathname === '/employer' ||
+    if (location.pathname.startsWith('/employer') ||
         location.pathname === '/login' ||
         location.pathname.startsWith('/company/')) return null;
 

@@ -88,7 +88,7 @@
   padding: 2rem;
   border-radius: 16px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 2.5rem;
   align-items: flex-end;
 }
