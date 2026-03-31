@@ -1,0 +1,190 @@
+/* 
+   UniTalent Modern Design System 
+   Premium Aesthetics - Glassmorphism & High-end UI
+*/
+
+:root {
+    /* Color Palette - Elegant Indigo & Slate */
+    --p-h: 243; --p-s: 75%; --p-l: 59%; /* Primary Indigo */
+    --primary: hsl(var(--p-h), var(--p-s), var(--p-l));
+    --primary-light: hsl(var(--p-h), var(--p-s), 90%);
+    --primary-dark: hsl(var(--p-h), var(--p-s), 45%);
+    
+    --s-h: 262; --s-s: 83%; --s-l: 58%; /* Secondary Purple */
+    --secondary: hsl(var(--s-h), var(--s-s), var(--s-l));
+    
+    --slate-50: #ffffff;
+    --slate-100: #f1f5f9;
+    --slate-200: #e2e8f0;
+    --slate-800: #1e293b;
+    --slate-900: #0f172a;
+    
+    --white: #ffffff;
+    --glass: rgba(255, 255, 255, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.4);
+    
+    --radius-lg: 1.25rem;
+    --radius-xl: 2rem;
+    
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--slate-50);
+    color: var(--slate-900);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* --- Premium Typography --- */
+h1, h2, h3, h4, .fw-extrabold {
+    font-weight: 800;
+    letter-spacing: -0.04em;
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* --- Glassmorphism Layers --- */
+.glass-card {
+    background: var(--glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-xl);
+    border-radius: var(--radius-lg);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 30px 60px -12px rgba(0,0,0,0.15);
+}
+
+/* --- Hero Section & Mesh --- */
+.hero-mesh {
+    background: radial-gradient(at 0% 0%, hsla(243, 75%, 59%, 0.15) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(262, 83%, 58%, 0.15) 0, transparent 50%);
+    position: relative;
+    padding: 100px 0;
+}
+
+/* --- Modern Buttons --- */
+.btn {
+    padding: 0.8rem 1.8rem;
+    font-weight: 600;
+    border-radius: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.39);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+}
+
+.btn-primary:active {
+    transform: scale(0.96);
+}
+
+.btn-outline-primary {
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-3px);
+}
+
+.btn-light {
+    background: var(--white);
+    border: 1px solid var(--slate-200);
+    color: var(--slate-800);
+}
+
+.btn-light:hover {
+    background: var(--slate-100);
+    transform: translateY(-2px);
+}
+
+/* --- Inputs --- */
+.form-control-modern {
+    background: var(--white);
+    border: 2px solid var(--slate-200);
+    border-radius: 1rem;
+    padding: 0.9rem 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.form-control-modern:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+    outline: none;
+}
+
+/* --- Navigation --- */
+.navbar-modern {
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0.8rem 0;
+}
+
+.nav-link {
+    color: var(--slate-800) !important;
+    font-weight: 500;
+    margin: 0 0.5rem;
+    padding: 0.5rem 1rem !important;
+    border-radius: 0.75rem;
+    transition: all 0.2s;
+}
+
+.nav-link:hover {
+    background: var(--primary-light);
+    color: var(--primary) !important;
+}
+
+/* --- Animations --- */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+}
+
+.animate-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+/* --- Badges --- */
+.badge-premium {
+    background: var(--primary-light);
+    color: var(--primary);
+    padding: 0.6rem 1.2rem;
+    border-radius: 2rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}

@@ -1,0 +1,59 @@
+.admin-navbar {
+    height: 80px;
+    background: white;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 900;
+}
+
+.admin-page-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
+.admin-navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.admin-user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem;
+    border-radius: 50px;
+    transition: background 0.2s;
+}
+
+.admin-user-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.admin-username {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.admin-role {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.admin-avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #f1f5f9;
+}

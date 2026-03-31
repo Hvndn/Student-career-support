@@ -1,0 +1,102 @@
+.admin-sidebar {
+    width: 280px;
+    height: 100vh;
+    background: #ffffff;
+    color: #1e293b;
+    display: flex;
+    flex-direction: column;
+    /* Đã gỡ position: fixed để tránh làm hỏng CSS flex chia cột của các trang Admin Layout */
+    z-index: 1000;
+    border-right: 1px solid #e2e8f0;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.02);
+}
+
+.admin-sidebar-logo {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: white;
+    text-decoration: none;
+    letter-spacing: -0.5px;
+}
+
+.logo-text .highlight {
+    color: #2563eb;
+}
+
+.logo-badge {
+    background: #eff6ff;
+    color: #2563eb;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 6px;
+    width: fit-content;
+    letter-spacing: 2px;
+    border: 1px solid #dbeafe;
+}
+
+.admin-sidebar-nav {
+    flex: 1;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.admin-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 1.2rem;
+    color: #475569;
+    text-decoration: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.admin-nav-item:hover {
+    background: #f8fafc;
+    color: #2563eb;
+    transform: translateX(2px);
+}
+
+.admin-nav-item.active {
+    background: #2563eb;
+    color: white;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.item-label {
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.admin-sidebar-footer {
+    padding: 1.5rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.admin-logout-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 1.2rem;
+    background: transparent;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.admin-logout-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
