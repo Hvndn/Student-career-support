@@ -3,6 +3,10 @@ package com.fivecore.jobportal.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Thực thể Công việc - Thông tin đăng tuyển từ doanh nghiệp.
@@ -28,7 +32,7 @@ public class Job {
     @Column(length = 100)
     private String industry;
 
-    @Column(length = 50)
+    @Column(length = 100)
     private String level;
 
     @Column(columnDefinition = "TEXT", nullable = false)
@@ -46,7 +50,7 @@ public class Job {
 
     private Integer quantity;
 
-    @Column(length = 50)
+    @Column(length = 20)
     private String gender;
 
     @Column(length = 100)
@@ -55,14 +59,14 @@ public class Job {
     @Column(length = 100)
     private String qualification;
 
-    @Column(name = "salary_type", length = 20)
-    private String salaryType; // range, agreement
+    @Column(name = "salary_type", length = 50)
+    private String salaryType;
 
     @Column(name = "min_salary")
-    private java.math.BigDecimal minSalary;
+    private BigDecimal minSalary;
 
     @Column(name = "max_salary")
-    private java.math.BigDecimal maxSalary;
+    private BigDecimal maxSalary;
 
     @Column(length = 100)
     private String region;
@@ -70,19 +74,18 @@ public class Job {
     @Column(length = 255)
     private String location;
 
-    @Builder.Default
-    @Column(columnDefinition = "INT DEFAULT 0")
-    private Integer views = 0;
-
     private LocalDate deadline;
-    
+
     @Column(name = "posted_at")
-    private java.time.LocalDateTime postedAt;
+    private LocalDateTime postedAt;
+
+    @Builder.Default
+    private Integer views = 0;
 
     @Column(name = "contact_name", length = 255)
     private String contactName;
 
-    @Column(name = "contact_email", length = 255)
+    @Column(name = "contact_email", length = 100)
     private String contactEmail;
 
     @Column(name = "contact_phone", length = 20)
@@ -94,14 +97,13 @@ public class Job {
 
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private java.util.List<JobSkill> skills = new java.util.ArrayList<>();
+    private List<JobSkill> skills = new ArrayList<>();
 
     public enum JobType {
-        intern, parttime, fulltime, freelance, remote
+        intern, parttime, fulltime, remote, contract
     }
 
     public enum JobStatus {
-        draft, pending, open, rejected, closed, archived
+        draft, pending, open, closed, archived, rejected
     }
-
 }

@@ -1,0 +1,103 @@
+@import '/src/pages/Auth.css';
+
+/* REGISTER SPECIFIC STYLES */
+
+/* ROLE SELECTOR - Specific to Register */
+.role-selector {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.role-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    background: #f7f9fa;
+    color: #1a1a1a;
+    font-weight: 600;
+    gap: 0.8rem;
+}
+
+.role-card:hover {
+    background: #f0f2f5;
+}
+
+.role-card svg {
+    color: #666;
+    width: 28px;
+    height: 28px;
+}
+
+.role-card.active {
+    background: #f0f5ff;
+    border-color: #0d5cda;
+    color: #0d5cda;
+}
+
+.role-card.active svg {
+    color: #0d5cda;
+}
+
+/* FORM ROW - specific to Register (FullName, ConfirmPassword) */
+.form-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+/* TERMS CHECKBOX - specific to Register */
+.terms-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+}
+
+.terms-checkbox {
+    width: 18px;
+    height: 18px;
+    margin-top: 0.2rem;
+    cursor: pointer;
+    accent-color: #0d5cda;
+}
+
+.terms-text {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.5;
+}
+
+.terms-text a {
+    color: #0d5cda;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.terms-text a:hover {
+    text-decoration: underline;
+}
+
+/* RESPONSIVE SPECIFICS */
+@media (max-width: 600px) {
+    .form-row {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    .role-selector {
+        flex-direction: column;
+    }
+}

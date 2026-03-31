@@ -25,19 +25,24 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class AdvancedFeatureTests {
 
-    @Mock private JobRepository jobRepository;
-    @Mock private StudentRepository studentRepository;
-    @Mock private com.fivecore.jobportal.repository.SkillRepository skillRepository;
+    @Mock
+    private JobRepository jobRepository;
+    @Mock
+    private StudentRepository studentRepository;
+    @Mock
+    private com.fivecore.jobportal.repository.SkillRepository skillRepository;
 
-    @InjectMocks private RecommendationService recommendationService;
-    @InjectMocks private SkillService skillService;
+    @InjectMocks
+    private RecommendationService recommendationService;
+    @InjectMocks
+    private SkillService skillService;
 
     @Test
     @DisplayName("Gợi ý việc làm dựa trên kỹ năng trùng khớp")
     void recommendation_Success() {
         Skill skill = Skill.builder().name("Java").build();
         StudentSkill ss = StudentSkill.builder().skill(skill).build();
-        Student student = new Student(); 
+        Student student = new Student();
         student.setSkills(List.of(ss));
 
         Company company = Company.builder().name("Google").build();

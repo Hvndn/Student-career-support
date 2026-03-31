@@ -23,4 +23,5 @@ public class StudentProfileRequest {
     private String academicYear;
     private String currentTerm;
     private String address;
+
 }

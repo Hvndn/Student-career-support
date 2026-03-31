@@ -29,7 +29,7 @@ public class JobRestController {
             @RequestParam(required = false) String location,
             @RequestParam(required = false) String skill,
             @RequestParam(required = false) String jobType) {
-        
+
         List<JobResponse> jobs = jobSearchService.searchJobs(keyword, location, skill, jobType);
         return ResponseEntity.ok(ApiResponse.success("Lấy danh sách công việc thành công", jobs));
     }
@@ -38,7 +38,8 @@ public class JobRestController {
      * API Chi tiết công việc.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<JobResponse>> getJobById(@PathVariable("id") Integer id, org.springframework.security.core.Authentication authentication) {
+    public ResponseEntity<ApiResponse<JobResponse>> getJobById(@PathVariable("id") Integer id,
+            org.springframework.security.core.Authentication authentication) {
         Integer studentId = null;
         if (authentication != null && authentication.isAuthenticated()) {
             // Lấy studentId nếu là sinh viên

@@ -54,7 +54,6 @@ export const studentApi = {
     getProfile: () => api.get('/student/profile'),
     updateProfile: (data) => api.put('/student/profile', data),
     applyJob: (jobId) => api.post(`/student/jobs/${jobId}/apply`),
-    cancelApplication: (jobId) => api.delete(`/student/jobs/${jobId}/apply`),
     saveJob: (jobId) => api.post(`/student/jobs/${jobId}/save`),
     getSavedJobs: () => api.get('/student/jobs/saved'),
     getMyApplications: () => api.get('/student/applications'),
@@ -125,15 +124,19 @@ export const recruitmentApi = {
 
 export const adminApi = {
     getStats: () => api.get('/admin/statistics'),
-    getUsers: () => api.get('/admin/users'),
+    getUsers: (params) => api.get('/admin/users', { params }),
+    getUserDetail: (id) => api.get(`/admin/users/${id}`),
     toggleUserStatus: (userId) => api.post(`/admin/users/${userId}/toggle-status`),
+    updateUserRole: (userId, role) => api.patch(`/admin/users/${userId}/role?role=${role}`),
     getSkills: () => api.get('/admin/skills'),
-    addSkill: (name) => api.post(`/admin/skills?name=${name}`),
+    addSkill: (name, category) => api.post(`/admin/skills?name=${name}&category=${category}`),
+    updateSkill: (id, name, category) => api.put(`/admin/skills/${id}?name=${name}&category=${category}`),
     deleteSkill: (id) => api.delete(`/admin/skills/${id}`),
     getJobs: () => api.get('/admin/jobs'),
     updateJobStatus: (id, status) => api.post(`/admin/jobs/${id}/status?status=${status}`),
     getPendingCompanies: () => api.get('/admin/companies/pending'),
-    approveCompany: (id) => api.post(`/admin/companies/${id}/approve`)
+    approveCompany: (id) => api.post(`/admin/companies/${id}/approve`),
+    getReports: () => api.get('/admin/reports'),
 };
 
 export default api;

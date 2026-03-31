@@ -1,29 +1,34 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast';
+
+// components
 import LoadingSpinner from './components/common/LoadingSpinner';
 import NavbarSelector from './components/common/NavbarSelector';
-import Home from './pages/common/Home'
+import Footer from './components/Footer'
+import ProtectedRoute from './components/common/ProtectedRoute';
 
+// common pages
+import Home from './pages/common/Home'
 import Login from './pages/common/Login'
+import LoginSuccess from './pages/common/LoginSuccess'
 import Register from './pages/common/Register'
 import JobDetail from './pages/common/JobDetail'
 import JobList from './pages/common/JobList'
-import ProtectedRoute from './components/common/ProtectedRoute';
 
-// student
+// student pages
 import Profile from './pages/student/Profile'
 import Applications from './pages/student/Applications'
 import SavedJobs from './pages/student/SavedJobs'
 import Notifications from './pages/student/Notifications'
 
-// company
+// company pages
 import CompanyDashboard from './pages/company/CompanyDashboard'
-import PostJob from './pages/company/PostJob'
+import CompanyJobManagement from './pages/company/CompanyJobManagement'
 import PostJobSelection from './pages/company/PostJobSelection'
+import PostJob from './pages/company/PostJob'
 import PostJobAI from './pages/company/PostJobAI'
 import PostJobJD from './pages/company/PostJobJD'
-import CompanyJobManagement from './pages/company/CompanyJobManagement'
 import Applicants from './pages/company/Applicants'
 import CompanyCandidates from './pages/company/CompanyCandidates'
 import CompanyProfile from './pages/company/CompanyProfile'
@@ -31,22 +36,24 @@ import CompanySearchCandidates from './pages/company/CompanySearchCandidates'
 import CompanySavedCandidates from './pages/company/CompanySavedCandidates'
 import CompanyCandidateTags from './pages/company/CompanyCandidateTags'
 import CompanyCandidateNotifications from './pages/company/CompanyCandidateNotifications'
-// Removed EmployerHome and EmployerPricing as requested
+import EmployerHome from './pages/company/EmployerHome'
+import EmployerPricing from './pages/company/EmployerPricing'
 
-// admin
+// admin pages
 import AdminDashboard from './pages/admin/AdminDashboard'
 import SkillManagement from './pages/admin/SkillManagement'
 import UserManagement from './pages/admin/UserManagement'
-import JobManagement from './pages/admin/JobManagement'
-import CompanyApproval from './pages/admin/CompanyApproval'
+import CompanyVerification from './pages/admin/CompanyVerification'
+import JobApproval from './pages/admin/JobApproval'
+import Reports from './pages/admin/Reports'
+
 // Thành phần xử lý hiệu ứng load trang khi chuyển route
 const RouteChangeHandler = ({ setIsLoading }) => {
   const location = useLocation();
 
   useEffect(() => {
-    // Các bộ route đã có spinner nội bộ hoặc load dữ liệu phức tạp cần giữ spinner cũ
     const EXCLUDED_PREFIXES = ['/jobs', '/student', '/company', '/admin'];
-    const isExcluded = EXCLUDED_PREFIXES.some(prefix => 
+    const isExcluded = EXCLUDED_PREFIXES.some(prefix =>
       location.pathname === prefix || location.pathname.startsWith(prefix + '/')
     );
 
@@ -58,7 +65,6 @@ const RouteChangeHandler = ({ setIsLoading }) => {
       setIsLoading(false);
     };
     
-    // Giả lập tiến trình lâu hơn một chút để tạo cảm giác mượt mà (800ms)
     const timeout = setTimeout(handleStop, 800);
 
     return () => {
@@ -70,11 +76,14 @@ const RouteChangeHandler = ({ setIsLoading }) => {
   return null;
 };
 
-function App() {
+const AppContent = () => {
+  const location = useLocation();
+  const hideOnRoutes = ['/login', '/register', '/login-success'];
+  const shouldHide = hideOnRoutes.includes(location.pathname);
   const [isLoading, setIsLoading] = useState(false);
 
   return (
-    <Router>
+    <>
       <Toaster 
         position="top-right" 
         reverseOrder={false}
@@ -91,14 +100,21 @@ function App() {
       />
       <RouteChangeHandler setIsLoading={setIsLoading} />
       {isLoading && <LoadingSpinner />}
+      
       <NavbarSelector />
+      
       <Routes>
         {/* Công khai */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/login-success" element={<LoginSuccess />} />
         <Route path="/register" element={<Register />} />
         <Route path="/jobs" element={<JobList />} />
         <Route path="/jobs/:id" element={<JobDetail />} />
+        
+        {/* Nhà tuyển dụng (Landing & Pricing) */}
+        <Route path="/employer" element={<EmployerHome />} />
+        <Route path="/employer/pricing" element={<EmployerPricing />} />
 
         {/* Bảo vệ cho Sinh viên */}
         <Route path="/student/*" element={
@@ -112,7 +128,7 @@ function App() {
           </ProtectedRoute>
         } />
         
-        {/* Bảo vệ cho Doanh nghiệp */}
+        {/* Bảo vệ cho Doanh nghiệp (Dashboard & Management) */}
         <Route path="/company/*" element={
           <ProtectedRoute requiredRole="ROLE_COMPANY">
             <Routes>
@@ -141,17 +157,25 @@ function App() {
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="skills" element={<SkillManagement />} />
               <Route path="users" element={<UserManagement />} />
-              <Route path="jobs" element={<JobManagement />} />
-              <Route path="companies/pending" element={<CompanyApproval />} />
+              <Route path="companies" element={<CompanyVerification />} />
+              <Route path="jobs" element={<JobApproval />} />
+              <Route path="reports" element={<Reports />} />
             </Routes>
           </ProtectedRoute>
         } />
       </Routes>
+      
+      {!shouldHide && <Footer />}
+    </>
+  );
+};
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   )
 }
-
-
-
 
 export default App

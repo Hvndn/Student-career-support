@@ -4,23 +4,27 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 const Navbar = () => {
     const navigate = useNavigate();
     const location = useLocation();
-
-
-
+    // Giả định login đơn giản bằng localStorage cho demo nhanh
     const user = JSON.parse(localStorage.getItem('user'));
-    const isHome = location.pathname === '/';
 
-    const isStudentRoute = location.pathname.startsWith('/student/') || (isHome && user?.role === 'ROLE_STUDENT');
-    const isJobRoute = location.pathname === '/jobs' || location.pathname.startsWith('/jobs/');
-
-    if (location.pathname.startsWith('/employer') ||
-        location.pathname === '/login' ||
-        location.pathname.startsWith('/company/')) return null;
+    // Ẩn Navbar trên các trang đặc thù
+    if (location.pathname === '/login' || 
+        location.pathname === '/register' || 
+        location.pathname.startsWith('/company/') || 
+        location.pathname.startsWith('/employer') || 
+        location.pathname.startsWith('/admin')) {
+        return null;
+    }
 
     const handleLogout = () => {
         localStorage.removeItem('user');
         navigate('/login');
     };
+
+    const isHome = location.pathname === '/';
+    const isStudentRoute = location.pathname.startsWith('/student');
+    const isJobRoute = location.pathname.startsWith('/jobs');
+    const linkStyle = { color: 'rgba(255, 255, 255, 0.9)' };
 
     /* ── Light Navbar for Student Pages, Job Pages & Public Home ── */
     if (isHome || isStudentRoute || isJobRoute) {
@@ -99,20 +103,16 @@ const Navbar = () => {
         );
     }
 
-    /* ── Dark Glass Navbar for other pages ── */
     return (
-        <nav className="glass fade-in" style={{
-            position: 'sticky',
-            top: '1.5rem',
-            left: '1.5rem',
-            right: '1.5rem',
-            margin: '1.5rem auto',
-            padding: '0.8rem 2.5rem',
+        <nav className="glass fade-in navbar-fixed" style={{
+            padding: '1rem 2.5rem',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            zIndex: 1000,
-            maxWidth: '1200px'
+            background: 'rgba(0, 0, 0, 0.75)',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.15)',
+            boxShadow: 'none',
+            borderRadius: 0
         }}>
             <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
                 <img
@@ -122,30 +122,31 @@ const Navbar = () => {
                 />
             </Link>
             <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'center', fontWeight: '500' }}>
-                <Link to="/" style={{ color: 'var(--text-muted)' }} className="nav-link">Trang chủ</Link>
+                <Link to="/" style={linkStyle} className="nav-link navbar-link">Việc làm</Link>
                 {user ? (
                     <>
                         {user.role === 'ROLE_STUDENT' && (
                             <>
-                                <Link to="/student/notifications" style={{ color: 'var(--text-muted)' }}>Thông báo</Link>
-                                <Link to="/student/applications" style={{ color: 'var(--text-muted)' }}>Đơn tuyển</Link>
-                                <Link to="/student/profile" style={{ color: 'var(--text-muted)' }}>Hồ sơ</Link>
+                                <Link to="/student/notifications" style={linkStyle} className="nav-link navbar-link">Thông báo</Link>
+                                <Link to="/student/applications" style={linkStyle} className="nav-link navbar-link">Đơn tuyển</Link>
+                                <Link to="/student/profile" style={linkStyle} className="nav-link navbar-link">Hồ sơ</Link>
                             </>
                         )}
                         {user.role === 'ROLE_COMPANY' && (
                             <>
-                                <Link to="/company/dashboard" style={{ color: 'var(--text-muted)' }}>Dashboard</Link>
-                                <Link to="/company/jobs/post" style={{ color: 'var(--text-muted)' }}>Đăng tin</Link>
-                                <Link to="/company/candidates/search" style={{ color: 'var(--text-muted)' }}>Tìm ứng viên</Link>
+                                <Link to="/company/dashboard" style={linkStyle} className="nav-link navbar-link">Trang chủ</Link>
+                                <Link to="/company/jobs/post" style={linkStyle} className="nav-link navbar-link">Đăng tin</Link>
+                                <Link to="/company/candidates/search" style={linkStyle} className="nav-link navbar-link">Tìm ứng viên</Link>
                             </>
                         )}
                         {user.role === 'ROLE_ADMIN' && (
                             <>
-                                <Link to="/admin/dashboard" style={{ color: 'var(--text-muted)' }}>Admin</Link>
-                                <Link to="/admin/skills" style={{ color: 'var(--text-muted)' }}>Kỹ năng</Link>
-                                <Link to="/admin/users" style={{ color: 'var(--text-muted)' }}>Thành viên</Link>
+                                <Link to="/admin/dashboard" style={linkStyle} className="nav-link navbar-link">Admin</Link>
+                                <Link to="/admin/skills" style={linkStyle} className="nav-link navbar-link">Kỹ năng</Link>
+                                <Link to="/admin/users" style={linkStyle} className="nav-link navbar-link">Thành viên</Link>
                             </>
                         )}
+
                         <div style={{ height: '24px', width: '1px', background: 'var(--border)' }}></div>
                         <span style={{ fontWeight: '600', color: 'var(--primary)' }}>{user.fullName}</span>
                         <button onClick={handleLogout} className="btn glass" style={{ color: 'var(--error)', padding: '0.5rem 1.2rem', fontSize: '0.9rem' }}>Đăng xuất</button>
@@ -160,5 +161,6 @@ const Navbar = () => {
         </nav>
     );
 };
+
 
 export default Navbar;

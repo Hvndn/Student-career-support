@@ -5,7 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 /**
- * Thực thể Sinh viên - Chứa thông tin chi tiết của người dùng có vai trò là sinh viên.
+ * Thực thể Sinh viên - Chứa thông tin chi tiết của người dùng có vai trò là
+ * sinh viên.
  */
 @Entity
 @Table(name = "students")
@@ -61,7 +62,7 @@ public class Student {
     @Column(name = "earned_credits")
     private Integer earnedCredits;
 
-    @Column(name = "class_rank", length = 50)
+    @Column(name = "class_rank")
     private String classRank;
 
     @Column(name = "academic_year", length = 20)
@@ -81,9 +82,13 @@ public class Student {
     @Builder.Default
     private java.util.List<Education> educations = new java.util.ArrayList<>();
 
+
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     @Builder.Default
     private java.util.List<Experience> experiences = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<Application> applications;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
