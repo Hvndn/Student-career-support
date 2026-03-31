@@ -60,7 +60,7 @@ public class RecruitmentRestController {
             @RequestParam("status") String status) {
         try {
             applicationService.updateApplicationStatus(appId,
-                    Application.ApplicationStatus.valueOf(status.toUpperCase()));
+                    Enum.valueOf(Application.ApplicationStatus.class, status.toLowerCase()));
             return ResponseEntity.ok(ApiResponse.success("Cập nhật trạng thái thành công", null));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(ApiResponse.error("Trạng thái không hợp lệ", "INVALID_STATUS"));

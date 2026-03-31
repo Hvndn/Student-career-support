@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Thực thể Công việc - Thông tin đăng tuyển từ doanh nghiệp.
@@ -22,6 +23,7 @@ public class Job {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;

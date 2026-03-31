@@ -84,7 +84,7 @@ public class CompanyService {
                 .location(request.getLocation())
                 .minSalary(request.getMinSalary())
                 .maxSalary(request.getMaxSalary())
-                .jobType(Job.JobType.valueOf(request.getJobType().toLowerCase()))
+                .jobType(Enum.valueOf(Job.JobType.class, request.getJobType().toLowerCase()))
                 .deadline(request.getDeadline())
                 .status(Job.JobStatus.open)
                 .build();
@@ -145,7 +145,7 @@ public class CompanyService {
         job.setDescription(request.getDescription() != null ? request.getDescription() : job.getDescription());
         job.setRequirements(request.getRequirements());
         job.setBenefits(request.getBenefits());
-        job.setJobType(Job.JobType.valueOf(request.getJobType().toLowerCase()));
+        job.setJobType(Enum.valueOf(Job.JobType.class, request.getJobType().toLowerCase()));
         job.setQuantity(request.getQuantity());
         job.setGender(request.getGender());
         job.setExperience(request.getExperience());
@@ -159,7 +159,7 @@ public class CompanyService {
         job.setContactName(request.getContactName());
         job.setContactEmail(request.getContactEmail());
         job.setContactPhone(request.getContactPhone());
-        job.setStatus(Job.JobStatus.valueOf(request.getStatus().toLowerCase()));
+        job.setStatus(Enum.valueOf(Job.JobStatus.class, request.getStatus().toLowerCase()));
         job.setPostedAt(java.time.LocalDateTime.now()); // Cập nhật thời gian thực tế khi có bất kỳ thay đổi nào
 
         // Cập nhật kỹ năng

@@ -54,6 +54,20 @@ public class AdminService {
                 .collect(Collectors.groupingBy(com.fivecore.jobportal.entity.Skill::getCategory, Collectors.counting()));
         stats.put("skillDistribution", skillDistribution);
 
+        List<Map<String, Object>> recentJobs = jobRepository.findAll().stream()
+                .sorted((j1, j2) -> j2.getId().compareTo(j1.getId()))
+                .limit(4)
+                .map(job -> {
+                    Map<String, Object> j = new HashMap<>();
+                    j.put("id", job.getId());
+                    j.put("title", job.getTitle());
+                    j.put("companyName", job.getCompany().getName());
+                    j.put("postedAt", job.getPostedAt());
+                    return j;
+                })
+                .collect(Collectors.toList());
+        stats.put("recentJobs", recentJobs);
+
         return stats;
     }
 
@@ -78,10 +92,39 @@ public class AdminService {
     }
 
     /**
+     * Lấy toàn bộ danh sách việc làm và ánh xạ sang AdminJobResponse
+     */
+    public List<com.fivecore.jobportal.dto.admin.AdminJobResponse> getAllJobs() {
+        return jobRepository.findAll().stream().map(job -> {
+            String status = "PENDING";
+            if (job.getStatus() == com.fivecore.jobportal.entity.Job.JobStatus.open) status = "APPROVED";
+            else if (job.getStatus() == com.fivecore.jobportal.entity.Job.JobStatus.rejected) status = "REJECTED";
+            
+            return com.fivecore.jobportal.dto.admin.AdminJobResponse.builder()
+                .id(job.getId())
+                .title(job.getTitle())
+                .companyName(job.getCompany().getName())
+                .createdAt(job.getPostedAt())
+                .minSalary(job.getMinSalary())
+                .maxSalary(job.getMaxSalary())
+                .status(status)
+                .build();
+        }).collect(Collectors.toList());
+    }
+
+    /**
      * Kiểm duyệt tin tuyển dụng (Thay đổi trạng thái job).
      */
     public void reviewJobPost(Integer jobId, String status) {
         jobRepository.findById(jobId).ifPresent(job -> {
+            com.fivecore.jobportal.entity.Job.JobStatus newStatus = com.fivecore.jobportal.entity.Job.JobStatus.pending;
+            if ("APPROVED".equalsIgnoreCase(status)) {
+                newStatus = com.fivecore.jobportal.entity.Job.JobStatus.open;
+            } else if ("REJECTED".equalsIgnoreCase(status)) {
+                newStatus = com.fivecore.jobportal.entity.Job.JobStatus.rejected;
+            }
+            job.setStatus(newStatus);
+            jobRepository.save(job);
             log.info("Admin đã cập nhật trạng thái tin '{}' sang {}", job.getTitle(), status);
         });
     }
@@ -127,7 +170,7 @@ public class AdminService {
                     .id(student.getId())
                     .fullName(user.getFullName())
                     .email(user.getEmail())
-                    .studentCode(student.getStudentCode())
+                    .studentIdStr(student.getStudentIdStr())
                     .university(student.getUniversity())
                     .major(student.getMajor())
                     .graduationYear(student.getGraduationYear())

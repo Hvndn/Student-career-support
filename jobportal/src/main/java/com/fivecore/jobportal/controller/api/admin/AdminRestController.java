@@ -136,4 +136,37 @@ public class AdminRestController {
                 .header("Location", "http://localhost:5174/admin/users")
                 .build();
     }
+
+    /**
+     * API Lấy danh sách việc làm.
+     */
+    @GetMapping("/jobs")
+    public ResponseEntity<ApiResponse<java.util.List<com.fivecore.jobportal.dto.admin.AdminJobResponse>>> getAllJobs() {
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách việc làm thành công", adminService.getAllJobs()));
+    }
+
+    /**
+     * API Duyệt/Từ chối tin tuyển dụng.
+     */
+    @PostMapping("/jobs/{id}/status")
+    public ResponseEntity<ApiResponse<Object>> reviewJobPost(@PathVariable Integer id, @RequestParam("status") String status) {
+        adminService.reviewJobPost(id, status);
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật trạng thái thành công", null));
+    }
+
+    /**
+     * API Lấy danh sách công ty chờ duyệt.
+     */
+    @GetMapping("/companies/pending")
+    public ResponseEntity<ApiResponse<java.util.List<com.fivecore.jobportal.entity.Company>>> getPendingCompanies() {
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách chờ duyệt thành công", adminService.getPendingCompanies()));
+    }
+
+    /**
+     * API Lấy danh sách báo cáo (Mock tạm thời để tránh lỗi Error 500).
+     */
+    @GetMapping("/reports")
+    public ResponseEntity<ApiResponse<java.util.List<Object>>> getReports() {
+        return ResponseEntity.ok(ApiResponse.success("Lấy báo cáo thành công", java.util.Collections.emptyList()));
+    }
 }

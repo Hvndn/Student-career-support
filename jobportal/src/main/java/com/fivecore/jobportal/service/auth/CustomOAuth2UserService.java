@@ -105,7 +105,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             String studentCode = "SV" + System.currentTimeMillis() % 1000000;
             Student student = Student.builder()
                     .user(user)
-                    .studentCode(studentCode)
+                    .studentIdStr(studentCode)
                     .build();
             studentRepository.save(student);
         } else if (user.getRole() == User.Role.company) {

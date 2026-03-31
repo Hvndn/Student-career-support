@@ -56,7 +56,7 @@ public class JobSearchService {
 
         if (jobType != null && !jobType.isEmpty()) {
             try {
-                Job.JobType type = Job.JobType.valueOf(jobType.toLowerCase());
+                Job.JobType type = Enum.valueOf(Job.JobType.class, jobType.toLowerCase());
                 spec = spec.and((root, query, cb) -> cb.equal(root.get("jobType"), type));
             } catch (IllegalArgumentException e) {
                 // Ignore invalid job type
@@ -95,7 +95,7 @@ public class JobSearchService {
                 .title(job.getTitle())
                 .companyName(job.getCompany().getName())
                 .location(job.getLocation())
-                .salary(job.getSalary())
+                .salary(job.getMaxSalary() != null ? job.getMinSalary() + " - " + job.getMaxSalary() : (job.getMinSalary() != null ? job.getMinSalary().toString() : "Thỏa thuận"))
                 .jobType(job.getJobType().name())
                 .status(job.getStatus().name())
                 .description(job.getDescription())

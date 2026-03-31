@@ -5,7 +5,7 @@ import { Toaster } from 'react-hot-toast';
 // components
 import LoadingSpinner from './components/common/LoadingSpinner';
 import NavbarSelector from './components/common/NavbarSelector';
-import Footer from './components/Footer'
+
 import ProtectedRoute from './components/common/ProtectedRoute';
 
 // common pages
@@ -36,7 +36,7 @@ import CompanySearchCandidates from './pages/company/CompanySearchCandidates'
 import CompanySavedCandidates from './pages/company/CompanySavedCandidates'
 import CompanyCandidateTags from './pages/company/CompanyCandidateTags'
 import CompanyCandidateNotifications from './pages/company/CompanyCandidateNotifications'
-import EmployerHome from './pages/company/EmployerHome'
+// import EmployerHome from './pages/company/EmployerHome' (Đã đổi tên sang CompanyDashboard)
 import EmployerPricing from './pages/company/EmployerPricing'
 
 // admin pages
@@ -113,7 +113,7 @@ const AppContent = () => {
         <Route path="/jobs/:id" element={<JobDetail />} />
         
         {/* Nhà tuyển dụng (Landing & Pricing) */}
-        <Route path="/employer" element={<EmployerHome />} />
+        <Route path="/employer" element={<CompanyDashboard />} />
         <Route path="/employer/pricing" element={<EmployerPricing />} />
 
         {/* Bảo vệ cho Sinh viên */}
@@ -165,7 +165,8 @@ const AppContent = () => {
         } />
       </Routes>
       
-      {!shouldHide && <Footer />}
+    
+
     </>
   );
 };

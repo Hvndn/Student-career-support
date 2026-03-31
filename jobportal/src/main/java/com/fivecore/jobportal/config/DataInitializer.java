@@ -29,9 +29,11 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         initializeAdmin();
-        initializeSampleSkills();
-        initializeSampleStudents();
-        initializeSampleCompaniesAndJobs();
+        
+        // Đã tắt tự động tạo dữ liệu mẫu theo lệnh của Người
+        // initializeSampleSkills();
+        // initializeSampleStudents();
+        // initializeSampleCompaniesAndJobs();
     }
 
     private void initializeAdmin() {
@@ -65,11 +67,14 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeSampleStudents() {
-        if (userRepository.findByEmail("student@scholarbridge.vn").isPresent()) return;
+        String studentEmail = "student@scholarbridge.vn";
+        String studentCode = "SV001";
+        if (userRepository.findByEmail(studentEmail).isPresent() || 
+            studentRepository.findByStudentIdStr(studentCode).isPresent()) return;
 
         log.info("🌱 Khởi tạo dữ liệu sinh viên mẫu...");
         Skill javaSkill = getOrCreateSkill("Java", "Programming");
-        createStudent("student@scholarbridge.vn", "Nguyễn Văn Sinh Viên", "Đại học Bách Khoa", "CNTT", "SV001", javaSkill);
+        createStudent(studentEmail, "Nguyễn Văn Sinh Viên", "Đại học Bách Khoa", "CNTT", studentCode, javaSkill);
     }
 
     private void initializeSampleCompaniesAndJobs() {
@@ -79,8 +84,8 @@ public class DataInitializer implements CommandLineRunner {
 
         // 1. Doanh nghiệp đã được duyệt và có tin tuyển dụng
         Company techFlow = createCompany("hr@techflow.vn", "TechFlow Solutions", "Công ty công nghệ hàng đầu", true);
-        createJob(techFlow, "Senior Java Developer", "Phát triển hệ thống backend", 25000000, 40000000, Job.JobStatus.APPROVED);
-        createJob(techFlow, "Product Manager", "Quản lý vòng đời sản phẩm", 30000000, 50000000, Job.JobStatus.PENDING);
+        createJob(techFlow, "Senior Java Developer", "Phát triển hệ thống backend", 25000000, 40000000, Job.JobStatus.open);
+        createJob(techFlow, "Product Manager", "Quản lý vòng đời sản phẩm", 30000000, 50000000, Job.JobStatus.pending);
 
         // 2. Doanh nghiệp ĐANG CHỜ DUYỆT (isActive = false)
         createCompany("contact@creativepulse.agency", "CreativePulse Agency", "Đơn vị truyền thông sáng tạo", false);
@@ -88,8 +93,8 @@ public class DataInitializer implements CommandLineRunner {
 
         // 3. Tin tuyển dụng ĐANG CHỜ DUYỆT từ doanh nghiệp khác
         Company futureSoft = createCompany("jobs@futuresoft.io", "FutureSoft", "Product house chuyên về AI", true);
-        createJob(futureSoft, "AI Engineer Intern", "Nghiên cứu và triển khai LLMs", 5000000, 10000000, Job.JobStatus.PENDING);
-        createJob(futureSoft, "React Native Developer", "Xây dựng ứng dụng di động", 15000000, 25000000, Job.JobStatus.PENDING);
+        createJob(futureSoft, "AI Engineer Intern", "Nghiên cứu và triển khai LLMs", 5000000, 10000000, Job.JobStatus.pending);
+        createJob(futureSoft, "React Native Developer", "Xây dựng ứng dụng di động", 15000000, 25000000, Job.JobStatus.pending);
     }
 
     private Skill getOrCreateSkill(String name, String category) {
@@ -150,12 +155,11 @@ public class DataInitializer implements CommandLineRunner {
                 .title(title)
                 .description(desc)
                 .company(company)
-                .minSalary(min)
-                .maxSalary(max)
+                .minSalary(java.math.BigDecimal.valueOf(min))
+                .maxSalary(java.math.BigDecimal.valueOf(max))
+                .jobType(Job.JobType.fulltime)
                 .status(status)
                 .postedAt(LocalDateTime.now())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
         jobRepository.save(job);
     }

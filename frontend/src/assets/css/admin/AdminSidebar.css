@@ -5,9 +5,7 @@
     color: #1e293b;
     display: flex;
     flex-direction: column;
-    position: fixed;
-    left: 0;
-    top: 0;
+    /* Đã gỡ position: fixed để tránh làm hỏng CSS flex chia cột của các trang Admin Layout */
     z-index: 1000;
     border-right: 1px solid #e2e8f0;
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.02);

@@ -6,7 +6,6 @@
 
 .admin-main-content {
     flex: 1;
-    margin-left: 280px; /* Space for sidebar */
     display: flex;
     flex-direction: column;
     position: relative;

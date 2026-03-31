@@ -198,18 +198,5 @@ const AdminDashboard = () => {
         </div>
     );
 };
-ển quản trị v2.4.0</span>
-                        <div className="admin-footer-links">
-                            <a href="#">Giao thức quyền riêng tư</a>
-                            <a href="#">Nhật ký kiểm tra</a>
-                            <a href="#">Tuân thủ</a>
-                        </div>
-                    </footer>
-                </div>
-            </main>
->>>>>>> da7cfda3cbc0dcba44ed426c45c4320ec6cfaee3
-        </div>
-    );
-};
 
 export default AdminDashboard;
