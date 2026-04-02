@@ -7,8 +7,9 @@ const NavbarSelector = () => {
     const location = useLocation();
     const user = JSON.parse(localStorage.getItem('user'));
 
-    // Bỏ qua Navbar cho trang login, company và admin vì họ có nav riêng
+    // Bỏ qua Navbar cho các trang auth, company và admin
     if (location.pathname === '/login' || 
+        location.pathname === '/register' ||
         location.pathname.startsWith('/company/') || 
         location.pathname.startsWith('/admin/')) {
         return null;

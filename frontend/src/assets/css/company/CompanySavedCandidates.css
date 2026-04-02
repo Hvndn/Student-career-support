@@ -1,6 +1,6 @@
 /* ─── Company Saved Candidates Page ─── */
 .saved-candidates-page {
-    padding: 2rem 3rem;
+    padding: 0.75rem 3rem 2rem 3rem;
     max-width: 1600px;
     margin: 0 auto;
 }

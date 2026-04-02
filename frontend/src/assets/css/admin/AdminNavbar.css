@@ -6,8 +6,10 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 2rem;
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 280px;
+    right: 0;
     z-index: 900;
 }
 

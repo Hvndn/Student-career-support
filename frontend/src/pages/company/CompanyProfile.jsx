@@ -4,6 +4,7 @@ import CompanyNavbar from '../../components/company/CompanyNavbar';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { companyApi } from '../../api';
+import { getImageUrl } from '../../utils/urlUtils';
 import '../../assets/css/company/CompanyProfile.css';
 
 const QUILL_MODULES = {
@@ -35,6 +36,8 @@ const CompanyProfile = () => {
         description: '',
         logo: ''
     });
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [isUploading, setIsUploading] = useState(false);
     const [toast, setToast] = useState({ show: false, message: '', type: 'error' });
 
     const showToast = (message, type = 'error') => {
@@ -106,29 +109,34 @@ const CompanyProfile = () => {
         try {
             const dataToSubmit = new FormData();
             
-            // Append all fields from formData
             Object.keys(formData).forEach(key => {
                 if (key !== 'logo' && formData[key] !== null && formData[key] !== undefined) {
                     dataToSubmit.append(key, formData[key]);
                 }
             });
 
-            // If a new file was selected, append it as 'logoFile'
             if (selectedFile) {
                 dataToSubmit.append('logoFile', selectedFile);
             }
 
-            await companyApi.updateProfile(dataToSubmit);
+            setIsUploading(true);
+            await companyApi.updateProfile(dataToSubmit, (progressEvent) => {
+                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                setUploadProgress(percentCompleted);
+            });
+            
             setProfile(formData);
             setSelectedFile(null);
             setIsEditing(false);
+            setUploadProgress(0);
+            setIsUploading(false);
             
-            // Emit custom event for Topbar to refresh
             window.dispatchEvent(new CustomEvent('companyProfileUpdated'));
-            
             showToast('Cập nhật hồ sơ công ty thành công!', 'success');
         } catch (err) {
             console.error('Update failed:', err);
+            setIsUploading(false);
+            setUploadProgress(0);
             showToast(err.response?.data?.message || 'Cập nhật thất bại. Vui lòng thử lại!', 'error');
         }
     };
@@ -157,11 +165,17 @@ const CompanyProfile = () => {
                         <div className="profile-avatar-row">
                             <div className="profile-avatar" onClick={handleLogoClick} style={{ cursor: isEditing ? 'pointer' : 'default' }}>
                                 {formData.logo ? (
-                                    <img src={formData.logo} alt="Logo" />
+                                    <img src={getImageUrl(formData.logo)} alt="Logo" />
                                 ) : (
                                     <div className="avatar-placeholder">🏢</div>
                                 )}
-                                {isEditing && <button className="avatar-edit-btn" type="button">📸</button>}
+                                {isEditing && !isUploading && <button className="avatar-edit-btn" type="button">📸</button>}
+                                {isUploading && (
+                                    <div className="upload-progress-overlay">
+                                        <div className="progress-spinner"></div>
+                                        <span className="progress-text">{uploadProgress}%</span>
+                                    </div>
+                                )}
                                 <input 
                                     type="file" 
                                     ref={fileInputRef} 
@@ -175,25 +189,47 @@ const CompanyProfile = () => {
                                 <p className="profile-industry-badge">{profile.industry || 'Lĩnh vực chưa cập nhật'}</p>
                             </div>
                             <div className="profile-header-actions">
-                                <button 
-                                    className={`btn-action ${isEditing ? 'btn-cancel' : 'btn-edit'}`}
-                                    onClick={() => setIsEditing(!isEditing)}
-                                >
-                                    {isEditing ? 'Hủy bản sửa' : 'Chỉnh sửa hồ sơ'}
-                                </button>
+                                {isEditing ? (
+                                    <div className="acting-buttons">
+                                        <button 
+                                            type="button"
+                                            className="btn-action btn-cancel"
+                                            onClick={() => {
+                                                setIsEditing(false);
+                                                fetchProfile();
+                                            }}
+                                        >
+                                            Hủy bỏ
+                                        </button>
+                                        <button 
+                                            type="submit" 
+                                            form="profile-edit-form"
+                                            className="btn-action btn-save-header"
+                                        >
+                                            Lưu thay đổi
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button 
+                                        className="btn-action btn-edit"
+                                        onClick={() => setIsEditing(true)}
+                                    >
+                                        Chỉnh sửa hồ sơ
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
 
-                    <div className="profile-main-grid">
-                        <div className="profile-sections-container">
-                            <form onSubmit={handleSubmit}>
-                                {/* Basic Info Section */}
-                                <div className="profile-section-card glass">
+                    <div className="profile-content-body">
+                        <form id="profile-edit-form" onSubmit={handleSubmit}>
+                            {/* Row 1: General Info & Contact */}
+                            <div className="info-row-top">
+                                <div className="profile-section-card glass flex-half">
                                     <h3><span className="icon">🏢</span> Thông tin chung</h3>
-                                    <div className="form-grid">
+                                    <div className="form-grid-compact">
                                         <div className="form-group">
-                                            <label>Tên doanh nghiệp (hiển thị)</label>
+                                            <label>Tên doanh nghiệp</label>
                                             <input 
                                                 type="text" name="name" 
                                                 value={formData.name} onChange={handleChange} 
@@ -246,10 +282,9 @@ const CompanyProfile = () => {
                                     </div>
                                 </div>
 
-                                {/* Contact Section */}
-                                <div className="profile-section-card glass">
-                                    <h3><span className="icon">📞</span> Liên hệ & Địa chỉ</h3>
-                                    <div className="form-grid">
+                                <div className="profile-section-card glass flex-half">
+                                    <h3><span className="icon">📞</span> Liên hệ</h3>
+                                    <div className="form-grid-compact">
                                         <div className="form-group">
                                             <label>Email liên hệ</label>
                                             <input 
@@ -268,78 +303,56 @@ const CompanyProfile = () => {
                                         </div>
                                         <div className="form-group full-width">
                                             <label>Trụ sở chính</label>
-                                            <input 
-                                                type="text" name="address" 
+                                            <textarea 
+                                                name="address" 
                                                 value={formData.address} onChange={handleChange} 
                                                 disabled={!isEditing}
                                                 placeholder="Nhập địa chỉ đầy đủ..."
+                                                rows="4"
+                                                style={{ resize: 'none' }}
                                             />
                                         </div>
                                     </div>
                                 </div>
-
-                                {/* About Section */}
-                                <div className="profile-section-card glass">
-                                    <h3><span className="icon">📝</span> Giới thiệu doanh nghiệp</h3>
-                                    <div className="form-group full-width">
-                                        {isEditing ? (
-                                            <div className="rich-editor-wrapper">
-                                                <ReactQuill 
-                                                    theme="snow" 
-                                                    value={formData.description} 
-                                                    onChange={handleDescriptionChange} 
-                                                    modules={QUILL_MODULES} 
-                                                    placeholder="Mô tả về văn hóa, sứ mệnh và giá trị của công ty..." 
-                                                />
-                                            </div>
-                                        ) : (
-                                            <div className="ql-container ql-snow" style={{ border: 'none' }}>
-                                                <div 
-                                                    className="description-preview ql-editor"
-                                                    dangerouslySetInnerHTML={{ __html: profile.description || 'Chưa có mô tả' }}
-                                                />
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {isEditing && (
-                                    <div className="form-actions">
-                                        <button type="submit" className="btn-save">Lưu tất cả thay đổi</button>
-                                    </div>
-                                )}
-                            </form>
-                        </div>
-
-                        <div className="profile-sidebar-blocks">
-                            <div className="info-block glass">
-                                <h4>Trạng thái xác thực</h4>
-                                <div className="verification-status verified">
-                                    <span className="v-icon">✓</span> Đã xác thực email
-                                </div>
-                                <div className="verification-status pending">
-                                    <span className="v-icon">!</span> Chưa xác thực tư cách pháp nhân
-                                </div>
-                                <button className="btn-verify-now">Xác thực ngay</button>
                             </div>
 
-                            <div className="info-block glass">
-                                <h4>Mẹo cho hồ sơ</h4>
-                                <p className="tip-text">Hồ sơ có mô tả chi tiết và hình ảnh thực tế thường thu hút hơn 45% lượt ứng tuyển chất lượng.</p>
+                            {/* Row 2: About Section */}
+                            <div className="profile-section-card glass mt-4">
+                                <h3><span className="icon">📝</span> Giới thiệu doanh nghiệp</h3>
+                                <div className="form-group full-width">
+                                    {isEditing ? (
+                                        <div className="rich-editor-wrapper">
+                                            <ReactQuill 
+                                                theme="snow" 
+                                                value={formData.description} 
+                                                onChange={handleDescriptionChange} 
+                                                modules={QUILL_MODULES} 
+                                                placeholder="Mô tả về văn hóa, sứ mệnh và giá trị của công ty..." 
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="ql-container ql-snow" style={{ border: 'none' }}>
+                                            <div 
+                                                className="description-preview ql-editor"
+                                                dangerouslySetInnerHTML={{ __html: profile.description || 'Chưa có mô tả' }}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
-            </div>
 
-            {toast.show && (
-                <div className={`pj-toast ${toast.type} animate-slide-down`}>
-                    <span className="pj-toast-icon">
-                        {toast.type === 'success' ? '✅' : '⚠️'}
-                    </span>
-                    <span className="pj-toast-message">{toast.message}</span>
-                </div>
-            )}
+                {toast.show && (
+                    <div className={`pj-toast ${toast.type} animate-slide-down`}>
+                        <span className="pj-toast-icon">
+                            {toast.type === 'success' ? '✅' : '⚠️'}
+                        </span>
+                        <span className="pj-toast-message">{toast.message}</span>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

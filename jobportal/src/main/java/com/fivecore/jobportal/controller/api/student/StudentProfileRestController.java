@@ -226,25 +226,25 @@ public class StudentProfileRestController {
     @PostMapping("/avatar")
     public ResponseEntity<ApiResponse<String>> updateAvatar(@RequestParam("avatarFile") MultipartFile avatarFile,
             Authentication authentication) {
-        Integer studentId = getCurrentStudentId(authentication);
-        if (avatarFile == null || avatarFile.isEmpty()) {
-            return ResponseEntity.badRequest().body(ApiResponse.error("Vui lòng chọn ảnh", "INVALID_FILE"));
-        }
-        
-        // Validate dung lượng ảnh (< 5MB)
-        if (avatarFile.getSize() > 5 * 1024 * 1024) {
-            return ResponseEntity.badRequest().body(ApiResponse.error("Dung lượng ảnh không được vượt quá 5MB", "FILE_TOO_LARGE"));
-        }
-        
-        // Validate định dạng ảnh (ContentType)
-        String contentType = avatarFile.getContentType();
-        if (contentType == null || !contentType.startsWith("image/")) {
-            return ResponseEntity.badRequest().body(ApiResponse.error("Chỉ chấp nhận file định dạng ảnh (JPG, PNG...)", "INVALID_FILE_TYPE"));
-        }
+        try {
+            Integer studentId = getCurrentStudentId(authentication);
+            if (avatarFile == null || avatarFile.isEmpty()) {
+                return ResponseEntity.badRequest().body(ApiResponse.error("Vui lòng chọn ảnh", "INVALID_FILE"));
+            }
 
-        String avatarUrl = storageService.saveAvatar(avatarFile);
-        profileService.updateAvatar(studentId, avatarUrl);
-        return ResponseEntity.ok(ApiResponse.success("Cập nhật ảnh đại diện thành công", avatarUrl));
+            // Lưu avatar (StorageService sẽ tự động validate MIME/Extension/Trùng tên)
+            String avatarUrl = storageService.saveAvatar(avatarFile);
+            profileService.updateAvatar(studentId, avatarUrl);
+            
+            log.info("Sinh viên ID {} đã cập nhật ảnh đại diện thành công", studentId);
+            return ResponseEntity.ok(ApiResponse.success("Cập nhật ảnh đại diện thành công", avatarUrl));
+        } catch (RuntimeException e) {
+            log.warn("Lỗi bảo mật/hệ thống khi upload avatar: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage(), "UPLOAD_ERROR"));
+        } catch (Exception e) {
+            log.error("Lỗi không xác định khi upload avatar: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi hệ thống", "SERVER_ERROR"));
+        }
     }
 
     @GetMapping("/export-pdf")

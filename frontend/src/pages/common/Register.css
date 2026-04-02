@@ -91,6 +91,18 @@
     text-decoration: underline;
 }
 
+/* BTN SUBMIT LOADING */
+.btn-submit.loading {
+    background: #4a8dfa !important;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.btn-submit:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
 /* RESPONSIVE SPECIFICS */
 @media (max-width: 600px) {
     .form-row {

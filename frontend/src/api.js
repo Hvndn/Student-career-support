@@ -3,16 +3,29 @@ import toast from 'react-hot-toast';
 
 const api = axios.create({
     baseURL: '/api',
-    withCredentials: true,
+    // withCredentials: true, // Chuyển sang JWT nên không cần gửi cookie tự động nữa
     headers: {
         'Content-Type': 'application/json'
     }
 });
 
-// Thêm interceptor để xử lý lỗi 401 (Thần thêm vào để tự động điều hướng khi hết hạn phiên làm việc)
+// Request Interceptor: Đính kèm JWT Token vào Header Authorization
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// Response Interceptor: Xử lý lỗi 401 và các lỗi chung
 api.interceptors.response.use(
     (response) => {
-        // Có thể thêm NProgress.done() ở đây nếu muốn theo dõi từng request
         return response;
     },
     (error) => {
@@ -20,10 +33,16 @@ api.interceptors.response.use(
         
         if (error.response) {
             if (error.response.status === 401) {
-                toast.error("Phiên làm việc hết hạn. Vui lòng đăng nhập lại!");
+                // Nếu đang ở trang login thì không cần báo lỗi hết hạn
+                if (!window.location.pathname.includes('/login')) {
+                    toast.error("Phiên làm việc hết hạn. Vui lòng đăng nhập lại!");
+                }
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
-                window.location.href = '/login';
+                // Chỉ chuyển hướng nếu không phải đang ở trang login
+                if (!window.location.pathname.includes('/login')) {
+                    window.location.href = '/login';
+                }
             } else if (error.response.status === 403) {
                 toast.error("Bạn không có quyền thực hiện hành động này!");
             } else if (error.response.status >= 500) {
@@ -38,11 +57,15 @@ api.interceptors.response.use(
     }
 );
 
-
 export const authApi = {
     login: (credentials) => api.post('/auth/login', credentials),
     register: (userData) => api.post('/auth/register', userData),
-    logout: () => api.post('/auth/logout')
+    logout: () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        return api.post('/auth/logout');
+    },
+    getCurrentUser: () => api.get('/auth/me')
 };
 
 export const jobApi = {
@@ -67,8 +90,9 @@ export const studentApi = {
     addSkill: (skillId, level) => api.post(`/student/profile/skills`, { skillId, level }),
     deleteSkill: (skillId) => api.delete(`/student/profile/skills/${skillId}`),
     getSkills: () => api.get('/student/profile/skills/all'),
-    updateAvatar: (formData) => api.post('/student/profile/avatar', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+    updateAvatar: (formData, onUploadProgress) => api.post('/student/profile/avatar', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        onUploadProgress
     }),
     addLanguage: (data) => api.post('/student/profile/languages', data),
     updateLanguage: (id, data) => api.put(`/student/profile/languages/${id}`, data),
@@ -93,10 +117,11 @@ export const studentApi = {
 export const companyApi = {
     getDashboard: () => api.get('/company/dashboard'),
     getProfile: () => api.get('/company/profile'),
-    updateProfile: (data) => {
+    updateProfile: (data, onUploadProgress) => {
         if (data instanceof FormData) {
             return api.put('/company/profile', data, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+                headers: { 'Content-Type': 'multipart/form-data' },
+                onUploadProgress
             });
         }
         return api.put('/company/profile', data);
@@ -140,5 +165,3 @@ export const adminApi = {
 };
 
 export default api;
-
-

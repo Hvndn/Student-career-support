@@ -3,8 +3,10 @@
     background: #fff;
     border-bottom: 1px solid #e5e7eb;
     padding: 0 2rem;
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 1000;
     font-family: 'Inter', sans-serif;
 }

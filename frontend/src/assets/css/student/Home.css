@@ -4,6 +4,7 @@
   background: #f8fafd;
   color: #1a1a2e;
   min-height: 100vh;
+  padding-top: 64px;
 }
 
 .student-home a {
