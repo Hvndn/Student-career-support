@@ -35,4 +35,4 @@ build/
 ### Uploads ###
 uploads/
 GEMINI.md
-./agent
+.agent/

@@ -1,271 +1,251 @@
 import React from 'react';
+import { getImageUrl } from '../../utils/urlUtils';
 
-const CVTemplate = ({ profile, experiences, educations, skills, languages, interests, projects, activities, certifications }) => {
+const CVTemplate = ({ profile, avatarBase64, experiences, educations, skills, languages, interests, projects, activities, certifications }) => {
+  // Styles & Colors
+  const sidebarBg = '#f1f5f9'; // Subtle blue-gray
+  const mainBg = '#ffffff';
+  const accentColor = '#2563eb'; // Royal Blue
+  const primaryText = '#0f172a'; // Midnight
+  const secondaryText = '#334155'; // Slate
+  const mutedText = '#64748b'; // Light Slate
+  const borderColor = '#e2e8f0'; // Border
+
+  // SVG Icons
+  const IconEmail = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+  );
+  const IconPhone = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+  );
+  const IconMap = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+  );
+
   return (
     <div id="cv-template" style={{
       width: '210mm',
       minHeight: '297mm',
-      padding: '0',
-      margin: '0',
-      background: 'white',
-      fontFamily: "'Outfit', sans-serif",
-      color: '#1e293b',
-      boxSizing: 'border-box',
+      background: mainBg,
+      fontFamily: "'Inter', 'Segoe UI', sans-serif",
+      color: secondaryText,
       display: 'flex',
-      flexDirection: 'column'
+      overflow: 'hidden'
     }}>
-      {/* Top Header - High Impact */}
-      <div style={{
-        background: '#0f172a',
-        color: 'white',
-        padding: '40mm 20mm 15mm 20mm',
+      
+      {/* ── LEFT SIDEBAR (30%) ── */}
+      <aside style={{
+        width: '32%',
+        background: sidebarBg,
+        padding: '30mm 12mm 20mm',
         display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        position: 'relative',
-        overflow: 'hidden'
+        flexDirection: 'column',
+        gap: '2.5rem'
       }}>
-        {/* Decorative element */}
-        <div style={{
-          position: 'absolute',
-          top: '-50px',
-          right: '-50px',
-          width: '200px',
-          height: '200px',
-          background: 'rgba(37, 99, 235, 0.2)',
-          borderRadius: '50%',
-        }}></div>
+        {/* Avatar */}
+        <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+          <div style={{
+            width: '40mm',
+            height: '40mm',
+            margin: '0 auto',
+            borderRadius: '50%',
+            overflow: 'hidden',
+            border: `4px solid ${mainBg}`,
+            boxShadow: '0 8px 16px rgba(0,0,0,0.06)'
+          }}>
+            <img 
+              src={avatarBase64 || getImageUrl(profile.avatarUrl || profile.avatar) || 'https://vectorified.com/images/default-avatar-icon-33.png'} 
+              alt="Avatar" 
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+            />
+          </div>
+        </div>
 
-        <div style={{ position: 'relative', zIndex: 1 }}>
+        {/* Contact Info */}
+        <section>
+          <h3 style={{ fontSize: '10pt', fontWeight: 800, color: primaryText, marginBottom: '1.25rem', letterSpacing: '0.05em', borderBottom: `2.5px solid ${accentColor}`, paddingBottom: '4px', display: 'inline-block' }}>LIÊN HỆ</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '9pt' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ color: accentColor }}><IconEmail /></span>
+              <span style={{ wordBreak: 'break-all' }}>{profile.email || 'email@example.com'}</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ color: accentColor }}><IconPhone /></span>
+              <span>{profile.phone || '0123 456 789'}</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ color: accentColor }}><IconMap /></span>
+              <span>{profile.address || 'Hà Nội, Việt Nam'}</span>
+            </div>
+          </div>
+        </section>
+
+        {/* Skills Section */}
+        <section>
+          <h3 style={{ fontSize: '10pt', fontWeight: 800, color: primaryText, marginBottom: '1.25rem', letterSpacing: '0.05em', borderBottom: `2.5px solid ${accentColor}`, paddingBottom: '4px', display: 'inline-block' }}>KỸ NĂNG</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {skills && skills.length > 0 ? skills.slice(0, 8).map((s, i) => (
+              <div key={i}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '8.5pt', fontWeight: 600, marginBottom: '4px' }}>
+                  <span>{s.skillName || s.name}</span>
+                </div>
+                <div style={{ height: '3px', background: '#e2e8f0', borderRadius: '3px' }}>
+                  <div style={{ width: s.proficiency === 'Expert' ? '100%' : s.proficiency === 'Advanced' ? '85%' : '65%', height: '100%', background: accentColor, borderRadius: '3px' }}></div>
+                </div>
+              </div>
+            )) : <p style={{ fontSize: '8.5pt', fontStyle: 'italic' }}>Chưa có thông tin.</p>}
+          </div>
+        </section>
+
+        {/* Languages */}
+        <section>
+          <h3 style={{ fontSize: '10pt', fontWeight: 800, color: primaryText, marginBottom: '1.25rem', letterSpacing: '0.05em', borderBottom: `2.5px solid ${accentColor}`, paddingBottom: '4px', display: 'inline-block' }}>NGOẠI NGỮ</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {languages && languages.length > 0 ? languages.map((lang, i) => (
+              <div key={i}>
+                <p style={{ margin: 0, fontSize: '9pt', fontWeight: 700, color: primaryText }}>{lang.languageName}</p>
+                <p style={{ margin: 0, fontSize: '8pt', color: mutedText }}>{lang.proficiency} • {lang.certificate}</p>
+              </div>
+            )) : <p style={{ fontSize: '8.5pt', fontStyle: 'italic' }}>Chưa có thông tin.</p>}
+          </div>
+        </section>
+
+        {/* Interests */}
+        <section>
+          <h3 style={{ fontSize: '10pt', fontWeight: 800, color: primaryText, marginBottom: '1.25rem', letterSpacing: '0.05em', borderBottom: `2.5px solid ${accentColor}`, paddingBottom: '4px', display: 'inline-block' }}>SỞ THÍCH</h3>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {interests && interests.map((item, i) => (
+              <span key={i} style={{ fontSize: '8.5pt', background: mainBg, color: secondaryText, padding: '3px 10px', borderRadius: '4px', border: '1px solid #e2e8f0' }}>
+                {item.name}
+              </span>
+            ))}
+          </div>
+        </section>
+      </aside>
+
+      {/* ── MAIN CONTENT (70%) ── */}
+      <main style={{
+        flex: 1,
+        padding: '30mm 20mm 20mm 15mm',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '2.5rem'
+      }}>
+        {/* Name Header */}
+        <header style={{ marginBottom: '1rem' }}>
           <h1 style={{ 
             fontSize: '32pt', 
-            fontWeight: 800, 
-            margin: 0, 
-            letterSpacing: '-0.03em',
-            lineHeight: '1',
-            textTransform: 'uppercase'
+            fontWeight: 900, 
+            color: primaryText, 
+            margin: 0,
+            lineHeight: 1,
+            letterSpacing: '-0.04em'
           }}>
             {profile.fullName || 'HỌ TÊN CỦA BẠN'}
           </h1>
           <p style={{ 
-            fontSize: '16pt', 
-            fontWeight: 500, 
-            color: '#60a5fa', 
-            margin: '0.75rem 0 0',
-            letterSpacing: '0.05em'
+            fontSize: '15pt', 
+            fontWeight: 600, 
+            color: accentColor, 
+            margin: '12px 0 0',
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase'
           }}>
             {profile.major || 'Chuyên ngành học thuật'}
           </p>
-        </div>
+        </header>
 
-        {/* Contact Info in Header */}
-        <div style={{ 
-          position: 'relative', 
-          zIndex: 1, 
-          textAlign: 'right',
-          fontSize: '10pt',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.4rem',
-          opacity: 0.9
-        }}>
-          <p style={{ margin: 0 }}>{profile.email || 'email@example.com'}</p>
-          <p style={{ margin: 0 }}>{profile.phone || '0123 456 789'}</p>
-          <p style={{ margin: 0 }}>{profile.address || 'Hà Nội, Việt Nam'}</p>
-        </div>
-      </div>
+        {/* Bio / Summary */}
+        <section>
+          <div 
+            style={{ fontSize: '10.5pt', color: secondaryText, lineHeight: '1.6', textAlign: 'justify', fontStyle: 'italic' }}
+            dangerouslySetInnerHTML={{ __html: profile.bio || 'Sinh viên năng động với nền tảng kiến thức vững chắc.' }}
+          />
+        </section>
 
-      {/* Main Body - Balanced Two Column */}
-      <div style={{ display: 'flex', flex: 1 }}>
-        {/* Left Column (Main) */}
-        <div style={{ width: '65%', padding: '15mm 10mm 20mm 20mm' }}>
-          
-          {/* Summary */}
-          <section style={{ marginBottom: '2.5rem' }}>
-            <h3 style={{ fontSize: '14pt', fontWeight: 800, color: '#0f172a', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ width: '4px', height: '18px', background: '#2563eb' }}></span>
-              GIỚI THIỆU BẢN THÂN
-            </h3>
-            <div 
-              style={{ fontSize: '10.5pt', color: '#475569', lineHeight: '1.6', textAlign: 'justify' }}
-              dangerouslySetInnerHTML={{ __html: profile.bio || 'Một sinh viên năng động với nền tảng kiến thức vững chắc và mong muốn phát triển sự nghiệp trong môi trường chuyên nghiệp.' }}
-            />
-          </section>
-
-          {/* Experience */}
-          <section style={{ marginBottom: '2.5rem' }}>
-            <h3 style={{ fontSize: '14pt', fontWeight: 800, color: '#0f172a', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ width: '4px', height: '18px', background: '#2563eb' }}></span>
-              KINH NGHIỆM LÀM VIỆC
-            </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-              {experiences.length > 0 ? experiences.map((exp, i) => (
-                <div key={i} style={{ position: 'relative', paddingLeft: '1.5rem', borderLeft: '1px solid #e2e8f0' }}>
-                  <div style={{ position: 'absolute', left: '-5px', top: '5px', width: '9px', height: '9px', background: '#2563eb', borderRadius: '50%' }}></div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <h4 style={{ margin: 0, fontSize: '12pt', fontWeight: 700, color: '#1e293b' }}>{exp.position}</h4>
-                    <span style={{ fontSize: '9pt', color: '#64748b', fontWeight: 600 }}>{exp.startDate} - {exp.endDate || 'Hiện tại'}</span>
-                  </div>
-                  <p style={{ margin: '0.2rem 0', fontWeight: 600, color: '#2563eb', fontSize: '10pt' }}>{exp.companyName}</p>
-                  <p style={{ margin: '0.6rem 0 0', fontSize: '10pt', color: '#475569', lineHeight: '1.5' }}>{exp.description}</p>
+        {/* Experience */}
+        <section>
+          <h3 style={{ fontSize: '14pt', fontWeight: 800, color: primaryText, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ width: '2rem', height: '2.5px', background: accentColor }}></span>
+            KINH NGHIỆM LÀM VIỆC
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+            {experiences && experiences.length > 0 ? experiences.map((exp, i) => (
+              <div key={i}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                  <h4 style={{ margin: 0, fontSize: '11.5pt', fontWeight: 800, color: primaryText }}>{exp.jobTitle || exp.position}</h4>
+                  <span style={{ fontSize: '9.5pt', color: mutedText, fontWeight: 700 }}>{exp.startDate} — {exp.endDate || 'Hiện tại'}</span>
                 </div>
-              )) : <p style={{ color: '#94a3b8', fontStyle: 'italic' }}>Chưa có thông tin kinh nghiệm.</p>}
-            </div>
-          </section>
+                <p style={{ margin: 0, fontWeight: 700, color: accentColor, fontSize: '10pt' }}>{exp.companyName}</p>
+                <div 
+                  style={{ margin: '8px 0 0', fontSize: '10pt', color: secondaryText, lineHeight: '1.5' }}
+                  dangerouslySetInnerHTML={{ __html: exp.description }}
+                />
+              </div>
+            )) : <p style={{ color: mutedText, fontStyle: 'italic' }}>Chưa có thông tin.</p>}
+          </div>
+        </section>
 
-          {/* Education */}
+        {/* Education */}
+        <section>
+          <h3 style={{ fontSize: '14pt', fontWeight: 800, color: primaryText, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ width: '2rem', height: '2.5px', background: accentColor }}></span>
+            HỌC VẤN
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+            {educations && educations.length > 0 ? educations.map((edu, i) => (
+              <div key={i}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                  <h4 style={{ margin: 0, fontSize: '11.5pt', fontWeight: 800, color: primaryText }}>{edu.schoolName || edu.universityName}</h4>
+                  <span style={{ fontSize: '9.5pt', color: mutedText, fontWeight: 700 }}>{edu.startDate} — {edu.endDate || 'Tốt nghiệp 2027'}</span>
+                </div>
+                <p style={{ margin: 0, fontWeight: 700, color: accentColor, fontSize: '10pt' }}>{edu.major || profile.major}</p>
+                {edu.description && (
+                  <div style={{ margin: '6px 0 0', fontSize: '10pt', color: secondaryText }} dangerouslySetInnerHTML={{ __html: edu.description }} />
+                )}
+              </div>
+            )) : <p style={{ color: mutedText, fontStyle: 'italic' }}>Chưa có thông tin.</p>}
+          </div>
+        </section>
+
+        {/* Projects */}
+        {projects && projects.length > 0 && (
           <section>
-            <h3 style={{ fontSize: '14pt', fontWeight: 800, color: '#0f172a', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ width: '4px', height: '18px', background: '#2563eb' }}></span>
-              HỌC VẤN
+            <h3 style={{ fontSize: '14pt', fontWeight: 800, color: primaryText, marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ width: '2rem', height: '2.5px', background: accentColor }}></span>
+              DỰ ÁN TIÊU BIỂU
             </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-              {educations.length > 0 ? educations.map((edu, i) => (
-                <div key={i} style={{ position: 'relative', paddingLeft: '1.5rem', borderLeft: '1px solid #e2e8f0' }}>
-                  <div style={{ position: 'absolute', left: '-5px', top: '5px', width: '9px', height: '9px', background: '#2563eb', borderRadius: '50%' }}></div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <h4 style={{ margin: 0, fontSize: '12pt', fontWeight: 700, color: '#1e293b' }}>{edu.universityName}</h4>
-                    <span style={{ fontSize: '9pt', color: '#64748b', fontWeight: 600 }}>{edu.startDate} - {edu.endDate || 'Hiện tại'}</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              {projects.slice(0, 2).map((proj, i) => (
+                <div key={i} style={{ borderLeft: `3px solid ${borderColor}`, paddingLeft: '1rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                    <h4 style={{ margin: 0, fontSize: '10.5pt', fontWeight: 800, color: primaryText }}>{proj.name}</h4>
                   </div>
-                  <p style={{ margin: '0.2rem 0', fontWeight: 600, color: '#2563eb', fontSize: '10pt' }}>{edu.degree} - {profile.major}</p>
-                </div>
-              )) : <p style={{ color: '#94a3b8', fontStyle: 'italic' }}>Chưa có thông tin học vấn.</p>}
-            </div>
-          </section>
-
-          {/* Projects */}
-          <section style={{ marginTop: '2.5rem' }}>
-            <h3 style={{ fontSize: '14pt', fontWeight: 800, color: '#0f172a', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ width: '4px', height: '18px', background: '#2563eb' }}></span>
-              DỰ ÁN CÁ NHÂN
-            </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              {projects && projects.length > 0 ? projects.map((proj, i) => (
-                <div key={i} style={{ position: 'relative', paddingLeft: '1.5rem', borderLeft: '1px solid #e2e8f0' }}>
-                  <div style={{ position: 'absolute', left: '-5px', top: '5px', width: '9px', height: '9px', background: '#2563eb', borderRadius: '50%' }}></div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <h4 style={{ margin: 0, fontSize: '12pt', fontWeight: 700, color: '#1e293b' }}>{proj.name}</h4>
-                    {proj.repositoryUrl && <span style={{ fontSize: '8.5pt', color: '#2563eb' }}>Source code: {proj.repositoryUrl.replace('https://', '')}</span>}
-                  </div>
-                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.2rem' }}>
-                    {proj.role && <span style={{ fontSize: '9pt', fontWeight: 600, color: '#0f172a' }}>Vai trò: {proj.role}</span>}
-                    {proj.techStack && <span style={{ fontSize: '9pt', color: '#64748b' }}>• {proj.techStack}</span>}
+                  <div style={{ fontSize: '9pt', fontWeight: 700, color: accentColor, marginBottom: '6px' }}>
+                    {proj.role} • {proj.techStack}
                   </div>
                   <div 
-                    style={{ margin: '0.5rem 0 0', fontSize: '10pt', color: '#475569', lineHeight: '1.5' }}
+                    style={{ fontSize: '10pt', color: secondaryText, lineHeight: '1.4' }}
                     dangerouslySetInnerHTML={{ __html: proj.description }}
                   />
-                </div>
-              )) : <p style={{ color: '#94a3b8', fontStyle: 'italic' }}>Chưa cập nhật dự án cá nhân.</p>}
-            </div>
-          </section>
-
-          {/* Activities */}
-          <section style={{ marginTop: '2.5rem' }}>
-            <h3 style={{ fontSize: '14pt', fontWeight: 800, color: '#0f172a', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ width: '4px', height: '18px', background: '#2563eb' }}></span>
-              HOẠT ĐỘNG NGOẠI KHÓA
-            </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              {activities && activities.length > 0 ? activities.map((act, i) => (
-                <div key={i} style={{ position: 'relative', paddingLeft: '1.5rem', borderLeft: '1px solid #e2e8f0' }}>
-                  <div style={{ position: 'absolute', left: '-5px', top: '5px', width: '9px', height: '9px', background: '#2563eb', borderRadius: '50%' }}></div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <h4 style={{ margin: 0, fontSize: '12pt', fontWeight: 700, color: '#1e293b' }}>{act.name}</h4>
-                    <span style={{ fontSize: '9pt', color: '#64748b', fontWeight: 600 }}>{act.startDate} - {act.endDate || 'Hiện tại'}</span>
-                  </div>
-                  <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.2rem' }}>
-                    {act.organization && <span style={{ fontSize: '9pt', fontWeight: 600, color: '#0f172a' }}>{act.organization}</span>}
-                    {act.role && <span style={{ fontSize: '9pt', color: '#64748b' }}>• {act.role}</span>}
-                  </div>
-                  <div 
-                    style={{ margin: '0.5rem 0 0', fontSize: '10pt', color: '#475569', lineHeight: '1.5' }}
-                    dangerouslySetInnerHTML={{ __html: act.description }}
-                  />
-                </div>
-              )) : <p style={{ color: '#94a3b8', fontStyle: 'italic' }}>Chưa cập nhật hoạt động ngoại khóa.</p>}
-            </div>
-          </section>
-        </div>
-
-        {/* Right Column (Sidebar) */}
-        <div style={{ width: '35%', padding: '15mm 20mm 20mm 10mm', borderLeft: '1px solid #f1f5f9', background: '#fcfdfe' }}>
-          
-          {/* Skills Section */}
-          <section style={{ marginBottom: '3rem' }}>
-            <h3 style={{ fontSize: '12pt', fontWeight: 800, color: '#0f172a', marginBottom: '1.2rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Kỹ năng chuyển môn</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              {skills.map((s, i) => (
-                <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9.5pt', fontWeight: 600 }}>
-                    <span>{s.skillName}</span>
-                    <span style={{ color: '#2563eb' }}>Expert</span>
-                  </div>
-                  <div style={{ height: '4px', background: '#e2e8f0', borderRadius: '2px' }}>
-                    <div style={{ width: '85%', height: '100%', background: '#2563eb', borderRadius: '2px' }}></div>
-                  </div>
                 </div>
               ))}
             </div>
           </section>
+        )}
 
-          {/* Languages */}
-          <section style={{ marginBottom: '3rem' }}>
-            <h3 style={{ fontSize: '12pt', fontWeight: 800, color: '#0f172a', marginBottom: '1.2rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Ngoại ngữ</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {languages && languages.length > 0 ? languages.map((lang, i) => (
-                <div key={i} style={{ background: 'white', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                  <p style={{ margin: 0, fontSize: '10pt', fontWeight: 700 }}>{lang.languageName}</p>
-                  <p style={{ margin: '0.2rem 0 0', fontSize: '8.5pt', color: '#64748b' }}>{lang.certificate || lang.proficiency}</p>
-                </div>
-              )) : (
-                <p style={{ fontSize: '9pt', color: '#94a3b8', fontStyle: 'italic' }}>Chưa cập nhật ngoại ngữ.</p>
-              )}
-            </div>
-          </section>
-
-          {/* Certifications */}
-          <section style={{ marginBottom: '3rem' }}>
-            <h3 style={{ fontSize: '12pt', fontWeight: 800, color: '#0f172a', marginBottom: '1.2rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Chứng chỉ</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {certifications && certifications.length > 0 ? certifications.map((cert, i) => (
-                <div key={i} style={{ background: 'white', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                  <p style={{ margin: 0, fontSize: '10pt', fontWeight: 700 }}>{cert.name}</p>
-                  <p style={{ margin: '0.2rem 0 0', fontSize: '8.5pt', color: '#64748b' }}>{cert.issuer}</p>
-                  <p style={{ margin: '0.2rem 0 0', fontSize: '8pt', color: '#94a3b8' }}>Ngày cấp: {cert.issueDate}</p>
-                </div>
-              )) : (
-                <p style={{ fontSize: '9pt', color: '#94a3b8', fontStyle: 'italic' }}>Chưa cập nhật chứng chỉ.</p>
-              )}
-            </div>
-          </section>
-
-          {/* Interests */}
-          <section>
-            <h3 style={{ fontSize: '12pt', fontWeight: 800, color: '#0f172a', marginBottom: '1.2rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Sở thích</h3>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-              {interests && interests.length > 0 ? interests.map((item, i) => (
-                <span key={i} style={{ fontSize: '9pt', background: '#f1f5f9', padding: '4px 10px', borderRadius: '4px', color: '#475569' }}>
-                  # {item.name}
-                </span>
-              )) : <p style={{ fontSize: '9pt', color: '#94a3b8', fontStyle: 'italic' }}>Chưa cập nhật sở thích.</p>}
-            </div>
-          </section>
-
-        </div>
-      </div>
-
-      {/* Footer Branding */}
-      <footer style={{ 
-        padding: '5mm 20mm', 
-        borderTop: '1px solid #f1f5f9', 
-        textAlign: 'center',
-        fontSize: '8pt',
-        color: '#94a3b8',
-        background: '#fff'
-      }}>
-        Hồ sơ được tạo tự động bởi hệ thống Nexus Talent &copy; 2024
-      </footer>
+        {/* Footer Branding */}
+        <footer style={{ 
+          marginTop: 'auto',
+          paddingTop: '2rem',
+          borderTop: `1px solid ${sidebarBg}`,
+          textAlign: 'center',
+          fontSize: '8pt',
+          color: mutedText
+        }}>
+          Bản quyền hệ thống <strong>Nexus Talent</strong> &copy; 2024 • Hồ sơ được tối ưu cho nhà tuyển dụng
+        </footer>
+      </main>
     </div>
   );
 };

@@ -17,6 +17,7 @@ import JobDetail from './pages/common/JobDetail'
 import JobList from './pages/common/JobList'
 
 // student pages
+import Dashboard from './pages/student/Dashboard'
 import Profile from './pages/student/Profile'
 import Applications from './pages/student/Applications'
 import SavedJobs from './pages/student/SavedJobs'
@@ -120,6 +121,7 @@ const AppContent = () => {
         <Route path="/student/*" element={
           <ProtectedRoute requiredRole="ROLE_STUDENT">
             <Routes>
+              <Route path="dashboard" element={<Dashboard />} />
               <Route path="profile" element={<Profile />} />
               <Route path="applications" element={<Applications />} />
               <Route path="saved" element={<SavedJobs />} />

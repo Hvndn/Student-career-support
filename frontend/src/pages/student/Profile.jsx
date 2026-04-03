@@ -32,6 +32,7 @@ const BLANK_CERT = { name: '', issuer: '', issueDate: '', expirationDate: '', ce
 
 const Profile = () => {
     const [profile, setProfile] = useState(null);
+    const [avatarBase64, setAvatarBase64] = useState(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState('');
@@ -71,6 +72,22 @@ const Profile = () => {
     const [showCertForm, setShowCertForm] = useState(false);
     const [certForm, setCertForm] = useState(BLANK_CERT);
 
+    const loadAvatarBase64 = async (p) => {
+        const path = p?.avatarUrl || p?.avatar;
+        if (!path) { setAvatarBase64(null); return; }
+        try {
+            const url = getImageUrl(path);
+            const response = await fetch(url);
+            const blob = await response.blob();
+            const reader = new FileReader();
+            reader.onloadend = () => setAvatarBase64(reader.result);
+            reader.readAsDataURL(blob);
+        } catch (err) {
+            console.error("Error loading avatar base64:", err);
+            setAvatarBase64(null);
+        }
+    };
+
     useEffect(() => {
         studentApi.getProfile()
             .then(res => { 
@@ -78,12 +95,17 @@ const Profile = () => {
                 setProfile(data); 
                 setBio(data.bio || ''); 
                 setLoading(false); 
+                loadAvatarBase64(data);
             })
             .catch(() => setLoading(false));
     }, []);
 
     const flash = (msg) => { setMessage(msg); setTimeout(() => setMessage(''), 3000); };
-    const reload = () => studentApi.getProfile().then(res => setProfile(res.data.data));
+    const reload = () => studentApi.getProfile().then(res => {
+        const data = res.data.data;
+        setProfile(data);
+        loadAvatarBase64(data);
+    });
 
     /* ---- Handlers ---- */
     const openBasic = () => {
@@ -386,7 +408,7 @@ const Profile = () => {
                 <div className="pf-card pf-profile-header">
                     <div className="pf-profile-info">
                         <div className="pf-avatar-large" onClick={() => !isUploading && document.getElementById('avatarInput').click()} style={{ cursor: isUploading ? 'wait' : 'pointer', position: 'relative' }}>
-                            <img src={getImageUrl(profile.avatarUrl) || 'https://vectorified.com/images/default-avatar-icon-33.png'} alt="Avatar" />
+                            <img src={getImageUrl(profile.avatarUrl || profile.avatar) || 'https://vectorified.com/images/default-avatar-icon-33.png'} alt="Avatar" />
                             {isUploading && (
                                 <div className="pf-upload-overlay">
                                     <div className="pf-upload-spinner"></div>
@@ -414,9 +436,6 @@ const Profile = () => {
                     <div className="pf-actions">
                         <button className="pf-btn pf-btn-outline" onClick={openBasic}>
                             <span className="material-symbols-outlined">edit</span> Chỉnh sửa hồ sơ
-                        </button>
-                        <button className="pf-btn pf-btn-primary" onClick={handleDownloadCV}>
-                            <span className="material-symbols-outlined">download</span> Tải xuống CV
                         </button>
                     </div>
                 </div>
@@ -567,6 +586,29 @@ const Profile = () => {
 
                     {/* Right Col */}
                     <div className="pf-col-right">
+                        {/* Premium CV Section */}
+                        <section className="pf-card pf-cv-card">
+                            <div className="pf-section-title">
+                                <h2>Tài liệu & Hồ sơ</h2>
+                                <span className="pf-doc-badge">PDF • Ready</span>
+                            </div>
+                            <div className="pf-cv-preview">
+                                <div className="pf-cv-mock">
+                                    <div className="pf-mock-header"></div>
+                                    <div className="pf-mock-line"></div>
+                                    <div className="pf-mock-line pf-short"></div>
+                                    <div className="pf-mock-content"></div>
+                                </div>
+                                <div className="pf-cv-info">
+                                    <p className="pf-cv-name">CV_{profile.fullName?.replace(/\s+/g, '_')}.pdf</p>
+                                    <p className="pf-cv-meta">Cập nhật: {new Date().toLocaleDateString('vi-VN')}</p>
+                                    <button className="pf-btn-premium-download" onClick={handleDownloadCV}>
+                                        <span className="material-symbols-outlined">cloud_download</span> Tải xuống CV ngay
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+
                         {/* Career Goals */}
                         <section className="pf-card">
                             <div className="pf-section-title">
@@ -954,6 +996,7 @@ const Profile = () => {
             <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
                 <CVTemplate 
                     profile={profile} 
+                    avatarBase64={avatarBase64}
                     experiences={profile.experiences || []} 
                     educations={profile.educations || []} 
                     skills={profile.skills || []} 
