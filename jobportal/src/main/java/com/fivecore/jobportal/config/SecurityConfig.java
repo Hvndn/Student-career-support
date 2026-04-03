@@ -7,18 +7,20 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 
+import com.fivecore.jobportal.security.JwtAuthenticationFilter;
+import com.fivecore.jobportal.security.JwtTokenProvider;
 import com.fivecore.jobportal.service.auth.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Cấu hình bảo mật Spring Security.
+ * Cấu hình bảo mật Spring Security sử dụng JWT.
  */
 @Configuration
 @EnableWebSecurity
@@ -26,11 +28,8 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
-
-    @Bean
-    public SecurityContextRepository securityContextRepository() {
-        return new HttpSessionSecurityContextRepository();
-    }
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtTokenProvider tokenProvider;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -52,9 +51,6 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
-            .securityContext(context -> context
-                .securityContextRepository(securityContextRepository())
-            )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**", "/api/jobs/**", "/error").permitAll()
                 .requestMatchers("/api/company/**").hasAnyRole("COMPANY")
@@ -70,7 +66,7 @@ public class SecurityConfig {
                 })
             )
             .sessionManagement(session -> session
-                .sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.IF_REQUIRED)
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .formLogin(AbstractHttpConfigurer::disable)
             .oauth2Login(oauth2 -> oauth2
@@ -78,8 +74,10 @@ public class SecurityConfig {
                     .userService(customOAuth2UserService)
                 )
                 .successHandler((request, response, authentication) -> {
-                    // Redirect tới frontend handle việc lấy thông tin user
-                    response.sendRedirect("http://localhost:5173/login-success");
+                    // Tạo JWT Token sau khi OAuth2 thành công
+                    String token = tokenProvider.generateToken(authentication);
+                    // Redirect tới frontend với token
+                    response.sendRedirect("http://localhost:5173/login-success?token=" + token);
                 })
             )
             .logout(logout -> logout
@@ -90,6 +88,9 @@ public class SecurityConfig {
                 })
                 .permitAll()
             );
+
+        // Thêm JwtAuthenticationFilter vào filter chain
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

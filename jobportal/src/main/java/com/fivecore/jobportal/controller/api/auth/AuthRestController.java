@@ -3,7 +3,7 @@ package com.fivecore.jobportal.controller.api.auth;
 import com.fivecore.jobportal.dto.ApiResponse;
 import com.fivecore.jobportal.dto.LoginRequest;
 import com.fivecore.jobportal.dto.RegisterRequest;
-import com.fivecore.jobportal.service.auth.AuthService;
+import com.fivecore.jobportal.security.JwtTokenProvider;
 import com.fivecore.jobportal.service.auth.PasswordResetService;
 import com.fivecore.jobportal.service.auth.RegisterService;
 import jakarta.validation.Valid;
@@ -13,17 +13,17 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.util.HashMap;
 import java.util.Map;
 import com.fivecore.jobportal.repository.UserRepository;
 
 /**
  * REST API Controller cho Xác thực (Login & Register).
- * Thay thế logic của AuthController (MVC).
+ * Sử dụng JWT thay cho Session.
  */
 @RestController
 @RequestMapping("/api/auth")
@@ -33,42 +33,42 @@ public class AuthRestController {
     private final RegisterService registerService;
     private final PasswordResetService passwordResetService;
     private final AuthenticationManager authenticationManager;
-    private final SecurityContextRepository securityContextRepository;
+    private final JwtTokenProvider tokenProvider;
     private final UserRepository userRepository;
 
     /**
-     * API Đăng nhập.
+     * API Đăng nhập. Trả về JWT Token.
      */
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<Object>> login(
-            @Valid @RequestBody LoginRequest request,
-            HttpServletRequest httpRequest,
-            HttpServletResponse httpResponse) {
+            @Valid @RequestBody LoginRequest request) {
+        
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
         SecurityContextHolder.getContext().setAuthentication(auth);
         
-        // Save the security context to the repository (Required for manual auth in Spring Security 6)
-        securityContextRepository.saveContext(SecurityContextHolder.getContext(), httpRequest, httpResponse);
+        // Tạo JWT Token
+        String token = tokenProvider.generateToken(auth);
 
         String role = auth.getAuthorities().stream()
                 .map(r -> r.getAuthority())
                 .findFirst().orElse("");
 
-        // Get the user's full name from the database
+        // Lấy thông tin họ tên từ DB
         String fullName = request.getEmail();
         var userOpt = userRepository.findByEmail(request.getEmail());
         if (userOpt.isPresent()) {
             fullName = userOpt.get().getFullName();
         }
 
-        Map<String, Object> data = Map.of(
-                "email", request.getEmail(),
-                "role", role,
-                "fullName", fullName != null ? fullName : request.getEmail(),
-                "message", "Đăng nhập thành công"
-        );
+        Map<String, Object> data = new HashMap<>();
+        data.put("email", request.getEmail());
+        data.put("role", role);
+        data.put("fullName", fullName != null ? fullName : request.getEmail());
+        data.put("token", token);
+        data.put("tokenType", "Bearer");
+        data.put("message", "Đăng nhập thành công");
 
         return ResponseEntity.ok(ApiResponse.success("Đăng nhập thành công", data));
     }
@@ -117,7 +117,7 @@ public class AuthRestController {
     }
 
     /**
-     * API Lấy thông tin người dùng hiện tại (dùng cho OAuth2 và kiểm tra session).
+     * API Lấy thông tin người dùng hiện tại (dùng cho OAuth2 và kiểm tra token).
      */
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<Object>> getCurrentUser(Authentication authentication) {
@@ -126,6 +126,7 @@ public class AuthRestController {
         }
 
         String email = authentication.getName();
+        // Nếu là OAuth2User thì lấy email từ attributes
         if (authentication.getPrincipal() instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
             email = oauth2User.getAttribute("email");
         }

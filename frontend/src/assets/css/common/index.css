@@ -54,7 +54,6 @@ body {
   line-height: 1.6;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
-  padding-top: 100px;
 }
 
 /* Links */
@@ -241,46 +240,7 @@ button {
   transform: scale(1.02);
 }
 
-/* ── Company Module Shared Styles ── */
-.cd-topbar {
-  background: #fff;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 0 2rem;
-  height: 58px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky; top: 0; z-index: 100;
-  width: 100%;
-  box-sizing: border-box;
-}
-.cd-topbar-left { display: flex; gap: 1.5rem; align-items: center; }
-.cd-tab { font-size: 0.88rem; color: #6b7280; font-weight: 500; cursor: pointer; }
-.cd-tab.active { color: #2563eb; font-weight: 700; }
-.cd-topbar-right { display: flex; align-items: center; gap: 0.8rem; }
-.cd-search {
-  display: flex; align-items: center; gap: 0.5rem;
-  background: #f3f4f6; border-radius: 8px; padding: 0.4rem 0.8rem;
-}
-.cd-search input {
-  border: none; background: transparent; outline: none;
-  font-size: 0.82rem; width: 180px; color: #374151; font-family: 'Inter', sans-serif;
-}
-.cd-search input::placeholder { color: #9ca3af; }
-.cd-icon-btn {
-  background: none; border: none; font-size: 1rem;
-  cursor: pointer; padding: 0.3rem; border-radius: 8px; transition: background 0.2s;
-}
-.cd-icon-btn:hover { background: #f3f4f6; }
-.cd-user { display: flex; align-items: center; gap: 0.6rem; }
-.cd-avatar {
-  width: 34px; height: 34px; border-radius: 50%;
-  background: #2563eb; color: white;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 0.95rem;
-}
-.cd-uname { font-weight: 700; font-size: 0.82rem; color: #111827; margin: 0; }
-.cd-urole { font-size: 0.65rem; color: #6b7280; margin: 0; }
+/* ── Company Module Styles removed (now handled in specific CSS files) ── */
 
 
 

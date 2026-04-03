@@ -181,9 +181,17 @@ public class CompanyRestController {
     public ResponseEntity<ApiResponse<Object>> updateProfile(@ModelAttribute Company company,
             @RequestParam(value = "logoFile", required = false) MultipartFile logoFile,
             Authentication authentication) {
-        Integer companyId = getCurrentCompanyId(authentication);
-        companyService.updateCompanyInfo(companyId, company, logoFile);
-        return ResponseEntity.ok(ApiResponse.success("Cập nhật thông tin thành công", null));
+        try {
+            Integer companyId = getCurrentCompanyId(authentication);
+            companyService.updateCompanyInfo(companyId, company, logoFile);
+            return ResponseEntity.ok(ApiResponse.success("Cập nhật thông tin thành công", null));
+        } catch (RuntimeException e) {
+            log.warn("Lỗi khi cập nhật profile doanh nghiệp: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage(), "UPDATE_ERROR"));
+        } catch (Exception e) {
+            log.error("Lỗi hệ thống khi cập nhật profile doanh nghiệp: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi hệ thống", "SERVER_ERROR"));
+        }
     }
 }
 

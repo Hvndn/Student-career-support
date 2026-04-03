@@ -140,11 +140,11 @@ public class ApplicationService {
     }
 
     /**
-     * Hủy đơn ứng tuyển (US-008).
+     * Hủy đơn ứng tuyển theo jobId + studentId (US-008).
      */
     @Transactional
-    public void cancelApplication(Integer applicationId, Integer studentId) {
-        Application application = applicationRepository.findById(applicationId)
+    public void cancelApplication(Integer studentId, Integer jobId) {
+        Application application = applicationRepository.findByStudentIdAndJobId(studentId, jobId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn ứng tuyển"));
 
         if (!application.getStudent().getId().equals(studentId)) {
@@ -152,10 +152,10 @@ public class ApplicationService {
         }
 
         if (application.getStatus() != Application.ApplicationStatus.pending) {
-            throw new RuntimeException("Chỉ có thể hủy đơn ứng tuyển đang ở trạng thái chờ duyệt");
+            throw new RuntimeException("Chỉ có thể hủy khi đơn đang ở trạng thái chờ duyệt (pending)");
         }
 
         applicationRepository.delete(application);
-        log.info("Sinh viên ID {} đã hủy đơn ứng tuyển ID {}", studentId, applicationId);
+        log.info("Sinh viên ID {} đã hủy đơn ứng tuyển vị trí job ID {}", studentId, jobId);
     }
 }

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { companyApi } from '../../api';
-import '../../assets/css/company/CompanyTopbar.css'; // Will add nested css rules in CompanyDashboard.css
+import { getImageUrl } from '../../utils/urlUtils';
+import '../../assets/css/company/CompanyTopbar.css';
 
 const CompanyTopbar = ({ activeTab = 'Jobs' }) => {
   const navigate = useNavigate();
@@ -59,7 +60,7 @@ const CompanyTopbar = ({ activeTab = 'Jobs' }) => {
           <div className="cd-user">
             <div className="cd-company-icon">
               {companyData.logoUrl ? (
-                <img src={companyData.logoUrl} alt="Logo" className="cd-topbar-avatar" />
+                <img src={getImageUrl(companyData.logoUrl)} alt="Logo" className="cd-topbar-avatar" />
               ) : (
                 <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="12"></line><line x1="15" y1="22" x2="15" y2="12"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
               )}

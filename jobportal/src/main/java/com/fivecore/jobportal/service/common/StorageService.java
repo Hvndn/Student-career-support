@@ -2,12 +2,15 @@ package com.fivecore.jobportal.service.common;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -15,10 +18,38 @@ import java.util.UUID;
 public class StorageService {
 
     private final String baseUploadDir = "uploads";
+    private final List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "pdf");
+    private final List<String> allowedMimeTypes = Arrays.asList("image/jpeg", "image/png", "application/pdf");
 
+    /**
+     * Lưu file an toàn theo các bước:
+     * 1. Kiểm tra file trống.
+     * 2. Kiểm tra MIME type thực tế.
+     * 3. Kiểm tra Extension hợp lệ.
+     * 4. Tạo tên file ngẫu nhiên (UUID), loại bỏ tên gốc.
+     * 5. Lưu ngoài webroot (nếu được cấu hình).
+     */
     public String saveFile(MultipartFile file, String subDir) {
-        if (file.isEmpty()) {
+        if (file == null || file.isEmpty()) {
             return null;
+        }
+
+        // 1. Validate MIME type
+        String contentType = file.getContentType();
+        if (contentType == null || !allowedMimeTypes.contains(contentType.toLowerCase())) {
+            throw new RuntimeException("Định dạng file không được hỗ trợ: " + contentType);
+        }
+
+        // 2. Validate Extension & Prepare Name
+        String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
+        String extension = "";
+        int i = originalFilename.lastIndexOf('.');
+        if (i > 0) {
+            extension = originalFilename.substring(i + 1).toLowerCase();
+        }
+
+        if (!allowedExtensions.contains(extension)) {
+            throw new RuntimeException("Đuôi file không hợp lệ: " + extension);
         }
 
         try {
@@ -28,12 +59,14 @@ public class StorageService {
                 Files.createDirectories(root);
             }
 
-            // Tạo tên file duy nhất
-            String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            // 3. Tạo tên file DUY NHẤT (UUID), loại bỏ tên gốc để bảo mật
+            String fileName = UUID.randomUUID().toString() + "." + extension;
             Path filePath = root.resolve(fileName);
 
             // Lưu file
             Files.copy(file.getInputStream(), filePath);
+
+            log.info("Đã lưu file an toàn: {}/{}", subDir, fileName);
 
             // Trả về đường dẫn để truy cập qua web
             return "/" + baseUploadDir + "/" + subDir + "/" + fileName;

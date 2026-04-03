@@ -1,46 +1,56 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { authApi } from '../../api';
 
 const LoginSuccess = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchUserData = async () => {
+        const handleLoginSuccess = async () => {
             try {
-                // Gọi API lấy thông tin user hiện tại từ session
-                const response = await axios.get('http://localhost:8080/api/auth/me', {
-                    withCredentials: true
-                });
+                // 1. Lấy token từ URL (do Backend bắn về sau khi OAuth2 thành công)
+                const token = searchParams.get('token');
+                
+                if (token) {
+                    // 2. Lưu token vào localStorage
+                    localStorage.setItem('token', token);
+                    
+                    // 3. Gọi API lấy thông tin user hiện tại (Sẽ tự động đính kèm token nhờ Interceptor trong api.js)
+                    const response = await authApi.getCurrentUser();
 
-                if (response.data.status === 'success') {
-                    const userData = response.data.data;
-                    localStorage.setItem('user', JSON.stringify(userData));
+                    if (response.data.status === 'success') {
+                        const userData = response.data.data;
+                        localStorage.setItem('user', JSON.stringify(userData));
 
-                    // Chuyển hướng dựa trên vai trò
-                    const userRole = userData.role ? userData.role.toUpperCase() : '';
-                    const loginSuccessMsg = { state: { message: 'Đăng nhập Google thành công!' } };
+                        // 4. Chuyển hướng dựa trên vai trò
+                        const userRole = userData.role ? userData.role.toUpperCase() : '';
+                        const loginSuccessMsg = { state: { message: 'Đăng nhập Google thành công!' } };
 
-                    if (userRole === 'ADMIN' || userRole === 'ROLE_ADMIN') {
-                        navigate('/admin/dashboard', loginSuccessMsg);
-                    } else if (userRole === 'COMPANY' || userRole === 'ROLE_COMPANY') {
-                        navigate('/company/dashboard', loginSuccessMsg);
+                        if (userRole === 'ADMIN' || userRole === 'ROLE_ADMIN') {
+                            navigate('/admin/dashboard', loginSuccessMsg);
+                        } else if (userRole === 'COMPANY' || userRole === 'ROLE_COMPANY') {
+                            navigate('/company/dashboard', loginSuccessMsg);
+                        } else {
+                            navigate('/', loginSuccessMsg);
+                        }
                     } else {
-                        navigate('/', loginSuccessMsg);
+                        setError('Không thể lấy thông tin người dùng.');
                     }
                 } else {
-                    setError('Không thể lấy thông tin người dùng.');
+                    setError('Không tìm thấy mã xác thực (Token).');
+                    setTimeout(() => navigate('/login'), 2000);
                 }
             } catch (err) {
-                console.error('Lỗi khi fetch user data:', err);
+                console.error('Lỗi khi xử lý đăng nhập Google:', err);
                 setError('Đã xảy ra lỗi khi xác thực tài khoản Google.');
                 setTimeout(() => navigate('/login'), 3000);
             }
         };
 
-        fetchUserData();
-    }, [navigate]);
+        handleLoginSuccess();
+    }, [navigate, searchParams]);
 
     return (
         <div style={{ 

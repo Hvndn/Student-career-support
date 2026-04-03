@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authApi } from '../../api';
+import toast from 'react-hot-toast';
 import './Register.css'; // New CSS file for specific styles
 
 const Register = () => {
@@ -15,34 +16,53 @@ const Register = () => {
         email: '',
         password: '',
         confirmPassword: '',
-        role: 'STUDENT'
+        role: 'student' // Đổi sang chữ thường để khớp với Enum Backend
     });
     const [agreed, setAgreed] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
+        
         if (!agreed) {
-            setError('Vui lòng đồng ý với Điều khoản dịch vụ và Chính sách bảo mật.');
+            toast.error('Vui lòng đồng ý với Điều khoản dịch vụ và Chính sách bảo mật.');
             return;
         }
         if (formData.password !== formData.confirmPassword) {
             setError('Mật khẩu và Xác nhận mật khẩu không khớp.');
+            toast.error('Mật khẩu xác nhận không khớp!');
             return;
         }
+
+        setLoading(true);
         try {
             const { confirmPassword, ...registerData } = formData;
-            const res = await authApi.register(registerData);
+            // Đảm bảo role được gửi đúng dạng lowercase cho Backend
+            const res = await authApi.register({
+                ...registerData,
+                role: formData.role.toLowerCase()
+            });
+
             if (res.data.status === 'success') {
-                navigate('/login', { state: { message: 'Đăng ký thành công! Vui lòng đăng nhập.' } });
+                toast.success('Đăng ký thành công! Đang chuyển hướng...');
+                setTimeout(() => {
+                    navigate('/login', { state: { message: 'Đăng ký thành công! Vui lòng đăng nhập.' } });
+                }, 1500);
             } else {
-                setError(res.data.message || 'Đăng ký thất bại. Vui lòng thử lại.');
+                setError(res.data.message || 'Đăng ký thất bại.');
+                toast.error(res.data.message || 'Đăng ký thất bại!');
             }
         } catch (err) {
             console.error('Registration error:', err);
             const serverMessage = err.response?.data?.message;
-            setError(serverMessage || 'Đăng ký thất bại. Email có thể đã tồn tại hoặc hệ thống gặp sự cố.');
+            const msg = serverMessage || 'Email đã tồn tại hoặc hệ thống gặp sự cố.';
+            setError(msg);
+            toast.error(msg);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -104,8 +124,8 @@ const Register = () => {
                         {/* Role Selector */}
                         <div className="role-selector">
                             <div
-                                className={`role-card ${formData.role === 'STUDENT' ? 'active' : ''}`}
-                                onClick={() => setFormData({ ...formData, role: 'STUDENT' })}
+                                className={`role-card ${formData.role === 'student' ? 'active' : ''}`}
+                                onClick={() => setFormData({ ...formData, role: 'student' })}
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
@@ -113,8 +133,8 @@ const Register = () => {
                                 <span>Tôi là Sinh viên</span>
                             </div>
                             <div
-                                className={`role-card ${formData.role === 'COMPANY' ? 'active' : ''}`}
-                                onClick={() => setFormData({ ...formData, role: 'COMPANY' })}
+                                className={`role-card ${formData.role === 'company' ? 'active' : ''}`}
+                                onClick={() => setFormData({ ...formData, role: 'company' })}
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <rect x="4" y="2" width="16" height="20" rx="2" ry="2" /><path d="M16 2v4" /><path d="M8 2v4" /><path d="M3 10h18" />
@@ -188,11 +208,19 @@ const Register = () => {
                         </div>
 
                         {/* Submit Button */}
-                        <button type="submit" className="btn-submit">
-                            Tạo tài khoản
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
-                            </svg>
+                        <button 
+                            type="submit" 
+                            className={`btn-submit ${loading ? 'loading' : ''}`}
+                            disabled={loading}
+                        >
+                            {loading ? 'Đang xử lý...' : (
+                                <>
+                                    Tạo tài khoản
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline>
+                                    </svg>
+                                </>
+                            )}
                         </button>
 
                         <div className="auth-prompt">

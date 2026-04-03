@@ -37,6 +37,7 @@ const Login = () => {
             const res = await authApi.login({ email, password });
             if (res.data.status === 'success') {
                 const userData = res.data.data;
+                localStorage.setItem('token', userData.token); // Lưu JWT Token
                 localStorage.setItem('user', JSON.stringify(userData));
 
                 // Redirect based on role

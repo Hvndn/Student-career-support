@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { jobApi, studentApi } from '../../api';
 import NavbarSelector from '../../components/common/NavbarSelector';
+import { getImageUrl } from '../../utils/urlUtils';
 import CVTemplate from '../../components/student/CVTemplate';
 import html2pdf from 'html2pdf.js';
 import ReactQuill from 'react-quill-new';
@@ -34,6 +35,8 @@ const Profile = () => {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState('');
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [isUploading, setIsUploading] = useState(false);
 
     // Form states
     const [editBasic, setEditBasic] = useState(false);
@@ -117,13 +120,17 @@ const Profile = () => {
         if (!file) return;
         const formData = new FormData();
         formData.append('avatarFile', file);
-        setSaving(true);
+        setIsUploading(true);
         try {
-            await studentApi.updateAvatar(formData);
+            await studentApi.updateAvatar(formData, (progressEvent) => {
+                const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                setUploadProgress(percentCompleted);
+            });
             await reload();
             flash('✅ Cập nhật ảnh đại diện thành công!');
         } catch { flash('❌ Lỗi khi tải ảnh lên.'); }
-        setSaving(false);
+        setIsUploading(false);
+        setUploadProgress(0);
     };
 
     const saveBio = async () => {
@@ -378,9 +385,15 @@ const Profile = () => {
                 {/* Profile Header Card */}
                 <div className="pf-card pf-profile-header">
                     <div className="pf-profile-info">
-                        <div className="pf-avatar-large" onClick={() => document.getElementById('avatarInput').click()} style={{ cursor: 'pointer' }}>
-                            <img src={profile.avatarUrl || 'https://vectorified.com/images/default-avatar-icon-33.png'} alt="Avatar" />
-                            <input type="file" id="avatarInput" hidden accept="image/*" onChange={handleAvatarChange} />
+                        <div className="pf-avatar-large" onClick={() => !isUploading && document.getElementById('avatarInput').click()} style={{ cursor: isUploading ? 'wait' : 'pointer', position: 'relative' }}>
+                            <img src={getImageUrl(profile.avatarUrl) || 'https://vectorified.com/images/default-avatar-icon-33.png'} alt="Avatar" />
+                            {isUploading && (
+                                <div className="pf-upload-overlay">
+                                    <div className="pf-upload-spinner"></div>
+                                    <div className="pf-upload-text">{uploadProgress}%</div>
+                                </div>
+                            )}
+                            <input type="file" id="avatarInput" hidden accept="image/*" onChange={handleAvatarChange} disabled={isUploading} />
                         </div>
                         <div className="pf-user-details">
                             <h1>{profile.fullName}</h1>
