@@ -390,6 +390,19 @@ const Profile = () => {
         html2pdf().from(element).set(opt).save();
     };
 
+    const calculateCompletion = () => {
+        if (!profile) return 0;
+        const fields = [
+            profile.fullName, profile.bio, profile.avatar || profile.avatarUrl, profile.phone, profile.address,
+            profile.skills?.length > 0, profile.educations?.length > 0, 
+            profile.experiences?.length > 0, profile.projects?.length > 0
+        ];
+        const filled = fields.filter(f => !!f).length;
+        return Math.round((filled / fields.length) * 100);
+    };
+
+    const completion = calculateCompletion();
+
     if (loading) return <div className="pf-layout" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Đang tải hồ sơ...</div>;
     if (!profile) return <div className="pf-layout" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Không tìm thấy hồ sơ!</div>;
 
@@ -404,6 +417,38 @@ const Profile = () => {
             )}
 
             <main className="pf-container pf-main">
+                {/* Profile Completeness Alert */}
+                <div className="pf-completeness-banner" style={{
+                    background: completion === 100 ? '#f0fdf4' : '#fff7ed',
+                    border: `1px solid ${completion === 100 ? '#bbf7d0' : '#ffedd5'}`,
+                    padding: '1rem 1.5rem',
+                    borderRadius: '12px',
+                    marginBottom: '1.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '1rem'
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <span className="material-symbols-outlined" style={{ color: completion === 100 ? '#16a34a' : '#ea580c' }}>
+                            {completion === 100 ? 'verified' : 'info'}
+                        </span>
+                        <div>
+                            <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1e293b' }}>
+                                Độ hoàn thiện hồ sơ: {completion}%
+                            </span>
+                            <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>
+                                {completion === 100 
+                                    ? "Tuyệt vời! Hồ sơ của bạn đã sẵn sàng để ứng tuyển." 
+                                    : "Hãy cập nhật đầy đủ thông tin để tăng cơ hội trúng tuyển lên 200%."}
+                            </p>
+                        </div>
+                    </div>
+                    <div style={{ width: '150px', height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                        <div style={{ width: `${completion}%`, height: '100%', background: completion === 100 ? '#16a34a' : '#f97316', transition: 'width 0.5s ease' }}></div>
+                    </div>
+                </div>
+
                 {/* Profile Header Card */}
                 <div className="pf-card pf-profile-header">
                     <div className="pf-profile-info">

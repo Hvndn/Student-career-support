@@ -52,18 +52,20 @@ const SkillRadar = ({ skills }) => {
 
 const Dashboard = () => {
   const [profile, setProfile] = useState(null);
-  const [notifications, setNotifications] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const profileRes = await studentApi.getProfile();
-        setProfile(profileRes.data.data);
+        const [profileRes, recRes] = await Promise.all([
+          studentApi.getProfile(),
+          studentApi.getRecommendations()
+        ]);
         
-        const notifRes = await studentApi.getNotifications();
-        setNotifications(notifRes.data.data || []);
+        setProfile(profileRes.data.data);
+        setRecommendations(recRes.data.data || []);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
@@ -82,19 +84,39 @@ const Dashboard = () => {
 
   const displayName = profile?.fullName || 'Người dùng';
   
-  const skillsData = [
-    { name: 'React', value: 85 },
-    { name: 'Node.js', value: 70 },
-    { name: 'Design', value: 90 },
-    { name: 'SQL', value: 60 },
-    { name: 'Git', value: 80 },
-  ];
+  // Calculate profile completion
+  const calculateCompletion = () => {
+    if (!profile) return 0;
+    const fields = [
+      profile.fullName, profile.bio, profile.avatar, profile.phone, profile.address,
+      profile.skills?.length > 0, profile.educations?.length > 0, 
+      profile.experiences?.length > 0, profile.projects?.length > 0
+    ];
+    const filled = fields.filter(f => !!f).length;
+    return Math.round((filled / fields.length) * 100);
+  };
+
+  const completion = calculateCompletion();
+  const dashOffset = 471 - (471 * completion) / 100;
+
+  const skillsData = profile?.skills?.length > 0 
+    ? profile.skills.slice(0, 5).map(s => ({ 
+        name: s.skill.name, 
+        value: s.level === 'Expert' ? 100 : s.level === 'Advanced' ? 80 : 60 
+      }))
+    : [
+        { name: 'Kỹ năng 1', value: 20 },
+        { name: 'Kỹ năng 2', value: 20 },
+        { name: 'Kỹ năng 3', value: 20 },
+        { name: 'Kỹ năng 4', value: 20 },
+        { name: 'Kỹ năng 5', value: 20 },
+      ];
 
   const roadmapData = [
-    { title: 'Thực tập sinh', status: 'completed', active: true },
-    { title: 'Junior Dev', status: 'current', active: true },
+    { title: 'Sinh viên', status: 'completed', active: true },
+    { title: 'Thực tập sinh', status: profile?.experiences?.length > 0 ? 'completed' : 'current', active: true },
+    { title: 'Junior Dev', status: profile?.experiences?.length > 0 ? 'current' : 'planned', active: profile?.experiences?.length > 0 },
     { title: 'Senior Dev', status: 'planned', active: false },
-    { title: 'Tech Lead', status: 'target', active: false },
   ];
 
   if (loading) {
@@ -119,7 +141,7 @@ const Dashboard = () => {
                 <svg className="sd-progress-circle">
                   <circle cx="80" cy="80" r="75" fill="none" stroke="#e2e8f0" strokeWidth="6" />
                   <circle cx="80" cy="80" r="75" fill="none" stroke="#2563eb" strokeWidth="6" 
-                    strokeDasharray="471" strokeDashoffset="117" strokeLinecap="round" />
+                    strokeDasharray="471" strokeDashoffset={dashOffset} strokeLinecap="round" />
                 </svg>
                 <img 
                   src={profile?.avatar || "https://ui-avatars.com/api/?name=" + displayName + "&background=2563eb&color=fff"} 
@@ -133,7 +155,7 @@ const Dashboard = () => {
                 <div 
                   className="sd-profile-bio"
                   dangerouslySetInnerHTML={{ 
-                    __html: profile?.bio || 'Hồ sơ của bạn đã hoàn thành 75%. Hãy cập nhật thêm kỹ năng!' 
+                    __html: profile?.bio || `Hồ sơ của bạn đã hoàn thành ${completion}%. Hãy cập nhật thêm thông tin!` 
                   }} 
                 />
               </div>
@@ -154,9 +176,9 @@ const Dashboard = () => {
 
           <div className="sd-glass-card sd-area-stats-2">
             <div className="sd-stat-content">
-              <div className="sd-stat-value">05</div>
+              <div className="sd-stat-value">{profile?.applications?.length || '0'}</div>
               <div className="sd-stat-label">Đang ứng tuyển</div>
-              <div className="sd-stat-trend">2 đang được xem xét</div>
+              <div className="sd-stat-trend">Xem lịch sử ứng tuyển</div>
             </div>
           </div>
 
@@ -177,19 +199,17 @@ const Dashboard = () => {
               <Link to="/jobs" className="sd-link-more">Xem tất cả →</Link>
             </div>
             <div className="sd-job-list">
-              {[
-                { title: 'Senior React Developer', co: 'TechFlow', match: 98 },
-                { title: 'Product Designer', co: 'CreativeBox', match: 85 },
-                { title: 'Frontend Intern', co: 'Startup Hub', match: 92 }
-              ].map((job, i) => (
-                <div key={i} className="sd-job-item">
+              {recommendations.length > 0 ? recommendations.map((job, i) => (
+                <Link key={i} to={`/jobs/${job.id}`} className="sd-job-item">
                   <div className="sd-job-meta">
                     <h4>{job.title}</h4>
-                    <span>{job.co}</span>
+                    <span>{job.companyName}</span>
                   </div>
-                  <div className="sd-match-pills">{job.match}% Match</div>
-                </div>
-              ))}
+                  <div className="sd-match-pills">Phù hợp</div>
+                </Link>
+              )) : (
+                <p className="sd-no-data">Chưa có gợi ý phù hợp. Hãy cập nhật kỹ năng!</p>
+              )}
             </div>
           </div>
 

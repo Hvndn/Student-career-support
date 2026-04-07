@@ -65,7 +65,9 @@ export const authApi = {
         localStorage.removeItem('user');
         return api.post('/auth/logout');
     },
-    getCurrentUser: () => api.get('/auth/me')
+    getCurrentUser: () => api.get('/auth/me'),
+    forgotPassword: (email) => api.post(`/auth/forgot-password?email=${email}`),
+    resetPassword: (token, password) => api.post(`/auth/reset-password?token=${token}&password=${password}`)
 };
 
 export const jobApi = {
@@ -112,6 +114,9 @@ export const studentApi = {
     addCertification: (data) => api.post('/student/profile/certifications', data),
     updateCertification: (id, data) => api.put(`/student/profile/certifications/${id}`, data),
     deleteCertification: (id) => api.delete(`/student/profile/certifications/${id}`),
+    // Recommendations & Interviews
+    getRecommendations: () => api.get('/student/recommendations'),
+    getInterviews: () => api.get('/student/interviews'),
 };
 
 

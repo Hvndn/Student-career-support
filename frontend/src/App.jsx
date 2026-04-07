@@ -15,6 +15,8 @@ import LoginSuccess from './pages/common/LoginSuccess'
 import Register from './pages/common/Register'
 import JobDetail from './pages/common/JobDetail'
 import JobList from './pages/common/JobList'
+import ForgotPassword from './pages/common/ForgotPassword'
+import ResetPassword from './pages/common/ResetPassword'
 
 // student pages
 import Dashboard from './pages/student/Dashboard'
@@ -22,6 +24,7 @@ import Profile from './pages/student/Profile'
 import Applications from './pages/student/Applications'
 import SavedJobs from './pages/student/SavedJobs'
 import Notifications from './pages/student/Notifications'
+import Interviews from './pages/student/Interviews'
 
 // company pages
 import CompanyDashboard from './pages/company/CompanyDashboard'
@@ -79,7 +82,7 @@ const RouteChangeHandler = ({ setIsLoading }) => {
 
 const AppContent = () => {
   const location = useLocation();
-  const hideOnRoutes = ['/login', '/register', '/login-success'];
+  const hideOnRoutes = ['/login', '/register', '/login-success', '/forgot-password', '/reset-password'];
   const shouldHide = hideOnRoutes.includes(location.pathname);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -110,6 +113,8 @@ const AppContent = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/login-success" element={<LoginSuccess />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/jobs" element={<JobList />} />
         <Route path="/jobs/:id" element={<JobDetail />} />
         
@@ -126,6 +131,7 @@ const AppContent = () => {
               <Route path="applications" element={<Applications />} />
               <Route path="saved" element={<SavedJobs />} />
               <Route path="notifications" element={<Notifications />} />
+              <Route path="interviews" element={<Interviews />} />
             </Routes>
           </ProtectedRoute>
         } />
