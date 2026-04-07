@@ -1,6 +1,5 @@
 package com.fivecore.jobportal.controller.api.student;
 
-import com.fivecore.jobportal.dto.ApiResponse;
 import com.fivecore.jobportal.entity.Student;
 import com.fivecore.jobportal.entity.User;
 import com.fivecore.jobportal.repository.UserRepository;

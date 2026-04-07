@@ -1,14 +1,14 @@
 /* Premium Student Dashboard Styles */
 :root {
-  --sd-primary: #2563eb;
-  --sd-primary-glow: rgba(37, 99, 235, 0.4);
-  --sd-secondary: #7c3aed;
-  --sd-bg: #f8fafc;
-  --sd-card-bg: rgba(255, 255, 255, 0.7);
-  --sd-border: rgba(255, 255, 255, 0.3);
-  --sd-text-main: #0f172a;
-  --sd-text-muted: #64748b;
-  --sd-glass-blur: 16px;
+  --sd-primary: #0652dd;
+  --sd-primary-glow: rgba(6, 82, 221, 0.3);
+  --sd-secondary: #009432;
+  --sd-bg: #f5f7fa;
+  --sd-card-bg: rgba(255, 255, 255, 0.8);
+  --sd-border: rgba(255, 255, 255, 0.5);
+  --sd-text-main: #1e272e;
+  --sd-text-muted: #808e9b;
+  --sd-glass-blur: 20px;
 }
 
 .student-dashboard-page {
@@ -78,18 +78,22 @@
   backdrop-filter: blur(var(--sd-glass-blur));
   -webkit-backdrop-filter: blur(var(--sd-glass-blur));
   border: 1px solid var(--sd-border);
-  border-radius: 28px;
-  padding: 2rem;
-  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: 32px;
+  padding: 2.2rem;
+  box-shadow: 
+    0 10px 40px -10px rgba(0, 0, 0, 0.05),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
   position: relative;
   overflow: hidden;
 }
 
 .sd-glass-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 16px 48px rgba(31, 38, 135, 0.12);
-  border-color: rgba(37, 99, 235, 0.3);
+  transform: translateY(-10px) scale(1.01);
+  box-shadow: 
+    0 20px 60px -15px rgba(0, 0, 0, 0.1),
+    0 0 20px var(--sd-primary-glow);
+  border-color: rgba(6, 82, 221, 0.4);
 }
 
 .sd-glass-card::before {

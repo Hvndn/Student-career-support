@@ -44,6 +44,7 @@ public class PasswordResetService {
         User user = userOptional.get();
         // Xóa token cũ nếu có
         tokenRepository.deleteByUser(user);
+        tokenRepository.flush();
 
         // Tạo token mới ngẫu nhiên
         String token = UUID.randomUUID().toString();

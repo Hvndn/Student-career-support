@@ -8,7 +8,10 @@ const SkillRadar = ({ skills }) => {
   const centerX = size / 2;
   const centerY = size / 2;
   const radius = 100;
-  const angleStep = (Math.PI * 2) / skills.length;
+  if (!skills || skills.length === 0) {
+    return <div className="sd-no-radar-data">Cập nhật thêm kỹ năng để xem lộ trình!</div>;
+  }
+  const angleStep = (Math.PI * 2) / (skills.length < 3 ? 3 : skills.length);
 
   const points = skills.map((s, i) => {
     const r = (s.value / 100) * radius;
@@ -100,17 +103,17 @@ const Dashboard = () => {
   const dashOffset = 471 - (471 * completion) / 100;
 
   const skillsData = profile?.skills?.length > 0 
-    ? profile.skills.slice(0, 5).map(s => ({ 
+    ? profile.skills.map(s => ({ 
         name: s.skill.name, 
-        value: s.level === 'Expert' ? 100 : s.level === 'Advanced' ? 80 : 60 
+        value: s.level === 'advanced' ? 100 : s.level === 'intermediate' ? 70 : 40 
       }))
-    : [
-        { name: 'Kỹ năng 1', value: 20 },
-        { name: 'Kỹ năng 2', value: 20 },
-        { name: 'Kỹ năng 3', value: 20 },
-        { name: 'Kỹ năng 4', value: 20 },
-        { name: 'Kỹ năng 5', value: 20 },
-      ];
+    : [];
+
+  // Ensure at least 3 points for a valid polygon geometry in Radar
+  const radarSkills = [...skillsData];
+  while (radarSkills.length > 0 && radarSkills.length < 3) {
+    radarSkills.push({ name: '', value: 0 });
+  }
 
   const roadmapData = [
     { title: 'Sinh viên', status: 'completed', active: true },
@@ -188,7 +191,7 @@ const Dashboard = () => {
               <h4 className="sd-card-title">Phân tích kỹ năng</h4>
             </div>
             <div className="sd-radar-wrapper">
-              <SkillRadar skills={skillsData} />
+              <SkillRadar skills={radarSkills} />
             </div>
           </div>
 

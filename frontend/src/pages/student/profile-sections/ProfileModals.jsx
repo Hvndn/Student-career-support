@@ -72,10 +72,9 @@ export const SkillModal = ({ show, skillId, setSkillId, skillLevel, setSkillLeve
                 <div className="pf-field">
                     <label className="pf-label">Mức độ</label>
                     <select className="pf-input" value={skillLevel} onChange={e => setSkillLevel(e.target.value)}>
-                        <option value="Beginner">Beginner</option>
-                        <option value="Intermediate">Intermediate</option>
-                        <option value="Advanced">Advanced</option>
-                        <option value="Expert">Expert</option>
+                        <option value="beginner">Mới bắt đầu</option>
+                        <option value="intermediate">Trung bình</option>
+                        <option value="advanced">Nâng cao</option>
                     </select>
                 </div>
                 <button className="pf-btn pf-btn-primary" style={{ width: '100%' }} onClick={onSave} disabled={saving}>Thêm</button>

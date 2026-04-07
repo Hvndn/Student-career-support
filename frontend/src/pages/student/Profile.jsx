@@ -54,7 +54,7 @@ const Profile = () => {
 
     const [showSkillForm, setShowSkillForm] = useState(false);
     const [skillId, setSkillId] = useState('');
-    const [skillLevel, setSkillLevel] = useState('Intermediate');
+    const [skillLevel, setSkillLevel] = useState('beginner');
     const [allSkills, setAllSkills] = useState([]);
 
     const [showLangForm, setShowLangForm] = useState(false);
