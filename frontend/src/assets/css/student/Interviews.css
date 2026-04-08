@@ -1,0 +1,140 @@
+.student-interviews-page {
+    padding: 2rem;
+    min-height: calc(100vh - 80px);
+    background-color: #f8fafc;
+}
+
+.si-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.si-header {
+    margin-bottom: 2rem;
+}
+
+.si-header h1 {
+    font-size: 2rem;
+    color: #1e293b;
+    font-weight: 800;
+}
+
+.si-header p {
+    color: #64748b;
+    margin-top: 0.5rem;
+}
+
+.si-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.si-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.si-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.si-date-box {
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 1rem;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+}
+
+.si-day {
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.si-month {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.si-info {
+    flex: 1;
+}
+
+.si-info h3 {
+    font-size: 1.25rem;
+    color: #0f172a;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.si-company {
+    color: #2563eb;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+}
+
+.si-details {
+    display: flex;
+    gap: 1.5rem;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.si-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.si-status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.si-status-scheduled {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.si-no-data {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 16px;
+    border: 2px dashed #e2e8f0;
+}
+
+.si-no-data-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 640px) {
+    .si-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .si-details {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}

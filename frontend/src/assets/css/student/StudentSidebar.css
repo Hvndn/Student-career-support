@@ -1,0 +1,133 @@
+/* StudentSidebar.css */
+.student-sidebar {
+    width: 250px;
+    min-height: 100vh;
+    background: #fff;
+    border-right: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 200;
+    font-family: 'Inter', sans-serif;
+}
+
+.ss-header {
+    padding: 1.2rem 1.5rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.ss-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+}
+
+.ss-brand-icon {
+    font-size: 1.3rem;
+}
+
+.ss-brand-name {
+    font-weight: 800;
+    font-size: 1rem;
+    color: #111827;
+}
+
+.ss-badge-section {
+    padding: 0.6rem 1.5rem 0;
+}
+
+.ss-badge-text {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    color: #9ca3af;
+}
+
+.ss-nav {
+    flex: 1;
+    padding: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.ss-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.18s;
+}
+
+.ss-nav-item.active {
+    color: #2563eb !important;
+    background: #eff6ff !important;
+    font-weight: 700 !important;
+}
+
+.ss-nav-item.inactive {
+    color: #4b5563;
+    background: transparent;
+    font-weight: 500;
+}
+
+.ss-nav-item:hover {
+    background: #f3f4f6;
+}
+
+.ss-nav-icon {
+    font-size: 1.05rem;
+    width: 22px;
+    text-align: center;
+}
+
+.ss-bottom {
+    padding: 1rem 0.8rem 1.5rem;
+    border-top: 1px solid #f3f4f6;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.ss-bottom-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.85rem;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #6b7280;
+    font-size: 0.88rem;
+    transition: background 0.2s;
+}
+
+.ss-bottom-link:hover {
+    background: #f3f4f6;
+}
+
+.ss-logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.85rem;
+    border-radius: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #ef4444;
+    font-size: 0.88rem;
+    font-family: 'Inter', sans-serif;
+    width: 100%;
+    text-align: left;
+    transition: background 0.2s;
+}
+
+.ss-logout-btn:hover {
+    background: #fef2f2;
+}

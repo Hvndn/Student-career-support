@@ -1,0 +1,394 @@
+.home {
+  font-family: "Inter", sans-serif;
+}
+
+/* HERO */
+.hero {
+  display: flex;
+  justify-content: space-between;
+  padding: 80px 10%;
+  background: linear-gradient(to bottom, #f8fafc, #ffffff);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.hero-left {
+  max-width: 550px;
+}
+
+.hero-left h1 {
+  font-size: 48px;
+  font-weight: 800;
+}
+
+.hero-left span {
+  color: #2563eb;
+}
+
+.hero-left p {
+  margin: 20px 0;
+  color: #666;
+}
+
+/* SEARCH */
+.search-box {
+  display: flex;
+  gap: 10px;
+  background: white;
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  margin-top: 20px;
+}
+
+.input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.input input {
+  border: none;
+  outline: none;
+}
+
+.search-box button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.search-box button:hover {
+  background: #1e40af;
+}
+
+/* TAG */
+.tags span {
+  margin-right: 10px;
+  background: #eef2ff;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+/* IMAGE */
+.hero-right img {
+  width: 350px;
+  animation: float 3s infinite;
+}
+
+/* CATEGORY */
+.categories {
+  padding: 60px 10%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.card {
+  padding: 20px;
+  background: white;
+  border-radius: 14px;
+  text-align: center;
+  transition: 0.3s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.card:hover {
+  transform: translateY(-10px);
+}
+
+/* JOB */
+.jobs {
+  padding: 60px 10%;
+}
+
+.job-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.job-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  transition: 0.3s;
+}
+
+.job-card:hover {
+  transform: scale(1.05);
+}
+
+.badge {
+  background: #d1fae5;
+  padding: 5px 10px;
+  border-radius: 6px;
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.load {
+  margin-top: 30px;
+  padding: 10px 20px;
+}
+
+/* CTA */
+.cta {
+  margin: 60px 10%;
+  padding: 50px;
+  text-align: center;
+  background: linear-gradient(to right, #2563eb, #1e40af);
+  color: white;
+  border-radius: 14px;
+}
+
+.primary {
+  background: white;
+  color: #2563eb;
+}
+
+.secondary {
+  border: 1px solid white;
+  background: transparent;
+  color: white;
+}
+
+/* ANIMATION */
+@keyframes float {
+  50% { transform: translateY(-10px); }
+}
+
+/* 📱 RESPONSIVE */
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .job-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .search-box {
+    flex-direction: column;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .job-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* NAVBAR */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 10%;
+  background: white;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.nav-links a {
+  margin: 0 15px;
+  cursor: pointer;
+}
+
+.nav-auth .register {
+  background: #2563eb;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 8px;
+}
+
+/* HOW */
+.how {
+  padding: 60px 10%;
+  text-align: center;
+}
+
+.how-grid {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.how-card {
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  width: 200px;
+  transition: 0.3s;
+}
+
+.how-card:hover {
+  transform: translateY(-10px);
+}
+
+/* FOOTER */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 40px 10%;
+  background: #f1f5f9;
+}
+.search-box {
+  display: flex;
+  gap: 10px;
+  background: white;
+  padding: 12px;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  margin-top: 25px;
+  transition: 0.3s;
+}
+
+.search-box:hover {
+  box-shadow: 0 15px 40px rgba(37,99,235,0.2);
+}
+
+.input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.input svg {
+  color: #2563eb;
+  background: #eff6ff;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 30px;
+}
+.search-box button {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 5px 15px rgba(37,99,235,0.3);
+}
+
+.search-box button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(37,99,235,0.5);
+}
+.card {
+  padding: 25px;
+  background: white;
+  border-radius: 16px;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+  cursor: pointer;
+}
+
+.card svg {
+  font-size: 30px;
+  color: #2563eb;
+  background: #eff6ff;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(37,99,235,0.2);
+}.job-card {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  transition: all 0.3s;
+  border: 1px solid #f1f5f9;
+  cursor: pointer;
+}
+
+.job-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.badge {
+  background: #dcfce7;
+  color: #16a34a;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  display: inline-block;
+  margin-bottom: 10px;
+}.hero-left h1 {
+  font-size: 52px;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+.hero-left span {
+  background: linear-gradient(90deg, #2563eb, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}.tags span {
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-right: 10px;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.tags span:hover {
+  background: #2563eb;
+  color: white;
+}.cta {
+  margin: 80px 10%;
+  padding: 60px;
+  background: linear-gradient(135deg, #2563eb, #1e3a8a);
+  color: white;
+  text-align: center;
+  border-radius: 20px;
+  box-shadow: 0 20px 50px rgba(37,99,235,0.4);
+}
+
+.cta button {
+  margin-top: 20px;
+  padding: 12px 30px;
+  border-radius: 999px;
+  border: none;
+  background: white;
+  color: #2563eb;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.cta button:hover {
+  transform: scale(1.05);
+}

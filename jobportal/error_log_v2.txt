@@ -1,0 +1,40 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------------< com.fivecore:jobportal >-----------------------
+[INFO] Building JobPortal 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- jacoco:0.8.12:prepare-agent (default) @ jobportal ---
+[INFO] argLine set to -javaagent:C:\\Users\\DELL\\.m2\\repository\\org\\jacoco\\org.jacoco.agent\\0.8.12\\org.jacoco.agent-0.8.12-runtime.jar=destfile=C:\\CNPM\\Student-career-support\\jobportal\\target\\jacoco.exec
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ jobportal ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 16 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ jobportal ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 111 source files with javac [debug parameters release 21] to target\classes
+[INFO] /C:/CNPM/Student-career-support/jobportal/src/main/java/com/fivecore/jobportal/service/admin/PdfExportService.java: C:\CNPM\Student-career-support\jobportal\src\main\java\com\fivecore\jobportal\service\admin\PdfExportService.java uses unchecked or unsafe operations.
+[INFO] /C:/CNPM/Student-career-support/jobportal/src/main/java/com/fivecore/jobportal/service/admin/PdfExportService.java: Recompile with -Xlint:unchecked for details.
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /C:/CNPM/Student-career-support/jobportal/src/main/java/com/fivecore/jobportal/controller/api/admin/AdminRestController.java:[190,11] exception java.io.IOException is never thrown in body of corresponding try statement
+[INFO] 1 error
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  16.474 s
+[INFO] Finished at: 2026-04-09T00:46:27+07:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project jobportal: Compilation failure
+[ERROR] /C:/CNPM/Student-career-support/jobportal/src/main/java/com/fivecore/jobportal/controller/api/admin/AdminRestController.java:[190,11] exception java.io.IOException is never thrown in body of corresponding try statement
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

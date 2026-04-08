@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
@@ -5,6 +6,23 @@ target/
 !**/src/test/**/target/
 
 ### STS ###
+=======
+# Dependencies
+node_modules/
+target/
+.mvn/
+
+# Compiled files
+*.class
+*.jar
+*.war
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+>>>>>>> 0cc9f64bf3016784293ee6a729353de484beaea1
 .apt_generated
 .classpath
 .factorypath
@@ -13,6 +31,7 @@ target/
 .springBeans
 .sts4-cache
 
+<<<<<<< HEAD
 ### IntelliJ IDEA ###
 .idea
 *.iws
@@ -31,3 +50,32 @@ build/
 
 ### VS Code ###
 .vscode/
+=======
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build output
+dist/
+build/
+out/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Project specific
+uploads/
+HELP.md
+GEMINI.md
+.agent/
+>>>>>>> 0cc9f64bf3016784293ee6a729353de484beaea1
