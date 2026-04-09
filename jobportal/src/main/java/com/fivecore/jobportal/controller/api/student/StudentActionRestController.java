@@ -4,6 +4,8 @@ import com.fivecore.jobportal.dto.ApiResponse;
 import com.fivecore.jobportal.repository.UserRepository;
 import com.fivecore.jobportal.service.auth.ApplicationService;
 import com.fivecore.jobportal.service.interaction.NotificationService;
+import com.fivecore.jobportal.service.company.InterviewService;
+import com.fivecore.jobportal.service.student.RecommendationService;
 import com.fivecore.jobportal.service.student.SavedJobService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,8 @@ public class StudentActionRestController {
     private final ApplicationService applicationService;
     private final NotificationService notificationService;
     private final SavedJobService savedJobService;
+    private final RecommendationService recommendationService;
+    private final InterviewService interviewService;
     private final UserRepository userRepository;
 
     private Integer getCurrentStudentId(Authentication authentication) {
@@ -117,5 +121,25 @@ public class StudentActionRestController {
         Integer userId = getCurrentUserId(authentication);
         return ResponseEntity.ok(
                 ApiResponse.success("Lấy thông báo thành công", notificationService.getNotificationsByUser(userId)));
+    }
+
+    /**
+     * API Lấy danh sách việc làm gợi ý.
+     */
+    @GetMapping("/recommendations")
+    public ResponseEntity<ApiResponse<Object>> getRecommendations(Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách gợi ý thành công",
+                recommendationService.recommendJobs(studentId)));
+    }
+
+    /**
+     * API Lấy danh mục lịch phỏng vấn của sinh viên.
+     */
+    @GetMapping("/interviews")
+    public ResponseEntity<ApiResponse<Object>> getInterviews(Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        return ResponseEntity.ok(ApiResponse.success("Lấy lịch phỏng vấn thành công",
+                interviewService.getInterviewsByStudent(studentId)));
     }
 }

@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { studentApi } from '../../api';
+import toast from 'react-hot-toast';
+import '../../assets/css/common/Applications.css'; // Use shared CSS folder structure
 
 const Applications = () => {
     const [apps, setApps] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
+    const loadApps = () => {
         studentApi.getMyApplications()
             .then(res => {
                 setApps(res.data.data);
@@ -16,43 +18,65 @@ const Applications = () => {
                 console.error(err);
                 setLoading(false);
             });
+    };
+
+    useEffect(() => {
+        loadApps();
     }, []);
 
-    const getStatusConfig = (status) => {
-        switch (status) {
-            case 'REVIEWING': return { bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-200', icon: 'hourglass_top', label: 'Đang xem xét' };
-            case 'ACCEPTED': return { bg: 'bg-green-50', text: 'text-green-600', border: 'border-green-200', icon: 'check_circle', label: 'Đã chấp nhận' };
-            case 'REJECTED': return { bg: 'bg-red-50', text: 'text-red-500', border: 'border-red-200', icon: 'cancel', label: 'Đã từ chối' };
-            default: return { bg: 'bg-slate-50', text: 'text-slate-500', border: 'border-slate-200', icon: 'pending', label: status || 'Chờ xử lý' };
+    const handleCancel = async (jobId) => {
+        if (!window.confirm("Bạn có chắc chắn muốn hủy đơn ứng tuyển này?")) return;
+        try {
+            await studentApi.cancelApplication(jobId);
+            toast.success("Hủy ứng tuyển thành công");
+            loadApps();
+        } catch (err) {
+            toast.error(err.response?.data?.message || 'Có lỗi xảy ra khi hủy ứng tuyển');
         }
     };
 
+    const getStatusConfig = (status) => {
+        const s = (status || '').toLowerCase();
+        switch (s) {
+            case 'reviewing': return { class: 'status-reviewing', icon: 'hourglass_top', label: 'Đang xem xét' };
+            case 'accepted': return { class: 'status-accepted', icon: 'check_circle', label: 'Đã chấp nhận' };
+            case 'rejected': return { class: 'status-rejected', icon: 'cancel', label: 'Đã từ chối' };
+            case 'pending': return { class: 'status-pending', icon: 'hourglass_empty', label: 'Chờ duyệt' };
+            default: return { class: 'status-pending', icon: 'pending', label: status || 'Chờ xử lý' };
+        }
+    };
+
+    const formatDate = (dt) => {
+        if (!dt) return 'N/A';
+        return new Date(dt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    };
+
     if (loading) return (
-        <div className="min-h-screen flex items-center justify-center" style={{ background: '#f8fafd', fontFamily: "'Inter', sans-serif" }}>
-            <div className="text-center space-y-3">
-                <span className="material-symbols-outlined animate-spin text-4xl text-blue-600">refresh</span>
-                <p className="text-slate-500 text-sm">Đang tải danh sách đơn ứng tuyển...</p>
+        <div className="applications-page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ textAlign: 'center' }}>
+                <span className="material-symbols-outlined premium-spinner">refresh</span>
+                <p className="loading-text" style={{ marginTop: '1rem' }}>Đang tải danh sách đơn ứng tuyển...</p>
             </div>
         </div>
     );
 
     return (
-        <div className="min-h-screen" style={{ background: '#f8fafd', fontFamily: "'Inter', sans-serif" }}>
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="applications-page">
+            <div className="applications-container">
                 {/* Header */}
-                <div className="mb-8">
-                    <nav className="flex items-center gap-2 text-xs font-medium text-slate-500 mb-4">
-                        <Link className="hover:text-blue-600 transition-colors" to="/">Trang chủ</Link>
-                        <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-                        <span className="text-slate-900 font-semibold">Đơn ứng tuyển</span>
+                <div className="apps-header">
+                    <nav className="apps-breadcrumb">
+                        <Link to="/">Trang chủ</Link>
+                        <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>chevron_right</span>
+                        <span style={{ color: 'var(--text)', fontWeight: 600 }}>Đơn ứng tuyển</span>
                     </nav>
-                    <div className="flex items-end justify-between gap-4">
+                    <div className="apps-header-main">
                         <div>
-                            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Đơn ứng tuyển của tôi</h1>
-                            <p className="text-slate-500 text-sm mt-1">Theo dõi trạng thái tất cả các đơn ứng tuyển bạn đã gửi.</p>
+                            <h1 className="apps-title">Đơn ứng tuyển của tôi</h1>
+                            <p className="apps-desc">Theo dõi trạng thái tất cả các đơn ứng tuyển bạn đã gửi.</p>
                         </div>
-                        <div className="flex items-center gap-3">
-                            <span className="text-sm font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100">
+                        <div>
+                            <span className="apps-count-badge">
                                 {apps.length} đơn
                             </span>
                         </div>
@@ -60,101 +84,97 @@ const Applications = () => {
                 </div>
 
                 {/* Stats Row */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                    <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center">
-                                <span className="material-symbols-outlined text-blue-600">description</span>
-                            </div>
-                            <div>
-                                <p className="text-xl font-extrabold text-slate-900">{apps.length}</p>
-                                <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Tổng đơn</p>
-                            </div>
+                <div className="apps-stats-grid">
+                    <div className="stat-card">
+                        <div className="stat-icon total">
+                            <span className="material-symbols-outlined">description</span>
+                        </div>
+                        <div>
+                            <p className="stat-value">{apps.length}</p>
+                            <p className="stat-label">Tổng đơn</p>
                         </div>
                     </div>
-                    <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
-                                <span className="material-symbols-outlined text-amber-500">hourglass_top</span>
-                            </div>
-                            <div>
-                                <p className="text-xl font-extrabold text-slate-900">{apps.filter(a => a.status === 'REVIEWING').length}</p>
-                                <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Đang xét</p>
-                            </div>
+                    <div className="stat-card">
+                        <div className="stat-icon reviewing">
+                            <span className="material-symbols-outlined">hourglass_top</span>
+                        </div>
+                        <div>
+                            <p className="stat-value">{apps.filter(a => (a.status||'').toLowerCase() === 'reviewing').length}</p>
+                            <p className="stat-label">Đang xét</p>
                         </div>
                     </div>
-                    <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
-                                <span className="material-symbols-outlined text-green-600">check_circle</span>
-                            </div>
-                            <div>
-                                <p className="text-xl font-extrabold text-slate-900">{apps.filter(a => a.status === 'ACCEPTED').length}</p>
-                                <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Chấp nhận</p>
-                            </div>
+                    <div className="stat-card">
+                        <div className="stat-icon accepted">
+                            <span className="material-symbols-outlined">check_circle</span>
+                        </div>
+                        <div>
+                            <p className="stat-value">{apps.filter(a => (a.status||'').toLowerCase() === 'accepted').length}</p>
+                            <p className="stat-label">Chấp nhận</p>
                         </div>
                     </div>
-                    <div className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center">
-                                <span className="material-symbols-outlined text-red-500">cancel</span>
-                            </div>
-                            <div>
-                                <p className="text-xl font-extrabold text-slate-900">{apps.filter(a => a.status === 'REJECTED').length}</p>
-                                <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Từ chối</p>
-                            </div>
+                    <div className="stat-card">
+                        <div className="stat-icon rejected">
+                            <span className="material-symbols-outlined">cancel</span>
+                        </div>
+                        <div>
+                            <p className="stat-value">{apps.filter(a => (a.status||'').toLowerCase() === 'rejected').length}</p>
+                            <p className="stat-label">Từ chối</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Applications List */}
                 {apps.length === 0 ? (
-                    <div className="bg-white rounded-2xl p-12 text-center border border-slate-100 shadow-sm">
-                        <span className="material-symbols-outlined text-6xl text-slate-200 mb-4">inbox</span>
-                        <h3 className="text-lg font-bold text-slate-900 mb-2">Chưa có đơn ứng tuyển</h3>
-                        <p className="text-slate-500 text-sm mb-6">Bạn chưa nộp đơn ứng tuyển nào. Hãy khám phá các cơ hội việc làm ngay!</p>
-                        <Link to="/jobs" className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-bold text-sm rounded-xl hover:bg-blue-700 transition-colors shadow-sm shadow-blue-600/20">
-                            <span className="material-symbols-outlined text-lg">search</span>
+                    <div className="empty-apps">
+                        <span className="material-symbols-outlined">inbox</span>
+                        <h3>Chưa có đơn ứng tuyển</h3>
+                        <p>Bạn chưa nộp đơn ứng tuyển nào. Hãy khám phá các cơ hội việc làm ngay!</p>
+                        <Link to="/jobs" className="btn-find-jobs">
+                            <span className="material-symbols-outlined">search</span>
                             Tìm việc làm
                         </Link>
                     </div>
                 ) : (
-                    <div className="space-y-3">
+                    <div className="apps-list">
                         {apps.map(app => {
                             const status = getStatusConfig(app.status);
                             return (
-                                <div key={app.id} className="group bg-white rounded-xl p-5 border border-slate-100 hover:border-blue-200 hover:shadow-md transition-all shadow-sm">
-                                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                                        {/* Company Icon */}
-                                        <div className="w-12 h-12 shrink-0 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-lg font-bold text-blue-600">
-                                            {app.companyName ? app.companyName.charAt(0).toUpperCase() : 'C'}
-                                        </div>
+                                <div key={app.id} className="app-card">
+                                    {/* Company Icon */}
+                                    <div className="app-company-logo">
+                                        {app.companyName ? app.companyName.charAt(0).toUpperCase() : 'C'}
+                                    </div>
 
-                                        {/* Info */}
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-start justify-between gap-3">
-                                                <div>
-                                                    <h3 className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors truncate">
-                                                        {app.jobTitle}
-                                                    </h3>
-                                                    <p className="text-sm text-slate-500 mt-0.5">{app.companyName}</p>
-                                                </div>
-                                                {/* Status Badge */}
-                                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold border shrink-0 ${status.bg} ${status.text} ${status.border}`}>
-                                                    <span className="material-symbols-outlined text-sm">{status.icon}</span>
-                                                    {status.label}
-                                                </span>
+                                    {/* Info */}
+                                    <div className="app-info">
+                                        <div className="app-header-row">
+                                            <div>
+                                                <h3 className="app-job-title">{app.jobTitle}</h3>
+                                                <p className="app-company-name">{app.companyName}</p>
                                             </div>
-                                            <div className="flex items-center gap-4 mt-3 text-xs text-slate-400">
-                                                <span className="flex items-center gap-1">
-                                                    <span className="material-symbols-outlined text-sm">calendar_today</span>
-                                                    Ứng tuyển: {app.appliedDate}
-                                                </span>
+                                            {/* Status Badge */}
+                                            <span className={`app-status-badge ${status.class}`}>
+                                                <span className="material-symbols-outlined" style={{ fontSize: '0.875rem' }}>{status.icon}</span>
+                                                {status.label}
+                                            </span>
+                                        </div>
+                                        <div className="app-meta-row">
+                                            <span className="app-meta-item">
+                                                <span className="material-symbols-outlined">calendar_today</span>
+                                                Ứng tuyển: {formatDate(app.appliedAt)}
+                                            </span>
+                                            <div style={{ display: 'flex', gap: '1rem', marginLeft: 'auto' }}>
                                                 {app.jobId && (
-                                                    <Link to={`/jobs/${app.jobId}`} className="flex items-center gap-1 text-blue-600 font-semibold hover:underline">
-                                                        <span className="material-symbols-outlined text-sm">open_in_new</span>
+                                                    <Link to={`/jobs/${app.jobId}`} className="app-job-link">
+                                                        <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>open_in_new</span>
                                                         Xem việc làm
                                                     </Link>
+                                                )}
+                                                {['pending', 'reviewing'].includes((app.status||'').toLowerCase()) && (
+                                                    <button onClick={() => handleCancel(app.jobId)} style={{ color: 'var(--error, #ef4444)', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem', fontWeight: 600, fontSize: '0.75rem' }}>
+                                                        <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>cancel</span>
+                                                        Hủy
+                                                    </button>
                                                 )}
                                             </div>
                                         </div>

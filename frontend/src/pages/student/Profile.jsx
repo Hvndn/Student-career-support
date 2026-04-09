@@ -32,6 +32,7 @@ const BLANK_CERT = { name: '', issuer: '', issueDate: '', expirationDate: '', ce
 
 const Profile = () => {
     const [profile, setProfile] = useState(null);
+    const [avatarBase64, setAvatarBase64] = useState(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState('');
@@ -53,7 +54,7 @@ const Profile = () => {
 
     const [showSkillForm, setShowSkillForm] = useState(false);
     const [skillId, setSkillId] = useState('');
-    const [skillLevel, setSkillLevel] = useState('Intermediate');
+    const [skillLevel, setSkillLevel] = useState('beginner');
     const [allSkills, setAllSkills] = useState([]);
 
     const [showLangForm, setShowLangForm] = useState(false);
@@ -71,6 +72,22 @@ const Profile = () => {
     const [showCertForm, setShowCertForm] = useState(false);
     const [certForm, setCertForm] = useState(BLANK_CERT);
 
+    const loadAvatarBase64 = async (p) => {
+        const path = p?.avatarUrl || p?.avatar;
+        if (!path) { setAvatarBase64(null); return; }
+        try {
+            const url = getImageUrl(path);
+            const response = await fetch(url);
+            const blob = await response.blob();
+            const reader = new FileReader();
+            reader.onloadend = () => setAvatarBase64(reader.result);
+            reader.readAsDataURL(blob);
+        } catch (err) {
+            console.error("Error loading avatar base64:", err);
+            setAvatarBase64(null);
+        }
+    };
+
     useEffect(() => {
         studentApi.getProfile()
             .then(res => { 
@@ -78,12 +95,17 @@ const Profile = () => {
                 setProfile(data); 
                 setBio(data.bio || ''); 
                 setLoading(false); 
+                loadAvatarBase64(data);
             })
             .catch(() => setLoading(false));
     }, []);
 
     const flash = (msg) => { setMessage(msg); setTimeout(() => setMessage(''), 3000); };
-    const reload = () => studentApi.getProfile().then(res => setProfile(res.data.data));
+    const reload = () => studentApi.getProfile().then(res => {
+        const data = res.data.data;
+        setProfile(data);
+        loadAvatarBase64(data);
+    });
 
     /* ---- Handlers ---- */
     const openBasic = () => {
@@ -176,15 +198,36 @@ const Profile = () => {
 
     const saveEdu = async () => {
         if (!eduForm.schoolName) return flash('⚠️ Nhập tên trường');
+        if (!eduForm.startDate) return flash('⚠️ Chọn ngày bắt đầu');
+        
+        let payload = { ...eduForm };
+        if (!payload.endDate) payload.endDate = null;
+        else if (new Date(payload.endDate) < new Date(payload.startDate)) {
+            return flash('⚠️ Ngày kết thúc phải sau ngày bắt đầu');
+        }
+
         setSaving(true);
         try {
-            await studentApi.addEducation(eduForm);
+            if (eduForm.id) {
+                await studentApi.updateEducation(eduForm.id, payload);
+                flash('✅ Cập nhật học vấn thành công!');
+            } else {
+                await studentApi.addEducation(payload);
+                flash('✅ Thêm học vấn thành công!');
+            }
             await reload();
             setShowEduForm(false);
             setEduForm(BLANK_EDU);
-            flash('✅ Thêm học vấn thành công!');
-        } catch { flash('❌ Lỗi khi thêm.'); }
+        } catch (e) { 
+            const msg = e.response?.data?.message || 'Lỗi khi lưu học vấn.';
+            flash('❌ ' + msg); 
+        }
         setSaving(false);
+    };
+
+    const openEduEdit = (edu) => {
+        setEduForm({ ...edu });
+        setShowEduForm(true);
     };
 
     const deleteEdu = async (id) => {
@@ -195,15 +238,38 @@ const Profile = () => {
 
     const saveExp = async () => {
         if (!expForm.companyName) return flash('⚠️ Nhập tên công ty');
+        if (!expForm.jobTitle) return flash('⚠️ Nhập tên vị trí');
+        if (!expForm.startDate) return flash('⚠️ Chọn ngày bắt đầu');
+
+        let payload = { ...expForm };
+        if (!payload.endDate) payload.endDate = null;
+        else if (new Date(payload.endDate) < new Date(payload.startDate)) {
+            return flash('⚠️ Ngày kết thúc phải sau ngày bắt đầu');
+        }
+
         setSaving(true);
         try {
-            await studentApi.addExperience(expForm);
+            if (expForm.id) {
+                await studentApi.updateExperience(expForm.id, payload);
+                flash('✅ Cập nhật kinh nghiệm thành công!');
+            } else {
+                await studentApi.addExperience(payload);
+                flash('✅ Thêm kinh nghiệm thành công!');
+            }
             await reload();
             setShowExpForm(false);
             setExpForm(BLANK_EXP);
-            flash('✅ Thêm kinh nghiệm thành công!');
-        } catch { flash('❌ Lỗi khi thêm.'); }
+        } catch (e) {
+            console.error(e);
+            const msg = e.response?.data?.message || 'Lỗi khi lưu kinh nghiệm.';
+            flash('❌ ' + msg); 
+        }
         setSaving(false);
+    };
+
+    const openExpEdit = (exp) => {
+        setExpForm({ ...exp });
+        setShowExpForm(true);
     };
 
     const deleteExp = async (id) => {
@@ -243,7 +309,10 @@ const Profile = () => {
             setShowInterestForm(false);
             setInterestName('');
             flash('✅ Thêm sở thích thành công!');
-        } catch { flash('❌ Lỗi khi thêm.'); }
+        } catch (e) { 
+            const msg = e.response?.data?.message || 'Lỗi khi thêm.';
+            flash('❌ ' + msg); 
+        }
         setSaving(false);
     };
 
@@ -270,7 +339,10 @@ const Profile = () => {
             await reload();
             setShowProjectForm(false);
             setProjectForm(BLANK_PROJECT);
-        } catch { flash('❌ Lỗi khi lưu dự án.'); }
+        } catch (e) { 
+            const msg = e.response?.data?.message || 'Lỗi khi lưu dự án.';
+            flash('❌ ' + msg); 
+        }
         setSaving(false);
     };
 
@@ -296,19 +368,30 @@ const Profile = () => {
 
     const saveActivity = async () => {
         if (!activityForm.name) return flash('⚠️ Vui lòng nhập tên hoạt động.');
+        if (!activityForm.startDate) return flash('⚠️ Vui lòng chọn ngày bắt đầu.');
+
+        let payload = { ...activityForm };
+        if (!payload.endDate) payload.endDate = null;
+        else if (new Date(payload.endDate) < new Date(payload.startDate)) {
+            return flash('⚠️ Ngày kết thúc phải sau ngày bắt đầu');
+        }
+
         setSaving(true);
         try {
             if (activityForm.id) {
-                await studentApi.updateActivity(activityForm.id, activityForm);
+                await studentApi.updateActivity(activityForm.id, payload);
                 flash('✅ Cập nhật hoạt động thành công!');
             } else {
-                await studentApi.addActivity(activityForm);
+                await studentApi.addActivity(payload);
                 flash('✅ Thêm hoạt động thành công!');
             }
             await reload();
             setShowActivityForm(false);
             setActivityForm(BLANK_ACTIVITY);
-        } catch { flash('❌ Lỗi khi lưu hoạt động.'); }
+        } catch (e) { 
+            const msg = e.response?.data?.message || 'Lỗi khi lưu hoạt động.';
+            flash('❌ ' + msg); 
+        }
         setSaving(false);
     };
 
@@ -368,6 +451,19 @@ const Profile = () => {
         html2pdf().from(element).set(opt).save();
     };
 
+    const calculateCompletion = () => {
+        if (!profile) return 0;
+        const fields = [
+            profile.fullName, profile.bio, profile.avatar || profile.avatarUrl, profile.phone, profile.address,
+            profile.skills?.length > 0, profile.educations?.length > 0, 
+            profile.experiences?.length > 0, profile.projects?.length > 0
+        ];
+        const filled = fields.filter(f => !!f).length;
+        return Math.round((filled / fields.length) * 100);
+    };
+
+    const completion = calculateCompletion();
+
     if (loading) return <div className="pf-layout" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Đang tải hồ sơ...</div>;
     if (!profile) return <div className="pf-layout" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Không tìm thấy hồ sơ!</div>;
 
@@ -382,11 +478,44 @@ const Profile = () => {
             )}
 
             <main className="pf-container pf-main">
+                {/* Profile Completeness Alert */}
+                <div className="pf-completeness-banner" style={{
+                    background: completion === 100 ? '#f0fdf4' : '#fff7ed',
+                    border: `1px solid ${completion === 100 ? '#bbf7d0' : '#ffedd5'}`,
+                    padding: '1rem 1.5rem',
+                    borderRadius: '12px',
+                    marginBottom: '1.5rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '1rem'
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', flex: '1 1 300px' }}>
+                        <span className="material-symbols-outlined" style={{ color: completion === 100 ? '#16a34a' : '#ea580c', marginTop: '2px' }}>
+                            {completion === 100 ? 'verified' : 'info'}
+                        </span>
+                        <div>
+                            <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1e293b', display: 'block', marginBottom: '4px' }}>
+                                Độ hoàn thiện hồ sơ: {completion}%
+                            </span>
+                            <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0, lineHeight: '1.4' }}>
+                                {completion === 100 
+                                    ? "Tuyệt vời! Hồ sơ của bạn đã sẵn sàng để ứng tuyển." 
+                                    : "Hãy cập nhật đầy đủ thông tin để tăng cơ hội trúng tuyển lên 200%."}
+                            </p>
+                        </div>
+                    </div>
+                    <div style={{ width: '100%', maxWidth: '200px', flex: '1 1 150px', height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                        <div style={{ width: `${completion}%`, height: '100%', background: completion === 100 ? '#16a34a' : '#f97316', transition: 'width 0.5s ease' }}></div>
+                    </div>
+                </div>
+
                 {/* Profile Header Card */}
                 <div className="pf-card pf-profile-header">
                     <div className="pf-profile-info">
                         <div className="pf-avatar-large" onClick={() => !isUploading && document.getElementById('avatarInput').click()} style={{ cursor: isUploading ? 'wait' : 'pointer', position: 'relative' }}>
-                            <img src={getImageUrl(profile.avatarUrl) || 'https://vectorified.com/images/default-avatar-icon-33.png'} alt="Avatar" />
+                            <img src={getImageUrl(profile.avatarUrl || profile.avatar) || 'https://vectorified.com/images/default-avatar-icon-33.png'} alt="Avatar" />
                             {isUploading && (
                                 <div className="pf-upload-overlay">
                                     <div className="pf-upload-spinner"></div>
@@ -414,9 +543,6 @@ const Profile = () => {
                     <div className="pf-actions">
                         <button className="pf-btn pf-btn-outline" onClick={openBasic}>
                             <span className="material-symbols-outlined">edit</span> Chỉnh sửa hồ sơ
-                        </button>
-                        <button className="pf-btn pf-btn-primary" onClick={handleDownloadCV}>
-                            <span className="material-symbols-outlined">download</span> Tải xuống CV
                         </button>
                     </div>
                 </div>
@@ -462,6 +588,7 @@ const Profile = () => {
                         <EducationSection
                             educations={profile.educations}
                             onAdd={() => setShowEduForm(true)}
+                            onEdit={openEduEdit}
                             onDelete={deleteEdu}
                         />
 
@@ -469,6 +596,7 @@ const Profile = () => {
                         <ExperienceSection
                             experiences={profile.experiences}
                             onAdd={() => setShowExpForm(true)}
+                            onEdit={openExpEdit}
                             onDelete={deleteExp}
                         />
 
@@ -567,6 +695,29 @@ const Profile = () => {
 
                     {/* Right Col */}
                     <div className="pf-col-right">
+                        {/* Premium CV Section */}
+                        <section className="pf-card pf-cv-card">
+                            <div className="pf-section-title">
+                                <h2>Tài liệu & Hồ sơ</h2>
+                                <span className="pf-doc-badge">PDF • Ready</span>
+                            </div>
+                            <div className="pf-cv-preview">
+                                <div className="pf-cv-mock">
+                                    <div className="pf-mock-header"></div>
+                                    <div className="pf-mock-line"></div>
+                                    <div className="pf-mock-line pf-short"></div>
+                                    <div className="pf-mock-content"></div>
+                                </div>
+                                <div className="pf-cv-info">
+                                    <p className="pf-cv-name">CV_{profile.fullName?.replace(/\s+/g, '_')}.pdf</p>
+                                    <p className="pf-cv-meta">Cập nhật: {new Date().toLocaleDateString('vi-VN')}</p>
+                                    <button className="pf-btn-premium-download" onClick={handleDownloadCV}>
+                                        <span className="material-symbols-outlined">cloud_download</span> Tải xuống CV ngay
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+
                         {/* Career Goals */}
                         <section className="pf-card">
                             <div className="pf-section-title">
@@ -954,6 +1105,7 @@ const Profile = () => {
             <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
                 <CVTemplate 
                     profile={profile} 
+                    avatarBase64={avatarBase64}
                     experiences={profile.experiences || []} 
                     educations={profile.educations || []} 
                     skills={profile.skills || []} 

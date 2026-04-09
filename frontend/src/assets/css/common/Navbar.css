@@ -3,7 +3,7 @@
     background: #fff;
     border-bottom: 1px solid #e5e7eb;
     padding: 0 2rem;
-    position: fixed;
+    position: sticky;
     top: 0;
     left: 0;
     right: 0;

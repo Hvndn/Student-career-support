@@ -40,12 +40,14 @@ public class ProjectService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
 
         if (projectData.getRepositoryUrl() != null && !projectData.getRepositoryUrl().isEmpty()) {
+            projectData.setRepositoryUrl(projectData.getRepositoryUrl().trim());
             if (!projectData.getRepositoryUrl().matches("^(https?://)?(www\\.)?github\\.com/.*$")) {
-                throw new IllegalArgumentException("Link Repository không đúng định dạng URL");
+                throw new IllegalArgumentException("Link Repository không đúng định dạng URL GitHub");
             }
         }
 
         projectData.setStudent(student);
+        projectData.setTitle(projectData.getName());
         Project savedProject = projectRepository.save(projectData);
         log.info("Đã thêm dự án mới: {} cho sinh viên ID: {}", savedProject.getName(), studentId);
         return savedProject;
@@ -61,6 +63,7 @@ public class ProjectService {
         }
 
         existing.setName(projectData.getName());
+        existing.setTitle(projectData.getName());
         existing.setDescription(projectData.getDescription());
         existing.setTechStack(projectData.getTechStack());
         existing.setRole(projectData.getRole());

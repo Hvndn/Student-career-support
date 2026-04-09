@@ -1,7 +1,8 @@
 .auth-container {
     display: flex;
     min-height: 100vh;
-    width: 100%;
+    width: 100vw;
+    max-width: 100%;
     margin: 0;
     padding: 0;
     font-family: 'Inter', 'Outfit', sans-serif;
@@ -11,8 +12,8 @@
 
 /* LEFT PANEL - Shared Branding */
 .auth-left {
-    flex: 1;
-    max-width: 480px;
+    width: 450px;
+    flex-shrink: 0;
     background: linear-gradient(135deg, #0f409f 0%, #052668 100%);
     position: relative;
     padding: 3rem;
@@ -83,7 +84,8 @@
 
 /* RIGHT PANEL - Shared Form Container */
 .auth-right {
-    flex: 2;
+    flex: 1;
+    min-width: 0;
     background-color: #ffffff;
     display: flex;
     justify-content: center;

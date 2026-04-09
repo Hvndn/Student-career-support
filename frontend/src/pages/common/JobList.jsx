@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { jobApi, studentApi } from '../../api';
-import '../../assets/css/student/JobList.css';
+import '../../assets/css/common/JobList.css';
 
 const JobList = () => {
     const [jobs, setJobs] = useState([]);
@@ -46,184 +46,237 @@ const JobList = () => {
         );
     }, [search, locationSearch, jobs]);
 
-    const handleClearFilters = () => {
-        setSearch('');
-        setLocationSearch('');
-    };
+    const displayAvatar = profile?.avatarUrl || user?.avatar || "https://vectorified.com/images/default-avatar-icon-33.png";
 
     return (
-        <div className="job-list-container">
-            <main className="job-list-content">
-                {/* Sidebar: Filters */}
-                <aside className="jobs-sidebar">
-                    <div className="filter-card">
-                        <div className="filter-header">
-                            <h2 className="filter-title">
-                                <span className="material-symbols-outlined">tune</span>
-                                Bộ lọc
-                            </h2>
-                            <button className="filter-reset" onClick={handleClearFilters}>Xoá lọc</button>
+        <div className="job-list-page">
+            <main className="container py-8">
+                {/* Header */}
+                <div className="job-list-header">
+                    <nav aria-label="Breadcrumb" className="breadcrumb">
+                        <Link to="/">Trang chủ</Link>
+                        <span className="material-symbols-outlined">chevron_right</span>
+                        <span className="active">Tìm kiếm việc làm</span>
+                    </nav>
+                    <div className="header-content">
+                        <div>
+                            <h1>Việc làm dành cho Sinh viên</h1>
+                            <p>Khám phá hơn {Math.max(1200, jobs.length)}+ cơ hội thực tập và việc làm part-time/full-time mới nhất.</p>
                         </div>
-                        
-                        <div className="filter-group">
-                            <label className="filter-label">Tìm kiếm</label>
-                            <input 
-                                className="filter-input" 
-                                placeholder="Tên công việc, công ty..." 
-                                type="text"
-                                value={search}
-                                onChange={e => setSearch(e.target.value)}
-                            />
-                        </div>
-
-                        <div className="filter-group">
-                            <label className="filter-label">Địa điểm</label>
-                            <div style={{ position: 'relative' }}>
-                                <span className="material-symbols-outlined" style={{ position: 'absolute', left: '12px', top: '10px', fontSize: '18px', color: 'var(--text-muted)' }}>location_on</span>
-                                <input 
-                                    className="filter-input" 
-                                    style={{ paddingLeft: '38px' }}
-                                    placeholder="TP. Hồ Chí Minh, Hà Nội..." 
-                                    type="text" 
-                                    value={locationSearch}
-                                    onChange={e => setLocationSearch(e.target.value)}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="filter-group">
-                            <label className="filter-label">Ngành nghề</label>
-                            <select className="filter-select">
-                                <option>Tất cả ngành nghề</option>
-                                <option>Công nghệ thông tin</option>
-                                <option>Marketing / Truyền thông</option>
-                                <option>Thiết kế đồ họa</option>
-                                <option>Kinh doanh / Bán hàng</option>
-                            </select>
-                        </div>
-
-                        <div className="filter-group">
-                            <label className="filter-label">Mức lương</label>
-                            <div className="checkbox-group">
-                                {['Dưới 5 triệu', '5 - 10 triệu', '10 - 20 triệu', 'Thoả thuận'].map(label => (
-                                    <label key={label} className="checkbox-item">
-                                        <input type="checkbox" />
-                                        <span>{label}</span>
-                                    </label>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="filter-group">
-                            <label className="filter-label">Loại hình</label>
-                            <div className="checkbox-group">
-                                {['Full-time', 'Internship', 'Part-time'].map(label => (
-                                    <label key={label} className="checkbox-item">
-                                        <input type="checkbox" />
-                                        <span>{label}</span>
-                                    </label>
-                                ))}
-                            </div>
+                        <div className="sort-filters">
+                            <button className="sort-btn active">Mới nhất</button>
+                            <button className="sort-btn">Lương cao</button>
                         </div>
                     </div>
+                </div>
 
-                    {/* Promotion Card */}
-                    <div style={{ marginTop: '1.5rem', padding: '1.8rem', background: 'linear-gradient(135deg, #111827, #374151)', borderRadius: '24px', color: '#fff', boxShadow: 'var(--shadow-md)' }}>
-                        <span className="material-symbols-outlined" style={{ color: '#fbbf24', marginBottom: '0.5rem' }}>auto_awesome</span>
-                        <h4 style={{ fontWeight: '700', marginBottom: '0.5rem' }}>CV của bạn ổn chứ?</h4>
-                        <p style={{ fontSize: '0.8rem', opacity: '0.8', marginBottom: '1.2rem', lineHeight: '1.5' }}>Ghi điểm ngay với nhà tuyển dụng bằng bộ hồ sơ chuyên nghiệp.</p>
-                        <Link to="/student/profile" style={{ display: 'block', textAlign: 'center', background: '#fff', color: '#111827', padding: '0.6rem', borderRadius: '10px', fontSize: '0.85rem', fontWeight: '700' }}>Tối ưu CV ngay</Link>
-                    </div>
-                </aside>
-
-                {/* Main Content */}
-                <div className="jobs-main">
-                    <header className="jobs-header">
-                        <div className="breadcrumb">
-                            <Link to="/">Trang chủ</Link>
-                            <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>chevron_right</span>
-                            <span>Việc làm</span>
-                        </div>
-                        <div className="jobs-title-row">
-                            <div>
-                                <h1 className="jobs-title">Việc làm dành cho bạn</h1>
-                                <p className="jobs-subtitle">Tìm kiếm hàng nghìn cơ hội nghề nghiệp phù hợp với tài năng của bạn.</p>
+                <div className="job-list-content">
+                    {/* Sidebar Filters */}
+                    <aside className="filters-sidebar">
+                        <div className="filter-card">
+                            <div className="filter-header">
+                                <h2>
+                                    <span className="material-symbols-outlined">tune</span>
+                                    Bộ lọc chi tiết
+                                </h2>
+                                <button 
+                                    className="clear-filter-btn"
+                                    onClick={() => { setSearch(''); setLocationSearch(''); }}
+                                >
+                                    Xoá lọc
+                                </button>
                             </div>
-                            <div style={{ display: 'flex', gap: '10px', background: 'var(--surface)', padding: '6px', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                                <button className="btn" style={{ padding: '6px 16px', fontSize: '0.8rem', background: 'var(--accent)', color: '#fff', borderRadius: '8px' }}>Mới nhất</button>
-                                <button className="btn" style={{ padding: '6px 16px', fontSize: '0.8rem', background: 'transparent', color: 'var(--text-muted)', borderRadius: '8px' }}>Lương cao</button>
+                            
+                            {/* Search */}
+                            <div className="filter-group">
+                                <label className="filter-label">Tìm kiếm công việc/công ty</label>
+                                <div className="search-input-wrapper">
+                                    <span className="material-symbols-outlined">search</span>
+                                    <input 
+                                        className="search-input" 
+                                        placeholder="Ví dụ: Java, FPT..." 
+                                        type="text" 
+                                        value={search}
+                                        onChange={e => setSearch(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Industry */}
+                            <div className="filter-group">
+                                <label className="filter-label">Ngành nghề</label>
+                                <select className="filter-select">
+                                    <option>Công nghệ thông tin</option>
+                                    <option>Marketing / Truyền thông</option>
+                                    <option>Thiết kế đồ họa</option>
+                                    <option>Kinh doanh / Bán hàng</option>
+                                    <option>Nhân sự</option>
+                                </select>
+                            </div>
+
+                            {/* Salary */}
+                            <div className="filter-group">
+                                <label className="filter-label">Mức lương (VNĐ)</label>
+                                <div className="checkbox-group">
+                                    <label className="checkbox-label">
+                                        <input type="checkbox" />
+                                        <span>Dưới 5 triệu</span>
+                                    </label>
+                                    <label className="checkbox-label">
+                                        <input defaultChecked type="checkbox" />
+                                        <span>5 - 10 triệu</span>
+                                    </label>
+                                    <label className="checkbox-label">
+                                        <input type="checkbox" />
+                                        <span>Trên 10 triệu</span>
+                                    </label>
+                                    <label className="checkbox-label">
+                                        <input type="checkbox" />
+                                        <span>Thoả thuận</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            {/* Job Type */}
+                            <div className="filter-group">
+                                <label className="filter-label">Loại hình</label>
+                                <div className="job-type-chips">
+                                    <button className="job-type-chip active">Full-time</button>
+                                    <button className="job-type-chip">Internship</button>
+                                    <button className="job-type-chip">Part-time</button>
+                                </div>
+                            </div>
+
+                            {/* City */}
+                            <div className="filter-group">
+                                <label className="filter-label">Thành phố</label>
+                                <div className="search-input-wrapper">
+                                    <span className="material-symbols-outlined">location_on</span>
+                                    <input 
+                                        className="search-input" 
+                                        placeholder="Hồ Chí Minh, Hà Nội..." 
+                                        type="text" 
+                                        value={locationSearch}
+                                        onChange={e => setLocationSearch(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Skills */}
+                            <div className="filter-group">
+                                <label className="filter-label">Kỹ năng yêu cầu</label>
+                                <div className="checkbox-group">
+                                    <label className="checkbox-label">
+                                        <input defaultChecked type="checkbox" />
+                                        <span>English Communication</span>
+                                    </label>
+                                    <label className="checkbox-label">
+                                        <input type="checkbox" />
+                                        <span>UI/UX Design</span>
+                                    </label>
+                                    <label className="checkbox-label">
+                                        <input defaultChecked type="checkbox" />
+                                        <span>Critical Thinking</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
-                    </header>
 
-                    {loading ? (
-                        <div style={{ textAlign: 'center', padding: '5rem' }}>
-                            <div className="premium-spinner" style={{ margin: '0 auto 1.5rem' }}></div>
-                            <p style={{ color: 'var(--text-muted)', fontWeight: '500' }}>Đang tìm kiếm những cơ hội tốt nhất...</p>
+                        {/* Promo Card */}
+                        <div className="promo-card">
+                            <span className="material-symbols-outlined" style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>auto_awesome</span>
+                            <h3>CV của bạn đã sẵn sàng?</h3>
+                            <p>Tối ưu CV bằng AI để tăng 80% tỷ lệ được gọi phỏng vấn.</p>
+                            <Link to="/student/profile" className="promo-btn">Tạo CV ngay</Link>
                         </div>
-                    ) : filtered.length === 0 ? (
-                        <div className="empty-state">
-                            <span className="material-symbols-outlined empty-icon">search_off</span>
-                            <h3 style={{ fontWeight: '700', color: 'var(--primary)', marginBottom: '0.5rem' }}>Không tìm thấy kết quả</h3>
-                            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Thử thay đổi từ khóa hoặc xóa bớt bộ lọc bạn nhé.</p>
-                            <button className="btn-detail" style={{ marginTop: '1.5rem' }} onClick={handleClearFilters}>Xoá bộ lọc</button>
-                        </div>
-                    ) : (
-                        <div className="jobs-list">
-                            {filtered.map(job => (
-                                <div key={job.id} className="job-card">
-                                    <div className="company-logo-wrapper">
+                    </aside>
+
+                    {/* Results Section */}
+                    <div className="results-section">
+                        {loading ? (
+                            <div className="empty-state">
+                                <span className="material-symbols-outlined spinner" style={{ animation: 'spin 1s linear infinite' }}>refresh</span>
+                                <h3>Đang tải...</h3>
+                                <p>Vui lòng đợi giây lát.</p>
+                            </div>
+                        ) : filtered.length === 0 ? (
+                            <div className="empty-state">
+                                <span className="material-symbols-outlined">search_off</span>
+                                <h3>Không tìm thấy việc làm</h3>
+                                <p>Rất tiếc, không có công việc nào trùng khớp với bộ lọc của bạn.</p>
+                                <button onClick={() => { setSearch(''); setLocationSearch(''); }} className="btn btn-outline" style={{ marginTop: '1.5rem' }}>Xoá bộ lọc</button>
+                            </div>
+                        ) : (
+                            filtered.map(job => (
+                                <div key={job.id} className="job-card fade-in">
+                                    <div className="company-logo-ph">
                                         {job.companyName ? job.companyName.charAt(0).toUpperCase() : 'C'}
                                     </div>
                                     <div className="job-info">
-                                        <div className="job-card-header">
+                                        <div className="job-header-row">
                                             <div>
-                                                <h3 className="job-title">{job.title}</h3>
-                                                <p className="job-company">{job.companyName}</p>
+                                                <h3 className="job-title">
+                                                    <Link to={`/jobs/${job.id}`}>{job.title}</Link>
+                                                </h3>
+                                                <p className="company-name">{job.companyName}</p>
                                             </div>
                                             <button className="bookmark-btn">
-                                                <span className="material-symbols-outlined">bookmark</span>
+                                                <span className="material-symbols-outlined">bookmark_add</span>
                                             </button>
                                         </div>
                                         <div className="job-meta">
-                                            <div className="meta-item">
+                                            <div className="meta-item meta-salary">
                                                 <span className="material-symbols-outlined">payments</span>
-                                                <span className="salary-text">{job.salary || 'Thoả thuận'}</span>
+                                                <span>{job.salary || 'Thoả thuận'}</span>
                                             </div>
                                             <div className="meta-item">
                                                 <span className="material-symbols-outlined">location_on</span>
-                                                <span>{job.location || 'Địa điểm khác'}</span>
+                                                <span>{job.location || 'Chưa cập nhật'}</span>
                                             </div>
                                             <div className="meta-item">
-                                                <span className="material-symbols-outlined">work</span>
-                                                <span>{job.jobType || 'Toàn thời gian'}</span>
+                                                <span className="material-symbols-outlined">schedule</span>
+                                                <span>Có sẵn</span>
                                             </div>
                                         </div>
                                         <div className="job-tags">
-                                            {job.level && <span className="job-tag">{job.level}</span>}
-                                            {job.industry && <span className="job-tag">{job.industry}</span>}
-                                            <span className="job-tag">Cơ hội thực tập</span>
+                                            {job.jobType && (
+                                                <span className="job-tag">{job.jobType}</span>
+                                            )}
+                                            {job.level && (
+                                                <span className="job-tag">{job.level}</span>
+                                            )}
                                         </div>
                                         <div className="job-actions">
-                                            <Link to={`/jobs/${job.id}`} className="btn-detail">Xem chi tiết</Link>
-                                            <Link to={`/jobs/${job.id}`} className="btn-apply">Ứng tuyển nhanh</Link>
+                                            <Link to={`/jobs/${job.id}`} className="btn-sm btn-secondary">Chi tiết</Link>
+                                            {(!user || user?.role === 'ROLE_STUDENT') && (
+                                                (job.isApplied || job.applied) ? (
+                                                    <Link to={`/jobs/${job.id}`} className="btn-sm" style={{ padding: '0.5rem 1.5rem', borderRadius: '8px', border: '1px solid var(--border)', color: 'var(--text-muted)', background: 'var(--surface-hover)' }}>Đã ứng tuyển</Link>
+                                                ) : (
+                                                    <Link to={`/jobs/${job.id}`} className="btn-sm btn-primary" style={{ padding: '0.5rem 1.5rem', borderRadius: '8px' }}>Ứng tuyển nhanh</Link>
+                                                )
+                                            )}
                                         </div>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                    )}
+                            ))
+                        )}
 
-                    {/* Pagination */}
-                    {!loading && filtered.length > 0 && (
-                        <div className="pagination">
-                            <button className="page-btn"><span className="material-symbols-outlined">chevron_left</span></button>
-                            <button className="page-btn active">1</button>
-                            <button className="page-btn">2</button>
-                            <button className="page-btn">3</button>
-                            <button className="page-btn"><span className="material-symbols-outlined">chevron_right</span></button>
-                        </div>
-                    )}
+                        {/* Pagination */}
+                        {!loading && filtered.length > 0 && (
+                            <div className="pagination">
+                                <button className="page-btn">
+                                    <span className="material-symbols-outlined">chevron_left</span>
+                                </button>
+                                <button className="page-btn active">1</button>
+                                <button className="page-btn">2</button>
+                                <button className="page-btn">3</button>
+                                <span className="page-dots">...</span>
+                                <button className="page-btn">
+                                    <span className="material-symbols-outlined">chevron_right</span>
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </main>
         </div>

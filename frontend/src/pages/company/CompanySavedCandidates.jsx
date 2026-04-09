@@ -227,7 +227,7 @@ const CompanySavedCandidates = () => {
                                             <tr key={candidate.id}>
                                                 <td>
                                                     <div className="user-profile">
-                                                        <img src={candidate.avatar || 'https://i.pravatar.cc/150'} alt={candidate.name} className="user-avatar" />
+                                                        <img src={candidate.avatar || `https://ui-avatars.com/api/?name=${candidate.name}&background=random`} alt={candidate.name} className="user-avatar" />
                                                         <div className="user-info">
                                                             <span className="user-name">{candidate.name}</span>
                                                             <span className="user-pos">{candidate.university}</span>

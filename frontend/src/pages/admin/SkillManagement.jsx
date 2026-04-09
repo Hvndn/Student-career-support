@@ -213,7 +213,7 @@ const SkillManagement = () => {
                                 <span className="user-name">Admin SB</span>
                                 <span className="user-role">Quản trị viên</span>
                             </div>
-                            <img src="https://i.pravatar.cc/100?img=12" alt="Avatar" className="user-avatar" />
+                            <img src={`https://ui-avatars.com/api/?name=Admin&background=0d5cda&color=fff`} alt="Avatar" className="user-avatar" />
                         </div>
                     </div>
                 </header>

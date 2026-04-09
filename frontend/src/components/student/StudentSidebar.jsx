@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   { icon: '💼', label: 'Việc làm', to: '/jobs' },
   { icon: '📋', label: 'Đơn ứng tuyển', to: '/student/applications' },
   { icon: '🔖', label: 'Đã lưu', to: '/student/saved' },
+  { icon: '📅', label: 'Phỏng vấn', to: '/student/interviews' },
   { icon: '🔔', label: 'Thông báo', to: '/student/notifications' },
   { icon: '👤', label: 'Hồ sơ', to: '/student/profile' },
   { icon: '⚙️', label: 'Cài đặt', to: '#' },
@@ -27,7 +28,7 @@ const StudentSidebar = () => {
       <div className="ss-header">
         <Link to="/" className="ss-brand">
           <span className="ss-brand-icon">🎯</span>
-          <span className="ss-brand-name">Nexus Talent</span>
+          <span className="ss-brand-name">Fivecore</span>
         </Link>
       </div>
 

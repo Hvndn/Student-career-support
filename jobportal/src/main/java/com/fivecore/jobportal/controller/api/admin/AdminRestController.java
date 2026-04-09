@@ -2,6 +2,7 @@ package com.fivecore.jobportal.controller.api.admin;
 
 import com.fivecore.jobportal.dto.ApiResponse;
 import com.fivecore.jobportal.service.admin.AdminService;
+import com.fivecore.jobportal.service.auth.PasswordResetService;
 import com.fivecore.jobportal.service.auth.SkillService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ public class AdminRestController {
 
     private final SkillService skillService;
     private final AdminService adminService;
+    private final PasswordResetService passwordResetService;
 
     /**
      * API Thống kê hệ thống.
@@ -168,5 +170,26 @@ public class AdminRestController {
     @GetMapping("/reports")
     public ResponseEntity<ApiResponse<java.util.List<Object>>> getReports() {
         return ResponseEntity.ok(ApiResponse.success("Lấy báo cáo thành công", java.util.Collections.emptyList()));
+    }
+
+    /**
+     * API Lấy danh sách yêu cầu cấp lại mật khẩu.
+     */
+    @GetMapping("/password-requests")
+    public ResponseEntity<ApiResponse<java.util.List<com.fivecore.jobportal.entity.PasswordResetRequest>>> getPasswordRequests() {
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách yêu cầu thành công", passwordResetService.getAllPendingRequests()));
+    }
+
+    /**
+     * API Phê duyệt cấp lại mật khẩu.
+     */
+    @PostMapping("/password-requests/{id}/approve")
+    public ResponseEntity<ApiResponse<Object>> approvePasswordRequest(@PathVariable Integer id) {
+        boolean success = passwordResetService.approveRequest(id);
+        if (success) {
+            return ResponseEntity.ok(ApiResponse.success("Đã cấp lại mật khẩu và gửi email thành công", null));
+        } else {
+            return ResponseEntity.badRequest().body(ApiResponse.error("Phê duyệt thất bại hoặc yêu cầu không tồn tại", "APPROVE_FAILED"));
+        }
     }
 }

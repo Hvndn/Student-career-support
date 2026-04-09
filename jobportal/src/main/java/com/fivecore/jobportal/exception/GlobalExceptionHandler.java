@@ -1,6 +1,8 @@
 package com.fivecore.jobportal.exception;
 
 import com.fivecore.jobportal.dto.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -16,7 +18,26 @@ import java.util.Map;
  * Đảm bảo mọi lỗi đều trả về định dạng JSON thay vì HTML.
  */
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<Object>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.error("Dữ liệu không hợp lệ: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(ex.getMessage(), "BAD_REQUEST"));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponse<Object>> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        log.error("Lỗi vi phạm ràng buộc dữ liệu: {}", ex.getMessage());
+        String message = "Lỗi dữ liệu: Có thể trường thông tin quá dài hoặc thiếu trường bắt buộc.";
+        if (ex.getRootCause() != null) {
+            message += " Chi tiết: " + ex.getRootCause().getMessage();
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(message, "DATA_INTEGRITY_ERROR"));
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Object>> handleGeneralException(Exception ex) {

@@ -169,7 +169,7 @@ const UserManagement = () => {
                                 <span className="user-name">Alex Rivera</span>
                                 <span className="user-role">Quản trị viên cấp cao</span>
                             </div>
-                            <img src="https://i.pravatar.cc/100?img=11" alt="Avatar" className="user-avatar" />
+                            <img src={`https://ui-avatars.com/api/?name=Admin&background=0d5cda&color=fff`} alt="Avatar" className="user-avatar" />
                         </div>
                     </div>
                 </header>
@@ -430,7 +430,7 @@ const UserManagement = () => {
                         <div className="profile-header-info">
                             <div className="profile-avatar-wrapper">
                                 <img 
-                                    src={selectedUser.studentProfile?.avatarUrl || selectedUser.companyProfile?.logoUrl || "https://i.pravatar.cc/150?u=" + selectedUser.id} 
+                                    src={selectedUser.studentProfile?.avatarUrl || selectedUser.companyProfile?.logoUrl || `https://ui-avatars.com/api/?name=${selectedUser.fullName}&background=0d5cda&color=fff`} 
                                     alt="Avatar" 
                                     className="profile-avatar-big" 
                                 />

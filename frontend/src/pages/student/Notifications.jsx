@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { studentApi } from '../../api';
-import '../../assets/css/student/Notifications.css';
+import '../../assets/css/common/Notifications.css';
 
 const Notifications = () => {
     const [notifications, setNotifications] = useState([]);
@@ -11,7 +11,7 @@ const Notifications = () => {
     useEffect(() => {
         studentApi.getNotifications()
             .then(res => {
-                setNotifications(res.data.data || []);
+                setNotifications(res.data.data);
                 setLoading(false);
             })
             .catch(err => {
@@ -21,25 +21,20 @@ const Notifications = () => {
     }, []);
 
     const markAsRead = (id) => {
-        const notif = notifications.find(n => n.id === id);
-        if (notif && !notif.isRead) {
-            setNotifications(notifications.map(n => n.id === id ? { ...n, isRead: true } : n));
-            // Optional: call API to mark as read
-        }
+        setNotifications(notifications.map(n => n.id === id ? { ...n, isRead: true } : n));
     };
 
     const markAllRead = () => {
         setNotifications(notifications.map(n => ({ ...n, isRead: true })));
-        // Optional: call API to mark all as read
     };
 
-    const getIconConfig = (title) => {
+    const getIcon = (title) => {
         const t = (title || '').toLowerCase();
-        if (t.includes('chấp nhận') || t.includes('accepted')) return { icon: 'check_circle', class: 'bg-accept' };
-        if (t.includes('từ chối') || t.includes('rejected')) return { icon: 'cancel', class: 'bg-reject' };
-        if (t.includes('ứng tuyển') || t.includes('apply')) return { icon: 'send', class: 'bg-apply' };
-        if (t.includes('phỏng vấn') || t.includes('interview')) return { icon: 'event', class: 'bg-interview' };
-        return { icon: 'notifications', class: 'bg-system' };
+        if (t.includes('chấp nhận') || t.includes('accepted')) return { icon: 'check_circle', class: 'icon-green' };
+        if (t.includes('từ chối') || t.includes('rejected')) return { icon: 'cancel', class: 'icon-red' };
+        if (t.includes('ứng tuyển') || t.includes('apply')) return { icon: 'send', class: 'icon-blue' };
+        if (t.includes('phỏng vấn') || t.includes('interview')) return { icon: 'event', class: 'icon-purple' };
+        return { icon: 'notifications', class: 'icon-amber' };
     };
 
     const filtered = notifications.filter(n => {
@@ -51,43 +46,47 @@ const Notifications = () => {
     const unreadCount = notifications.filter(n => !n.isRead).length;
 
     if (loading) return (
-        <div className="notifications-container">
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60vh' }}>
-                <div className="premium-spinner" style={{ marginBottom: '1.5rem' }}></div>
-                <p style={{ color: 'var(--text-muted)', fontWeight: '500' }}>Đang tải thông báo của bạn...</p>
+        <div className="notifications-page" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ textAlign: 'center' }}>
+                <span className="material-symbols-outlined premium-spinner">refresh</span>
+                <p className="loading-text" style={{ marginTop: '1rem' }}>Đang tải thông báo...</p>
             </div>
         </div>
     );
 
     return (
-        <div className="notifications-container">
-            <main className="notifications-content">
+        <div className="notifications-page">
+            <div className="notifications-container">
                 {/* Breadcrumb */}
-                <nav className="notifications-breadcrumb">
+                <nav className="notif-breadcrumb">
                     <Link to="/">Trang chủ</Link>
-                    <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>chevron_right</span>
-                    <span style={{ color: 'var(--primary)', fontWeight: '700' }}>Thông báo</span>
+                    <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>chevron_right</span>
+                    <span style={{ color: 'var(--text)', fontWeight: 600 }}>Thông báo</span>
                 </nav>
 
                 {/* Header */}
-                <header className="notifications-header">
-                    <div className="notifications-title-group">
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                            <h1>Thông báo</h1>
-                            {unreadCount > 0 && <span className="unread-badge">{unreadCount} tin mới</span>}
-                        </div>
-                        <p>Theo dõi tiến độ hồ sơ và tin tức quan trọng.</p>
+                <div className="notif-header">
+                    <div>
+                        <h1 className="notif-title">Thông báo</h1>
+                        <p className="notif-desc">Cập nhật mới nhất về đơn ứng tuyển và hoạt động của bạn.</p>
                     </div>
-                    {unreadCount > 0 && (
-                        <button className="mark-all-btn" onClick={markAllRead}>
-                            <span className="material-symbols-outlined">done_all</span>
-                            Đánh dấu đã đọc tất cả
-                        </button>
-                    )}
-                </header>
+                    <div className="notif-actions">
+                        {unreadCount > 0 && (
+                            <span className="notif-unread-badge">
+                                {unreadCount} chưa đọc
+                            </span>
+                        )}
+                        {unreadCount > 0 && (
+                            <button onClick={markAllRead} className="btn-mark-all">
+                                <span className="material-symbols-outlined">done_all</span>
+                                Đọc tất cả
+                            </button>
+                        )}
+                    </div>
+                </div>
 
                 {/* Filter Tabs */}
-                <div className="notifications-tabs">
+                <div className="notif-tabs">
                     {[
                         { key: 'all', label: 'Tất cả' },
                         { key: 'unread', label: 'Chưa đọc' },
@@ -96,53 +95,64 @@ const Notifications = () => {
                         <button
                             key={tab.key}
                             onClick={() => setFilter(tab.key)}
-                            className={`tab-btn ${filter === tab.key ? 'active' : ''}`}
+                            className={`notif-tab ${filter === tab.key ? 'active' : ''}`}
                         >
                             {tab.label}
                         </button>
                     ))}
                 </div>
 
-                {/* List Content */}
+                {/* Notifications List */}
                 {filtered.length === 0 ? (
-                    <div className="empty-notifications">
-                        <div className="empty-icon-box">
-                            <span className="material-symbols-outlined">{filter === 'unread' ? 'done_all' : 'notifications_off'}</span>
-                        </div>
-                        <h3>{filter === 'unread' ? 'Bạn đã đọc hết!' : 'Chưa có thông báo'}</h3>
-                        <p>{filter === 'unread' ? 'Hộp thư của bạn sạch sẽ rồi đó.' : 'Khi có tin nhắn mới từ nhà tuyển dụng, chúng tôi sẽ báo cho bạn ngay.'}</p>
+                    <div className="empty-notif">
+                        <span className="material-symbols-outlined">notifications_off</span>
+                        <h3>
+                            {filter === 'unread' ? 'Không có thông báo chưa đọc' : 'Chưa có thông báo'}
+                        </h3>
+                        <p>
+                            {filter === 'unread'
+                                ? 'Bạn đã đọc hết tất cả thông báo.'
+                                : 'Khi có cập nhật mới về đơn ứng tuyển, thông báo sẽ xuất hiện ở đây.'}
+                        </p>
                     </div>
                 ) : (
-                    <div className="notifications-list">
+                    <div className="notif-list">
                         {filtered.map(n => {
-                            const iconConfig = getIconConfig(n.title);
+                            const iconConfig = getIcon(n.title);
                             return (
                                 <div
                                     key={n.id}
                                     onClick={() => markAsRead(n.id)}
-                                    className={`notification-card ${n.isRead ? 'read' : 'unread'}`}
+                                    className={`notif-item ${n.isRead ? 'read' : 'unread'}`}
                                 >
-                                    <div className={`notif-icon-box ${iconConfig.class}`}>
+                                    {/* Icon */}
+                                    <div className={`notif-icon-wrapper ${iconConfig.class}`}>
                                         <span className="material-symbols-outlined">{iconConfig.icon}</span>
                                     </div>
-                                    <div className="notif-info">
-                                        <div className="notif-top">
-                                            <h3 className="notif-title">{n.title || 'Cập nhật từ hệ thống'}</h3>
-                                            <span className="notif-time">{n.createdAt || 'Vừa xong'}</span>
+
+                                    {/* Content */}
+                                    <div className="notif-content">
+                                        <div className="notif-header-row">
+                                            <h3 className="notif-item-title">
+                                                {n.title || 'Thông báo mới'}
+                                            </h3>
+                                            <div className="notif-meta">
+                                                {!n.isRead && <span className="unread-dot"></span>}
+                                                <span className="notif-time">
+                                                    {n.createdAt || 'Vừa xong'}
+                                                </span>
+                                            </div>
                                         </div>
-                                        <p className="notif-message">{n.content || n.message}</p>
+                                        <p className="notif-message">
+                                            {n.content || n.message}
+                                        </p>
                                     </div>
-                                    {!n.isRead && (
-                                        <div style={{ position: 'absolute', right: '10px', top: '10px' }}>
-                                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent)' }}></div>
-                                        </div>
-                                    )}
                                 </div>
                             );
                         })}
                     </div>
                 )}
-            </main>
+            </div>
         </div>
     );
 };

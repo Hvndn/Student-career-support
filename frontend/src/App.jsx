@@ -15,12 +15,16 @@ import LoginSuccess from './pages/common/LoginSuccess'
 import Register from './pages/common/Register'
 import JobDetail from './pages/common/JobDetail'
 import JobList from './pages/common/JobList'
+import ForgotPassword from './pages/common/ForgotPassword'
+import ResetPassword from './pages/common/ResetPassword'
 
 // student pages
+import Dashboard from './pages/student/Dashboard'
 import Profile from './pages/student/Profile'
 import Applications from './pages/student/Applications'
 import SavedJobs from './pages/student/SavedJobs'
 import Notifications from './pages/student/Notifications'
+import Interviews from './pages/student/Interviews'
 
 // company pages
 import CompanyDashboard from './pages/company/CompanyDashboard'
@@ -46,6 +50,7 @@ import UserManagement from './pages/admin/UserManagement'
 import CompanyVerification from './pages/admin/CompanyVerification'
 import JobApproval from './pages/admin/JobApproval'
 import Reports from './pages/admin/Reports'
+import AdminPasswordRequests from './pages/admin/AdminPasswordRequests'
 
 // Thành phần xử lý hiệu ứng load trang khi chuyển route
 const RouteChangeHandler = ({ setIsLoading }) => {
@@ -78,7 +83,7 @@ const RouteChangeHandler = ({ setIsLoading }) => {
 
 const AppContent = () => {
   const location = useLocation();
-  const hideOnRoutes = ['/login', '/register', '/login-success'];
+  const hideOnRoutes = ['/login', '/register', '/login-success', '/forgot-password', '/reset-password'];
   const shouldHide = hideOnRoutes.includes(location.pathname);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -109,6 +114,8 @@ const AppContent = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/login-success" element={<LoginSuccess />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/jobs" element={<JobList />} />
         <Route path="/jobs/:id" element={<JobDetail />} />
         
@@ -120,10 +127,12 @@ const AppContent = () => {
         <Route path="/student/*" element={
           <ProtectedRoute requiredRole="ROLE_STUDENT">
             <Routes>
+              <Route path="dashboard" element={<Dashboard />} />
               <Route path="profile" element={<Profile />} />
               <Route path="applications" element={<Applications />} />
               <Route path="saved" element={<SavedJobs />} />
               <Route path="notifications" element={<Notifications />} />
+              <Route path="interviews" element={<Interviews />} />
             </Routes>
           </ProtectedRoute>
         } />
@@ -159,6 +168,7 @@ const AppContent = () => {
               <Route path="users" element={<UserManagement />} />
               <Route path="companies" element={<CompanyVerification />} />
               <Route path="jobs" element={<JobApproval />} />
+              <Route path="password-requests" element={<AdminPasswordRequests />} />
               <Route path="reports" element={<Reports />} />
             </Routes>
           </ProtectedRoute>

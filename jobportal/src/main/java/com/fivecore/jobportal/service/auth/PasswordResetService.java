@@ -1,8 +1,8 @@
 package com.fivecore.jobportal.service.auth;
 
-import com.fivecore.jobportal.entity.PasswordResetToken;
+import com.fivecore.jobportal.entity.PasswordResetRequest;
 import com.fivecore.jobportal.entity.User;
-import com.fivecore.jobportal.repository.PasswordResetTokenRepository;
+import com.fivecore.jobportal.repository.PasswordResetRequestRepository;
 import com.fivecore.jobportal.repository.UserRepository;
 import com.fivecore.jobportal.service.interaction.EmailService;
 import lombok.RequiredArgsConstructor;
@@ -12,11 +12,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 /**
- * Dịch vụ Khôi phục Mật khẩu - Xử lý logic quên mật khẩu và đặt lại mật khẩu.
+ * Dịch vụ Khôi phục Mật khẩu - Xử lý logic yêu cầu cấp lại mật khẩu bởi Admin.
  */
 @Service
 @RequiredArgsConstructor
@@ -24,17 +25,17 @@ import java.util.UUID;
 public class PasswordResetService {
 
     private final UserRepository userRepository;
-    private final PasswordResetTokenRepository tokenRepository;
+    private final PasswordResetRequestRepository requestRepository;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
 
     /**
-     * Tạo token reset và gửi email cho người dùng.
+     * Tạo yêu cầu cấp lại mật khẩu và lưu vào hệ thống cho Admin duyệt.
      * @param email Email của người dùng cần reset
-     * @return true nếu email tồn tại và đã gửi, ngược lại false
+     * @return true nếu email tồn tại và đã tạo yêu cầu, ngược lại false
      */
     @Transactional
-    public boolean createPasswordResetToken(String email) {
+    public boolean createPasswordResetRequest(String email) {
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isEmpty()) {
             log.warn("Yêu cầu reset mật khẩu cho email không tồn tại: {}", email);
@@ -42,58 +43,70 @@ public class PasswordResetService {
         }
 
         User user = userOptional.get();
-        // Xóa token cũ nếu có
-        tokenRepository.deleteByUser(user);
+        
+        // Kiểm tra xem đã có yêu cầu PENDING chưa
+        List<PasswordResetRequest> pendingRequests = requestRepository.findByUserAndStatus(user, PasswordResetRequest.RequestStatus.PENDING);
+        if (!pendingRequests.isEmpty()) {
+            log.info("Đã có yêu cầu đang chờ xử lý cho email: {}", email);
+            return true;
+        }
 
-        // Tạo token mới ngẫu nhiên
-        String token = UUID.randomUUID().toString();
-        PasswordResetToken resetToken = PasswordResetToken.builder()
-                .token(token)
+        // Tạo yêu cầu mới
+        PasswordResetRequest request = PasswordResetRequest.builder()
                 .user(user)
-                .expiryDate(LocalDateTime.now().plusHours(2)) // Hết hạn sau 2 giờ
+                .requestDate(LocalDateTime.now())
+                .status(PasswordResetRequest.RequestStatus.PENDING)
                 .build();
 
-        tokenRepository.save(resetToken);
-
-        // Gửi email (Giả lập link reset)
-        String resetLink = "http://localhost:8080/reset-password?token=" + token;
-        String emailContent = "Chào " + user.getFullName() + ",\n\n" +
-                "Bạn đã yêu cầu đặt lại mật khẩu. Vui lòng nhấn vào link bên dưới để thực hiện:\n" +
-                resetLink + "\n\n" +
-                "Link này sẽ hết hạn sau 2 giờ.\n" +
-                "Nếu bạn không yêu cầu điều này, vui lòng bỏ qua email này.";
-
-        emailService.sendSimpleEmail(user.getEmail(), "[Student Career] Khôi phục mật khẩu", emailContent);
+        requestRepository.save(request);
+        log.info("Đã tạo yêu cầu cấp lại mật khẩu cho: {}", email);
         
         return true;
     }
 
     /**
-     * Thực hiện đặt lại mật khẩu mới.
-     * @param token Mã xác thực
-     * @param newPassword Mật khẩu mới
-     * @return true nếu reset thành công, false nếu token không hợp lệ hoặc hết hạn
+     * Lấy danh sách toàn bộ yêu cầu đang chờ xử lý.
+     */
+    public List<PasswordResetRequest> getAllPendingRequests() {
+        return requestRepository.findByStatus(PasswordResetRequest.RequestStatus.PENDING);
+    }
+
+    /**
+     * Admin phê duyệt yêu cầu: Tự động tạo mật khẩu mới và gửi mail.
+     * @param requestId ID của yêu cầu
+     * @return true nếu thành công
      */
     @Transactional
-    public boolean resetPassword(String token, String newPassword) {
-        Optional<PasswordResetToken> tokenOptional = tokenRepository.findByToken(token);
-        
-        if (tokenOptional.isEmpty() || tokenOptional.get().isExpired()) {
-            log.warn("Token reset mật khẩu không hợp lệ hoặc đã hết hạn: {}", token);
+    public boolean approveRequest(Integer requestId) {
+        Optional<PasswordResetRequest> requestOpt = requestRepository.findById(requestId);
+        if (requestOpt.isEmpty() || requestOpt.get().getStatus() == PasswordResetRequest.RequestStatus.COMPLETED) {
             return false;
         }
 
-        PasswordResetToken resetToken = tokenOptional.get();
-        User user = resetToken.getUser();
+        PasswordResetRequest request = requestOpt.get();
+        User user = request.getUser();
+
+        // 1. Tạo mật khẩu ngẫu nhiên (8 ký tự)
+        String newPassword = UUID.randomUUID().toString().substring(0, 8);
         
-        // Cập nhật mật khẩu mới (Mã hóa)
+        // 2. Cập nhật mật khẩu vào DB (Mã hóa)
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
 
-        // Xóa token sau khi dùng xong
-        tokenRepository.delete(resetToken);
-        log.info("Đã đặt lại mật khẩu thành công cho người dùng: {}", user.getEmail());
-        
+        // 3. Gửi email thông báo mật khẩu mới
+        String emailContent = "Chào " + user.getFullName() + ",\n\n" +
+                "Yêu cầu cấp lại mật khẩu của bạn đã được Quản trị viên phê duyệt.\n" +
+                "Mật khẩu mới của bạn là: " + newPassword + "\n\n" +
+                "Vui lòng đăng nhập và đổi mật khẩu ngay để đảm bảo an toàn.\n" +
+                "Trân trọng,\nFivecore Team";
+
+        emailService.sendSimpleEmail(user.getEmail(), "[Student Career] Mật khẩu mới của bạn", emailContent);
+
+        // 4. Cập nhật trạng thái yêu cầu
+        request.setStatus(PasswordResetRequest.RequestStatus.COMPLETED);
+        requestRepository.save(request);
+
+        log.info("Admin đã cấp lại mật khẩu thành công cho người dùng: {}", user.getEmail());
         return true;
     }
 }

@@ -105,6 +105,17 @@ public class ApplicationService {
         application.setStatus(status);
         applicationRepository.save(application);
         log.info("Đã cập nhật trạng thái đơn ứng tuyển ID {} sang {}", applicationId, status);
+        
+        // Gửi thông báo cho ứng viên
+        if (status == Application.ApplicationStatus.accepted) {
+            notificationService.sendNotification(application.getStudent().getUser(),
+                    "Chúc mừng! Đơn ứng tuyển được duyệt",
+                    "Đơn ứng tuyển của bạn vào vị trí " + application.getJob().getTitle() + " đã được doanh nghiệp duyệt. Vui lòng chờ lịch phỏng vấn sắp tới!");
+        } else if (status == Application.ApplicationStatus.rejected) {
+            notificationService.sendNotification(application.getStudent().getUser(),
+                    "Cập nhật hồ sơ ứng tuyển",
+                    "Rất tiếc, đơn ứng tuyển của bạn vào vị trí " + application.getJob().getTitle() + " chưa phù hợp tại thời điểm này.");
+        }
     }
 
     /**
@@ -140,11 +151,11 @@ public class ApplicationService {
     }
 
     /**
-     * Hủy đơn ứng tuyển (US-008).
+     * Hủy đơn ứng tuyển theo jobId + studentId (US-008).
      */
     @Transactional
-    public void cancelApplication(Integer applicationId, Integer studentId) {
-        Application application = applicationRepository.findById(applicationId)
+    public void cancelApplication(Integer studentId, Integer jobId) {
+        Application application = applicationRepository.findByStudentIdAndJobId(studentId, jobId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn ứng tuyển"));
 
         if (!application.getStudent().getId().equals(studentId)) {
@@ -152,10 +163,10 @@ public class ApplicationService {
         }
 
         if (application.getStatus() != Application.ApplicationStatus.pending) {
-            throw new RuntimeException("Chỉ có thể hủy đơn ứng tuyển đang ở trạng thái chờ duyệt");
+            throw new RuntimeException("Chỉ có thể hủy khi đơn đang ở trạng thái chờ duyệt (pending)");
         }
 
         applicationRepository.delete(application);
-        log.info("Sinh viên ID {} đã hủy đơn ứng tuyển ID {}", studentId, applicationId);
+        log.info("Sinh viên ID {} đã hủy đơn ứng tuyển vị trí job ID {}", studentId, jobId);
     }
 }

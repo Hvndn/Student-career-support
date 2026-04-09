@@ -198,7 +198,7 @@ const CompanyCandidates = () => {
                                             <tr key={app.id} onClick={() => handleOpenModal(app.studentId)}>
                                                 <td>
                                                     <div className="candidate-info-cell">
-                                                        <img src={app.studentAvatar || 'https://i.pravatar.cc/150'} alt={app.studentName} className="candidate-avatar" />
+                                                        <img src={app.studentAvatar || `https://ui-avatars.com/api/?name=${app.studentName}&background=random`} alt={app.studentName} className="candidate-avatar" />
                                                         <div className="candidate-name-group">
                                                             <span className="candidate-name">{app.studentName}</span>
                                                             <span className="candidate-meta">ID: S{app.studentId}</span>

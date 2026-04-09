@@ -47,7 +47,7 @@ const Navbar = () => {
                     height: '64px',
                 }}>
                     <Link to="/" style={{ fontWeight: 800, fontSize: '1.1rem', color: '#111827', textDecoration: 'none' }}>
-                        Nexus Talent
+                        Fivecore
                     </Link>
                     <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
                         <Link to="/" style={{ color: '#374151', fontWeight: 600, fontSize: '0.9rem', textDecoration: 'none' }}>Trang chủ</Link>

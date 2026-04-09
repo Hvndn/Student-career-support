@@ -172,7 +172,7 @@ const CompanySearchCandidates = () => {
                                         className={`candidate-card-sm ${selectedCandidate?.id === candidate.id ? 'active' : ''}`}
                                         onClick={() => setSelectedCandidate(candidate)}
                                     >
-                                        <img src={candidate.avatarUrl || 'https://i.pravatar.cc/150'} alt={candidate.fullName} className="card-avatar" />
+                                        <img src={candidate.avatarUrl || `https://ui-avatars.com/api/?name=${candidate.fullName}&background=random`} alt={candidate.fullName} className="card-avatar" />
                                         <div className="card-details">
                                             <h4 className="card-name">{candidate.fullName}</h4>
                                             <p className="card-pos">{candidate.major}</p>
@@ -193,7 +193,7 @@ const CompanySearchCandidates = () => {
                                     <div className="preview-content">
                                         <div className="preview-header">
                                             <div className="user-main">
-                                                <img src={selectedCandidate.avatarUrl || 'https://i.pravatar.cc/150'} alt={selectedCandidate.fullName} className="large-avatar" />
+                                                <img src={selectedCandidate.avatarUrl || `https://ui-avatars.com/api/?name=${selectedCandidate.fullName}&background=random`} alt={selectedCandidate.fullName} className="large-avatar" />
                                                 <div>
                                                     <h3>{selectedCandidate.fullName}</h3>
                                                     <p className="large-pos">{selectedCandidate.major} {selectedCandidate.location && `• ${selectedCandidate.location}`}</p>

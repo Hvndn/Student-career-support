@@ -55,4 +55,11 @@ public class InterviewService {
         log.info("Đã sắp xếp lịch phỏng vấn cho đơn ứng tuyển ID: {}", application.getId());
         return savedInterview;
     }
+
+    /**
+     * Lấy danh sách phỏng vấn của sinh viên.
+     */
+    public java.util.List<Interview> getInterviewsByStudent(Integer studentId) {
+        return interviewRepository.findByApplication_Student_Id(studentId);
+    }
 }

@@ -10,6 +10,7 @@ const AdminSidebar = () => {
         { path: '/admin/jobs', icon: 'work', label: 'Quản lý việc làm' },
         { path: '/admin/companies/pending', icon: 'domain_verification', label: 'Duyệt doanh nghiệp' },
         { path: '/admin/skills', icon: 'settings_suggest', label: 'Quản lý kỹ năng' },
+        { path: '/admin/password-requests', icon: 'lock_reset', label: 'Cấp lại mật khẩu' },
         { path: '/admin/users', icon: 'group', label: 'Quản lý người dùng' },
     ];
 

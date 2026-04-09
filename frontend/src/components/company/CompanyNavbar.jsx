@@ -33,7 +33,7 @@ const CompanyTopbar = ({ activeTab = 'Jobs' }) => {
     };
   }, []);
 
-  const companyName = companyData.name || 'Nexus Talent';
+  const companyName = companyData.name || 'Fivecore';
   const userEmail = companyData.email || user.email || '...';
 
   return (
@@ -41,7 +41,7 @@ const CompanyTopbar = ({ activeTab = 'Jobs' }) => {
       <div className="cd-topbar-left">
         <Link to="/company/dashboard" className="cd-logo">
           <span className="cd-logo-icon">🎯</span>
-          <span className="cd-logo-text">Nexus Talent</span>
+          <span className="cd-logo-text">Fivecore</span>
         </Link>
         <div className="cd-nav-divider"></div>
         <Link to="/employer/pricing" className="cd-tab">Bảng giá</Link>

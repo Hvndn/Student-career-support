@@ -65,7 +65,9 @@ export const authApi = {
         localStorage.removeItem('user');
         return api.post('/auth/logout');
     },
-    getCurrentUser: () => api.get('/auth/me')
+    getCurrentUser: () => api.get('/auth/me'),
+    forgotPassword: (email) => api.post('/auth/forgot-password', null, { params: { email } }),
+    resetPassword: (token, password) => api.post(`/auth/reset-password?token=${token}&password=${password}`)
 };
 
 export const jobApi = {
@@ -80,6 +82,7 @@ export const studentApi = {
     saveJob: (jobId) => api.post(`/student/jobs/${jobId}/save`),
     getSavedJobs: () => api.get('/student/jobs/saved'),
     getMyApplications: () => api.get('/student/applications'),
+    cancelApplication: (jobId) => api.delete(`/student/jobs/${jobId}/apply`),
     getNotifications: () => api.get('/student/notifications'),
     addEducation: (data) => api.post('/student/profile/educations', data),
     updateEducation: (id, data) => api.put(`/student/profile/educations/${id}`, data),
@@ -111,6 +114,9 @@ export const studentApi = {
     addCertification: (data) => api.post('/student/profile/certifications', data),
     updateCertification: (id, data) => api.put(`/student/profile/certifications/${id}`, data),
     deleteCertification: (id) => api.delete(`/student/profile/certifications/${id}`),
+    // Recommendations & Interviews
+    getRecommendations: () => api.get('/student/recommendations'),
+    getInterviews: () => api.get('/student/interviews'),
 };
 
 
@@ -162,6 +168,8 @@ export const adminApi = {
     getPendingCompanies: () => api.get('/admin/companies/pending'),
     approveCompany: (id) => api.post(`/admin/companies/${id}/approve`),
     getReports: () => api.get('/admin/reports'),
+    getPasswordRequests: () => api.get('/admin/password-requests'),
+    approvePasswordRequest: (id) => api.post(`/admin/password-requests/${id}/approve`),
 };
 
 export default api;

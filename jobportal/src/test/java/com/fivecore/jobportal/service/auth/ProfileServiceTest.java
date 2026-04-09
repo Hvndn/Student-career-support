@@ -1,7 +1,5 @@
 package com.fivecore.jobportal.service.auth;
 
-import com.fivecore.jobportal.dto.EducationRequest;
-import com.fivecore.jobportal.dto.ExperienceRequest;
 import com.fivecore.jobportal.dto.StudentProfileRequest;
 import com.fivecore.jobportal.entity.Education;
 import com.fivecore.jobportal.entity.Experience;
