@@ -92,9 +92,9 @@ public class AuthRestController {
      */
     @PostMapping("/forgot-password")
     public ResponseEntity<ApiResponse<Object>> forgotPassword(@RequestParam("email") String email) {
-        boolean success = passwordResetService.createPasswordResetToken(email);
+        boolean success = passwordResetService.createPasswordResetRequest(email);
         if (success) {
-            return ResponseEntity.ok(ApiResponse.success("Link khôi phục mật khẩu đã được gửi tới email", null));
+            return ResponseEntity.ok(ApiResponse.success("Yêu cầu đã được gửi tới Quản trị viên. Vui lòng kiểm tra email sau khi được phê duyệt.", null));
         } else {
             return ResponseEntity.badRequest()
                     .body(ApiResponse.error("Email không tồn tại trong hệ thống", "EMAIL_NOT_FOUND"));
@@ -102,18 +102,11 @@ public class AuthRestController {
     }
 
     /**
-     * API Đặt lại mật khẩu mới.
+     * API Đặt lại mật khẩu mới (Đã bị vô hiệu hóa - Dùng luồng cấp lại bởi Admin).
      */
     @PostMapping("/reset-password")
-    public ResponseEntity<ApiResponse<Object>> resetPassword(@RequestParam("token") String token,
-                                                           @RequestParam("password") String password) {
-        boolean success = passwordResetService.resetPassword(token, password);
-        if (success) {
-            return ResponseEntity.ok(ApiResponse.success("Mật khẩu đã được thay đổi thành công", null));
-        } else {
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.error("Token không hợp lệ hoặc đã hết hạn", "INVALID_TOKEN"));
-        }
+    public ResponseEntity<ApiResponse<Object>> resetPassword() {
+        return ResponseEntity.badRequest().body(ApiResponse.error("Chức năng này đã được chuyển sang luồng phê duyệt bởi Quản trị viên.", "DEPRECATED"));
     }
 
     /**

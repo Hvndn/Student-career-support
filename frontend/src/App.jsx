@@ -50,6 +50,7 @@ import UserManagement from './pages/admin/UserManagement'
 import CompanyVerification from './pages/admin/CompanyVerification'
 import JobApproval from './pages/admin/JobApproval'
 import Reports from './pages/admin/Reports'
+import AdminPasswordRequests from './pages/admin/AdminPasswordRequests'
 
 // Thành phần xử lý hiệu ứng load trang khi chuyển route
 const RouteChangeHandler = ({ setIsLoading }) => {
@@ -167,6 +168,7 @@ const AppContent = () => {
               <Route path="users" element={<UserManagement />} />
               <Route path="companies" element={<CompanyVerification />} />
               <Route path="jobs" element={<JobApproval />} />
+              <Route path="password-requests" element={<AdminPasswordRequests />} />
               <Route path="reports" element={<Reports />} />
             </Routes>
           </ProtectedRoute>

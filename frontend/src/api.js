@@ -66,7 +66,7 @@ export const authApi = {
         return api.post('/auth/logout');
     },
     getCurrentUser: () => api.get('/auth/me'),
-    forgotPassword: (email) => api.post(`/auth/forgot-password?email=${email}`),
+    forgotPassword: (email) => api.post('/auth/forgot-password', null, { params: { email } }),
     resetPassword: (token, password) => api.post(`/auth/reset-password?token=${token}&password=${password}`)
 };
 
@@ -168,6 +168,8 @@ export const adminApi = {
     getPendingCompanies: () => api.get('/admin/companies/pending'),
     approveCompany: (id) => api.post(`/admin/companies/${id}/approve`),
     getReports: () => api.get('/admin/reports'),
+    getPasswordRequests: () => api.get('/admin/password-requests'),
+    approvePasswordRequest: (id) => api.post(`/admin/password-requests/${id}/approve`),
 };
 
 export default api;

@@ -53,8 +53,8 @@ const ForgotPassword = () => {
                         <h2>{isSent ? "Kiểm tra Email" : "Quên mật khẩu?"}</h2>
                         <p>
                             {isSent 
-                                ? `Chúng tôi đã gửi hướng dẫn lấy lại mật khẩu tới ${email}. Vui lòng kiểm tra hộp thư đến.` 
-                                : "Nhập địa chỉ email đã đăng ký để nhận hướng dẫn khôi phục mật khẩu."}
+                                ? `Yêu cầu của bạn đã được gửi tới Quản trị viên. Vui lòng kiểm tra email ${email} sau khi yêu cầu được phê duyệt.` 
+                                : "Nhập địa chỉ email đã đăng ký để gửi yêu cầu cấp lại mật khẩu tới Quản trị viên."}
                         </p>
                     </div>
 
