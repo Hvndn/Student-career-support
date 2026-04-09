@@ -1,6 +1,6 @@
 import React from 'react';
 
-const EducationSection = ({ educations, onAdd, onDelete }) => {
+const EducationSection = ({ educations, onAdd, onEdit, onDelete }) => {
     return (
         <section className="pf-card">
             <div className="pf-section-title">
@@ -16,13 +16,20 @@ const EducationSection = ({ educations, onAdd, onDelete }) => {
                             <span className="material-symbols-outlined">account_balance</span>
                         </div>
                         <div className="pf-item-content">
-                            <h4>{edu.schoolName}</h4>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                <h4>{edu.schoolName}</h4>
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                    <button onClick={() => onEdit(edu)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
+                                        <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>edit</span>
+                                    </button>
+                                    <button onClick={() => onDelete(edu.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ef4444' }}>
+                                        <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>delete</span>
+                                    </button>
+                                </div>
+                            </div>
                             <p>{edu.major}</p>
                             <p className="pf-date">{edu.startDate} - {edu.endDate || 'Hiện tại'}</p>
                         </div>
-                        <button onClick={() => onDelete(edu.id)} className="pf-delete-btn-abs">
-                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>delete</span>
-                        </button>
                     </div>
                 ))}
                 {educations?.length === 0 && <p style={{ color: '#94a3b8', fontSize: '14px' }}>Chưa có thông tin học vấn.</p>}

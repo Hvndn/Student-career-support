@@ -47,6 +47,7 @@ public class ProjectService {
         }
 
         projectData.setStudent(student);
+        projectData.setTitle(projectData.getName());
         Project savedProject = projectRepository.save(projectData);
         log.info("Đã thêm dự án mới: {} cho sinh viên ID: {}", savedProject.getName(), studentId);
         return savedProject;
@@ -62,6 +63,7 @@ public class ProjectService {
         }
 
         existing.setName(projectData.getName());
+        existing.setTitle(projectData.getName());
         existing.setDescription(projectData.getDescription());
         existing.setTechStack(projectData.getTechStack());
         existing.setRole(projectData.getRole());

@@ -32,6 +32,9 @@ public class Experience {
     @Column(name = "job_title", nullable = false, length = 255)
     private String jobTitle;
 
+    @Column(nullable = false, length = 255)
+    private String position;
+
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 

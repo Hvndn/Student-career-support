@@ -21,8 +21,8 @@ export const EduModal = ({ show, form, setForm, onSave, onClose, saving }) => {
                     <h3>Thêm học vấn</h3>
                     <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><span className="material-symbols-outlined">close</span></button>
                 </div>
-                <div className="pf-field"><label className="pf-label">Trường</label><input className="pf-input" placeholder="Tên trường" value={form.schoolName} onChange={e => setForm({ ...form, schoolName: e.target.value })} /></div>
-                <div className="pf-field"><label className="pf-label">Ngành</label><input className="pf-input" placeholder="Chuyên ngành" value={form.major} onChange={e => setForm({ ...form, major: e.target.value })} /></div>
+                <div className="pf-field"><label className="pf-label">Trường <span style={{color: 'red'}}>*</span></label><input className="pf-input" placeholder="Tên trường (Ví dụ: Đại học Bách Khoa)" value={form.schoolName} onChange={e => setForm({ ...form, schoolName: e.target.value })} /></div>
+                <div className="pf-field"><label className="pf-label">Ngành <span style={{color: 'red'}}>*</span></label><input className="pf-input" placeholder="Chuyên ngành (Ví dụ: Công nghệ thông tin)" value={form.major} onChange={e => setForm({ ...form, major: e.target.value })} /></div>
                 <div className="pf-field"><label className="pf-label">Bắt đầu</label><input className="pf-input" type="date" value={form.startDate} onChange={e => setForm({ ...form, startDate: e.target.value })} /></div>
                 <div className="pf-field"><label className="pf-label">Kết thúc</label><input className="pf-input" type="date" value={form.endDate} onChange={e => setForm({ ...form, endDate: e.target.value })} /></div>
                 <button className="pf-btn pf-btn-primary" style={{ width: '100%' }} onClick={onSave} disabled={saving}>Thêm mới</button>
@@ -41,10 +41,10 @@ export const ExpModal = ({ show, form, setForm, onSave, onClose, saving }) => {
                     <h3>Thêm kinh nghiệm</h3>
                     <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><span className="material-symbols-outlined">close</span></button>
                 </div>
-                <div className="pf-field"><label className="pf-label">Công ty</label><input className="pf-input" value={form.companyName} onChange={e => setForm({ ...form, companyName: e.target.value })} /></div>
-                <div className="pf-field"><label className="pf-label">Vị trí</label><input className="pf-input" value={form.jobTitle} onChange={e => setForm({ ...form, jobTitle: e.target.value })} /></div>
-                <div className="pf-field"><label className="pf-label">Bắt đầu</label><input className="pf-input" type="date" value={form.startDate} onChange={e => setForm({ ...form, startDate: e.target.value })} /></div>
-                <div className="pf-field"><label className="pf-label">Kết thúc</label><input className="pf-input" type="date" value={form.endDate} onChange={e => setForm({ ...form, endDate: e.target.value })} /></div>
+                <div className="pf-field"><label className="pf-label">Công ty <span style={{color: 'red'}}>*</span></label><input className="pf-input" placeholder="Tên công ty / Tổ chức" value={form.companyName} onChange={e => setForm({ ...form, companyName: e.target.value })} /></div>
+                <div className="pf-field"><label className="pf-label">Vị trí / Chức danh <span style={{color: 'red'}}>*</span></label><input className="pf-input" placeholder="Ví dụ: Backend Developer Intern" value={form.jobTitle} onChange={e => setForm({ ...form, jobTitle: e.target.value })} /></div>
+                <div className="pf-field"><label className="pf-label">Bắt đầu <span style={{color: 'red'}}>*</span></label><input className="pf-input" type="date" value={form.startDate} onChange={e => setForm({ ...form, startDate: e.target.value })} /></div>
+                <div className="pf-field"><label className="pf-label">Kết thúc (Để trống nếu đang làm)</label><input className="pf-input" type="date" value={form.endDate} onChange={e => setForm({ ...form, endDate: e.target.value })} /></div>
                 <div className="pf-field"><label className="pf-label">Mô tả</label><textarea className="pf-input" rows={3} value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} /></div>
                 <button className="pf-btn pf-btn-primary" style={{ width: '100%' }} onClick={onSave} disabled={saving}>Thêm mới</button>
             </div>
@@ -94,7 +94,7 @@ export const ProjectModal = ({ show, form, setForm, onSave, onClose, saving }) =
                     <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><span className="material-symbols-outlined">close</span></button>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                    <div className="pf-field" style={{ gridColumn: 'span 2' }}><label className="pf-label">Tên dự án</label><input className="pf-input" placeholder="Vd: E-commerce Web App" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
+                    <div className="pf-field" style={{ gridColumn: 'span 2' }}><label className="pf-label">Tên dự án <span style={{color: 'red'}}>*</span></label><input className="pf-input" placeholder="Vd: E-commerce Web App" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></div>
                     <div className="pf-field"><label className="pf-label">Công nghệ sử dụng</label><input className="pf-input" placeholder="Vd: React, Node.js" value={form.techStack} onChange={e => setForm({ ...form, techStack: e.target.value })} /></div>
                     <div className="pf-field"><label className="pf-label">Vai trò</label><input className="pf-input" placeholder="Vd: Frontend Developer" value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} /></div>
                     <div className="pf-field"><label className="pf-label">Link GitHub</label><input className="pf-input" placeholder="https://github.com/..." value={form.repositoryUrl} onChange={e => setForm({ ...form, repositoryUrl: e.target.value })} /></div>

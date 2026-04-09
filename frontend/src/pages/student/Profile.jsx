@@ -208,16 +208,26 @@ const Profile = () => {
 
         setSaving(true);
         try {
-            await studentApi.addEducation(payload);
+            if (eduForm.id) {
+                await studentApi.updateEducation(eduForm.id, payload);
+                flash('✅ Cập nhật học vấn thành công!');
+            } else {
+                await studentApi.addEducation(payload);
+                flash('✅ Thêm học vấn thành công!');
+            }
             await reload();
             setShowEduForm(false);
             setEduForm(BLANK_EDU);
-            flash('✅ Thêm học vấn thành công!');
         } catch (e) { 
-            const msg = e.response?.data?.message || 'Lỗi khi thêm.';
+            const msg = e.response?.data?.message || 'Lỗi khi lưu học vấn.';
             flash('❌ ' + msg); 
         }
         setSaving(false);
+    };
+
+    const openEduEdit = (edu) => {
+        setEduForm({ ...edu });
+        setShowEduForm(true);
     };
 
     const deleteEdu = async (id) => {
@@ -239,17 +249,27 @@ const Profile = () => {
 
         setSaving(true);
         try {
-            await studentApi.addExperience(payload);
+            if (expForm.id) {
+                await studentApi.updateExperience(expForm.id, payload);
+                flash('✅ Cập nhật kinh nghiệm thành công!');
+            } else {
+                await studentApi.addExperience(payload);
+                flash('✅ Thêm kinh nghiệm thành công!');
+            }
             await reload();
             setShowExpForm(false);
             setExpForm(BLANK_EXP);
-            flash('✅ Thêm kinh nghiệm thành công!');
         } catch (e) {
             console.error(e);
-            const msg = e.response?.data?.message || 'Lỗi khi thêm kinh nghiệm.';
+            const msg = e.response?.data?.message || 'Lỗi khi lưu kinh nghiệm.';
             flash('❌ ' + msg); 
         }
         setSaving(false);
+    };
+
+    const openExpEdit = (exp) => {
+        setExpForm({ ...exp });
+        setShowExpForm(true);
     };
 
     const deleteExp = async (id) => {
@@ -568,6 +588,7 @@ const Profile = () => {
                         <EducationSection
                             educations={profile.educations}
                             onAdd={() => setShowEduForm(true)}
+                            onEdit={openEduEdit}
                             onDelete={deleteEdu}
                         />
 
@@ -575,6 +596,7 @@ const Profile = () => {
                         <ExperienceSection
                             experiences={profile.experiences}
                             onAdd={() => setShowExpForm(true)}
+                            onEdit={openExpEdit}
                             onDelete={deleteExp}
                         />
 

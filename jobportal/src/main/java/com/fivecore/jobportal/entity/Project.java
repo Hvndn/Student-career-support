@@ -26,6 +26,9 @@ public class Project {
     @Column(nullable = false, length = 255)
     private String name;
 
+    @Column(nullable = false, length = 255)
+    private String title;
+
     @Column(columnDefinition = "TEXT")
     private String description;
 

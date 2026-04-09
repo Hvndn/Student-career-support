@@ -143,6 +143,7 @@ public class ProfileService {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
         experience.setStudent(student);
+        experience.setPosition(experience.getJobTitle());
         return experienceRepository.save(experience);
     }
 
@@ -202,6 +203,7 @@ public class ProfileService {
         }
         exp.setCompanyName(request.getCompanyName());
         exp.setJobTitle(request.getJobTitle());
+        exp.setPosition(request.getJobTitle());
         exp.setStartDate(request.getStartDate());
         exp.setEndDate(request.getEndDate());
         exp.setDescription(request.getDescription());
