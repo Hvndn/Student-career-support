@@ -38,7 +38,9 @@ const Applications = () => {
     const getStatusConfig = (status) => {
         const s = (status || '').toLowerCase();
         switch (s) {
-            case 'reviewing': return { class: 'status-reviewing', icon: 'hourglass_top', label: 'Đang xem xét' };
+            case 'review': return { class: 'status-reviewing', icon: 'hourglass_top', label: 'Đang xem xét' };
+            case 'suitable': return { class: 'status-accepted', icon: 'thumb_up', label: 'Phù hợp' };
+            case 'interview': return { class: 'status-interview', icon: 'event', label: 'Phỏng vấn' };
             case 'accepted': return { class: 'status-accepted', icon: 'check_circle', label: 'Đã chấp nhận' };
             case 'rejected': return { class: 'status-rejected', icon: 'cancel', label: 'Đã từ chối' };
             case 'pending': return { class: 'status-pending', icon: 'hourglass_empty', label: 'Chờ duyệt' };
@@ -99,7 +101,7 @@ const Applications = () => {
                             <span className="material-symbols-outlined">hourglass_top</span>
                         </div>
                         <div>
-                            <p className="stat-value">{apps.filter(a => (a.status||'').toLowerCase() === 'reviewing').length}</p>
+                            <p className="stat-value">{apps.filter(a => ['review', 'suitable', 'interview', 'pending'].includes((a.status||'').toLowerCase())).length}</p>
                             <p className="stat-label">Đang xét</p>
                         </div>
                     </div>
