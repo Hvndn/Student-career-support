@@ -3,65 +3,140 @@ import { adminApi } from '../../api';
 import toast from 'react-hot-toast';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import AdminNavbar from '../../components/admin/AdminNavbar';
+import ConfirmModal from '../../components/common/ConfirmModal';
 import '../../assets/css/admin/AdminLayout.css';
 import '../../assets/css/admin/AdminDashboard.css';
 
 const AdminPasswordRequests = () => {
     const [requests, setRequests] = useState([]);
+    const [stats, setStats] = useState({ pendingCount: 0, completedCount: 0 });
     const [loading, setLoading] = useState(true);
     const [processingId, setProcessingId] = useState(null);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [selectedRequest, setSelectedRequest] = useState(null);
 
     useEffect(() => {
         document.body.style.paddingTop = '0';
-        fetchRequests();
+        fetchData();
         return () => {
             document.body.style.paddingTop = '';
         };
     }, []);
 
+    const fetchData = async () => {
+        setLoading(true);
+        await Promise.all([fetchRequests(), fetchStats()]);
+        setLoading(false);
+    };
+
     const fetchRequests = async () => {
         try {
-            setLoading(true);
             const response = await adminApi.getPasswordRequests();
             setRequests(response.data.data || []);
         } catch (error) {
             console.error("Lỗi khi lấy danh sách yêu cầu:", error);
-        } finally {
-            setLoading(false);
         }
     };
 
-    const handleApprove = async (id) => {
-        if (!window.confirm("Bạn có chắc chắn muốn cấp mật khẩu mới cho người dùng này? Hệ thống sẽ tự động gửi email thông báo.")) return;
-
+    const fetchStats = async () => {
         try {
+            const response = await adminApi.getPasswordRequestStats();
+            setStats(response.data.data || { pendingCount: 0, completedCount: 0 });
+        } catch (error) {
+            console.error("Lỗi khi lấy thống kê:", error);
+        }
+    };
+
+    const handleApproveClick = (request) => {
+        setSelectedRequest(request);
+        setShowConfirmModal(true);
+    };
+
+    const handleConfirmApprove = async () => {
+        if (!selectedRequest) return;
+        
+        const id = selectedRequest.id;
+        try {
+            setShowConfirmModal(false);
             setProcessingId(id);
             await adminApi.approvePasswordRequest(id);
             toast.success("Đã cấp lại mật khẩu và gửi email thành công!");
-            fetchRequests(); // Tải lại danh sách
+            fetchData(); 
         } catch (error) {
             console.error("Lỗi khi phê duyệt:", error);
+            toast.error("Có lỗi xảy ra khi cấp lại mật khẩu.");
         } finally {
             setProcessingId(null);
+            setSelectedRequest(null);
         }
     };
 
     return (
-        <div className="admin-layout">
+        <div className="admin-layout mesh-gradient-bg">
             <AdminSidebar />
             
             <div className="admin-main-content">
                 <AdminNavbar title="Cấp lại mật khẩu" />
                 
                 <main className="admin-body">
-                    <div className="admin-header-section">
-                        <div>
-                            <h1 className="admin-title">Yêu cầu Cấp lại Mật khẩu</h1>
-                            <p className="admin-subtitle">Danh sách người dùng quên mật khẩu đang chờ quản trị viên phê duyệt.</p>
+                    <div className="admin-header-section fade-in" style={{ marginBottom: '3rem' }}>
+                        <div className="header-text">
+                            <h1 style={{ fontSize: '2.5rem', fontWeight: 900, background: 'linear-gradient(135deg, #1e3a8a, #2563eb)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                                Cấp lại Mật khẩu
+                            </h1>
+                            <p style={{ fontSize: '1.1rem', marginTop: '8px' }}>Trung tâm xử lý yêu cầu khôi phục tài khoản hệ thống.</p>
+                        </div>
+                        <div className="header-actions">
+                            <button className="btn-secondary ultra-glass" onClick={fetchData} style={{ borderRadius: '14px', padding: '12px 24px' }}>
+                                <span className="material-symbols-outlined">refresh</span>
+                                Làm mới dữ liệu
+                            </button>
                         </div>
                     </div>
 
-                    <div className="admin-table-container card fade-in">
+                    <div className="metrics-grid fade-in">
+                        <div className="metric-card ultra-glass" style={{ borderLeft: '6px solid #f59e0b' }}>
+                            <div className="metric-header">
+                                <div className="metric-icon" style={{ background: '#fffbeb', color: '#f59e0b' }}>
+                                    <span className="material-symbols-outlined">pending_actions</span>
+                                </div>
+                                <div className="metric-trend stability">Đang chờ</div>
+                            </div>
+                            <div className="metric-info">
+                                <div className="metric-label">Số yêu cầu chưa xử lý</div>
+                                <div className="metric-value">{stats.pendingCount}</div>
+                            </div>
+                        </div>
+
+                        <div className="metric-card ultra-glass" style={{ borderLeft: '6px solid #10b981' }}>
+                            <div className="metric-header">
+                                <div className="metric-icon" style={{ background: '#ecfdf5', color: '#10b981' }}>
+                                    <span className="material-symbols-outlined">task_alt</span>
+                                </div>
+                                <div className="metric-trend up">Thành công</div>
+                            </div>
+                            <div className="metric-info">
+                                <div className="metric-label">Đã cấp lại mật khẩu</div>
+                                <div className="metric-value">{stats.completedCount}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="data-panel ultra-glass fade-in" style={{ marginTop: '2rem' }}>
+                        <div className="table-header-bar">
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
+                                    <span className="material-symbols-outlined">list_alt</span>
+                                </div>
+                                <div>
+                                    <h3 style={{ margin: 0, fontSize: '1.25rem' }}>Danh sách yêu cầu</h3>
+                                    <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>Cập nhật tự động theo thời gian thực</p>
+                                </div>
+                            </div>
+                            <div className="badge count-badge ultra-glass" style={{ background: 'white', fontWeight: 800 }}>
+                                {requests.length} ĐƠN CHỜ DUYỆT
+                            </div>
+                        </div>
                         {loading ? (
                             <div className="loading-spinner">Đang tải dữ liệu...</div>
                         ) : requests.length === 0 ? (
@@ -71,7 +146,7 @@ const AdminPasswordRequests = () => {
                                 <p style={{ color: '#64748b' }}>Hiện không có yêu cầu cấp lại mật khẩu nào đang chờ xử lý.</p>
                             </div>
                         ) : (
-                            <table className="admin-table">
+                            <table className="premium-table">
                                 <thead>
                                     <tr>
                                         <th>Người yêu cầu</th>
@@ -82,65 +157,63 @@ const AdminPasswordRequests = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {requests.map((request) => (
-                                        <tr key={request.id}>
+                                    {requests.map((request, index) => (
+                                        <tr key={request.id} className="stagger-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
                                             <td>
-                                                <div className="user-info-cell" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                                    <div className="user-avatar-small" style={{ 
-                                                        width: '32px', 
-                                                        height: '32px', 
-                                                        borderRadius: '50%', 
-                                                        background: '#7c3aed', 
-                                                        color: 'white', 
-                                                        display: 'flex', 
-                                                        alignItems: 'center', 
-                                                        justifyContent: 'center',
-                                                        fontSize: '0.9rem',
-                                                        fontWeight: '600'
+                                                <div className="user-info-cell">
+                                                    <div className="avatar-round" style={{ 
+                                                        background: request.user.role === 'student' ? '#7c3aed' : '#f59e0b'
                                                     }}>
                                                         {request.user.fullName.charAt(0).toUpperCase()}
                                                     </div>
-                                                    <span className="user-name-text" style={{ fontWeight: '600', color: '#1e293b' }}>{request.user.fullName}</span>
+                                                    <div className="user-details">
+                                                        <h4>{request.user.fullName}</h4>
+                                                        <p>ID: #{request.user.id}</p>
+                                                    </div>
                                                 </div>
                                             </td>
-                                            <td style={{ color: '#64748b' }}>{request.user.email}</td>
                                             <td>
-                                                <span className={`role-badge role-${request.user.role.toLowerCase()}`} style={{
-                                                    padding: '4px 12px',
-                                                    borderRadius: '20px',
-                                                    fontSize: '0.75rem',
-                                                    fontWeight: '700',
-                                                    textTransform: 'uppercase',
-                                                    backgroundColor: request.user.role === 'student' ? '#e0f2fe' : '#fef3c7',
-                                                    color: request.user.role === 'student' ? '#0369a1' : '#92400e'
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontWeight: '500' }}>
+                                                    <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>mail</span>
+                                                    {request.user.email}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span className={`badge role-${request.user.role.toLowerCase()}`} style={{
+                                                    textTransform: 'capitalize',
+                                                    padding: '6px 14px',
+                                                    fontWeight: '700'
                                                 }}>
                                                     {request.user.role === 'student' ? 'Sinh viên' : 
                                                      request.user.role === 'company' ? 'Doanh nghiệp' : 'Admin'}
                                                 </span>
                                             </td>
-                                            <td style={{ color: '#94a3b8', fontSize: '0.85rem' }}>{new Date(request.requestDate).toLocaleString('vi-VN')}</td>
+                                            <td>
+                                                <div style={{ color: '#64748b', fontSize: '0.85rem', display: 'flex', flexDirection: 'column' }}>
+                                                    <span style={{ fontWeight: '700', color: '#334155' }}>{new Date(request.requestDate).toLocaleDateString('vi-VN')}</span>
+                                                    <span>{new Date(request.requestDate).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</span>
+                                                </div>
+                                            </td>
                                             <td style={{ textAlign: 'center' }}>
                                                 <button 
-                                                    className="btn-action btn-approve"
-                                                    onClick={() => handleApprove(request.id)}
+                                                    className="btn-primary btn-hero pulse-primary ultra-glass"
+                                                    onClick={() => handleApproveClick(request)}
                                                     disabled={processingId === request.id}
-                                                    style={{
-                                                        display: 'inline-flex',
-                                                        alignItems: 'center',
-                                                        gap: '8px',
-                                                        padding: '8px 16px',
-                                                        backgroundColor: '#2563eb',
-                                                        color: 'white',
-                                                        border: 'none',
-                                                        borderRadius: '8px',
-                                                        cursor: 'pointer',
-                                                        fontSize: '0.9rem',
-                                                        fontWeight: '600',
-                                                        transition: 'all 0.2s'
+                                                    style={{ 
+                                                        margin: '0 auto', 
+                                                        padding: '12px 28px', 
+                                                        borderRadius: '16px',
+                                                        transition: 'all 0.3s'
                                                     }}
                                                 >
-                                                    <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>key</span>
-                                                    {processingId === request.id ? 'Đang cấp...' : 'Cấp mật khẩu'}
+                                                    {processingId === request.id ? (
+                                                        <span className="loader-small"></span>
+                                                    ) : (
+                                                        <>
+                                                            <span className="material-symbols-outlined" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>verified_user</span>
+                                                            PHÊ DUYỆT NGAY
+                                                        </>
+                                                    )}
                                                 </button>
                                             </td>
                                         </tr>
@@ -151,6 +224,17 @@ const AdminPasswordRequests = () => {
                     </div>
                 </main>
             </div>
+
+            <ConfirmModal 
+                show={showConfirmModal}
+                title="Cấp lại mật khẩu"
+                message={`Bạn có chắc chắn muốn cấp mật khẩu mới cho ${selectedRequest?.user?.fullName}? Hệ thống sẽ tự động tạo mật khẩu mới và gửi email thông báo cho người dùng.`}
+                confirmText="Xác nhận cấp"
+                cancelText="Hủy bỏ"
+                onConfirm={handleConfirmApprove}
+                onCancel={() => setShowConfirmModal(false)}
+                type="primary"
+            />
         </div>
     );
 };

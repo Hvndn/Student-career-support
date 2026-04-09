@@ -15,10 +15,12 @@
     --text-main: #1e293b;
     --text-muted: #64748b;
     --border: #f1f5f9;
-    --radius-lg: 16px;
-    --radius-md: 12px;
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --shadow-sm: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+    --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.4);
 }
 
 /* Base layout is handled by AdminLayout.css */
@@ -155,10 +157,69 @@
 }
 
 .metric-info .metric-value {
-    font-size: 1.75rem;
-    font-weight: 800;
+    font-size: 2.25rem;
+    font-weight: 900;
     color: #0f172a;
     margin-top: 4px;
+    letter-spacing: -1px;
+}
+
+/* Mega Premium Glass Utilities */
+.ultra-glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+.mesh-gradient-bg {
+    background-color: #f8fafc;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.05) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(244, 63, 94, 0.05) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(37, 99, 235, 0.05) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(244, 63, 94, 0.05) 0px, transparent 50%);
+}
+
+.stagger-fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: staggerFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes staggerFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pulse-primary {
+    animation: pulse-primary 0.8s infinite alternate !important;
+}
+
+@keyframes pulse-primary {
+    0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
+    100% { box-shadow: 0 0 0 12px rgba(37, 99, 235, 0); }
+}
+
+.btn-hero {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%) !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 900 !important;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-hero:hover {
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%) !important;
+    transform: scale(1.08) translateY(-3px) !important;
+    box-shadow: 0 15px 30px -5px rgba(37, 99, 235, 0.5) !important;
 }
 
 /* Dashboard Grid */
@@ -659,6 +720,15 @@
     animation: spin 1s linear infinite;
 }
 
+.loader-small {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -674,12 +744,12 @@
 }
 
 .table-header-bar {
-    padding: 1.5rem 2rem;
+    padding: 2rem 2.5rem;
     border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: white;
+    background: rgba(255, 255, 255, 0.5);
 }
 
 .table-header-bar h3 {
@@ -810,6 +880,13 @@
 
 .status-active { background: #f0fdf4; color: #16a34a; }
 .status-locked { background: #fef2f2; color: #dc2626; }
+
+.count-badge {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    padding: 6px 12px;
+}
 
 .dot { width: 6px; height: 6px; border-radius: 50%; }
 .bg-success { background: #16a34a; }

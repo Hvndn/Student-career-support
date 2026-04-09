@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -69,6 +71,16 @@ public class PasswordResetService {
      */
     public List<PasswordResetRequest> getAllPendingRequests() {
         return requestRepository.findByStatus(PasswordResetRequest.RequestStatus.PENDING);
+    }
+
+    /**
+     * Lấy thống kê số lượng yêu cầu (US-ST-001).
+     */
+    public Map<String, Long> getRequestStats() {
+        Map<String, Long> stats = new HashMap<>();
+        stats.put("pendingCount", requestRepository.countByStatus(PasswordResetRequest.RequestStatus.PENDING));
+        stats.put("completedCount", requestRepository.countByStatus(PasswordResetRequest.RequestStatus.COMPLETED));
+        return stats;
     }
 
     /**

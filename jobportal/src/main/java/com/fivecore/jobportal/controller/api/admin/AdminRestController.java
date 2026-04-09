@@ -182,6 +182,14 @@ public class AdminRestController {
     }
 
     /**
+     * API Lấy thống kê yêu cầu cấp lại mật khẩu.
+     */
+    @GetMapping("/password-requests/stats")
+    public ResponseEntity<ApiResponse<Map<String, Long>>> getPasswordRequestStats() {
+        return ResponseEntity.ok(ApiResponse.success("Lấy thống kê thành công", passwordResetService.getRequestStats()));
+    }
+
+    /**
      * API Phê duyệt cấp lại mật khẩu.
      */
     @PostMapping("/password-requests/{id}/approve")

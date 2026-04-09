@@ -170,6 +170,7 @@ export const adminApi = {
     deleteUser: (id) => api.delete(`/admin/users/${id}`),
     getReports: () => api.get('/admin/reports'),
     getPasswordRequests: () => api.get('/admin/password-requests'),
+    getPasswordRequestStats: () => api.get('/admin/password-requests/stats'),
     approvePasswordRequest: (id) => api.post(`/admin/password-requests/${id}/approve`),
 };
 
