@@ -94,7 +94,7 @@ const CandidateDetailModal = ({ show, studentId, onClose }) => {
                         <div className="detail-header">
                             <div className="header-info">
                                 <div className="detail-avatar-wrapper">
-                                    <img src={candidate.avatarUrl || 'https://i.pravatar.cc/150'} alt={candidate.fullName} className="detail-avatar" />
+                                    <img src={candidate.avatarUrl || `https://ui-avatars.com/api/?name=${candidate.fullName}&background=random`} alt={candidate.fullName} className="detail-avatar" />
                                 </div>
                                 <div className="header-text">
                                     <p className="detail-major">{candidate.major}</p>
