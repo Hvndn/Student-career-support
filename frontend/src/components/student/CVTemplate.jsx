@@ -243,7 +243,7 @@ const CVTemplate = ({ profile, avatarBase64, experiences, educations, skills, la
           fontSize: '8pt',
           color: mutedText
         }}>
-          Bản quyền hệ thống <strong>Nexus Talent</strong> &copy; 2024 • Hồ sơ được tối ưu cho nhà tuyển dụng
+          Bản quyền hệ thống <strong>Fivecore</strong> &copy; 2024 • Hồ sơ được tối ưu cho nhà tuyển dụng
         </footer>
       </main>
     </div>

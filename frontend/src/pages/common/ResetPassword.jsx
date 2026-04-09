@@ -51,11 +51,11 @@ const ResetPassword = () => {
     return (
         <div className="auth-container">
             <div className="auth-left">
-                <div className="brand-title">Nexus Talent</div>
+                <div className="brand-title">Fivecore</div>
                 <div className="brand-desc">
                     Hỗ trợ sinh viên kiến tạo sự nghiệp tương lai với công nghệ kết nối thông minh.
                 </div>
-                <div className="copyright">© 2024 Nexus Talent. All rights reserved.</div>
+                <div className="copyright">© 2024 Fivecore. All rights reserved.</div>
             </div>
 
             <div className="auth-right">

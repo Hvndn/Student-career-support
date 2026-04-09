@@ -16,7 +16,7 @@ describe('Footer Component', () => {
         );
         const year = new Date().getFullYear();
         expect(screen.getByText(new RegExp(year.toString(), 'i'))).toBeInTheDocument();
-        expect(screen.getByText(/Nexus Talent|JobPortal/i)).toBeInTheDocument();
+        expect(screen.getByText(/Fivecore|JobPortal/i)).toBeInTheDocument();
         expect(screen.getByText('Ứng viên')).toBeInTheDocument();
     });
 

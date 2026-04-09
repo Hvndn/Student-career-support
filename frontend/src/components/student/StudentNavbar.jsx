@@ -15,7 +15,7 @@ const StudentNavbar = () => {
         <nav className="navbar-light">
             <div className="navbar-container">
                 <Link to="/student/dashboard" className="brand-logo">
-                    Nexus Talent
+                    Fivecore
                 </Link>
                 <div className="nav-links-container">
                     <NavLink to="/student/dashboard" end className={({ isActive }) => `nav-link-item ${isActive ? 'nav-link-primary active' : 'nav-link-secondary'}`}>Trang chủ</NavLink>

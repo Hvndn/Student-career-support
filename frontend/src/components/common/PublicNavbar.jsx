@@ -7,7 +7,7 @@ const PublicNavbar = () => {
         <nav className="navbar-light">
             <div className="navbar-container">
                 <Link to="/" className="brand-logo">
-                    Nexus Talent
+                    Fivecore
                 </Link>
                 <div className="nav-links-container">
                     <NavLink to="/" end className={({ isActive }) => `nav-link-item ${isActive ? 'nav-link-primary active' : 'nav-link-secondary'}`}>Trang chủ</NavLink>

@@ -55,7 +55,7 @@ const Home = () => {
           <div className="sh-hero-text">
             <h1>
               Tìm kiếm việc làm <span className="sh-blue">mơ ước</span> với{' '}
-              <span className="sh-blue">Nexus Talent</span>
+              <span className="sh-blue">Fivecore</span>
             </h1>
             <p>
               Kết nối với hơn 500+ doanh nghiệp hàng đầu và hàng nghìn cơ hội tuyển dụng dành riêng cho bạn.
@@ -108,7 +108,7 @@ const Home = () => {
                 <div className="sh-illus-laptop">💼</div>
               </div>
               <div className="sh-illus-badge">
-                <span>🎯</span> Nexus Talent — Dành cho bạn
+                <span>🎯</span> Fivecore — Dành cho bạn
               </div>
             </div>
           </div>
@@ -120,7 +120,7 @@ const Home = () => {
         <div className="sh-container">
           <div className="sh-section-head">
             <div>
-              <span className="sh-section-label">NEXUS TALENT&nbsp;&bull;&nbsp;DANH MỤC NGHỀ NGHIỆP</span>
+              <span className="sh-section-label">Fivecore&nbsp;&bull;&nbsp;DANH MỤC NGHỀ NGHIỆP</span>
               <h2 className="sh-section-title">Khám phá danh mục</h2>
             </div>
             <Link to="/jobs" className="sh-viewall">Xem tất cả →</Link>
@@ -195,7 +195,7 @@ const Home = () => {
       <section className="sh-section">
         <div className="sh-container">
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <h2 className="sh-section-title">Nexus Talent hoạt động như thế nào?</h2>
+            <h2 className="sh-section-title">Fivecore hoạt động như thế nào?</h2>
             <p className="sh-section-sub">Quy trình đơn giản giúp bạn nhanh chóng tìm được công việc phù hợp.</p>
           </div>
           <div className="sh-how-grid">
@@ -259,7 +259,7 @@ const Home = () => {
         <div className="sh-cta-inner">
           <h2>Sẵn sàng bứt phá sự nghiệp?</h2>
           <p>
-            Tham gia cùng Nexus Talent ngày hôm nay để mở những cánh cửa tiềm năng dành riêng cho bạn trên thị trường.
+            Tham gia cùng Fivecore ngày hôm nay để mở những cánh cửa tiềm năng dành riêng cho bạn trên thị trường.
           </p>
           <div className="sh-cta-btns">
             {!user && <Link to="/register" className="sh-cta-btn-white">Đăng ký ngay</Link>}

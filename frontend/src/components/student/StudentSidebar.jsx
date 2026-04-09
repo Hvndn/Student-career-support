@@ -28,7 +28,7 @@ const StudentSidebar = () => {
       <div className="ss-header">
         <Link to="/" className="ss-brand">
           <span className="ss-brand-icon">🎯</span>
-          <span className="ss-brand-name">Nexus Talent</span>
+          <span className="ss-brand-name">Fivecore</span>
         </Link>
       </div>
 
