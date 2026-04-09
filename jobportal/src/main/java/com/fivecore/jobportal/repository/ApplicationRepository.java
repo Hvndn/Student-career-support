@@ -2,6 +2,9 @@ package com.fivecore.jobportal.repository;
 
 import com.fivecore.jobportal.entity.Application;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +15,18 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     List<Application> findByStudentIdOrderByAppliedAtDesc(Integer studentId);
     List<Application> findByJobIdOrderByAppliedAtDesc(Integer jobId);
     List<Application> findByJobCompanyIdOrderByAppliedAtDesc(Integer companyId);
+    
+    List<Application> findByStudentId(Integer studentId);
+    List<Application> findByJobId(Integer jobId);
+
+    @Modifying
+    @Query("DELETE FROM Application a WHERE a.student.id = :studentId")
+    void deleteByStudentId(@Param("studentId") Integer studentId);
+
+    @Modifying
+    @Query("DELETE FROM Application a WHERE a.job.id = :jobId")
+    void deleteByJobId(@Param("jobId") Integer jobId);
+
     long countByJobCompanyId(Integer companyId);
     long countByJobId(Integer jobId);
     long countByJobCompanyIdAndStatus(Integer companyId, Application.ApplicationStatus status);
@@ -20,4 +35,3 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     long countByJobIdAndStatus(Integer jobId, com.fivecore.jobportal.entity.Application.ApplicationStatus status);
     boolean existsByJobCompanyIdAndStudentId(Integer companyId, Integer studentId);
 }
-

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { adminApi } from '../../api';
-import './AdminDashboard.css';
+import AdminSidebar from '../../components/admin/AdminSidebar';
+import AdminNavbar from '../../components/admin/AdminNavbar';
+import '../../assets/css/admin/AdminDashboard.css';
 
 const SkillManagement = () => {
     const [skills, setSkills] = useState([]);
@@ -73,11 +75,6 @@ const SkillManagement = () => {
         }
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('user');
-        navigate('/login');
-    };
-
     const getIndustryIcon = (name) => {
         const lowerName = name.toLowerCase();
         if (lowerName.includes('công nghệ') || lowerName.includes('it') || lowerName.includes('phần mềm')) {
@@ -132,94 +129,10 @@ const SkillManagement = () => {
 
     return (
         <div className="admin-layout">
-            <aside className="admin-sidebar" style={{ backgroundColor: '#fff', borderRight: '1px solid #f1f5f9' }}>
-                <div className="sidebar-brand-new">
-                    <div className="brand-icon-box">
-                        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" /></svg>
-                    </div>
-                    <div>
-                        <div className="brand-title-new">ScholarBridge</div>
-                        <div className="brand-subtitle-new">BẢNG ĐIỀU KHIỂN QUẢN TRỊ</div>
-                    </div>
-                </div>
-
-                <nav className="sidebar-nav">
-                    <Link to="/admin/dashboard" className="nav-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                        Bảng điều khiển
-                    </Link>
-                    <Link to="/admin/users" className="nav-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                        Quản lý người dùng
-                    </Link>
-                    <Link to="/admin/companies" className="nav-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
-                        Xác minh công ty
-                    </Link>
-                    <Link to="/admin/jobs" className="nav-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                        Kiểm duyệt việc làm
-                    </Link>
-                    <Link to="/admin/skills" className="nav-item active">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
-                        Quản lý ngành nghề
-                    </Link>
-                    <Link to="/admin/reports" className="nav-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                        Báo cáo
-                    </Link>
-                </nav>
-
-                <div className="sidebar-system-status">
-                    <div className="status-indicator-dot"></div>
-                    <div className="status-text">
-                        Trạng thái hệ thống:<br />
-                        <span style={{ fontWeight: 800 }}>Khỏe mạnh</span>
-                    </div>
-                </div>
-
-                <div className="sidebar-bottom">
-                    <div className="nav-item" style={{ marginTop: 'auto', color: '#64748b' }}>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                        Trung tâm trợ giúp
-                    </div>
-                    <button onClick={handleLogout} className="nav-item danger" style={{ background: 'transparent', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', color: '#ef4444', fontWeight: 700 }}>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                        Đăng xuất
-                    </button>
-                </div>
-            </aside>
-
-            <main className="admin-main">
-                <header className="admin-header">
-                    <div className="header-search" style={{ border: '1px solid #eef0f4', background: '#f8fafc' }}>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                        <input 
-                            type="text" 
-                            placeholder="Tìm kiếm ngành nghề, mã ngành..." 
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </div>
-                    <div className="header-actions">
-                        <div className="action-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-                        </div>
-                        <div className="action-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                        </div>
-                        <div className="user-profile">
-                            <div className="user-info">
-                                <span className="user-name">Admin SB</span>
-                                <span className="user-role">Quản trị viên</span>
-                            </div>
-                            <img src={`https://ui-avatars.com/api/?name=Admin&background=0d5cda&color=fff`} alt="Avatar" className="user-avatar" />
-                        </div>
-                    </div>
-                </header>
-
-                <div className="admin-content" style={{ padding: '2.5rem', background: '#f8fafc' }}>
-                    
+            <AdminSidebar />
+            <div className="admin-main-content">
+                <AdminNavbar />
+                <main className="admin-body">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2.5rem' }}>
                         <div>
                             <h1 style={{ fontSize: '2rem', fontWeight: 800, color: '#0f172a', margin: 0, letterSpacing: '-0.025em' }}>Quản lý Ngành nghề</h1>
@@ -348,74 +261,74 @@ const SkillManagement = () => {
                             </div>
                         </div>
                     </div>
-                </div>
-            </main>
+                </main>
 
-            {showAddModal && (
-                <div className="modal-overlay">
-                    <div className="modal-content-premium">
-                        <h2 className="modal-title-premium">Thêm ngành nghề mới</h2>
-                        <form onSubmit={handleAdd}>
-                            <div className="form-group-premium">
-                                <label className="form-label-premium">Tên ngành nghề</label>
-                                <input 
-                                    className="form-input-premium" 
-                                    placeholder="Ví dụ: Công nghệ thông tin..."
-                                    value={newSkill}
-                                    onChange={(e) => setNewSkill(e.target.value)}
-                                    autoFocus
-                                />
-                            </div>
-                            <div className="form-group-premium">
-                                <label className="form-label-premium">Lĩnh vực (Phân loại)</label>
-                                <input 
-                                    className="form-input-premium" 
-                                    placeholder="Ví dụ: Kỹ thuật, Kinh doanh.."
-                                    value={newCategory}
-                                    onChange={(e) => setNewCategory(e.target.value)}
-                                />
-                            </div>
-                            <div className="modal-actions-premium">
-                                <button type="button" className="btn-premium-cancel" onClick={() => setShowAddModal(false)}>Hủy</button>
-                                <button type="submit" className="btn-premium-submit">Thêm ngay</button>
-                            </div>
-                        </form>
+                {showAddModal && (
+                    <div className="modal-overlay">
+                        <div className="modal-content-premium">
+                            <h2 className="modal-title-premium">Thêm ngành nghề mới</h2>
+                            <form onSubmit={handleAdd}>
+                                <div className="form-group-premium">
+                                    <label className="form-label-premium">Tên ngành nghề</label>
+                                    <input 
+                                        className="form-input-premium" 
+                                        placeholder="Ví dụ: Công nghệ thông tin..."
+                                        value={newSkill}
+                                        onChange={(e) => setNewSkill(e.target.value)}
+                                        autoFocus
+                                    />
+                                </div>
+                                <div className="form-group-premium">
+                                    <label className="form-label-premium">Lĩnh vực (Phân loại)</label>
+                                    <input 
+                                        className="form-input-premium" 
+                                        placeholder="Ví dụ: Kỹ thuật, Kinh doanh.."
+                                        value={newCategory}
+                                        onChange={(e) => setNewCategory(e.target.value)}
+                                    />
+                                </div>
+                                <div className="modal-actions-premium">
+                                    <button type="button" className="btn-premium-cancel" onClick={() => setShowAddModal(false)}>Hủy</button>
+                                    <button type="submit" className="btn-premium-submit">Thêm ngay</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
 
-            {editingId && (
-                <div className="modal-overlay">
-                    <div className="modal-content-premium">
-                        <h2 className="modal-title-premium">Chỉnh sửa ngành nghề</h2>
-                        <form onSubmit={handleUpdate}>
-                            <div className="form-group-premium">
-                                <label className="form-label-premium">Tên ngành nghề</label>
-                                <input 
-                                    className="form-input-premium" 
-                                    placeholder="Ví dụ: Công nghệ thông tin..."
-                                    value={editingName}
-                                    onChange={(e) => setEditingName(e.target.value)}
-                                    autoFocus
-                                />
-                            </div>
-                            <div className="form-group-premium">
-                                <label className="form-label-premium">Lĩnh vực (Phân loại)</label>
-                                <input 
-                                    className="form-input-premium" 
-                                    placeholder="Ví dụ: Kỹ thuật, Kinh doanh.."
-                                    value={editingCategory}
-                                    onChange={(e) => setEditingCategory(e.target.value)}
-                                />
-                            </div>
-                            <div className="modal-actions-premium">
-                                <button type="button" className="btn-premium-cancel" onClick={() => setEditingId(null)}>Hủy</button>
-                                <button type="submit" className="btn-premium-submit">Lưu thay đổi</button>
-                            </div>
-                        </form>
+                {editingId && (
+                    <div className="modal-overlay">
+                        <div className="modal-content-premium">
+                            <h2 className="modal-title-premium">Chỉnh sửa ngành nghề</h2>
+                            <form onSubmit={handleUpdate}>
+                                <div className="form-group-premium">
+                                    <label className="form-label-premium">Tên ngành nghề</label>
+                                    <input 
+                                        className="form-input-premium" 
+                                        placeholder="Ví dụ: Công nghệ thông tin..."
+                                        value={editingName}
+                                        onChange={(e) => setEditingName(e.target.value)}
+                                        autoFocus
+                                    />
+                                </div>
+                                <div className="form-group-premium">
+                                    <label className="form-label-premium">Lĩnh vực (Phân loại)</label>
+                                    <input 
+                                        className="form-input-premium" 
+                                        placeholder="Ví dụ: Kỹ thuật, Kinh doanh.."
+                                        value={editingCategory}
+                                        onChange={(e) => setEditingCategory(e.target.value)}
+                                    />
+                                </div>
+                                <div className="modal-actions-premium">
+                                    <button type="button" className="btn-premium-cancel" onClick={() => setEditingId(null)}>Hủy</button>
+                                    <button type="submit" className="btn-premium-submit">Lưu thay đổi</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 };

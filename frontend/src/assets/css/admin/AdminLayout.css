@@ -1,11 +1,10 @@
 .admin-layout {
-    display: flex;
     min-height: 100vh;
     background: #f8fafc;
+    padding-left: 280px;
 }
 
 .admin-main-content {
-    flex: 1;
     display: flex;
     flex-direction: column;
     position: relative;

@@ -47,7 +47,6 @@ import EmployerPricing from './pages/company/EmployerPricing'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import SkillManagement from './pages/admin/SkillManagement'
 import UserManagement from './pages/admin/UserManagement'
-import CompanyVerification from './pages/admin/CompanyVerification'
 import JobApproval from './pages/admin/JobApproval'
 import Reports from './pages/admin/Reports'
 import AdminPasswordRequests from './pages/admin/AdminPasswordRequests'
@@ -166,7 +165,6 @@ const AppContent = () => {
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="skills" element={<SkillManagement />} />
               <Route path="users" element={<UserManagement />} />
-              <Route path="companies" element={<CompanyVerification />} />
               <Route path="jobs" element={<JobApproval />} />
               <Route path="password-requests" element={<AdminPasswordRequests />} />
               <Route path="reports" element={<Reports />} />

@@ -2,101 +2,163 @@
     width: 280px;
     height: 100vh;
     background: #ffffff;
-    color: #1e293b;
+    border-right: 1px solid #f1f5f9;
     display: flex;
     flex-direction: column;
-    /* Đã gỡ position: fixed để tránh làm hỏng CSS flex chia cột của các trang Admin Layout */
     z-index: 1000;
-    border-right: 1px solid #e2e8f0;
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.02);
+    position: fixed;
+    top: 0;
+    left: 0;
 }
 
-.admin-sidebar-logo {
-    padding: 2rem;
+.admin-sidebar-header {
+    padding: 2.5rem 1.5rem;
+}
+
+.admin-logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-logo-icon {
+    width: 40px;
+    height: 40px;
+    background: #2563eb;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.admin-logo-icon .material-symbols-outlined {
+    font-size: 24px;
+}
+
+.admin-logo-text {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
 }
 
-.logo-text {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: white;
-    text-decoration: none;
+.logo-main {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e3a8a;
     letter-spacing: -0.5px;
 }
 
-.logo-text .highlight {
-    color: #2563eb;
-}
-
-.logo-badge {
-    background: #eff6ff;
-    color: #2563eb;
-    font-size: 0.7rem;
-    font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 6px;
-    width: fit-content;
-    letter-spacing: 2px;
-    border: 1px solid #dbeafe;
+.logo-sub {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #94a3b8;
+    letter-spacing: 1px;
 }
 
 .admin-sidebar-nav {
     flex: 1;
-    padding: 1rem;
+    padding: 0 1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 4px;
+    overflow-y: auto;
 }
 
 .admin-nav-item {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 0.8rem 1.2rem;
-    color: #475569;
+    gap: 12px;
+    padding: 12px 16px;
+    color: #64748b;
     text-decoration: none;
-    border-radius: 12px;
-    transition: all 0.3s ease;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.admin-nav-item .material-symbols-outlined {
+    font-size: 22px;
 }
 
 .admin-nav-item:hover {
     background: #f8fafc;
     color: #2563eb;
-    transform: translateX(2px);
 }
 
 .admin-nav-item.active {
-    background: #2563eb;
-    color: white;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-}
-
-.item-label {
-    font-size: 0.95rem;
-    font-weight: 500;
+    background: #eff6ff;
+    color: #2563eb;
 }
 
 .admin-sidebar-footer {
     padding: 1.5rem;
     border-top: 1px solid #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: auto;
+}
+
+.admin-bottom-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.admin-bottom-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    color: #64748b;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.admin-bottom-item.has-status {
+    background: #f0fdf4;
+    border-radius: 30px;
+    padding: 8px 16px;
+}
+
+.admin-bottom-item.has-status .item-label {
+    color: #166534;
+}
+
+.bottom-item-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.status-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #22c55e;
+}
+
+.admin-bottom-item .material-symbols-outlined {
+    font-size: 20px;
 }
 
 .admin-logout-btn {
-    width: 100%;
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 0.8rem 1.2rem;
-    background: transparent;
+    gap: 12px;
+    padding: 10px 12px;
+    background: none;
     border: none;
     color: #ef4444;
+    font-weight: 600;
     cursor: pointer;
-    border-radius: 12px;
-    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
 }
 
 .admin-logout-btn:hover {
-    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    transform: translateX(4px);
 }

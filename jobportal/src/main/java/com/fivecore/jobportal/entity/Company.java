@@ -56,4 +56,9 @@ public class Company {
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<Job> jobs;
+
+    // Các bảng tham chiếu để hỗ trợ DELETE CASCADE
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private java.util.List<SavedCandidate> savedCandidates;
 }

@@ -8,7 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import com.fivecore.jobportal.entity.Company;
+import org.springframework.transaction.annotation.Transactional;
+import com.fivecore.jobportal.entity.*;
 
 /**
  * Dịch vụ Quản trị Hệ thống (Dành cho Admin).
@@ -17,6 +18,7 @@ import com.fivecore.jobportal.entity.Company;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class AdminService {
 
     private final JobRepository jobRepository;
@@ -25,6 +27,12 @@ public class AdminService {
     private final CompanyRepository companyRepository;
     private final UserRepository userRepository;
     private final SkillRepository skillRepository;
+    private final NotificationRepository notificationRepository;
+    private final MessageRepository messageRepository;
+    private final PasswordResetTokenRepository tokenRepository;
+    private final SavedJobRepository savedJobRepository;
+    private final SavedCandidateRepository savedCandidateRepository;
+    private final InterviewRepository interviewRepository;
 
     /**
      * Lấy số liệu thống kê tổng quan cho Dashboard Admin.
@@ -61,7 +69,8 @@ public class AdminService {
                     Map<String, Object> j = new HashMap<>();
                     j.put("id", job.getId());
                     j.put("title", job.getTitle());
-                    j.put("companyName", job.getCompany().getName());
+                    String companyName = (job.getCompany() != null) ? job.getCompany().getName() : "N/A";
+                    j.put("companyName", companyName);
                     j.put("postedAt", job.getPostedAt());
                     return j;
                 })
@@ -103,7 +112,7 @@ public class AdminService {
             return com.fivecore.jobportal.dto.admin.AdminJobResponse.builder()
                 .id(job.getId())
                 .title(job.getTitle())
-                .companyName(job.getCompany().getName())
+                .companyName(job.getCompany() != null ? job.getCompany().getName() : "N/A")
                 .createdAt(job.getPostedAt())
                 .minSalary(job.getMinSalary())
                 .maxSalary(job.getMaxSalary())
@@ -130,13 +139,76 @@ public class AdminService {
     }
 
     /**
-     * Xóa vĩnh viễn tài khoản người dùng và các dữ liệu liên quan.
+     * Xóa vĩnh viễn tài khoản người dùng và dọn dẹp thủ công toàn bộ dữ liệu liên quan.
+     * Giải quyết triệt để lỗi ràng buộc khóa ngoại (Foreign Key Constraints).
      */
     public void deleteUser(Integer userId) {
-        userRepository.findById(userId).ifPresent(user -> {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng để xóa"));
+
+        log.info("Sát thực xóa tài khoản: {} (ID: {}) và các dữ liệu liên quan...", user.getEmail(), userId);
+
+        try {
+            // 1. Dọn dẹp Notification, Message, PasswordResetToken (Chung cho mọi User)
+            notificationRepository.deleteByUserId(userId);
+            tokenRepository.deleteByUserId(userId);
+            messageRepository.deleteBySenderIdOrReceiverId(userId, userId);
+
+            // 2. Dọn dẹp dữ liệu đặc thù theo Role
+            if (user.getRole() == User.Role.student && user.getStudent() != null) {
+                Student student = user.getStudent();
+                Integer studentId = student.getId();
+
+                // Xóa ứng viên đã lưu liên quan sinh viên này
+                savedCandidateRepository.deleteByStudentId(studentId);
+                // Xóa việc làm đã lưu
+                savedJobRepository.deleteByStudentId(studentId);
+                // Xóa đơn ứng tuyển & Phỏng vấn
+                List<Application> apps = applicationRepository.findByStudentId(studentId);
+                for (Application app : apps) {
+                    interviewRepository.deleteByApplicationId(app.getId());
+                }
+                applicationRepository.deleteByStudentId(studentId);
+                
+                studentRepository.delete(student);
+
+            } else if (user.getRole() == User.Role.company && user.getCompany() != null) {
+                Company company = user.getCompany();
+                Integer companyId = company.getId();
+
+                // Xóa ứng viên đã lưu bởi công ty
+                savedCandidateRepository.deleteByCompanyId(companyId);
+
+                // Xóa tin tuyển dụng & Dữ liệu liên quan
+                List<Job> jobs = jobRepository.findByCompanyId(companyId);
+                for (Job job : jobs) {
+                    List<Application> jobApps = applicationRepository.findByJobId(job.getId());
+                    for (Application app : jobApps) {
+                        interviewRepository.deleteByApplicationId(app.getId());
+                    }
+                    applicationRepository.deleteByJobId(job.getId());
+                    jobRepository.delete(job);
+                }
+
+                companyRepository.delete(company);
+            }
+
+            // 3. Cuối cùng mới xóa thực thể User
             userRepository.delete(user);
-            log.info("Admin đã XÓA vĩnh viễn tài khoản: {}", user.getEmail());
-        });
+            log.info("✅ Đã XÓA vĩnh viễn tài khoản: {} thành công.", user.getEmail());
+
+        } catch (Exception e) {
+            log.error("❌ Lỗi nghiêm trọng khi xóa người dùng {}: {}", user.getEmail(), e.getMessage());
+            try {
+                java.nio.file.Path logPath = java.nio.file.Paths.get("C:\\CNPM\\Student-career-support\\error_log.txt");
+                String errorInfo = "User: " + user.getEmail() + "\nError: " + e.toString() + "\nCause: " + e.getCause() + "\nStack: " + 
+                    java.util.Arrays.toString(e.getStackTrace());
+                java.nio.file.Files.writeString(logPath, errorInfo);
+            } catch (Exception logEx) {
+                log.error("Không thể ghi log lỗi ra file: {}", logEx.getMessage());
+            }
+            throw new RuntimeException("Lỗi ràng buộc: " + e.getMessage() + " (Xem log file)");
+        }
     }
 
     /**

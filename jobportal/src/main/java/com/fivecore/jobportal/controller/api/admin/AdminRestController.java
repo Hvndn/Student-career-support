@@ -128,15 +128,16 @@ public class AdminRestController {
     }
 
     /**
-     * API Xóa người dùng (Dùng cho flow không JS - Redirect về frontend).
+     * API Xóa vĩnh viễn người dùng khỏi Database.
      */
-    @PostMapping("/users/{id}/delete")
-    public ResponseEntity<Object> deleteUser(@PathVariable Integer id) {
-        adminService.deleteUser(id);
-        // Redirect về trang quản lý người dùng ở frontend
-        return ResponseEntity.status(302)
-                .header("Location", "http://localhost:5174/admin/users")
-                .build();
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<ApiResponse<Object>> deleteUser(@PathVariable Integer id) {
+        try {
+            adminService.deleteUser(id);
+            return ResponseEntity.ok(ApiResponse.success("Xóa người dùng thành công", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi xóa người dùng: " + e.getMessage(), "DELETE_ERROR"));
+        }
     }
 
     /**

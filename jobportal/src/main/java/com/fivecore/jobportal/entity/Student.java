@@ -109,4 +109,13 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private java.util.List<Project> projects = new java.util.ArrayList<>();
+
+    // Các bảng tham chiếu để hỗ trợ DELETE CASCADE
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private java.util.List<SavedJob> savedJobs;
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private java.util.List<SavedCandidate> savedByCompanies;
 }

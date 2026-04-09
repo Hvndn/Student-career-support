@@ -63,6 +63,23 @@ public class User {
     @JsonIgnore
     private Company company;
 
+    // Quan hệ với các bảng liên quan để hỗ trợ DELETE CASCADE
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private java.util.List<Notification> notifications;
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private java.util.List<Message> sentMessages;
+
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private java.util.List<Message> receivedMessages;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private java.util.List<PasswordResetToken> passwordResetTokens;
+
     /**
      * Các vai trò trong hệ thống.
      */

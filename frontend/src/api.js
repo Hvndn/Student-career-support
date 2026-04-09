@@ -30,7 +30,7 @@ api.interceptors.response.use(
     },
     (error) => {
         const message = error.response?.data?.message || "Đã có lỗi xảy ra. Vui lòng thử lại!";
-        
+
         if (error.response) {
             if (error.response.status === 401) {
                 // Nếu đang ở trang login thì không cần báo lỗi hết hạn
@@ -46,7 +46,7 @@ api.interceptors.response.use(
             } else if (error.response.status === 403) {
                 toast.error("Bạn không có quyền thực hiện hành động này!");
             } else if (error.response.status >= 500) {
-                toast.error("Lỗi hệ thống! Vui lòng liên hệ quản trị viên.");
+                toast.error(message || "Lỗi hệ thống! Vui lòng liên hệ quản trị viên.");
             } else {
                 toast.error(message);
             }
@@ -167,6 +167,7 @@ export const adminApi = {
     updateJobStatus: (id, status) => api.post(`/admin/jobs/${id}/status?status=${status}`),
     getPendingCompanies: () => api.get('/admin/companies/pending'),
     approveCompany: (id) => api.post(`/admin/companies/${id}/approve`),
+    deleteUser: (id) => api.delete(`/admin/users/${id}`),
     getReports: () => api.get('/admin/reports'),
     getPasswordRequests: () => api.get('/admin/password-requests'),
     approvePasswordRequest: (id) => api.post(`/admin/password-requests/${id}/approve`),

@@ -4,195 +4,228 @@ import { adminApi } from '../../api';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import AdminNavbar from '../../components/admin/AdminNavbar';
 import '../../assets/css/admin/AdminLayout.css';
+import '../../assets/css/admin/AdminSidebar.css';
+import '../../assets/css/admin/AdminNavbar.css';
+import '../../assets/css/admin/AdminDashboard.css';
+import globeImage from '../../assets/images/admin/global_reach_globe.png';
 
 const AdminDashboard = () => {
-    const [stats, setStats] = useState(null);
+    const [stats, setStats] = useState({
+        totalStudents: 0,
+        totalCompanies: 0,
+        totalJobs: 0,
+        totalApplications: 0,
+        pendingCompanies: 0,
+        totalReports: 0,
+        successRate: 0,
+        recentJobs: []
+    });
     const [loading, setLoading] = useState(true);
     const location = useLocation();
     const navigate = useNavigate();
-    const [successMessage, setSuccessMessage] = useState(location.state?.message || '');
 
     useEffect(() => {
-        if (location.state?.message) {
-            window.history.replaceState({}, document.title);
-            const timer = setTimeout(() => setSuccessMessage(''), 5000);
-            return () => clearTimeout(timer);
-        }
-    }, [location]);
-
-    useEffect(() => {
-        document.body.style.paddingTop = '0';
-
-        adminApi.getStats()
-            .then(res => {
-                setStats(res.data.data);
+        const fetchStats = async () => {
+            try {
+                const res = await adminApi.getStats();
+                if (res.data && res.data.data) {
+                    const data = res.data.data;
+                    setStats({
+                        totalStudents: data.totalStudents || 0,
+                        totalCompanies: data.totalCompanies || 0,
+                        totalJobs: data.totalJobs || 0,
+                        totalApplications: data.totalApplications || 0,
+                        pendingCompanies: data.pendingCompanies || 0,
+                        totalReports: data.totalReports || 0,
+                        successRate: data.successRate || 0,
+                        recentJobs: data.recentJobs || []
+                    });
+                }
+            } catch (err) {
+                console.error("Lấy thống kê admin thất bại:", err);
+            } finally {
                 setLoading(false);
-            })
-            .catch(err => {
-                console.error(err);
-                setStats({
-                    totalStudents: 15482,
-                    totalCompanies: 1240,
-                    totalJobs: 3512,
-                    totalApplications: 250,
-                    totalUsers: 16722,
-                    pendingCompanies: 18,
-                    totalReports: 7,
-                    recentJobs: []
-                });
-                setLoading(false);
-            });
-
-        return () => {
-            document.body.style.paddingTop = '';
+            }
         };
+
+        fetchStats();
     }, []);
 
-    const handleLogout = () => {
-        localStorage.removeItem('user');
-        navigate('/login');
-    };
+    if (loading) return (
+        <div className="admin-loading">
+            <div className="loader"></div>
+            <span>Đang tải dữ liệu vận hành...</span>
+        </div>
+    );
 
-    if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Đang tải dữ liệu hệ thống...</div>;
-
-    const statCards = [
-        { label: 'Việc làm', value: stats.totalJobs || 0, color: '#2563eb', icon: '💼' },
-        { label: 'Sinh viên', value: stats.totalStudents || 0, color: '#7c3aed', icon: '🎓' },
-        { label: 'Doanh nghiệp', value: stats.totalCompanies || 0, color: '#10b981', icon: '🏢' },
-        { label: 'Báo cáo', value: stats.totalReports || 0, color: '#ef4444', icon: '🚩' }
+    const metrics = [
+        { label: 'Sinh viên đăng ký', value: stats.totalStudents.toLocaleString(), trend: '+ 12%', trendType: 'up', icon: 'person', color: '#3b82f6' },
+        { label: 'Nhà tuyển dụng', value: stats.totalCompanies.toLocaleString(), trend: '+ 8.4%', trendType: 'up', icon: 'business_center', color: '#6366f1' },
+        { label: 'Tin tuyển dụng', value: stats.totalJobs.toLocaleString(), trend: 'Ổn định', trendType: 'stable', icon: 'work', color: '#f97316' },
+        { label: 'Tổng ứng tuyển', value: stats.totalApplications.toLocaleString(), trend: 'Mới', trendType: 'new', icon: 'person_add', color: '#ef4444' }
     ];
+
+    const chartData = [35, 45, 30, 52, 38, 55, 40, 60, 45, 65, 58, 62, 50, 75, 85];
 
     return (
         <div className="admin-layout">
             <AdminSidebar />
             <div className="admin-main-content">
-                <AdminNavbar title="Tổng quan hệ thống" />
+                <AdminNavbar />
                 <main className="admin-body">
-                    {successMessage && (
-                        <div style={{ marginBottom: '1.5rem', backgroundColor: '#dcfce7', color: '#15803d', padding: '1rem', borderRadius: '12px', border: '1px solid #bbf7d0' }}>
-                            {successMessage}
+                    <section className="admin-header-section">
+                        <div className="header-text">
+                            <h1>Tổng quan vận hành</h1>
+                            <p>Theo dõi hiệu suất hệ sinh thái ScholarBridge.</p>
                         </div>
-                    )}
-                    
-                    <h1 style={{ marginBottom: '2rem', color: '#1e293b' }}>Quản trị <span style={{ color: '#2563eb' }}>Hệ thống</span></h1>
-                    
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
-                        {statCards.map((card, i) => (
-                            <div key={i} className="card fade-in" style={{ 
-                                textAlign: 'left', 
-                                padding: '1.5rem', 
-                                borderLeft: `4px solid ${card.color}`,
-                                background: 'white',
-                                boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)',
-                                animationDelay: `${i * 0.1}s`
-                            }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem' }}>
-                                    <span style={{ color: '#64748b', fontWeight: '700', textTransform: 'uppercase', fontSize: '0.75rem' }}>{card.label}</span>
-                                    <div style={{ fontSize: '1.2rem' }}>{card.icon}</div>
+                        <div className="header-actions">
+                            <button className="btn-secondary">
+                                <span className="material-symbols-outlined">file_download</span>
+                                Xuất báo cáo
+                            </button>
+                            <button className="btn-primary">
+                                <span className="material-symbols-outlined">add</span>
+                                Mới đối tác
+                            </button>
+                        </div>
+                    </section>
+
+                    <section className="metrics-grid">
+                        {metrics.map((metric, i) => (
+                            <div key={i} className="metric-card">
+                                <div className="metric-header">
+                                    <div className="metric-icon" style={{ backgroundColor: metric.color + '15', color: metric.color }}>
+                                        <span className="material-symbols-outlined">{metric.icon}</span>
+                                    </div>
+                                    <div className={`metric-trend ${metric.trendType}`}>
+                                        {metric.trendType === 'up' && <span className="material-symbols-outlined">trending_up</span>}
+                                        {metric.trendType === 'stable' && <span className="material-symbols-outlined">sync</span>}
+                                        {metric.trend === 'New' && <span className="new-dot"></span>}
+                                        {metric.trend}
+                                    </div>
                                 </div>
-                                <h2 style={{ fontSize: '2rem', fontWeight: '800', color: '#0f172a' }}>{card.value.toLocaleString()}</h2>
-                                <div style={{ fontSize: '0.75rem', color: '#10b981', marginTop: '0.4rem', fontWeight: '600' }}>↑ +12% tháng này</div>
+                                <div className="metric-info">
+                                    <span className="metric-label">{metric.label}</span>
+                                    <h2 className="metric-value">{metric.value}</h2>
+                                </div>
                             </div>
                         ))}
-                    </div>
+                    </section>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem', marginBottom: '2rem' }}>
-                        {/* CHART PANEL */}
-                        <div className="card" style={{ background: 'white', padding: '1.5rem' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2rem' }}>
-                                <div>
-                                    <h3 style={{ margin: 0, fontSize: '1.1rem' }}>Phân tích tăng trưởng</h3>
-                                    <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>Tỉ lệ người dùng mới (30 ngày)</p>
+                    <div className="main-dashboard-grid">
+                        <div className="left-column">
+                            {/* GROWTH CHART */}
+                            <div className="dashboard-card growth-chart-card">
+                                <div className="card-header">
+                                    <div className="card-title-group">
+                                        <h3>Phân tích tăng trưởng</h3>
+                                        <p>Tỉ lệ chấp nhận người dùng (30 ngày)</p>
+                                    </div>
+                                    <button className="chart-filter-btn">30 ngày qua</button>
                                 </div>
-                                <span style={{ fontSize: '0.85rem', color: '#2563eb', fontWeight: 600 }}>Tháng 3, 2024</span>
-                            </div>
-                            <div style={{ height: '200px', display: 'flex', alignItems: 'flex-end', gap: '0.8rem', padding: '0 1rem' }}>
-                                {[35, 45, 30, 52, 38, 55, 40, 60, 45, 65].map((val, idx) => (
-                                    <div key={idx} style={{ 
-                                        flex: 1, 
-                                        height: `${val}%`, 
-                                        background: idx === 9 ? '#2563eb' : '#e2e8f0', 
-                                        borderRadius: '4px 4px 0 0',
-                                        transition: 'all 0.3s'
-                                    }}></div>
-                                ))}
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem', fontSize: '0.7rem', color: '#94a3b8', fontWeight: 700 }}>
-                                <span>NGÀY 01</span>
-                                <span>NGÀY 15</span>
-                                <span>HÔM NAY</span>
-                            </div>
-                        </div>
-
-                        {/* QUICK ACTIONS */}
-                        <div className="card" style={{ background: 'white', padding: '1.5rem' }}>
-                            <h3 style={{ marginBottom: '1.5rem', fontSize: '1.1rem' }}>Hành động nhanh</h3>
-                            <div style={{ display: 'grid', gap: '0.8rem' }}>
-                                <Link to="/admin/companies/pending" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '0.8rem', background: '#f0fdf4', color: '#16a34a', borderRadius: '10px', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600 }}>
-                                    <div style={{ background: '#dcfce7', padding: '0.4rem', borderRadius: '8px' }}>🏢</div>
-                                    Duyệt Doanh nghiệp ({stats.pendingCompanies || 0})
-                                </Link>
-                                <Link to="/admin/reports" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '0.8rem', background: '#fef2f2', color: '#dc2626', borderRadius: '10px', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600 }}>
-                                    <div style={{ background: '#fee2e2', padding: '0.4rem', borderRadius: '8px' }}>🚩</div>
-                                    Xử lý Báo cáo ({stats.totalReports || 0})
-                                </Link>
-                                <Link to="/admin/skills" style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '0.8rem', background: '#f8fafc', color: '#475569', borderRadius: '10px', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600 }}>
-                                    <div style={{ background: '#f1f5f9', padding: '0.4rem', borderRadius: '8px' }}>⚙️</div>
-                                    Quản lý Kỹ năng
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-                        {/* RECENT JOBS */}
-                        <div className="card" style={{ background: 'white', padding: '1.5rem' }}>
-                            <h3 style={{ marginBottom: '1.5rem', fontSize: '1.1rem' }}>Việc làm mới đăng</h3>
-                            <div style={{ display: 'grid', gap: '0.8rem' }}>
-                                {stats.recentJobs?.length > 0 ? (
-                                    stats.recentJobs.slice(0, 4).map(job => (
-                                        <div key={job.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.8rem', background: '#f8fafc', borderRadius: '10px' }}>
-                                            <div>
-                                                <div style={{ fontWeight: '700', fontSize: '0.9rem' }}>{job.title}</div>
-                                                <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{job.companyName}</div>
-                                            </div>
-                                            <span style={{ fontSize: '0.7rem', color: '#2563eb', fontWeight: '700' }}>{new Date(job.postedAt).toLocaleDateString()}</span>
+                                <div className="bar-chart-container">
+                                    {chartData.map((val, idx) => (
+                                        <div key={idx} className="bar-wrapper">
+                                            <div
+                                                className={`chart-bar ${idx === chartData.length - 1 ? 'active' : ''}`}
+                                                style={{ height: `${val}%` }}
+                                            ></div>
                                         </div>
-                                    ))
-                                ) : (
-                                    <div style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8', fontSize: '0.9rem' }}>Không có dữ liệu việc làm gần đây</div>
-                                )}
+                                    ))}
+                                </div>
+                                <div className="chart-labels">
+                                    <span>NGÀY 01</span>
+                                    <span>NGÀY 15</span>
+                                    <span>HÔM NAY</span>
+                                </div>
+                            </div>
+
+                            {/* SYSTEM ACTIVITY */}
+                            <div className="dashboard-card activity-card">
+                                <div className="card-header">
+                                    <h3>Hoạt động hệ thống gần đây</h3>
+                                    <Link to="/admin/jobs" className="see-all-link">Xem tất cả việc làm</Link>
+                                </div>
+                                <div className="activity-list">
+                                    {stats.recentJobs && stats.recentJobs.length > 0 ? stats.recentJobs.map((job, index) => (
+                                        <div key={job.id || index} className="activity-item">
+                                            <div className="activity-avatar bg-blue">
+                                                {job.companyName ? job.companyName.charAt(0) : 'J'}
+                                            </div>
+                                            <div className="activity-content">
+                                                <p><span className="bold">{job.companyName}</span> đã đăng một công việc mới: <span className="bold">{job.title}</span></p>
+                                                <span className="time">{job.postedAt ? new Date(job.postedAt).toLocaleDateString('vi-VN') : 'Mới đây'}</span>
+                                            </div>
+                                            <span className="activity-tag job">BÀI ĐĂNG VIỆC</span>
+                                        </div>
+                                    )) : (
+                                        <div className="activity-item">
+                                            <p style={{ color: '#6b7280', fontSize: '0.9rem' }}>Chưa có hoạt động mới nào được ghi lại.</p>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
-                        {/* SYSTEM LOGS */}
-                        <div className="card" style={{ background: 'white', padding: '1.5rem' }}>
-                            <h3 style={{ marginBottom: '1.5rem', fontSize: '1.1rem' }}>Hoạt động hệ thống</h3>
-                            <div style={{ display: 'grid', gap: '1rem' }}>
-                                <div style={{ display: 'flex', gap: '0.8rem', fontSize: '0.85rem' }}>
-                                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#2563eb', marginTop: '0.4rem' }}></div>
-                                    <div>
-                                        <span style={{ fontWeight: 700 }}>Google</span> vừa đăng tin tuyển dụng mới.
-                                        <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>2 PHÚT TRƯỚC</div>
+                        <div className="right-column">
+                            {/* QUICK ACTIONS */}
+                            <div className="right-sidebar-section">
+                                <h3>Thao tác nhanh</h3>
+                                <div className="quick-action-list">
+                                    <div className="action-item" onClick={() => navigate('/admin/reports')} style={{ cursor: 'pointer' }}>
+                                        <div className="action-icon red">
+                                            <span className="material-symbols-outlined">policy</span>
+                                        </div>
+                                        <div className="action-info">
+                                            <h4>Báo cáo & Khiếu nại</h4>
+                                            <p>{stats.totalReports} báo cáo cần xử lý</p>
+                                        </div>
+                                    </div>
+                                    <div className="action-item">
+                                        <div className="action-icon purple">
+                                            <span className="material-symbols-outlined">hub</span>
+                                        </div>
+                                        <div className="action-info">
+                                            <h4>Thông báo hệ thống</h4>
+                                            <p>Gửi thông báo toàn hệ thống</p>
+                                        </div>
                                     </div>
                                 </div>
-                                <div style={{ display: 'flex', gap: '0.8rem', fontSize: '0.85rem' }}>
-                                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#f59e0b', marginTop: '0.4rem' }}></div>
-                                    <div>
-                                        Báo cáo mới từ <span style={{ fontWeight: 700 }}>User #8291</span>.
-                                        <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>14 PHÚT TRƯỚC</div>
+                            </div>
+
+                            {/* GLOBAL REACH */}
+                            <div className="dashboard-card global-reach-card">
+                                <div className="card-header">
+                                    <div className="card-title-group">
+                                        <h3>Phạm vi toàn cầu</h3>
+                                        <p>Lưu lượng truy cập theo khu vực</p>
                                     </div>
                                 </div>
-                                <div style={{ display: 'flex', gap: '0.8rem', fontSize: '0.85rem' }}>
-                                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', marginTop: '0.4rem' }}></div>
-                                    <div>
-                                        <span style={{ fontWeight: 700 }}>NovaTech</span> đã xác minh thành công.
-                                        <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>45 PHÚT TRƯỚC</div>
+                                <div className="globe-visualization">
+                                    <img src={globeImage} alt="Global Reach Map" />
+                                </div>
+                                <div className="region-stats">
+                                    <div className="region-item">
+                                        <span className="region-label">BẮC MỸ</span>
+                                        <span className="region-value">45%</span>
+                                    </div>
+                                    <div className="region-item">
+                                        <span className="region-label">CHÂU ÂU</span>
+                                        <span className="region-value">32%</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <footer className="admin-footer">
+                        <p>© 2024 ScholarBridge Inc. | Bảng điều khiển quản trị v2.4.0</p>
+                        <div className="footer-links">
+                            <Link to="#">Giao thức quyền riêng tư</Link>
+                            <Link to="#">Nhật ký kiểm tra</Link>
+                            <Link to="#">Tuân thủ</Link>
+                        </div>
+                    </footer>
                 </main>
             </div>
         </div>

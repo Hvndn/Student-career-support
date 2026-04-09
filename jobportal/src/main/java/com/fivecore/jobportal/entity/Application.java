@@ -38,6 +38,10 @@ public class Application {
     @Column(name = "applied_at", nullable = false, updatable = false)
     private LocalDateTime appliedAt;
 
+    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private java.util.List<Interview> interviews;
+
     public enum ApplicationStatus {
         pending, review, suitable, interview, accepted, rejected
     }

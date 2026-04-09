@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { adminApi } from '../../api';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import AdminNavbar from '../../components/admin/AdminNavbar';
-import '../../assets/css/admin/AdminLayout.css';
+import '../../assets/css/admin/AdminDashboard.css';
 
 const Reports = () => {
     const [stats, setStats] = useState(null);
@@ -178,7 +178,7 @@ const Reports = () => {
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', flex: 1, maxHeight: '200px', overflowY: 'auto' }}>
                                     {stats?.skillDistribution && Object.entries(stats.skillDistribution).map(([category, count], idx) => {
                                         const total = Object.values(stats.skillDistribution).reduce((a, b) => a + b, 0);
-                                        const percentage = Math.round((count / total) * 100);
+                                        const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
                                         const colors = ['#0d5cda', '#ea580c', '#4b5563', '#8b5cf6', '#ec4899'];
                                         return (
                                             <div key={category}>
@@ -244,44 +244,22 @@ const Reports = () => {
                             </div>
                             
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1.2rem', paddingBottom: '1.5rem', borderBottom: '1px solid #f3f4f6' }}>
-                                    <div style={{ background: '#eef2ff', color: '#0d5cda', width: '40px', height: '40px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                                    </div>
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{ fontSize: '0.95rem', fontWeight: 600, color: '#111827', marginBottom: '0.3rem' }}>
-                                            Công ty <span style={{ color: '#0d5cda' }}>FPT Software</span> đã được xác thực
+                                {stats?.recentJobs && stats.recentJobs.length > 0 ? stats.recentJobs.map((job) => (
+                                    <div key={job.id} style={{ display: 'flex', alignItems: 'flex-start', gap: '1.2rem', paddingBottom: '1.5rem', borderBottom: '1px solid #f3f4f6' }}>
+                                        <div style={{ background: '#eef2ff', color: '#0d5cda', width: '40px', height: '40px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                                         </div>
-                                        <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>Bởi Admin Minh Quân • 12 phút trước</div>
-                                    </div>
-                                    <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#059669', background: '#ecfdf5', padding: '0.3rem 0.6rem', borderRadius: '4px' }}>THÀNH CÔNG</span>
-                                </div>
-                                
-                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1.2rem', paddingBottom: '1.5rem', borderBottom: '1px solid #f3f4f6' }}>
-                                    <div style={{ background: '#fff7ed', color: '#ea580c', width: '40px', height: '40px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                                    </div>
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{ fontSize: '0.95rem', fontWeight: 600, color: '#111827', marginBottom: '0.3rem' }}>
-                                            Nhập dữ liệu tin tuyển dụng hàng loạt hoàn tất
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ fontSize: '0.95rem', fontWeight: 600, color: '#111827', marginBottom: '0.3rem' }}>
+                                                Việc làm mới: <span style={{ color: '#0d5cda' }}>{job.title}</span> tại {job.companyName}
+                                            </div>
+                                            <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>Đăng vào {new Date(job.postedAt).toLocaleDateString('vi-VN')}</div>
                                         </div>
-                                        <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>Hệ thống tự động • 45 phút trước</div>
+                                        <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#0d5cda', background: '#e0ebff', padding: '0.3rem 0.6rem', borderRadius: '4px' }}>VIỆC LÀM</span>
                                     </div>
-                                    <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#0d5cda', background: '#e0ebff', padding: '0.3rem 0.6rem', borderRadius: '4px' }}>HỆ THỐNG</span>
-                                </div>
-
-                                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1.2rem' }}>
-                                    <div style={{ background: '#fef2f2', color: '#dc2626', width: '40px', height: '40px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="20" height="20"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                                    </div>
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{ fontSize: '0.95rem', fontWeight: 600, color: '#111827', marginBottom: '0.3rem' }}>
-                                            Phát hiện 5 tài khoản sinh viên trùng lặp
-                                        </div>
-                                        <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>Quét bảo mật • 2 giờ trước</div>
-                                    </div>
-                                    <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#dc2626', background: '#fee2e2', padding: '0.3rem 0.6rem', borderRadius: '4px' }}>CẢNH BÁO</span>
-                                </div>
+                                )) : (
+                                    <div style={{ color: '#6b7280', fontSize: '0.9rem', textAlign: 'center', padding: '2rem' }}>Chưa có hoạt động hệ thống mới</div>
+                                )}
                             </div>
                         </div>
 

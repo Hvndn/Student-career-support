@@ -6,18 +6,37 @@ const AdminNavbar = ({ title }) => {
 
     return (
         <header className="admin-navbar">
-            <div className="admin-navbar-left">
-                <h2 className="admin-page-title">{title || 'Admin Dashboard'}</h2>
-            </div>
-            
-            <div className="admin-navbar-right">
-                <div className="admin-user-info">
-                    <div className="admin-user-details">
-                        <span className="admin-username">{user?.fullName || 'Administrator'}</span>
-                        <span className="admin-role">System Admin</span>
+            <div className="navbar-content">
+                <div className="admin-navbar-left">
+                    <div className="admin-search-container">
+                        <span className="material-symbols-outlined search-icon">search</span>
+                        <input 
+                            type="text" 
+                            placeholder="Tìm kiếm ứng dụng, công ty..." 
+                            className="admin-search-input"
+                        />
                     </div>
-                    <div className="admin-avatar">
-                        <img src="https://ui-avatars.com/api/?name=Admin&background=7c3aed&color=fff" alt="Admin" />
+                </div>
+                
+                <div className="admin-navbar-right">
+                    <div className="admin-status-icons">
+                        <button className="status-icon-btn">
+                            <span className="material-symbols-outlined">notifications</span>
+                            <span className="notification-badge"></span>
+                        </button>
+                        <button className="status-icon-btn">
+                            <span className="material-symbols-outlined">settings</span>
+                        </button>
+                    </div>
+
+                    <div className="admin-user-info">
+                        <div className="admin-user-details">
+                            <span className="admin-username">{user?.fullName || 'Alex Rivera'}</span>
+                            <span className="admin-role">Quản trị viên cấp cao</span>
+                        </div>
+                        <div className="admin-avatar">
+                            <img src="https://i.pravatar.cc/150?u=admin" alt="Admin" />
+                        </div>
                     </div>
                 </div>
             </div>

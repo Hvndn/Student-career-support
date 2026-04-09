@@ -1,61 +1,136 @@
 .admin-navbar {
     height: 80px;
-    background: white;
-    border-bottom: 1px solid #e2e8f0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 2rem;
+    background: #ffffff;
+    border-bottom: 1px solid #f1f5f9;
     position: fixed;
     top: 0;
     left: 280px;
     right: 0;
     z-index: 900;
+    display: flex;
+    align-items: center;
 }
 
-.admin-page-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #0f172a;
-    margin: 0;
+.navbar-content {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.admin-navbar-left {
+    flex: 1;
+}
+
+.admin-search-container {
+    display: flex;
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid #f1f5f9;
+    border-radius: 40px;
+    padding: 8px 20px;
+    width: 350px;
+    gap: 12px;
+    transition: all 0.2s ease;
+}
+
+.admin-search-container:focus-within {
+    background: white;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.05);
+}
+
+.admin-search-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 0.9rem;
+    color: #1e293b;
+    width: 100%;
+}
+
+.search-icon {
+    color: #94a3b8;
+    font-size: 20px;
 }
 
 .admin-navbar-right {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 24px;
+}
+
+.admin-status-icons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-right: 24px;
+    border-right: 1px solid #f1f5f9;
+}
+
+.status-icon-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.status-icon-btn:hover {
+    background: #f8fafc;
+    color: #1e293b;
+}
+
+.notification-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 8px;
+    height: 8px;
+    background: #ef4444;
+    border: 2px solid white;
+    border-radius: 50%;
 }
 
 .admin-user-info {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 0.5rem;
-    border-radius: 50px;
-    transition: background 0.2s;
+    gap: 16px;
 }
 
 .admin-user-details {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    text-align: right;
 }
 
 .admin-username {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #0f172a;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e293b;
 }
 
 .admin-role {
     font-size: 0.75rem;
-    color: #64748b;
+    font-weight: 500;
+    color: #94a3b8;
 }
 
 .admin-avatar img {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid #f1f5f9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }

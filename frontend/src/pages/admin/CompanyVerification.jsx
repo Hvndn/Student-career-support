@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { adminApi } from '../../api';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import AdminNavbar from '../../components/admin/AdminNavbar';
-import '../../assets/css/admin/AdminLayout.css';
+import '../../assets/css/admin/AdminDashboard.css';
 import toast from 'react-hot-toast';
 
 const CompanyVerification = () => {
