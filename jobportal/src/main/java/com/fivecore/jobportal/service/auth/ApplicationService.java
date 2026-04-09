@@ -105,6 +105,17 @@ public class ApplicationService {
         application.setStatus(status);
         applicationRepository.save(application);
         log.info("Đã cập nhật trạng thái đơn ứng tuyển ID {} sang {}", applicationId, status);
+        
+        // Gửi thông báo cho ứng viên
+        if (status == Application.ApplicationStatus.approved) {
+            notificationService.sendNotification(application.getStudent().getUser(),
+                    "Chúc mừng! Đơn ứng tuyển được duyệt",
+                    "Đơn ứng tuyển của bạn vào vị trí " + application.getJob().getTitle() + " đã được doanh nghiệp duyệt. Vui lòng chờ lịch phỏng vấn sắp tới!");
+        } else if (status == Application.ApplicationStatus.rejected) {
+            notificationService.sendNotification(application.getStudent().getUser(),
+                    "Cập nhật hồ sơ ứng tuyển",
+                    "Rất tiếc, đơn ứng tuyển của bạn vào vị trí " + application.getJob().getTitle() + " chưa phù hợp tại thời điểm này.");
+        }
     }
 
     /**

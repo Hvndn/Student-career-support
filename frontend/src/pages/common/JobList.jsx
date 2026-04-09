@@ -87,6 +87,21 @@ const JobList = () => {
                                 </button>
                             </div>
                             
+                            {/* Search */}
+                            <div className="filter-group">
+                                <label className="filter-label">Tìm kiếm công việc/công ty</label>
+                                <div className="search-input-wrapper">
+                                    <span className="material-symbols-outlined">search</span>
+                                    <input 
+                                        className="search-input" 
+                                        placeholder="Ví dụ: Java, FPT..." 
+                                        type="text" 
+                                        value={search}
+                                        onChange={e => setSearch(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+
                             {/* Industry */}
                             <div className="filter-group">
                                 <label className="filter-label">Ngành nghề</label>

@@ -427,24 +427,25 @@ const Profile = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
+                    flexWrap: 'wrap',
                     gap: '1rem'
                 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <span className="material-symbols-outlined" style={{ color: completion === 100 ? '#16a34a' : '#ea580c' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', flex: '1 1 300px' }}>
+                        <span className="material-symbols-outlined" style={{ color: completion === 100 ? '#16a34a' : '#ea580c', marginTop: '2px' }}>
                             {completion === 100 ? 'verified' : 'info'}
                         </span>
                         <div>
-                            <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1e293b' }}>
+                            <span style={{ fontWeight: 700, fontSize: '0.95rem', color: '#1e293b', display: 'block', marginBottom: '4px' }}>
                                 Độ hoàn thiện hồ sơ: {completion}%
                             </span>
-                            <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>
+                            <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0, lineHeight: '1.4' }}>
                                 {completion === 100 
                                     ? "Tuyệt vời! Hồ sơ của bạn đã sẵn sàng để ứng tuyển." 
                                     : "Hãy cập nhật đầy đủ thông tin để tăng cơ hội trúng tuyển lên 200%."}
                             </p>
                         </div>
                     </div>
-                    <div style={{ width: '150px', height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                    <div style={{ width: '100%', maxWidth: '200px', flex: '1 1 150px', height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
                         <div style={{ width: `${completion}%`, height: '100%', background: completion === 100 ? '#16a34a' : '#f97316', transition: 'width 0.5s ease' }}></div>
                     </div>
                 </div>
