@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { jobApi, studentApi } from '../../api';
+import '../../assets/css/student/JobList.css';
 
 const JobList = () => {
     const [jobs, setJobs] = useState([]);
@@ -45,231 +46,186 @@ const JobList = () => {
         );
     }, [search, locationSearch, jobs]);
 
-    const displayAvatar = profile?.avatarUrl || user?.avatar || "https://vectorified.com/images/default-avatar-icon-33.png";
+    const handleClearFilters = () => {
+        setSearch('');
+        setLocationSearch('');
+    };
 
     return (
-        <div className="min-h-screen" style={{ background: '#f8fafd', fontFamily: "'Inter', sans-serif", paddingTop: '64px' }}>
-
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Breadcrumbs & Header */}
-                <div className="mb-8">
-                    <nav aria-label="Breadcrumb" className="flex text-sm text-slate-500 dark:text-slate-400 mb-4">
-                        <ol className="flex items-center space-x-2">
-                            <li><Link className="hover:text-blue-600 transition-colors" to="/">Trang chủ</Link></li>
-                            <li><span className="material-symbols-outlined text-xs">chevron_right</span></li>
-                            <li className="text-slate-900 dark:text-slate-200 font-medium">Tìm kiếm việc làm</li>
-                        </ol>
-                    </nav>
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                        <div>
-                            <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Việc làm dành cho Sinh viên</h1>
-                            <p className="text-slate-500 dark:text-slate-400 mt-2">Khám phá hơn {Math.max(1200, jobs.length)}+ cơ hội thực tập và việc làm part-time/full-time mới nhất.</p>
+        <div className="job-list-container">
+            <main className="job-list-content">
+                {/* Sidebar: Filters */}
+                <aside className="jobs-sidebar">
+                    <div className="filter-card">
+                        <div className="filter-header">
+                            <h2 className="filter-title">
+                                <span className="material-symbols-outlined">tune</span>
+                                Bộ lọc
+                            </h2>
+                            <button className="filter-reset" onClick={handleClearFilters}>Xoá lọc</button>
                         </div>
-                        <div className="flex items-center gap-2 bg-white dark:bg-slate-800 p-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
-                            <button className="px-4 py-1.5 text-xs font-semibold rounded bg-blue-600 text-white">Mới nhất</button>
-                            <button className="px-4 py-1.5 text-xs font-semibold rounded text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">Lương cao</button>
+                        
+                        <div className="filter-group">
+                            <label className="filter-label">Tìm kiếm</label>
+                            <input 
+                                className="filter-input" 
+                                placeholder="Tên công việc, công ty..." 
+                                type="text"
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                            />
                         </div>
-                    </div>
-                </div>
 
-                <div className="flex flex-col lg:flex-row gap-8">
-                    {/* Sidebar: Filters */}
-                    <aside className="w-full lg:w-72 shrink-0 space-y-6">
-                        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-                            <div className="flex items-center justify-between mb-6">
-                                <h2 className="font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-                                    <span className="material-symbols-outlined text-blue-600">tune</span>
-                                    Bộ lọc chi tiết
-                                </h2>
-                                <button 
-                                    className="text-xs text-blue-600 font-medium hover:underline"
-                                    onClick={() => { setSearch(''); setLocationSearch(''); }}
-                                >
-                                    Xoá lọc
-                                </button>
-                            </div>
-                            
-                            {/* Filter Group: Industry */}
-                            <div className="mb-6">
-                                <label className="block text-sm font-semibold mb-3 text-slate-700 dark:text-slate-300">Ngành nghề</label>
-                                <select className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg py-2 px-3 text-sm focus:ring-blue-600 focus:border-blue-600 outline-none text-slate-700 dark:text-slate-300">
-                                    <option>Công nghệ thông tin</option>
-                                    <option>Marketing / Truyền thông</option>
-                                    <option>Thiết kế đồ họa</option>
-                                    <option>Kinh doanh / Bán hàng</option>
-                                    <option>Nhân sự</option>
-                                </select>
-                            </div>
-
-                            {/* Filter Group: Salary */}
-                            <div className="mb-6">
-                                <label className="block text-sm font-semibold mb-3 text-slate-700 dark:text-slate-300">Mức lương (VNĐ)</label>
-                                <div className="space-y-2">
-                                    <label className="flex items-center gap-2 cursor-pointer">
-                                        <input className="rounded border-slate-300 text-blue-600 focus:ring-blue-600" type="checkbox" />
-                                        <span className="text-sm text-slate-700 dark:text-slate-300">Dưới 5 triệu</span>
-                                    </label>
-                                    <label className="flex items-center gap-2 cursor-pointer">
-                                        <input defaultChecked className="rounded border-slate-300 text-blue-600 focus:ring-blue-600" type="checkbox" />
-                                        <span className="text-sm text-slate-700 dark:text-slate-300">5 - 10 triệu</span>
-                                    </label>
-                                    <label className="flex items-center gap-2 cursor-pointer">
-                                        <input className="rounded border-slate-300 text-blue-600 focus:ring-blue-600" type="checkbox" />
-                                        <span className="text-sm text-slate-700 dark:text-slate-300">Trên 10 triệu</span>
-                                    </label>
-                                    <label className="flex items-center gap-2 cursor-pointer">
-                                        <input className="rounded border-slate-300 text-blue-600 focus:ring-blue-600" type="checkbox" />
-                                        <span className="text-sm text-slate-700 dark:text-slate-300">Thoả thuận</span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            {/* Filter Group: Job Type */}
-                            <div className="mb-6">
-                                <label className="block text-sm font-semibold mb-3 text-slate-700 dark:text-slate-300">Loại hình</label>
-                                <div className="flex flex-wrap gap-2">
-                                    <button className="px-3 py-1.5 text-xs font-medium rounded-full bg-blue-600/10 text-blue-600 border border-blue-600/20">Full-time</button>
-                                    <button className="px-3 py-1.5 text-xs font-medium rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-transparent hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Internship</button>
-                                    <button className="px-3 py-1.5 text-xs font-medium rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-transparent hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Part-time</button>
-                                </div>
-                            </div>
-
-                            {/* Filter Group: City */}
-                            <div className="mb-6">
-                                <label className="block text-sm font-semibold mb-3 text-slate-700 dark:text-slate-300">Thành phố</label>
-                                <div className="relative">
-                                    <span className="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-sm">location_on</span>
-                                    <input 
-                                        className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg py-2 pl-9 pr-3 text-sm focus:ring-blue-600 outline-none text-slate-700 dark:text-slate-300" 
-                                        placeholder="Hồ Chí Minh, Hà Nội..." 
-                                        type="text" 
-                                        value={locationSearch}
-                                        onChange={e => setLocationSearch(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Filter Group: Skills */}
-                            <div>
-                                <label className="block text-sm font-semibold mb-3 text-slate-700 dark:text-slate-300">Kỹ năng yêu cầu</label>
-                                <div className="space-y-2">
-                                    <label className="flex items-center gap-2 cursor-pointer">
-                                        <input defaultChecked className="rounded border-slate-300 text-blue-600 focus:ring-blue-600" type="checkbox" />
-                                        <span className="text-sm text-slate-700 dark:text-slate-300">English Communication</span>
-                                    </label>
-                                    <label className="flex items-center gap-2 cursor-pointer">
-                                        <input className="rounded border-slate-300 text-blue-600 focus:ring-blue-600" type="checkbox" />
-                                        <span className="text-sm text-slate-700 dark:text-slate-300">UI/UX Design</span>
-                                    </label>
-                                    <label className="flex items-center gap-2 cursor-pointer">
-                                        <input defaultChecked className="rounded border-slate-300 text-blue-600 focus:ring-blue-600" type="checkbox" />
-                                        <span className="text-sm text-slate-700 dark:text-slate-300">Critical Thinking</span>
-                                    </label>
-                                </div>
+                        <div className="filter-group">
+                            <label className="filter-label">Địa điểm</label>
+                            <div style={{ position: 'relative' }}>
+                                <span className="material-symbols-outlined" style={{ position: 'absolute', left: '12px', top: '10px', fontSize: '18px', color: 'var(--text-muted)' }}>location_on</span>
+                                <input 
+                                    className="filter-input" 
+                                    style={{ paddingLeft: '38px' }}
+                                    placeholder="TP. Hồ Chí Minh, Hà Nội..." 
+                                    type="text" 
+                                    value={locationSearch}
+                                    onChange={e => setLocationSearch(e.target.value)}
+                                />
                             </div>
                         </div>
 
-                        {/* Ad/Promo Card */}
-                        <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-6 text-white shadow-lg shadow-blue-600/20">
-                            <span className="material-symbols-outlined mb-2 text-2xl">auto_awesome</span>
-                            <h3 className="font-bold mb-2">CV của bạn đã sẵn sàng?</h3>
-                            <p className="text-xs opacity-90 mb-4 leading-relaxed">Tối ưu CV bằng AI để tăng 80% tỷ lệ được gọi phỏng vấn.</p>
-                            <Link to="/student/profile" className="block text-center w-full py-2 bg-white text-blue-600 font-bold text-xs rounded-lg hover:bg-opacity-90 transition-all">Tạo CV ngay</Link>
+                        <div className="filter-group">
+                            <label className="filter-label">Ngành nghề</label>
+                            <select className="filter-select">
+                                <option>Tất cả ngành nghề</option>
+                                <option>Công nghệ thông tin</option>
+                                <option>Marketing / Truyền thông</option>
+                                <option>Thiết kế đồ họa</option>
+                                <option>Kinh doanh / Bán hàng</option>
+                            </select>
                         </div>
-                    </aside>
 
-                    {/* Results Section */}
-                    <div className="flex-1">
-                        {loading ? (
-                            <div className="text-center py-20 text-slate-500">
-                                <span className="material-symbols-outlined animate-spin text-4xl mb-4">refresh</span>
-                                <p>Đang tải danh sách việc làm...</p>
-                            </div>
-                        ) : filtered.length === 0 ? (
-                            <div className="bg-white dark:bg-slate-800 p-12 text-center rounded-2xl border border-slate-200 dark:border-slate-700">
-                                <span className="material-symbols-outlined text-6xl text-slate-300 dark:text-slate-600 mb-4">search_off</span>
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">Không tìm thấy việc làm</h3>
-                                <p className="text-slate-500 dark:text-slate-400 text-sm">Rất tiếc, không có công việc nào trùng khớp với bộ lọc của bạn.</p>
-                                <button onClick={() => { setSearch(''); setLocationSearch(''); }} className="mt-6 px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 rounded-lg text-sm font-semibold transition-colors">Xoá bộ lọc</button>
-                            </div>
-                        ) : (
-                            <div className="space-y-4">
-                                {filtered.map(job => (
-                                    <div key={job.id} className="group bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-blue-600 dark:hover:border-blue-600 transition-all shadow-sm hover:shadow-md">
-                                        <div className="flex flex-col sm:flex-row gap-5">
-                                            <div className="w-16 h-16 shrink-0 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 flex items-center justify-center p-2 text-2xl font-bold text-blue-600">
-                                                {job.companyName ? job.companyName.charAt(0).toUpperCase() : 'C'}
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex justify-between items-start gap-2">
-                                                    <div>
-                                                        <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors truncate">
-                                                            <Link to={`/jobs/${job.id}`}>{job.title}</Link>
-                                                        </h3>
-                                                        <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mt-0.5">{job.companyName}</p>
-                                                    </div>
-                                                    <button className="text-slate-400 hover:text-red-500 transition-colors">
-                                                        <span className="material-symbols-outlined">bookmark_add</span>
-                                                    </button>
-                                                </div>
-                                                <div className="flex flex-wrap gap-4 mt-4 text-xs font-medium text-slate-500 dark:text-slate-400">
-                                                    <div className="flex items-center gap-1.5">
-                                                        <span className="material-symbols-outlined text-sm">payments</span>
-                                                        <span className="text-blue-600 font-bold">{job.salary || 'Thoả thuận'}</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-1.5">
-                                                        <span className="material-symbols-outlined text-sm">location_on</span>
-                                                        <span>{job.location || 'Chưa cập nhật'}</span>
-                                                    </div>
-                                                    <div className="flex items-center gap-1.5">
-                                                        <span className="material-symbols-outlined text-sm">schedule</span>
-                                                        <span>Có sẵn</span>
-                                                    </div>
-                                                </div>
-                                                <div className="flex flex-wrap gap-2 mt-4">
-                                                    {job.jobType && (
-                                                        <span className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-[10px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
-                                                            {job.jobType}
-                                                        </span>
-                                                    )}
-                                                    {job.level && (
-                                                        <span className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-[10px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
-                                                            {job.level}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                <div className="flex items-center justify-end gap-3 mt-6 border-t border-slate-100 dark:border-slate-700 pt-4">
-                                                    <Link to={`/jobs/${job.id}`} className="px-4 py-2 text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-colors border border-slate-200 dark:border-slate-700">Chi tiết</Link>
-                                                    {(!user || user?.role === 'ROLE_STUDENT') && (
-                                                        <Link to={`/jobs/${job.id}`} className="px-6 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 transition-all shadow-sm shadow-blue-600/20">Ứng tuyển nhanh</Link>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                        <div className="filter-group">
+                            <label className="filter-label">Mức lương</label>
+                            <div className="checkbox-group">
+                                {['Dưới 5 triệu', '5 - 10 triệu', '10 - 20 triệu', 'Thoả thuận'].map(label => (
+                                    <label key={label} className="checkbox-item">
+                                        <input type="checkbox" />
+                                        <span>{label}</span>
+                                    </label>
                                 ))}
                             </div>
-                        )}
+                        </div>
 
-                        {/* Pagination */}
-                        {!loading && filtered.length > 0 && (
-                            <div className="mt-10 flex items-center justify-center gap-2">
-                                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                                    <span className="material-symbols-outlined">chevron_left</span>
-                                </button>
-                                <button className="w-10 h-10 flex items-center justify-center rounded-lg bg-blue-600 text-white font-bold">1</button>
-                                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">2</button>
-                                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">3</button>
-                                <span className="px-2 text-slate-400">...</span>
-                                <button className="w-10 h-10 flex items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                                    <span className="material-symbols-outlined">chevron_right</span>
-                                </button>
+                        <div className="filter-group">
+                            <label className="filter-label">Loại hình</label>
+                            <div className="checkbox-group">
+                                {['Full-time', 'Internship', 'Part-time'].map(label => (
+                                    <label key={label} className="checkbox-item">
+                                        <input type="checkbox" />
+                                        <span>{label}</span>
+                                    </label>
+                                ))}
                             </div>
-                        )}
+                        </div>
                     </div>
+
+                    {/* Promotion Card */}
+                    <div style={{ marginTop: '1.5rem', padding: '1.8rem', background: 'linear-gradient(135deg, #111827, #374151)', borderRadius: '24px', color: '#fff', boxShadow: 'var(--shadow-md)' }}>
+                        <span className="material-symbols-outlined" style={{ color: '#fbbf24', marginBottom: '0.5rem' }}>auto_awesome</span>
+                        <h4 style={{ fontWeight: '700', marginBottom: '0.5rem' }}>CV của bạn ổn chứ?</h4>
+                        <p style={{ fontSize: '0.8rem', opacity: '0.8', marginBottom: '1.2rem', lineHeight: '1.5' }}>Ghi điểm ngay với nhà tuyển dụng bằng bộ hồ sơ chuyên nghiệp.</p>
+                        <Link to="/student/profile" style={{ display: 'block', textAlign: 'center', background: '#fff', color: '#111827', padding: '0.6rem', borderRadius: '10px', fontSize: '0.85rem', fontWeight: '700' }}>Tối ưu CV ngay</Link>
+                    </div>
+                </aside>
+
+                {/* Main Content */}
+                <div className="jobs-main">
+                    <header className="jobs-header">
+                        <div className="breadcrumb">
+                            <Link to="/">Trang chủ</Link>
+                            <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>chevron_right</span>
+                            <span>Việc làm</span>
+                        </div>
+                        <div className="jobs-title-row">
+                            <div>
+                                <h1 className="jobs-title">Việc làm dành cho bạn</h1>
+                                <p className="jobs-subtitle">Tìm kiếm hàng nghìn cơ hội nghề nghiệp phù hợp với tài năng của bạn.</p>
+                            </div>
+                            <div style={{ display: 'flex', gap: '10px', background: 'var(--surface)', padding: '6px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                                <button className="btn" style={{ padding: '6px 16px', fontSize: '0.8rem', background: 'var(--accent)', color: '#fff', borderRadius: '8px' }}>Mới nhất</button>
+                                <button className="btn" style={{ padding: '6px 16px', fontSize: '0.8rem', background: 'transparent', color: 'var(--text-muted)', borderRadius: '8px' }}>Lương cao</button>
+                            </div>
+                        </div>
+                    </header>
+
+                    {loading ? (
+                        <div style={{ textAlign: 'center', padding: '5rem' }}>
+                            <div className="premium-spinner" style={{ margin: '0 auto 1.5rem' }}></div>
+                            <p style={{ color: 'var(--text-muted)', fontWeight: '500' }}>Đang tìm kiếm những cơ hội tốt nhất...</p>
+                        </div>
+                    ) : filtered.length === 0 ? (
+                        <div className="empty-state">
+                            <span className="material-symbols-outlined empty-icon">search_off</span>
+                            <h3 style={{ fontWeight: '700', color: 'var(--primary)', marginBottom: '0.5rem' }}>Không tìm thấy kết quả</h3>
+                            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Thử thay đổi từ khóa hoặc xóa bớt bộ lọc bạn nhé.</p>
+                            <button className="btn-detail" style={{ marginTop: '1.5rem' }} onClick={handleClearFilters}>Xoá bộ lọc</button>
+                        </div>
+                    ) : (
+                        <div className="jobs-list">
+                            {filtered.map(job => (
+                                <div key={job.id} className="job-card">
+                                    <div className="company-logo-wrapper">
+                                        {job.companyName ? job.companyName.charAt(0).toUpperCase() : 'C'}
+                                    </div>
+                                    <div className="job-info">
+                                        <div className="job-card-header">
+                                            <div>
+                                                <h3 className="job-title">{job.title}</h3>
+                                                <p className="job-company">{job.companyName}</p>
+                                            </div>
+                                            <button className="bookmark-btn">
+                                                <span className="material-symbols-outlined">bookmark</span>
+                                            </button>
+                                        </div>
+                                        <div className="job-meta">
+                                            <div className="meta-item">
+                                                <span className="material-symbols-outlined">payments</span>
+                                                <span className="salary-text">{job.salary || 'Thoả thuận'}</span>
+                                            </div>
+                                            <div className="meta-item">
+                                                <span className="material-symbols-outlined">location_on</span>
+                                                <span>{job.location || 'Địa điểm khác'}</span>
+                                            </div>
+                                            <div className="meta-item">
+                                                <span className="material-symbols-outlined">work</span>
+                                                <span>{job.jobType || 'Toàn thời gian'}</span>
+                                            </div>
+                                        </div>
+                                        <div className="job-tags">
+                                            {job.level && <span className="job-tag">{job.level}</span>}
+                                            {job.industry && <span className="job-tag">{job.industry}</span>}
+                                            <span className="job-tag">Cơ hội thực tập</span>
+                                        </div>
+                                        <div className="job-actions">
+                                            <Link to={`/jobs/${job.id}`} className="btn-detail">Xem chi tiết</Link>
+                                            <Link to={`/jobs/${job.id}`} className="btn-apply">Ứng tuyển nhanh</Link>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Pagination */}
+                    {!loading && filtered.length > 0 && (
+                        <div className="pagination">
+                            <button className="page-btn"><span className="material-symbols-outlined">chevron_left</span></button>
+                            <button className="page-btn active">1</button>
+                            <button className="page-btn">2</button>
+                            <button className="page-btn">3</button>
+                            <button className="page-btn"><span className="material-symbols-outlined">chevron_right</span></button>
+                        </div>
+                    )}
                 </div>
             </main>
-
         </div>
     );
 };
