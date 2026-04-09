@@ -127,9 +127,11 @@ const CVTemplate = ({ profile, avatarBase64, experiences, educations, skills, la
       <main style={{
         flex: 1,
         padding: '30mm 20mm 20mm 15mm',
+        minWidth: 0,
         display: 'flex',
         flexDirection: 'column',
-        gap: '2.5rem'
+        gap: '2.5rem',
+        wordBreak: 'break-word'
       }}>
         {/* Name Header */}
         <header style={{ marginBottom: '1rem' }}>
@@ -172,9 +174,9 @@ const CVTemplate = ({ profile, avatarBase64, experiences, educations, skills, la
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
             {experiences && experiences.length > 0 ? experiences.map((exp, i) => (
               <div key={i}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                  <h4 style={{ margin: 0, fontSize: '11.5pt', fontWeight: 800, color: primaryText }}>{exp.jobTitle || exp.position}</h4>
-                  <span style={{ fontSize: '9.5pt', color: mutedText, fontWeight: 700 }}>{exp.startDate} — {exp.endDate || 'Hiện tại'}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px', marginBottom: '4px' }}>
+                  <h4 style={{ margin: 0, fontSize: '11.5pt', fontWeight: 800, color: primaryText, flex: '1 1 250px', minWidth: 0 }}>{exp.jobTitle || exp.position}</h4>
+                  <span style={{ fontSize: '9.5pt', color: mutedText, fontWeight: 700, whiteSpace: 'nowrap' }}>{exp.startDate} — {exp.endDate || 'Hiện tại'}</span>
                 </div>
                 <p style={{ margin: 0, fontWeight: 700, color: accentColor, fontSize: '10pt' }}>{exp.companyName}</p>
                 <div 
@@ -195,9 +197,9 @@ const CVTemplate = ({ profile, avatarBase64, experiences, educations, skills, la
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
             {educations && educations.length > 0 ? educations.map((edu, i) => (
               <div key={i}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                  <h4 style={{ margin: 0, fontSize: '11.5pt', fontWeight: 800, color: primaryText }}>{edu.schoolName || edu.universityName}</h4>
-                  <span style={{ fontSize: '9.5pt', color: mutedText, fontWeight: 700 }}>{edu.startDate} — {edu.endDate || 'Tốt nghiệp 2027'}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px', marginBottom: '4px' }}>
+                  <h4 style={{ margin: 0, fontSize: '11.5pt', fontWeight: 800, color: primaryText, flex: '1 1 250px', minWidth: 0 }}>{edu.schoolName || edu.universityName}</h4>
+                  <span style={{ fontSize: '9.5pt', color: mutedText, fontWeight: 700, whiteSpace: 'nowrap' }}>{edu.startDate} — {edu.endDate || 'Tốt nghiệp 2027'}</span>
                 </div>
                 <p style={{ margin: 0, fontWeight: 700, color: accentColor, fontSize: '10pt' }}>{edu.major || profile.major}</p>
                 {edu.description && (
