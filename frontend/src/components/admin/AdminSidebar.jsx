@@ -9,6 +9,7 @@ const AdminSidebar = () => {
         { path: '/admin/dashboard', icon: 'dashboard', label: 'Bảng điều khiển' },
         { path: '/admin/users', icon: 'group', label: 'Quản lý người dùng' },
         { path: '/admin/jobs', icon: 'verified', label: 'Kiểm duyệt việc làm' },
+        { path: '/admin/password-requests', icon: 'lock_reset', label: 'Cấp lại mật khẩu' },
         { path: '/admin/reports', icon: 'assessment', label: 'Báo cáo' },
         { path: '/admin/settings', icon: 'settings', label: 'Cài đặt' },
     ];

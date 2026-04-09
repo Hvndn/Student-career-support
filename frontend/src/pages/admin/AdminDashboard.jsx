@@ -181,6 +181,15 @@ const AdminDashboard = () => {
                                             <p>{stats.totalReports} báo cáo cần xử lý</p>
                                         </div>
                                     </div>
+                                    <div className="action-item" onClick={() => navigate('/admin/password-requests')} style={{ cursor: 'pointer' }}>
+                                        <div className="action-icon green">
+                                            <span className="material-symbols-outlined">lock_reset</span>
+                                        </div>
+                                        <div className="action-info">
+                                            <h4>Cấp lại mật khẩu</h4>
+                                            <p>Xử lý yêu cầu khôi phục tài khoản</p>
+                                        </div>
+                                    </div>
                                     <div className="action-item">
                                         <div className="action-icon purple">
                                             <span className="material-symbols-outlined">hub</span>

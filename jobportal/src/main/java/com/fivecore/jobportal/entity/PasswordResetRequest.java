@@ -3,6 +3,7 @@ package com.fivecore.jobportal.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import com.fivecore.jobportal.entity.User;
 
 /**
  * Thực thể Yêu cầu Cấp lại Mật khẩu.

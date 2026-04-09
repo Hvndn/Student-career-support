@@ -11,6 +11,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import com.fivecore.jobportal.entity.PasswordResetRequest;
 
 /**
  * Thực thể Người dùng - Ánh xạ tới bảng 'users' trong cơ sở dữ liệu.
@@ -66,19 +68,19 @@ public class User {
     // Quan hệ với các bảng liên quan để hỗ trợ DELETE CASCADE
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private java.util.List<Notification> notifications;
+    private List<Notification> notifications;
 
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private java.util.List<Message> sentMessages;
+    private List<Message> sentMessages;
 
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private java.util.List<Message> receivedMessages;
+    private List<Message> receivedMessages;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private java.util.List<PasswordResetRequest> passwordResetRequests;
+    private List<PasswordResetRequest> passwordResetRequests;
 
     /**
      * Các vai trò trong hệ thống.
