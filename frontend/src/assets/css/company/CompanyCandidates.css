@@ -202,6 +202,11 @@ select.filter-control {
   letter-spacing: 0.05em;
 }
 
+.candidates-table .text-right {
+  text-align: right;
+  padding-right: 2.5rem;
+}
+
 .candidates-table td {
   padding: 1.5rem 2rem;
   border-bottom: 1px solid #f1f5f9;
@@ -335,4 +340,54 @@ select.filter-control {
 
 .candidates-table tr:hover td {
     background: #fcfdfe;
+}
+
+/* ─── Quick Actions ─── */
+.quick-actions-group {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #f1f5f9;
+    background: #ffffff;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.action-btn.approve:hover {
+    background: #ecfdf5;
+    color: #10b981;
+    border-color: #d1fae5;
+}
+
+.action-btn.reject:hover {
+    background: #fef2f2;
+    color: #ef4444;
+    border-color: #fee2e2;
+}
+
+.action-btn.view:hover {
+    background: #eff6ff;
+    color: #3b82f6;
+    border-color: #dbeafe;
+}
+
+.action-btn.undo:hover {
+    background: #f1f5f9;
+    color: #475569;
+    border-color: #e2e8f0;
 }

@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { companyApi } from '../../api';
 import toast from 'react-hot-toast';
 import { tagService } from '../../utils/tagService';
+import { recruitmentApi } from '../../api';
 import '../../assets/css/company/CandidateDetailModal.css';
 
-const CandidateDetailModal = ({ show, studentId, onClose }) => {
+const CandidateDetailModal = ({ show, studentId, applicationId, initialStatus, onClose, onStatusUpdate }) => {
     const [candidate, setCandidate] = useState(null);
+    const [status, setStatus] = useState(initialStatus);
     const [loading, setLoading] = useState(false);
+    const [updatingStatus, setUpdatingStatus] = useState(false);
     const [downloading, setDownloading] = useState(false);
     const [allTags, setAllTags] = useState([]);
     const [candidateTagIds, setCandidateTagIds] = useState([]);
@@ -15,10 +18,11 @@ const CandidateDetailModal = ({ show, studentId, onClose }) => {
         if (show && studentId) {
             fetchDetail();
             loadTags();
+            setStatus(initialStatus);
         } else {
             setCandidate(null);
         }
-    }, [show, studentId]);
+    }, [show, studentId, initialStatus]);
 
     const fetchDetail = async () => {
         setLoading(true);
@@ -52,25 +56,59 @@ const CandidateDetailModal = ({ show, studentId, onClose }) => {
         });
     };
 
+    const handleUpdateStatus = async (newStatus) => {
+        if (!applicationId || updatingStatus) return;
+        setUpdatingStatus(true);
+        try {
+            const res = await recruitmentApi.updateStatus(applicationId, newStatus);
+            if (res.data.status === 'success') {
+                setStatus(newStatus);
+                if (newStatus === 'suitable') {
+                    toast.success("Đã duyệt ứng viên");
+                } else if (newStatus === 'pending') {
+                    toast.success("Đã hoàn tác trạng thái ứng viên");
+                } else {
+                    toast.success(`Đã chuyển ứng viên sang trạng thái ${getStatusLabel(newStatus)}`);
+                }
+                if (onStatusUpdate) onStatusUpdate(newStatus);
+            }
+        } catch (error) {
+            console.error("Lỗi khi cập nhật trạng thái:", error);
+            toast.error("Không thể cập nhật trạng thái. Vui lòng thử lại.");
+        } finally {
+            setUpdatingStatus(false);
+        }
+    };
+
     const handleDownloadCV = async () => {
-        if (downloading) return;
         setDownloading(true);
         try {
             const response = await companyApi.downloadCv(studentId);
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', `CV_${candidate?.fullName || studentId}.pdf`);
+            link.setAttribute('download', `CV_${candidate?.fullName || 'Candidate'}.pdf`);
             document.body.appendChild(link);
             link.click();
             link.remove();
-            toast.success("Đã bắt đầu tải xuống CV PDF");
         } catch (error) {
             console.error("Lỗi khi tải CV:", error);
-            toast.error("Không thể tải xuống CV. Vui lòng thử lại sau.");
+            toast.error("Không thể tải CV. Vui lòng thử lại.");
         } finally {
             setDownloading(false);
         }
+    };
+
+    const getStatusLabel = (s) => {
+        const labels = {
+            'pending': 'Chờ đánh giá',
+            'review': 'Đang xem xét',
+            'suitable': 'Đã duyệt',
+            'interview': 'Phỏng vấn',
+            'accepted': 'Đã nhận',
+            'rejected': 'Từ chối'
+        };
+        return labels[s?.toLowerCase()] || s;
     };
 
     if (!show) return null;
@@ -131,14 +169,34 @@ const CandidateDetailModal = ({ show, studentId, onClose }) => {
                                     </div>
                                 </div>
                             </div>
-                            <button className="btn-download-cv" onClick={handleDownloadCV} disabled={downloading}>
-                                {downloading ? 'Đang chuẩn bị...' : (
-                                    <>
-                                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v4a2 2 0 012-2h14a2 2 0 012 2zM7 10l5 5 5-5M12 15V3" /></svg>
-                                        Tải CV (PDF)
-                                    </>
+
+                            <div className="header-right-actions">
+                                {applicationId && (
+                                    <div className="status-updater">
+                                        <label>Trạng thái hồ sơ</label>
+                                        <div className="status-options">
+                                            {['pending', 'suitable', 'interview', 'accepted', 'rejected'].map(s => (
+                                                <button 
+                                                    key={s}
+                                                    className={`status-opt ${status?.toLowerCase() === s ? 'active' : ''} ${s}`}
+                                                    onClick={() => handleUpdateStatus(s)}
+                                                    disabled={updatingStatus}
+                                                >
+                                                    {getStatusLabel(s)}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
                                 )}
-                            </button>
+                                <button className="btn-download-cv" onClick={handleDownloadCV} disabled={downloading}>
+                                    {downloading ? 'Đang chuẩn bị...' : (
+                                        <>
+                                            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v4a2 2 0 012-2h14a2 2 0 012 2zM7 10l5 5 5-5M12 15V3" /></svg>
+                                            Tải CV (PDF)
+                                        </>
+                                    )}
+                                </button>
+                            </div>
                         </div>
 
                         <div className="detail-body">
