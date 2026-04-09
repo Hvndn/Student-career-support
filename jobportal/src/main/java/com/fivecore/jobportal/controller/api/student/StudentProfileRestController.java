@@ -100,6 +100,10 @@ public class StudentProfileRestController {
                     .description(request.getDescription())
                     .build());
             return ResponseEntity.ok(ApiResponse.success("Thêm học vấn thành công", null));
+        } catch (IllegalArgumentException e) {
+            log.error("Lỗi dữ liệu khi thêm học vấn: {}", e.getMessage());
+            return ResponseEntity.status(400)
+                    .body(ApiResponse.error(e.getMessage(), "BAD_REQUEST"));
         } catch (Exception e) {
             log.error("Lỗi khi thêm học vấn: {}", e.getMessage(), e);
             return ResponseEntity.status(500)
@@ -153,6 +157,10 @@ public class StudentProfileRestController {
                     .description(request.getDescription())
                     .build());
             return ResponseEntity.ok(ApiResponse.success("Thêm kinh nghiệm thành công", null));
+        } catch (IllegalArgumentException e) {
+            log.error("Lỗi dữ liệu khi thêm kinh nghiệm: {}", e.getMessage());
+            return ResponseEntity.status(400)
+                    .body(ApiResponse.error(e.getMessage(), "BAD_REQUEST"));
         } catch (Exception e) {
             log.error("Lỗi khi thêm kinh nghiệm: {}", e.getMessage(), e);
             return ResponseEntity.status(500)

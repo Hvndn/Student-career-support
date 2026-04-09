@@ -202,6 +202,9 @@ const Profile = () => {
         
         let payload = { ...eduForm };
         if (!payload.endDate) payload.endDate = null;
+        else if (new Date(payload.endDate) < new Date(payload.startDate)) {
+            return flash('⚠️ Ngày kết thúc phải sau ngày bắt đầu');
+        }
 
         setSaving(true);
         try {
@@ -210,7 +213,10 @@ const Profile = () => {
             setShowEduForm(false);
             setEduForm(BLANK_EDU);
             flash('✅ Thêm học vấn thành công!');
-        } catch { flash('❌ Lỗi khi thêm.'); }
+        } catch (e) { 
+            const msg = e.response?.data?.message || 'Lỗi khi thêm.';
+            flash('❌ ' + msg); 
+        }
         setSaving(false);
     };
 
@@ -227,6 +233,9 @@ const Profile = () => {
 
         let payload = { ...expForm };
         if (!payload.endDate) payload.endDate = null;
+        else if (new Date(payload.endDate) < new Date(payload.startDate)) {
+            return flash('⚠️ Ngày kết thúc phải sau ngày bắt đầu');
+        }
 
         setSaving(true);
         try {
@@ -237,7 +246,8 @@ const Profile = () => {
             flash('✅ Thêm kinh nghiệm thành công!');
         } catch (e) {
             console.error(e);
-            flash('❌ Lỗi khi thêm kinh nghiệm.'); 
+            const msg = e.response?.data?.message || 'Lỗi khi thêm kinh nghiệm.';
+            flash('❌ ' + msg); 
         }
         setSaving(false);
     };
