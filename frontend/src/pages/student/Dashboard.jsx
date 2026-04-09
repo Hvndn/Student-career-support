@@ -56,19 +56,22 @@ const SkillRadar = ({ skills }) => {
 const Dashboard = () => {
   const [profile, setProfile] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
+  const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const [profileRes, recRes] = await Promise.all([
+        const [profileRes, recRes, appRes] = await Promise.all([
           studentApi.getProfile(),
-          studentApi.getRecommendations()
+          studentApi.getRecommendations(),
+          studentApi.getMyApplications()
         ]);
         
         setProfile(profileRes.data.data);
         setRecommendations(recRes.data.data || []);
+        setApplications(appRes.data.data || []);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
@@ -171,17 +174,19 @@ const Dashboard = () => {
           {/* Stats Cards */}
           <div className="sd-glass-card sd-area-stats-1">
             <div className="sd-stat-content">
-              <div className="sd-stat-value">12</div>
+              <div className="sd-stat-value">{profile?.skills?.length || 0}</div>
               <div className="sd-stat-label">Kỹ năng xác thực</div>
-              <div className="sd-stat-trend">↑ 2 mới tuần này</div>
+              <div className="sd-stat-trend">↑ Mối liên kết thực tế</div>
             </div>
           </div>
 
           <div className="sd-glass-card sd-area-stats-2">
             <div className="sd-stat-content">
-              <div className="sd-stat-value">{profile?.applications?.length || '0'}</div>
+              <div className="sd-stat-value">{applications.length}</div>
               <div className="sd-stat-label">Đang ứng tuyển</div>
-              <div className="sd-stat-trend">Xem lịch sử ứng tuyển</div>
+              <div className="sd-stat-trend">
+                <Link to="/student/applications" style={{ color: 'inherit', textDecoration: 'none' }}>Xem lịch sử ứng tuyển</Link>
+              </div>
             </div>
           </div>
 
