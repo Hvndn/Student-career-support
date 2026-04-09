@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import AdminNavbar from '../../components/admin/AdminNavbar';
 import '../../assets/css/admin/AdminLayout.css';
-import './AdminDashboard.css';
+import '../../assets/css/admin/AdminDashboard.css';
 
 const AdminPasswordRequests = () => {
     const [requests, setRequests] = useState([]);

@@ -78,7 +78,7 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private java.util.List<PasswordResetToken> passwordResetTokens;
+    private java.util.List<PasswordResetRequest> passwordResetRequests;
 
     /**
      * Các vai trò trong hệ thống.

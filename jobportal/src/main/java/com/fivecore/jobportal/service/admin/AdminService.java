@@ -29,7 +29,7 @@ public class AdminService {
     private final SkillRepository skillRepository;
     private final NotificationRepository notificationRepository;
     private final MessageRepository messageRepository;
-    private final PasswordResetTokenRepository tokenRepository;
+    private final PasswordResetRequestRepository tokenRepository;
     private final SavedJobRepository savedJobRepository;
     private final SavedCandidateRepository savedCandidateRepository;
     private final InterviewRepository interviewRepository;
