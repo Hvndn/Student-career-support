@@ -104,7 +104,7 @@ const Dashboard = () => {
 
   const skillsData = profile?.skills?.length > 0 
     ? profile.skills.map(s => ({ 
-        name: s.skill.name, 
+        name: s.skill?.name || s.name || 'Kỹ năng', 
         value: s.level === 'advanced' ? 100 : s.level === 'intermediate' ? 70 : 40 
       }))
     : [];
