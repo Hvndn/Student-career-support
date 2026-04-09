@@ -198,9 +198,14 @@ const Profile = () => {
 
     const saveEdu = async () => {
         if (!eduForm.schoolName) return flash('⚠️ Nhập tên trường');
+        if (!eduForm.startDate) return flash('⚠️ Chọn ngày bắt đầu');
+        
+        let payload = { ...eduForm };
+        if (!payload.endDate) payload.endDate = null;
+
         setSaving(true);
         try {
-            await studentApi.addEducation(eduForm);
+            await studentApi.addEducation(payload);
             await reload();
             setShowEduForm(false);
             setEduForm(BLANK_EDU);
@@ -217,14 +222,23 @@ const Profile = () => {
 
     const saveExp = async () => {
         if (!expForm.companyName) return flash('⚠️ Nhập tên công ty');
+        if (!expForm.jobTitle) return flash('⚠️ Nhập tên vị trí');
+        if (!expForm.startDate) return flash('⚠️ Chọn ngày bắt đầu');
+
+        let payload = { ...expForm };
+        if (!payload.endDate) payload.endDate = null;
+
         setSaving(true);
         try {
-            await studentApi.addExperience(expForm);
+            await studentApi.addExperience(payload);
             await reload();
             setShowExpForm(false);
             setExpForm(BLANK_EXP);
             flash('✅ Thêm kinh nghiệm thành công!');
-        } catch { flash('❌ Lỗi khi thêm.'); }
+        } catch (e) {
+            console.error(e);
+            flash('❌ Lỗi khi thêm kinh nghiệm.'); 
+        }
         setSaving(false);
     };
 
