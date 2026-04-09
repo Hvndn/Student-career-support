@@ -86,14 +86,15 @@ public class CompanySavedCandidateRestController {
         // Map to a simple DTO to keep it clean
         var result = list.stream().map(sc -> {
             Student s = sc.getStudent();
+            User u = s.getUser();
             java.util.Map<String, Object> map = new java.util.HashMap<>();
             map.put("id", sc.getId());
             map.put("studentId", s.getId());
-            map.put("name", s.getUser().getFullName());
-            map.put("major", s.getMajor());
-            map.put("university", s.getUniversity());
+            map.put("name", u != null && u.getFullName() != null ? u.getFullName() : "N/A");
+            map.put("major", s.getMajor() != null ? s.getMajor() : "Chưa cập nhật");
+            map.put("university", s.getUniversity() != null ? s.getUniversity() : "Chưa cập nhật");
             map.put("avatar", s.getAvatarUrl());
-            map.put("position", s.getMajor());
+            map.put("position", s.getMajor() != null ? s.getMajor() : "Chưa cập nhật");
             map.put("savedDate", sc.getSavedAt() != null ? sc.getSavedAt().toString() : null);
             return map;
         }).collect(Collectors.toList());

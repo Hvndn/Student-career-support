@@ -141,6 +141,65 @@
     gap: 8px;
 }
 
+.header-right-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 16px;
+}
+
+.status-updater {
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 16px;
+    border: 1px solid #f1f5f9;
+    width: 100%;
+}
+
+.status-updater label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    padding-left: 4px;
+}
+
+.status-options {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.status-opt {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    background: #ffffff;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.status-opt:hover:not(:disabled) {
+    border-color: #cbd5e1;
+    background: #f1f5f9;
+}
+
+.status-opt.active {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.status-opt.pending.active { background: #eef2ff; color: #6366f1; border-color: #c7d2fe; }
+.status-opt.suitable.active { background: #ecfdf5; color: #10b981; border-color: #a7f3d0; }
+.status-opt.interview.active { background: #eff6ff; color: #3b82f6; border-color: #bfdbfe; }
+.status-opt.accepted.active { background: #f0fdf4; color: #059669; border-color: #bbf7d0; }
+.status-opt.rejected.active { background: #fef2f2; color: #ef4444; border-color: #fecaca; }
+
 .btn-download-cv {
     background: #0f172a;
     color: #ffffff;

@@ -5,6 +5,7 @@ import CompanyNavbar from '../../components/company/CompanyNavbar';
 import CandidateDetailModal from '../../components/company/CandidateDetailModal';
 import { recruitmentApi, companyApi } from '../../api';
 import { tagService } from '../../utils/tagService';
+import toast from 'react-hot-toast';
 import '../../assets/css/company/CompanyCandidates.css';
 
 const CompanyCandidates = () => {
@@ -22,6 +23,8 @@ const CompanyCandidates = () => {
     
     // State for Modal
     const [selectedStudentId, setSelectedStudentId] = useState(null);
+    const [selectedAppId, setSelectedAppId] = useState(null);
+    const [currentStatus, setCurrentStatus] = useState(null);
     const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
@@ -58,9 +61,33 @@ const CompanyCandidates = () => {
         setTagMappings(tagService.getAllMappings());
     };
 
-    const handleOpenModal = (studentId) => {
+    const handleOpenModal = (studentId, appId, status) => {
         setSelectedStudentId(studentId);
+        setSelectedAppId(appId);
+        setCurrentStatus(status);
         setShowModal(true);
+    };
+
+    const handleUpdateStatus = async (appId, status, e) => {
+        if (e) e.stopPropagation();
+        try {
+            const res = await recruitmentApi.updateStatus(appId, status);
+            if (res.data.status === 'success') {
+                if (status === 'suitable') {
+                    toast.success("Đã duyệt ứng viên");
+                } else if (status === 'pending') {
+                    toast.success("Đã hoàn tác trạng thái ứng viên");
+                } else {
+                    toast.success(`Đã chuyển ứng viên sang trạng thái ${getStatusLabel(status)}`);
+                }
+                // Cập nhật state local
+                setApplications(prev => prev.map(app => 
+                    app.id === appId ? { ...app, status: status } : app
+                ));
+            }
+        } catch (error) {
+            console.error('Lỗi khi cập nhật trạng thái:', error);
+        }
     };
 
     // Filter logic
@@ -77,11 +104,11 @@ const CompanyCandidates = () => {
     const getStatusLabel = (status) => {
         const labels = {
             'pending': 'Chờ đánh giá',
-            'suitable': 'Phù hợp',
-            'interview': 'Đang phỏng vấn',
+            'suitable': 'Đã duyệt',
+            'interview': 'Phỏng vấn',
             'offered': 'Đã gửi offer',
-            'accepted': 'Đã tuyển',
-            'rejected': 'Không phù hợp'
+            'accepted': 'Đã nhận',
+            'rejected': 'Từ chối'
         };
         return labels[status.toLowerCase()] || status;
     };
@@ -174,11 +201,11 @@ const CompanyCandidates = () => {
                             <div className="status-tabs">
                                 <div className={`tab-item ${activeTab === 'all' ? 'active' : ''}`} onClick={() => setActiveTab('all')}>Tất cả ({applications.length})</div>
                                 <div className={`tab-item ${activeTab === 'pending' ? 'active' : ''}`} onClick={() => setActiveTab('pending')}>Chờ đánh giá</div>
-                                <div className={`tab-item ${activeTab === 'suitable' ? 'active' : ''}`} onClick={() => setActiveTab('suitable')}>Phù hợp</div>
-                                <div className={`tab-item ${activeTab === 'interview' ? 'active' : ''}`} onClick={() => setActiveTab('interview')}>Đang phỏng vấn</div>
+                                <div className={`tab-item ${activeTab === 'suitable' ? 'active' : ''}`} onClick={() => setActiveTab('suitable')}>Đã duyệt</div>
+                                <div className={`tab-item ${activeTab === 'interview' ? 'active' : ''}`} onClick={() => setActiveTab('interview')}>Phỏng vấn</div>
                                 <div className={`tab-item ${activeTab === 'offered' ? 'active' : ''}`} onClick={() => setActiveTab('offered')}>Đã gửi offer</div>
-                                <div className={`tab-item ${activeTab === 'accepted' ? 'active' : ''}`} onClick={() => setActiveTab('accepted')}>Đã tuyển</div>
-                                <div className={`tab-item ${activeTab === 'rejected' ? 'active' : ''}`} onClick={() => setActiveTab('rejected')}>Không phù hợp</div>
+                                <div className={`tab-item ${activeTab === 'accepted' ? 'active' : ''}`} onClick={() => setActiveTab('accepted')}>Đã nhận</div>
+                                <div className={`tab-item ${activeTab === 'rejected' ? 'active' : ''}`} onClick={() => setActiveTab('rejected')}>Từ chối</div>
                             </div>
 
                             {/* List Table */}
@@ -191,11 +218,12 @@ const CompanyCandidates = () => {
                                             <th className="text-center">Mức phù hợp</th>
                                             <th>Tin đăng</th>
                                             <th>Trạng thái</th>
+                                            <th className="text-right">Thao tác</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {filteredApps.map(app => (
-                                            <tr key={app.id} onClick={() => handleOpenModal(app.studentId)}>
+                                            <tr key={app.id} onClick={() => handleOpenModal(app.studentId, app.id, app.status)}>
                                                 <td>
                                                     <div className="candidate-info-cell">
                                                         <img src={app.studentAvatar || `https://ui-avatars.com/api/?name=${app.studentName}&background=random`} alt={app.studentName} className="candidate-avatar" />
@@ -235,6 +263,45 @@ const CompanyCandidates = () => {
                                                         {getStatusLabel(app.status)}
                                                     </span>
                                                 </td>
+                                                <td className="text-right" onClick={e => e.stopPropagation()}>
+                                                    <div className="quick-actions-group">
+                                                        {app.status === 'pending' ? (
+                                                            <>
+                                                                <button 
+                                                                    className="action-btn approve" 
+                                                                    title="Duyệt hồ sơ"
+                                                                    onClick={(e) => handleUpdateStatus(app.id, 'suitable', e)}
+                                                                >
+                                                                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                                </button>
+                                                                <button 
+                                                                    className="action-btn reject" 
+                                                                    title="Từ chối"
+                                                                    onClick={(e) => handleUpdateStatus(app.id, 'rejected', e)}
+                                                                >
+                                                                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                                                </button>
+                                                            </>
+                                                        ) : (
+                                                            <button 
+                                                                className="action-btn undo" 
+                                                                title="Bỏ duyệt (Đặt lại về Chờ đánh giá)"
+                                                                onClick={(e) => handleUpdateStatus(app.id, 'pending', e)}
+                                                            >
+                                                                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none">
+                                                                    <path d="M3 10h10a5 5 0 0 1 0 10H11M3 10l4-4M3 10l4 4" />
+                                                                </svg>
+                                                            </button>
+                                                        )}
+                                                        <button 
+                                                            className="action-btn view" 
+                                                            title="Xem chi tiết"
+                                                            onClick={() => handleOpenModal(app.studentId, app.id, app.status)}
+                                                        >
+                                                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                                        </button>
+                                                    </div>
+                                                </td>
                                             </tr>
                                         ))}
                                         {filteredApps.length === 0 && (
@@ -255,8 +322,15 @@ const CompanyCandidates = () => {
             {/* Detail Modal */}
             <CandidateDetailModal 
                 show={showModal} 
-                studentId={selectedStudentId} 
+                studentId={selectedStudentId}
+                applicationId={selectedAppId}
+                initialStatus={currentStatus}
                 onClose={handleCloseModal}
+                onStatusUpdate={(newStatus) => {
+                    setApplications(prev => prev.map(app => 
+                        app.id === selectedAppId ? { ...app, status: newStatus } : app
+                    ));
+                }}
             />
         </div>
     );

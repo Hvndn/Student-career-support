@@ -31,6 +31,7 @@ public class Application {
     private Job job;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 20)
     @Builder.Default
     private ApplicationStatus status = ApplicationStatus.pending;
 

@@ -94,14 +94,18 @@ const CompanySavedCandidates = () => {
     };
 
     const filteredCandidates = savedCandidates.filter(c => {
-        const matchesSearch = c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                             c.position.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesUni = universityFilter === '' || c.university === universityFilter;
-        const matchesPos = positionFilter === '' || c.position === positionFilter;
+        const name = c.name || '';
+        const position = c.position || '';
+        const university = c.university || '';
+
+        const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                             position.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesUni = universityFilter === '' || university === universityFilter;
+        const matchesPos = positionFilter === '' || position === positionFilter;
         
         // Time filter logic
         let matchesTime = true;
-        if (timeFilter !== 'all') {
+        if (timeFilter !== 'all' && c.savedDate) {
             const savedDate = new Date(c.savedDate);
             const now = new Date();
             const diffMs = now - savedDate;
@@ -117,6 +121,8 @@ const CompanySavedCandidates = () => {
             else if (timeFilter === '3m') matchesTime = diffDays <= 90;
             else if (timeFilter === '6m') matchesTime = diffDays <= 180;
             else if (timeFilter === 'older') matchesTime = diffDays > 180;
+        } else if (timeFilter !== 'all' && !c.savedDate) {
+            matchesTime = false; // Nếu có lọc theo thời gian mà hồ sơ không có ngày lưu thì ẩn đi
         }
 
         return matchesSearch && matchesUni && matchesPos && matchesTime;
