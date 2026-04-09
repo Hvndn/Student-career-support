@@ -289,7 +289,10 @@ const Profile = () => {
             setShowInterestForm(false);
             setInterestName('');
             flash('✅ Thêm sở thích thành công!');
-        } catch { flash('❌ Lỗi khi thêm.'); }
+        } catch (e) { 
+            const msg = e.response?.data?.message || 'Lỗi khi thêm.';
+            flash('❌ ' + msg); 
+        }
         setSaving(false);
     };
 
@@ -316,7 +319,10 @@ const Profile = () => {
             await reload();
             setShowProjectForm(false);
             setProjectForm(BLANK_PROJECT);
-        } catch { flash('❌ Lỗi khi lưu dự án.'); }
+        } catch (e) { 
+            const msg = e.response?.data?.message || 'Lỗi khi lưu dự án.';
+            flash('❌ ' + msg); 
+        }
         setSaving(false);
     };
 
@@ -342,19 +348,30 @@ const Profile = () => {
 
     const saveActivity = async () => {
         if (!activityForm.name) return flash('⚠️ Vui lòng nhập tên hoạt động.');
+        if (!activityForm.startDate) return flash('⚠️ Vui lòng chọn ngày bắt đầu.');
+
+        let payload = { ...activityForm };
+        if (!payload.endDate) payload.endDate = null;
+        else if (new Date(payload.endDate) < new Date(payload.startDate)) {
+            return flash('⚠️ Ngày kết thúc phải sau ngày bắt đầu');
+        }
+
         setSaving(true);
         try {
             if (activityForm.id) {
-                await studentApi.updateActivity(activityForm.id, activityForm);
+                await studentApi.updateActivity(activityForm.id, payload);
                 flash('✅ Cập nhật hoạt động thành công!');
             } else {
-                await studentApi.addActivity(activityForm);
+                await studentApi.addActivity(payload);
                 flash('✅ Thêm hoạt động thành công!');
             }
             await reload();
             setShowActivityForm(false);
             setActivityForm(BLANK_ACTIVITY);
-        } catch { flash('❌ Lỗi khi lưu hoạt động.'); }
+        } catch (e) { 
+            const msg = e.response?.data?.message || 'Lỗi khi lưu hoạt động.';
+            flash('❌ ' + msg); 
+        }
         setSaving(false);
     };
 

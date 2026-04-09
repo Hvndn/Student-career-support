@@ -309,30 +309,46 @@ public class StudentProfileRestController {
     /* ---- Projects ---- */
     @PostMapping("/projects")
     public ResponseEntity<ApiResponse<Object>> addProject(@RequestBody ProjectRequest request, Authentication authentication) {
-        Integer studentId = getCurrentStudentId(authentication);
-        projectService.addProject(studentId, Project.builder()
-                .name(request.getName())
-                .description(request.getDescription())
-                .repositoryUrl(request.getRepositoryUrl())
-                .demoUrl(request.getDemoUrl())
-                .techStack(request.getTechStack())
-                .role(request.getRole())
-                .build());
-        return ResponseEntity.ok(ApiResponse.success("Thêm dự án thành công", null));
+        try {
+            Integer studentId = getCurrentStudentId(authentication);
+            projectService.addProject(studentId, Project.builder()
+                    .name(request.getName())
+                    .description(request.getDescription())
+                    .repositoryUrl(request.getRepositoryUrl())
+                    .demoUrl(request.getDemoUrl())
+                    .techStack(request.getTechStack())
+                    .role(request.getRole())
+                    .build());
+            return ResponseEntity.ok(ApiResponse.success("Thêm dự án thành công", null));
+        } catch (IllegalArgumentException e) {
+            log.error("Lỗi dữ liệu khi thêm dự án: {}", e.getMessage());
+            return ResponseEntity.status(400).body(ApiResponse.error(e.getMessage(), "BAD_REQUEST"));
+        } catch (Exception e) {
+            log.error("Lỗi khi thêm dự án: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi thêm dự án: " + e.getMessage(), "SERVER_ERROR"));
+        }
     }
 
     @PutMapping("/projects/{id}")
     public ResponseEntity<ApiResponse<Object>> updateProject(@PathVariable Integer id, @RequestBody ProjectRequest request, Authentication authentication) {
-        Integer studentId = getCurrentStudentId(authentication);
-        projectService.updateProject(id, studentId, Project.builder()
-                .name(request.getName())
-                .description(request.getDescription())
-                .repositoryUrl(request.getRepositoryUrl())
-                .demoUrl(request.getDemoUrl())
-                .techStack(request.getTechStack())
-                .role(request.getRole())
-                .build());
-        return ResponseEntity.ok(ApiResponse.success("Cập nhật dự án thành công", null));
+        try {
+            Integer studentId = getCurrentStudentId(authentication);
+            projectService.updateProject(id, studentId, Project.builder()
+                    .name(request.getName())
+                    .description(request.getDescription())
+                    .repositoryUrl(request.getRepositoryUrl())
+                    .demoUrl(request.getDemoUrl())
+                    .techStack(request.getTechStack())
+                    .role(request.getRole())
+                    .build());
+            return ResponseEntity.ok(ApiResponse.success("Cập nhật dự án thành công", null));
+        } catch (IllegalArgumentException e) {
+            log.error("Lỗi dữ liệu khi cập nhật dự án: {}", e.getMessage());
+            return ResponseEntity.status(400).body(ApiResponse.error(e.getMessage(), "BAD_REQUEST"));
+        } catch (Exception e) {
+            log.error("Lỗi khi cập nhật dự án: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi cập nhật dự án: " + e.getMessage(), "SERVER_ERROR"));
+        }
     }
 
     @DeleteMapping("/projects/{id}")
@@ -345,30 +361,46 @@ public class StudentProfileRestController {
     /* ---- Activities ---- */
     @PostMapping("/activities")
     public ResponseEntity<ApiResponse<Object>> addActivity(@RequestBody ActivityRequest request, Authentication authentication) {
-        Integer studentId = getCurrentStudentId(authentication);
-        activityService.addActivity(studentId, Activity.builder()
-                .name(request.getName())
-                .organization(request.getOrganization())
-                .role(request.getRole())
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
-                .description(request.getDescription())
-                .build());
-        return ResponseEntity.ok(ApiResponse.success("Thêm hoạt động thành công", null));
+        try {
+            Integer studentId = getCurrentStudentId(authentication);
+            activityService.addActivity(studentId, Activity.builder()
+                    .name(request.getName())
+                    .organization(request.getOrganization())
+                    .role(request.getRole())
+                    .startDate(request.getStartDate())
+                    .endDate(request.getEndDate())
+                    .description(request.getDescription())
+                    .build());
+            return ResponseEntity.ok(ApiResponse.success("Thêm hoạt động thành công", null));
+        } catch (IllegalArgumentException e) {
+            log.error("Lỗi dữ liệu khi thêm hoạt động: {}", e.getMessage());
+            return ResponseEntity.status(400).body(ApiResponse.error(e.getMessage(), "BAD_REQUEST"));
+        } catch (Exception e) {
+            log.error("Lỗi khi thêm hoạt động: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi thêm hoạt động: " + e.getMessage(), "SERVER_ERROR"));
+        }
     }
 
     @PutMapping("/activities/{id}")
     public ResponseEntity<ApiResponse<Object>> updateActivity(@PathVariable Integer id, @RequestBody ActivityRequest request, Authentication authentication) {
-        Integer studentId = getCurrentStudentId(authentication);
-        activityService.updateActivity(id, studentId, Activity.builder()
-                .name(request.getName())
-                .organization(request.getOrganization())
-                .role(request.getRole())
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
-                .description(request.getDescription())
-                .build());
-        return ResponseEntity.ok(ApiResponse.success("Cập nhật hoạt động thành công", null));
+        try {
+            Integer studentId = getCurrentStudentId(authentication);
+            activityService.updateActivity(id, studentId, Activity.builder()
+                    .name(request.getName())
+                    .organization(request.getOrganization())
+                    .role(request.getRole())
+                    .startDate(request.getStartDate())
+                    .endDate(request.getEndDate())
+                    .description(request.getDescription())
+                    .build());
+            return ResponseEntity.ok(ApiResponse.success("Cập nhật hoạt động thành công", null));
+        } catch (IllegalArgumentException e) {
+            log.error("Lỗi dữ liệu khi cập nhật hoạt động: {}", e.getMessage());
+            return ResponseEntity.status(400).body(ApiResponse.error(e.getMessage(), "BAD_REQUEST"));
+        } catch (Exception e) {
+            log.error("Lỗi khi cập nhật hoạt động: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi cập nhật hoạt động: " + e.getMessage(), "SERVER_ERROR"));
+        }
     }
 
     @DeleteMapping("/activities/{id}")
