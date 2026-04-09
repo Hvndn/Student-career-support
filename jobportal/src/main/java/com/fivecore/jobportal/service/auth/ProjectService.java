@@ -40,8 +40,9 @@ public class ProjectService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
 
         if (projectData.getRepositoryUrl() != null && !projectData.getRepositoryUrl().isEmpty()) {
+            projectData.setRepositoryUrl(projectData.getRepositoryUrl().trim());
             if (!projectData.getRepositoryUrl().matches("^(https?://)?(www\\.)?github\\.com/.*$")) {
-                throw new IllegalArgumentException("Link Repository không đúng định dạng URL");
+                throw new IllegalArgumentException("Link Repository không đúng định dạng URL GitHub");
             }
         }
 

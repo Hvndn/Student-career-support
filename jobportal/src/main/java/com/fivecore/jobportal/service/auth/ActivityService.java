@@ -24,6 +24,9 @@ public class ActivityService {
 
     @Transactional
     public Activity addActivity(Integer studentId, Activity activity) {
+        if (activity.getEndDate() != null && activity.getStartDate() != null && activity.getEndDate().isBefore(activity.getStartDate())) {
+            throw new IllegalArgumentException("Ngày kết thúc không được trước ngày bắt đầu");
+        }
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
         activity.setStudent(student);
