@@ -1,242 +1,289 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { studentApi } from '../../api';
+import StudentSidebar from '../../components/student/StudentSidebar';
 import '../../assets/css/student/Dashboard.css';
 
-const SkillRadar = ({ skills }) => {
-  const size = 300;
-  const centerX = size / 2;
-  const centerY = size / 2;
-  const radius = 100;
-  if (!skills || skills.length === 0) {
-    return <div className="sd-no-radar-data">Cập nhật thêm kỹ năng để xem lộ trình!</div>;
-  }
-  const angleStep = (Math.PI * 2) / (skills.length < 3 ? 3 : skills.length);
-
-  const points = skills.map((s, i) => {
-    const r = (s.value / 100) * radius;
-    const x = centerX + r * Math.cos(i * angleStep - Math.PI / 2);
-    const y = centerY + r * Math.sin(i * angleStep - Math.PI / 2);
-    return `${x},${y}`;
-  }).join(' ');
-
-  const gridLevels = [0.2, 0.4, 0.6, 0.8, 1];
+const DonutChart = ({ value, total }) => {
+  const radius = 70;
+  const stroke = 25;
+  const normalizedRadius = radius - stroke * 2;
+  const circumference = normalizedRadius * 2 * Math.PI;
+  const strokeDashoffset = circumference - (value / Math.max(total, 1)) * circumference;
 
   return (
-    <svg viewBox={`0 0 ${size} ${size}`} className="sd-radar-svg">
-      {gridLevels.map(level => {
-        const levelPoints = skills.map((_, i) => {
-          const r = level * radius;
-          const x = centerX + r * Math.cos(i * angleStep - Math.PI / 2);
-          const y = centerY + r * Math.sin(i * angleStep - Math.PI / 2);
-          return `${x},${y}`;
-        }).join(' ');
-        return <polygon key={level} points={levelPoints} fill="none" stroke="rgba(148, 163, 184, 0.2)" strokeWidth="1" />;
-      })}
-      {skills.map((_, i) => {
-        const x = centerX + radius * Math.cos(i * angleStep - Math.PI / 2);
-        const y = centerY + radius * Math.sin(i * angleStep - Math.PI / 2);
-        return <line key={i} x1={centerX} y1={centerY} x2={x} y2={y} stroke="rgba(148, 163, 184, 0.2)" strokeWidth="1" />;
-      })}
-      <polygon points={points} fill="rgba(37, 99, 235, 0.15)" stroke="#2563eb" strokeWidth="3" />
-      {skills.map((s, i) => {
-        const r = radius + 30;
-        const x = centerX + r * Math.cos(i * angleStep - Math.PI / 2);
-        const y = centerY + r * Math.sin(i * angleStep - Math.PI / 2);
-        return (
-          <text key={i} x={x} y={y} textAnchor="middle" fontSize="12" fill="#475569" fontWeight="700">
-            {s.name}
-          </text>
-        );
-      })}
-    </svg>
+    <div className="dau-donut-wrapper">
+      <svg height={radius * 2} width={radius * 2}>
+        <circle
+          stroke="#e5e7eb"
+          fill="transparent"
+          strokeWidth={stroke}
+          r={normalizedRadius}
+          cx={radius}
+          cy={radius}
+        />
+        <circle
+          stroke="#d1d5db"
+          fill="transparent"
+          strokeWidth={stroke}
+          strokeDasharray={circumference + ' ' + circumference}
+          style={{ strokeDashoffset }}
+          strokeLinecap="round"
+          r={normalizedRadius}
+          cx={radius}
+          cy={radius}
+          className="dau-donut-progress"
+        />
+      </svg>
+      <div className="dau-donut-text">
+        <span className="dau-donut-number">{value}</span>
+        <span className="dau-donut-label">Đã gửi</span>
+      </div>
+    </div>
   );
 };
 
 const Dashboard = () => {
   const [profile, setProfile] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
-  const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const [profileRes, recRes, appRes] = await Promise.all([
+        const [profileRes, recRes] = await Promise.all([
           studentApi.getProfile(),
-          studentApi.getRecommendations(),
-          studentApi.getMyApplications()
+          studentApi.getRecommendations()
         ]);
-        
         setProfile(profileRes.data.data);
         setRecommendations(recRes.data.data || []);
-        setApplications(appRes.data.data || []);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchDashboardData();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    navigate('/login');
-  };
+  if (loading) return <div className="dau-loading">Đang tải...</div>;
 
-  const displayName = profile?.fullName || 'Người dùng';
-  
-  // Calculate profile completion
-  const calculateCompletion = () => {
-    if (!profile) return 0;
-    const fields = [
-      profile.fullName, profile.bio, profile.avatar, profile.phone, profile.address,
-      profile.skills?.length > 0, profile.educations?.length > 0, 
-      profile.experiences?.length > 0, profile.projects?.length > 0
-    ];
-    const filled = fields.filter(f => !!f).length;
-    return Math.round((filled / fields.length) * 100);
-  };
-
-  const completion = calculateCompletion();
-  const dashOffset = 471 - (471 * completion) / 100;
-
-  const skillsData = profile?.skills?.length > 0 
-    ? profile.skills.map(s => ({ 
-        name: s.skill?.name || s.name || 'Kỹ năng', 
-        value: s.level === 'advanced' ? 100 : s.level === 'intermediate' ? 70 : 40 
-      }))
-    : [];
-
-  // Ensure at least 3 points for a valid polygon geometry in Radar
-  const radarSkills = [...skillsData];
-  while (radarSkills.length > 0 && radarSkills.length < 3) {
-    radarSkills.push({ name: '', value: 0 });
-  }
-
-  const roadmapData = [
-    { title: 'Sinh viên', status: 'completed', active: true },
-    { title: 'Thực tập sinh', status: profile?.experiences?.length > 0 ? 'completed' : 'current', active: true },
-    { title: 'Junior Dev', status: profile?.experiences?.length > 0 ? 'current' : 'planned', active: profile?.experiences?.length > 0 },
-    { title: 'Senior Dev', status: 'planned', active: false },
-  ];
-
-  if (loading) {
-    return <div className="loading-container">Đang tải...</div>;
-  }
+  const displayName = profile?.fullName || 'Sinh viên';
 
   return (
-    <div className="student-dashboard-page">
-      <div className="sd-container">
-        <header className="sd-header">
-          <div className="sd-welcome">
-            <h1>Xin chào, {displayName.split(' ').pop()} ⚡️</h1>
-            <p>Khám phá cơ hội và bứt phá sự nghiệp của bạn ngay hôm nay.</p>
+    <div className="dau-student-layout">
+      <StudentSidebar />
+      
+      <main className="dau-main-content">
+        {/* Top Navigation / Breadcrumb */}
+        <header className="dau-top-header">
+          <div className="dau-breadcrumb">
+            <span className="dau-breadcrumb-prev">DAU Connect</span>
+            <span className="dau-breadcrumb-sep">›</span>
+            <span className="dau-breadcrumb-current">Tổng quan</span>
+          </div>
+          
+          <div className="dau-header-actions">
+            <button className="dau-notif-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+              <span className="dau-notif-dot"></span>
+            </button>
+            <div className="dau-user-avatar">
+              <img src={profile?.avatar || "https://ui-avatars.com/api/?name=" + displayName} alt="User" />
+            </div>
           </div>
         </header>
 
-        <div className="sd-bento-grid">
-          {/* Profile Section */}
-          <div className="sd-glass-card sd-area-profile">
-            <div className="sd-profile-content">
-              <div className="sd-avatar-orb">
-                <svg className="sd-progress-circle">
-                  <circle cx="80" cy="80" r="75" fill="none" stroke="#e2e8f0" strokeWidth="6" />
-                  <circle cx="80" cy="80" r="75" fill="none" stroke="#2563eb" strokeWidth="6" 
-                    strokeDasharray="471" strokeDashoffset={dashOffset} strokeLinecap="round" />
-                </svg>
-                <img 
-                  src={profile?.avatar || "https://ui-avatars.com/api/?name=" + displayName + "&background=2563eb&color=fff"} 
-                  alt={displayName} 
-                  className="sd-avatar-img" 
-                />
-              </div>
-              <div className="sd-profile-info">
-                <span className="sd-badge-premium">Expert Candidate</span>
-                <h3>{displayName}</h3>
-                <div 
-                  className="sd-profile-bio"
-                  dangerouslySetInnerHTML={{ 
-                    __html: profile?.bio || `Hồ sơ của bạn đã hoàn thành ${completion}%. Hãy cập nhật thêm thông tin!` 
-                  }} 
-                />
-              </div>
-              <Link to="/student/profile" className="sd-btn-prime">
-                <span className="sd-btn-icon">✨</span> Chỉnh sửa hồ sơ
-              </Link>
+        <div className="dau-dashboard-body">
+          {/* Greeting & Refresh */}
+          <div className="dau-welcome-row">
+            <div className="dau-welcome-text">
+              <div className="dau-tag">STUDENT DASHBOARD</div>
+              <h1>Chào buổi sáng, <span className="dau-highlight">{displayName}</span> 🚀</h1>
+              <p>Hôm nay có <span className="dau-count">{recommendations.length} việc làm</span> và <span className="dau-count">3 doanh nghiệp</span> đang chờ bạn</p>
             </div>
+            <button className="dau-refresh-btn" onClick={() => window.location.reload()}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+              Làm mới
+            </button>
           </div>
 
-          {/* Stats Cards */}
-          <div className="sd-glass-card sd-area-stats-1">
-            <div className="sd-stat-content">
-              <div className="sd-stat-value">{profile?.skills?.length || 0}</div>
-              <div className="sd-stat-label">Kỹ năng xác thực</div>
-              <div className="sd-stat-trend">↑ Mối liên kết thực tế</div>
-            </div>
-          </div>
-
-          <div className="sd-glass-card sd-area-stats-2">
-            <div className="sd-stat-content">
-              <div className="sd-stat-value">{applications.length}</div>
-              <div className="sd-stat-label">Đang ứng tuyển</div>
-              <div className="sd-stat-trend">
-                <Link to="/student/applications" style={{ color: 'inherit', textDecoration: 'none' }}>Xem lịch sử ứng tuyển</Link>
+          {/* Stats Row */}
+          <div className="dau-stats-grid">
+            <div className="dau-stat-card">
+              <div className="dau-stat-icon dau-icon-blue">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+              </div>
+              <div className="dau-stat-info">
+                <h3>{recommendations.length}</h3>
+                <p>Việc làm mới</p>
               </div>
             </div>
-          </div>
-
-          {/* Skills Radar */}
-          <div className="sd-glass-card sd-area-skills">
-            <div className="sd-card-header">
-              <h4 className="sd-card-title">Phân tích kỹ năng</h4>
+            <div className="dau-stat-card">
+              <div className="dau-stat-icon dau-icon-red">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="17"></line></svg>
+              </div>
+              <div className="dau-stat-info">
+                <h3>3</h3>
+                <p>Doanh nghiệp</p>
+              </div>
             </div>
-            <div className="sd-radar-wrapper">
-              <SkillRadar skills={radarSkills} />
+            <div className="dau-stat-card">
+              <div className="dau-stat-icon dau-icon-green">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
+              </div>
+              <div className="dau-stat-info">
+                <h3>1</h3>
+                <p>Thử thách dự án</p>
+              </div>
             </div>
-          </div>
-
-          {/* Job Recommendations */}
-          <div className="sd-glass-card sd-area-jobs">
-            <div className="sd-card-header">
-              <h4 className="sd-card-title">Gợi ý dành cho bạn</h4>
-              <Link to="/jobs" className="sd-link-more">Xem tất cả →</Link>
-            </div>
-            <div className="sd-job-list">
-              {recommendations.length > 0 ? recommendations.map((job, i) => (
-                <Link key={i} to={`/jobs/${job.id}`} className="sd-job-item">
-                  <div className="sd-job-meta">
-                    <h4>{job.title}</h4>
-                    <span>{job.companyName}</span>
-                  </div>
-                  <div className="sd-match-pills">Phù hợp</div>
-                </Link>
-              )) : (
-                <p className="sd-no-data">Chưa có gợi ý phù hợp. Hãy cập nhật kỹ năng!</p>
-              )}
+            <div className="dau-stat-card">
+              <div className="dau-stat-icon dau-icon-orange">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              </div>
+              <div className="dau-stat-info">
+                <h3>2</h3>
+                <p>Trò chuyện</p>
+              </div>
             </div>
           </div>
 
-          {/* Roadmap */}
-          <div className="sd-glass-card sd-area-roadmap">
-            <div className="sd-card-header">
-              <h4 className="sd-card-title">Lộ trình sự nghiệp</h4>
-            </div>
-            <div className="sd-roadmap-track">
-              {roadmapData.map((step, i) => (
-                <div key={i} className={`sd-roadmap-node ${step.active ? 'active' : ''}`}>
-                  <div className="sd-node-dot" />
-                  <div className="sd-node-label">{step.title}</div>
+          <div className="dau-main-grid">
+            {/* Application Status Column */}
+            <div className="dau-grid-col-2">
+              <div className="dau-white-card">
+                <div className="dau-card-header">
+                   <h4>Trạng thái ứng tuyển</h4>
+                   <p>Phân bổ hồ sơ đã gửi</p>
                 </div>
-              ))}
+                <div className="dau-donut-container">
+                  <DonutChart value={0} total={10} />
+                  <p className="dau-empty-text">Chưa có dữ liệu ứng tuyển</p>
+                </div>
+              </div>
             </div>
+
+            {/* Profile Completion Column */}
+            <div className="dau-grid-col-2">
+              <div className="dau-white-card">
+                <div className="dau-card-header-between">
+                   <div className="dau-header-left">
+                     <h4>Hoàn thiện hồ sơ</h4>
+                     <p>Hồ sơ đầy đủ giúp tăng cơ hội được tuyển</p>
+                   </div>
+                   <span className="dau-percentage">100%</span>
+                </div>
+                
+                <div className="dau-progress-lane">
+                  <div className="dau-progress-bar" style={{width: '100%'}}></div>
+                </div>
+
+                <ul className="dau-checklist">
+                  <li className="dau-checked">
+                    <span className="dau-check-icon">✓</span> Ảnh đại diện
+                  </li>
+                  <li className="dau-checked">
+                    <span className="dau-check-icon">✓</span> Giới thiệu bản thân
+                  </li>
+                  <li className="dau-checked">
+                    <span className="dau-check-icon">✓</span> Số điện thoại
+                  </li>
+                  <li className="dau-checked">
+                    <span className="dau-check-icon">✓</span> Video giới thiệu
+                  </li>
+                  <li className="dau-checked">
+                    <span className="dau-check-icon">✓</span> CV đã tạo
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Features Row */}
+            <div className="dau-grid-col-1">
+              <div className="dau-features-side">
+                <p className="dau-side-label">Các tính năng dành cho bạn</p>
+                <Link to="/jobs" className="dau-feature-box">
+                  <div className="dau-f-icon-box blue"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg></div>
+                  <div className="dau-f-text">
+                    <h5>Tìm việc làm</h5>
+                    <p>Khám phá cơ hội mới</p>
+                  </div>
+                </Link>
+                <Link to="/student/cv-template" className="dau-feature-box">
+                  <div className="dau-f-icon-box red"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg></div>
+                  <div className="dau-f-text">
+                    <h5>CV của tôi</h5>
+                    <p>Tạo & quản lý CV</p>
+                  </div>
+                </Link>
+                <Link to="/student/profile" className="dau-feature-box">
+                  <div className="dau-f-icon-box green"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+                  <div className="dau-f-text">
+                    <h5>Hồ sơ cá nhân</h5>
+                    <p>Cập nhật thông tin</p>
+                  </div>
+                </Link>
+                <Link to="/companies" className="dau-feature-box">
+                  <div className="dau-f-icon-box purple"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="17"></line></svg></div>
+                  <div className="dau-f-text">
+                    <h5>Doanh nghiệp</h5>
+                    <p>Xem danh sách DN</p>
+                  </div>
+                </Link>
+              </div>
+            </div>
+
+            {/* Jobs List Row */}
+            <div className="dau-grid-col-3">
+              <div className="dau-white-card dau-jobs-list-card">
+                 <div className="dau-card-header">
+                    <h4>Cơ hội vừa được đăng</h4>
+                    <p>Cập nhật những việc làm mới nhất</p>
+                 </div>
+                 <div className="dau-job-items">
+                   {recommendations.slice(0, 5).map((job, idx) => (
+                      <div key={idx} className="dau-job-row">
+                        <div className="dau-job-left">
+                          <div className="dau-company-logo">
+                            <img src={job.companyLogo || "https://ui-avatars.com/api/?name=" + job.companyName} alt="Logo" />
+                          </div>
+                          <div className="dau-job-main">
+                            <h6>{job.title}</h6>
+                            <p>{job.companyName} • {idx + 2} ngày trước</p>
+                          </div>
+                        </div>
+                        <div className="dau-job-salary">
+                          {job.minSalary ? `${job.minSalary / 1000000} - ${job.maxSalary / 1000000} triệu` : 'Thỏa thuận'}
+                        </div>
+                      </div>
+                   ))}
+                 </div>
+              </div>
+            </div>
+
+            {/* My Applications Row */}
+            <div className="dau-grid-col-4">
+              <div className="dau-white-card">
+                 <div className="dau-card-header-between">
+                    <div className="dau-header-left">
+                       <h4><span className="dau-icon-inline red">✓</span> Đơn ứng tuyển của tôi</h4>
+                       <p>Theo dõi trạng thái hồ sơ</p>
+                    </div>
+                    <Link to="/student/applications" className="dau-link-all">Xem tất cả ›</Link>
+                 </div>
+                 <div className="dau-empty-apps">
+                    <div className="dau-empty-icon">📄</div>
+                    <p>Bạn chưa ứng tuyển công việc nào</p>
+                    <p className="dau-sub">Hãy khám phá các cơ hội làm mới! 🎯</p>
+                    <Link to="/jobs" className="dau-action-btn-red">Tìm việc ngay</Link>
+                 </div>
+              </div>
+            </div>
+
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
