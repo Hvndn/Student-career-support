@@ -67,7 +67,8 @@ export const authApi = {
     },
     getCurrentUser: () => api.get('/auth/me'),
     forgotPassword: (email) => api.post('/auth/forgot-password', null, { params: { email } }),
-    resetPassword: (token, password) => api.post(`/auth/reset-password?token=${token}&password=${password}`)
+    resetPassword: (token, password) => api.post(`/auth/reset-password?token=${token}&password=${password}`),
+    changePassword: (data) => api.post('/auth/change-password', data)
 };
 
 export const jobApi = {
