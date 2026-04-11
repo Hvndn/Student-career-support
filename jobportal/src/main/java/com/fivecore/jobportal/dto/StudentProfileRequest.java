@@ -23,5 +23,7 @@ public class StudentProfileRequest {
     private String academicYear;
     private String currentTerm;
     private String address;
+    private String coverImageUrl;
+    private String videoUrl;
 
 }

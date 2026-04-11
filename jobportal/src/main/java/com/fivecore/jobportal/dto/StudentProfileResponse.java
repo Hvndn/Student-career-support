@@ -30,6 +30,8 @@ public class StudentProfileResponse {
     private String phone;
     private String address;
     private String avatarUrl;
+    private String coverImageUrl;
+    private String videoUrl;
     private List<SkillDto> skills;
     private List<EducationDto> educations;
     private List<ExperienceDto> experiences;
