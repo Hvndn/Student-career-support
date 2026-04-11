@@ -65,6 +65,8 @@ public class ProfileService {
         if (request.getAddress() != null) student.setAddress(request.getAddress());
         if (request.getCoverImageUrl() != null) student.setCoverImageUrl(request.getCoverImageUrl());
         if (request.getVideoUrl() != null) student.setVideoUrl(request.getVideoUrl());
+        if (request.getGithubUrl() != null) student.setGithubUrl(request.getGithubUrl());
+        if (request.getLinkedinUrl() != null) student.setLinkedinUrl(request.getLinkedinUrl());
 
         studentRepository.save(student);
         log.info("Đã cập nhật thông tin hồ sơ cho sinh viên ID: {}", studentId);

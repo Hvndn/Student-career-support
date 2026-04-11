@@ -89,6 +89,108 @@
 }
 
 .dau-user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.dau-user-avatar.active { box-shadow: 0 0 0 2px #dc2626; }
+
+/* Premium User Dropdown */
+.dau-user-menu-container {
+  position: relative;
+}
+
+.dau-user-dropdown-premium {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 240px;
+  background: #8b1538; /* Dark Red */
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  z-index: 1000;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-family: 'Inter', sans-serif;
+}
+
+.dau-dropdown-header-premium {
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dau-dropdown-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.dau-dropdown-name {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.dau-dropdown-role {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.dau-dropdown-body-premium {
+  padding: 8px 0;
+}
+
+.dau-dropdown-item-premium {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dau-dropdown-item-premium:hover {
+  background: rgba(255, 255, 255, 0.1);
+  padding-left: 24px;
+}
+
+.dau-dropdown-item-premium svg {
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.2s;
+}
+
+.dau-dropdown-item-premium:hover svg {
+  color: #ffffff;
+  transform: scale(1.1);
+}
+
+.dau-dropdown-divider-premium {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 8px 0;
+}
+
+/* Animations */
+.fade-in-down {
+  animation: fadeInDown 0.3s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 /* Dashboard Body */
 .dau-dashboard-body {
