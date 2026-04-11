@@ -3,6 +3,7 @@ package com.fivecore.jobportal.controller.api.auth;
 import com.fivecore.jobportal.dto.ApiResponse;
 import com.fivecore.jobportal.dto.LoginRequest;
 import com.fivecore.jobportal.dto.RegisterRequest;
+import com.fivecore.jobportal.dto.ChangePasswordRequest;
 import com.fivecore.jobportal.security.JwtTokenProvider;
 import com.fivecore.jobportal.service.auth.PasswordResetService;
 import com.fivecore.jobportal.service.auth.RegisterService;
@@ -107,6 +108,27 @@ public class AuthRestController {
     @PostMapping("/reset-password")
     public ResponseEntity<ApiResponse<Object>> resetPassword() {
         return ResponseEntity.badRequest().body(ApiResponse.error("Chức năng này đã được chuyển sang luồng phê duyệt bởi Quản trị viên.", "DEPRECATED"));
+    }
+
+    /**
+     * API Đổi mật khẩu cho người dùng hiện tại.
+     */
+    @PostMapping("/change-password")
+    public ResponseEntity<ApiResponse<Object>> changePassword(
+            @Valid @RequestBody ChangePasswordRequest request,
+            Authentication authentication) {
+        
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).body(ApiResponse.error("Vui lòng đăng nhập để thực hiện hành động này", "UNAUTHORIZED"));
+        }
+
+        boolean success = registerService.changePassword(authentication.getName(), request);
+        
+        if (success) {
+            return ResponseEntity.ok(ApiResponse.success("Đổi mật khẩu thành công", null));
+        } else {
+            return ResponseEntity.badRequest().body(ApiResponse.error("Mật khẩu hiện tại không chính xác", "INVALID_PASSWORD"));
+        }
     }
 
     /**
