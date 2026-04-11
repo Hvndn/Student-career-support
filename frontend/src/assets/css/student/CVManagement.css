@@ -1,0 +1,354 @@
+/* DAU CV Management Styles - Fully Refined */
+:root {
+  --cv-bg: #f8fafc;
+  --cv-card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --cv-card-hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --dau-red: #8b1538;
+}
+
+.dau-cv-body {
+  padding: 32px;
+  background-color: var(--cv-bg);
+  min-height: calc(100vh - 64px);
+}
+
+.dau-cv-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
+}
+
+.dau-tag-career {
+  background: #fef2f2;
+  color: #dc2626;
+  padding: 6px 16px;
+  border-radius: 99px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.dau-cv-title-box h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #1f2937;
+  margin: 0 0 8px 0;
+}
+
+.dau-cv-title-box p {
+  color: #6b7280;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.dau-btn-create-cv {
+  background: var(--dau-red);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dau-btn-create-cv:hover {
+  background: #70112d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 21, 56, 0.3);
+}
+
+/* Search Bar */
+.dau-search-bar-container {
+  margin-bottom: 32px;
+}
+
+.dau-search-wrapper {
+  background: white;
+  border-radius: 16px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  box-shadow: var(--cv-card-shadow);
+  border: 1px solid #f1f5f9;
+}
+
+.dau-search-wrapper input {
+  border: none;
+  padding: 16px 0;
+  font-size: 1rem;
+  width: 100%;
+  outline: none;
+  color: #374151;
+}
+
+/* CV Grid */
+.dau-cv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.dau-cv-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--cv-card-shadow);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.dau-cv-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--cv-card-hover-shadow);
+}
+
+.dau-cv-preview {
+  height: 280px;
+  padding: 16px;
+  background: #f1f5f9;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hover Overlay Styles */
+.dau-cv-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(31, 41, 55, 0.2);
+  backdrop-filter: blur(2px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 20;
+}
+
+.dau-cv-card:hover .dau-cv-overlay {
+  opacity: 1;
+}
+
+.dau-btn-overlay-edit, .dau-btn-overlay-view {
+  width: 150px;
+  height: 50px;
+  border-radius: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  font-size: 1.1rem;
+}
+
+.dau-btn-overlay-edit {
+  background: var(--dau-red);
+  color: white;
+}
+
+.dau-btn-overlay-view {
+  background: white;
+  color: #1f2937;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.dau-btn-overlay-edit:hover { background: #70112d; }
+.dau-btn-overlay-view:hover { background: #f9fafb; }
+
+/* Status Badge */
+.dau-cv-status-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #4b5563;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 99px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 30;
+}
+
+.dau-cv-status-badge .dot { color: #10b981; }
+
+.dau-cv-thumb-content {
+  width: 180px;
+  height: 100%;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+}
+
+.dau-cv-card:hover .dau-cv-thumb-content {
+  transform: scale(0.95);
+  filter: blur(1px);
+}
+
+/* Thumb Internal Structure */
+.dau-thumb-header { height: 15px; margin-bottom: 5px; }
+.dau-thumb-body { display: flex; flex: 1; }
+.dau-thumb-sidebar { width: 40px; }
+.dau-thumb-main { flex: 1; padding: 10px; }
+.dau-thumb-line { height: 4px; background: #f1f5f9; margin-bottom: 5px; border-radius: 2px; }
+.dau-thumb-line.short { width: 60%; }
+
+.template-blue .dau-thumb-sidebar { background: #1e293b; }
+.template-blue .dau-thumb-header { background: #3b82f6; }
+.template-red .dau-thumb-sidebar { background: var(--dau-red); }
+.template-red .dau-thumb-header { background: #f59e0b; }
+.template-dark .dau-thumb-sidebar { background: #3f1011; }
+.template-dark .dau-thumb-header { background: #3f1011; }
+.template-gray .dau-cv-thumb-content { border: 2px solid var(--dau-red); }
+.template-light .dau-thumb-header { background: #ecfdf5; }
+
+/* CV Info & Actions */
+.dau-cv-info {
+  padding: 20px;
+  flex: 1;
+}
+
+.dau-cv-info h5 {
+  margin: 0 0 10px 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.dau-cv-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.dau-cv-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px 20px 20px;
+  border-top: 1px solid #f8fafc;
+}
+
+.dau-action-icon {
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #94a3b8;
+  transition: all 0.2s;
+}
+
+.dau-action-icon:hover {
+  background: #f1f5f9;
+  color: #1f2937;
+  transform: translateY(-2px);
+}
+
+.dau-action-icon.active {
+  background: #f0fdf4;
+  color: #10b981;
+  border-color: #dcfce7;
+}
+
+/* Modal Selector */
+.dau-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.dau-template-modal {
+  background: white;
+  width: 90%;
+  max-width: 950px;
+  max-height: 90vh;
+  border-radius: 32px;
+  padding: 40px;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.dau-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.dau-modal-header h3 { font-size: 1.75rem; font-weight: 800; margin: 0; }
+
+.dau-template-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.dau-template-option {
+  border: 2px solid #f1f5f9;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.dau-template-option:hover { border-color: var(--dau-red); background: #fffafb; }
+
+.dau-template-preview { height: 200px; background: #f8fafc; display: flex; justify-content: center; padding-top: 15px; }
+
+.dau-template-info { padding: 15px; }
+
+.dau-template-name { display: block; font-weight: 700; margin-bottom: 10px; }
+
+.dau-btn-select-template {
+  width: 100%;
+  background: #f3f4f6;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dau-btn-select-template:hover { background: var(--dau-red); color: white; }
+
+@media (max-width: 768px) {
+  .dau-cv-header-row { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .dau-main-content { margin-left: 0; }
+}
