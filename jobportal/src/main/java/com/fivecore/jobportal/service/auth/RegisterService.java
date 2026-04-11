@@ -94,6 +94,8 @@ public class RegisterService {
             companyRepository.save(company);
             log.info("Đã khởi tạo hồ sơ Công ty cho ID: {}", user.getId());
         }
+    }
+
     /**
      * Thay đổi mật khẩu cho người dùng đã đăng nhập.
      * 
