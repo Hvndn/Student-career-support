@@ -63,6 +63,8 @@ public class ProfileService {
         if (request.getBio() != null) student.setBio(request.getBio());
         if (request.getPhone() != null) student.setPhone(request.getPhone());
         if (request.getAddress() != null) student.setAddress(request.getAddress());
+        if (request.getCoverImageUrl() != null) student.setCoverImageUrl(request.getCoverImageUrl());
+        if (request.getVideoUrl() != null) student.setVideoUrl(request.getVideoUrl());
 
         studentRepository.save(student);
         log.info("Đã cập nhật thông tin hồ sơ cho sinh viên ID: {}", studentId);

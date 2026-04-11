@@ -29,6 +29,8 @@ public class StudentProfileMapper {
                 .phone(student.getPhone())
                 .address(student.getAddress())
                 .avatarUrl(student.getAvatarUrl())
+                .coverImageUrl(student.getCoverImageUrl())
+                .videoUrl(student.getVideoUrl())
                 .skills(mapSkills(student.getSkills()))
                 .educations(mapEducations(student.getEducations()))
                 .experiences(mapExperiences(student.getExperiences()))
