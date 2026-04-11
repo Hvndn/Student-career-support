@@ -1,11 +1,11 @@
 import React from 'react';
 import { getImageUrl } from '../../utils/urlUtils';
 
-const CVTemplate = ({ profile, avatarBase64, experiences, educations, skills, languages, interests, projects, activities, certifications }) => {
+const CVTemplate = ({ profile, avatarBase64, experiences, educations, skills, languages, interests, projects, activities, certifications, theme }) => {
   // Styles & Colors
   const sidebarBg = '#f1f5f9'; // Subtle blue-gray
   const mainBg = '#ffffff';
-  const accentColor = '#2563eb'; // Royal Blue
+  const accentColor = theme?.accentColor || '#2563eb'; // Royal Blue or custom
   const primaryText = '#0f172a'; // Midnight
   const secondaryText = '#334155'; // Slate
   const mutedText = '#64748b'; // Light Slate

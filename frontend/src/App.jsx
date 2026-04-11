@@ -25,6 +25,8 @@ import Applications from './pages/student/Applications'
 import SavedJobs from './pages/student/SavedJobs'
 import Notifications from './pages/student/Notifications'
 import Interviews from './pages/student/Interviews'
+import CVManagement from './pages/student/CVManagement'
+import CVBuilder from './pages/student/CVBuilder'
 
 // company pages
 import CompanyDashboard from './pages/company/CompanyDashboard'
@@ -132,6 +134,8 @@ const AppContent = () => {
               <Route path="saved" element={<SavedJobs />} />
               <Route path="notifications" element={<Notifications />} />
               <Route path="interviews" element={<Interviews />} />
+              <Route path="cv-template" element={<CVManagement />} />
+              <Route path="cv-builder/:id" element={<CVBuilder />} />
             </Routes>
           </ProtectedRoute>
         } />
