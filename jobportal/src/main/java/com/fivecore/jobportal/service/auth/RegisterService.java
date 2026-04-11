@@ -94,5 +94,29 @@ public class RegisterService {
             companyRepository.save(company);
             log.info("Đã khởi tạo hồ sơ Công ty cho ID: {}", user.getId());
         }
+    /**
+     * Thay đổi mật khẩu cho người dùng đã đăng nhập.
+     * 
+     * @param email Email của người dùng hiện tại
+     * @param request DTO chứa mật khẩu cũ và mới
+     * @return true nếu thành công, false nếu mật khẩu cũ không đúng
+     */
+    @Transactional
+    public boolean changePassword(String email, com.fivecore.jobportal.dto.ChangePasswordRequest request) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
+
+        // Kiểm tra mật khẩu hiện tại
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            log.warn("Đổi mật khẩu thất bại cho email {}: Mật khẩu hiện tại không khớp.", email);
+            return false;
+        }
+
+        // Cập nhật mật khẩu mới (Mã hóa)
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+        
+        log.info("Đã đổi mật khẩu thành công cho email: {}", email);
+        return true;
     }
 }
