@@ -42,6 +42,12 @@ public class Student {
     @Column(name = "avatar_url", length = 255)
     private String avatarUrl;
 
+    @Column(name = "cover_url", length = 255)
+    private String coverImageUrl;
+
+    @Column(name = "video_url", length = 255)
+    private String videoUrl;
+
     private java.time.LocalDate dob;
 
     @Column(name = "github_url", length = 255)
