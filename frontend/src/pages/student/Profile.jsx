@@ -4,7 +4,6 @@ import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { studentApi } from '../../api';
 import { getImageUrl } from '../../utils/urlUtils';
-import StudentSidebar from '../../components/student/StudentSidebar';
 import '../../assets/css/student/Profile.css';
 
 const Profile = () => {
@@ -123,8 +122,7 @@ const Profile = () => {
     };
 
     return (
-        <div className="pf-dashboard-wrapper">
-            <StudentSidebar />
+        <div className="pf-profile-content-only">
             
             <main className="pf-main-content">
                 {/* Toast Notification */}

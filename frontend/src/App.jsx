@@ -7,6 +7,7 @@ import LoadingSpinner from './components/common/LoadingSpinner';
 import NavbarSelector from './components/common/NavbarSelector';
 
 import ProtectedRoute from './components/common/ProtectedRoute';
+import StudentLayout from './components/layout/StudentLayout';
 
 // common pages
 import Home from './pages/common/Home'
@@ -82,6 +83,15 @@ const RouteChangeHandler = ({ setIsLoading }) => {
   return null;
 };
 
+// Wrapper để kiểm tra nếu là sinh viên thì bọc trong StudentLayout
+const StudentLayoutWrapper = ({ children }) => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (user?.role === 'ROLE_STUDENT') {
+    return <StudentLayout>{children}</StudentLayout>;
+  }
+  return children;
+};
+
 const AppContent = () => {
   const location = useLocation();
   const hideOnRoutes = ['/login', '/register', '/login-success', '/forgot-password', '/reset-password'];
@@ -117,8 +127,6 @@ const AppContent = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/jobs" element={<JobList />} />
-        <Route path="/jobs/:id" element={<JobDetail />} />
         
         {/* Nhà tuyển dụng (Landing & Pricing) */}
         <Route path="/employer" element={<CompanyDashboard />} />
@@ -127,18 +135,24 @@ const AppContent = () => {
         {/* Bảo vệ cho Sinh viên */}
         <Route path="/student/*" element={
           <ProtectedRoute requiredRole="ROLE_STUDENT">
-            <Routes>
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="profile" element={<Profile />} />
-              <Route path="applications" element={<Applications />} />
-              <Route path="saved" element={<SavedJobs />} />
-              <Route path="notifications" element={<Notifications />} />
-              <Route path="interviews" element={<Interviews />} />
-              <Route path="cv-template" element={<CVManagement />} />
-              <Route path="cv-builder/:id" element={<CVBuilder />} />
-            </Routes>
+            <StudentLayout>
+              <Routes>
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="applications" element={<Applications />} />
+                <Route path="saved" element={<SavedJobs />} />
+                <Route path="notifications" element={<Notifications />} />
+                <Route path="interviews" element={<Interviews />} />
+                <Route path="cv-template" element={<CVManagement />} />
+                <Route path="cv-builder/:id" element={<CVBuilder />} />
+              </Routes>
+            </StudentLayout>
           </ProtectedRoute>
         } />
+
+        {/* Cập nhật các route chung để hỗ trợ Layout Sinh viên nếu đã đăng nhập */}
+        <Route path="/jobs" element={<StudentLayoutWrapper><JobList /></StudentLayoutWrapper>} />
+        <Route path="/jobs/:id" element={<StudentLayoutWrapper><JobDetail /></StudentLayoutWrapper>} />
         
         {/* Bảo vệ cho Doanh nghiệp (Dashboard & Management) */}
         <Route path="/company/*" element={

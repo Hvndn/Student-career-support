@@ -1,12 +1,22 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import '../../assets/css/student/StudentSidebar.css';
 
 const NAV_ITEMS = [
   { icon: 'grid', label: 'Tổng quan', to: '/student/dashboard' },
-  { icon: 'briefcase', label: 'Việc làm', to: '/jobs', subItems: true },
+  { 
+    icon: 'briefcase', 
+    label: 'Việc làm', 
+    to: '/jobs',
+    subItems: [
+      { label: 'Tìm việc làm', to: '/jobs' },
+      { label: 'Thực tập tốt nghiệp', to: '/student/internships' },
+      { label: 'Việc làm đã ứng tuyển', to: '/student/applications' },
+      { label: 'Việc làm yêu thích', to: '/student/saved-jobs' }
+    ]
+  },
   { icon: 'award', label: 'Thử thách dự án', to: '/student/challenges' },
-  { icon: 'users', label: 'Cố vấn', to: '/student/mentors', subItems: true },
+  { icon: 'users', label: 'Cố vấn', to: '/student/mentors' },
   { icon: 'building', label: 'Danh sách công ty', to: '/companies' },
   { icon: 'message-square', label: 'Trò chuyện', to: '/student/chat' },
   { icon: 'file-text', label: 'Tạo CV / Resume', to: '/student/cv-template' },
@@ -15,6 +25,24 @@ const NAV_ITEMS = [
 
 const StudentSidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [expandedItem, setExpandedItem] = useState('Việc làm');
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
+
+  useEffect(() => {
+    // Automatically expand if a sub-item's path is active
+    NAV_ITEMS.forEach(item => {
+      if (item.subItems) {
+        const isChildActive = item.subItems.some(sub => location.pathname === sub.to);
+        if (isChildActive) setExpandedItem(item.label);
+      }
+    });
+  }, [location.pathname]);
 
   const getIcon = (name) => {
     switch (name) {
@@ -46,6 +74,10 @@ const StudentSidebar = () => {
     }
   };
 
+  const handleToggle = (label) => {
+    setExpandedItem(expandedItem === label ? null : label);
+  };
+
   return (
     <aside className="student-sidebar">
       <div className="ss-header">
@@ -59,25 +91,64 @@ const StudentSidebar = () => {
 
       <nav className="ss-nav">
         {NAV_ITEMS.map((item, index) => {
-          const isActive = location.pathname === item.to;
+          const isExpanded = expandedItem === item.label;
+          const isActive = location.pathname === item.to || (item.subItems && item.subItems.some(sub => location.pathname === sub.to));
+          
           return (
-            <div key={index} className="ss-nav-wrapper">
-              <Link
-                to={item.to}
-                className={`ss-nav-item ${isActive ? 'active' : ''}`}
-              >
-                <span className="ss-nav-icon">{getIcon(item.icon)}</span>
-                <span className="ss-nav-label">{item.label}</span>
-                {item.subItems && (
-                  <span className="ss-nav-arrow">
+            <div key={index} className={`ss-nav-section ${isExpanded ? 'is-expanded' : ''}`}>
+              {item.subItems ? (
+                <button 
+                  className={`ss-nav-item ${isActive ? 'active' : ''}`}
+                  onClick={() => handleToggle(item.label)}
+                >
+                  <span className="ss-nav-icon">{getIcon(item.icon)}</span>
+                  <span className="ss-nav-label">{item.label}</span>
+                  <span className={`ss-nav-arrow ${isExpanded ? 'rotated' : ''}`}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                   </span>
-                )}
-              </Link>
+                </button>
+              ) : (
+                <Link
+                  to={item.to}
+                  className={`ss-nav-item ${isActive ? 'active' : ''}`}
+                >
+                  <span className="ss-nav-icon">{getIcon(item.icon)}</span>
+                  <span className="ss-nav-label">{item.label}</span>
+                </Link>
+              )}
+
+              {item.subItems && isExpanded && (
+                <div className="ss-sub-menu">
+                    {item.subItems.map((sub, sIdx) => {
+                        const isSubActive = location.pathname === sub.to;
+                        return (
+                            <Link 
+                                key={sIdx} 
+                                to={sub.to} 
+                                className={`ss-sub-item ${isSubActive ? 'active' : ''}`}
+                            >
+                                <span className="ss-sub-icon">
+                                    <span className="material-symbols-outlined">{sub.label.includes('Tìm') ? 'search' : sub.label.includes('Thực tập') ? 'school' : sub.label.includes('ứng tuyển') ? 'description' : 'favorite'}</span>
+                                </span>
+                                <span className="ss-sub-label">{sub.label}</span>
+                            </Link>
+                        );
+                    })}
+                </div>
+              )}
             </div>
           );
         })}
       </nav>
+
+      <div className="ss-footer">
+        <button className="ss-logout-btn" onClick={handleLogout}>
+          <span className="ss-nav-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          </span>
+          <span className="ss-nav-label">Đăng xuất</span>
+        </button>
+      </div>
     </aside>
   );
 };

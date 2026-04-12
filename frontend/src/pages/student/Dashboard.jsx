@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { studentApi } from '../../api';
-import StudentSidebar from '../../components/student/StudentSidebar';
 import ChangePasswordModal from '../../components/student/ChangePasswordModal';
 import '../../assets/css/student/Dashboard.css';
 
@@ -92,8 +91,7 @@ const Dashboard = () => {
   const displayName = profile?.fullName || 'Sinh viên';
 
   return (
-    <div className="dau-student-layout">
-      <StudentSidebar />
+    <div className="dau-dashboard-content-only">
       
       <main className="dau-main-content">
         {/* Top Navigation / Breadcrumb */}

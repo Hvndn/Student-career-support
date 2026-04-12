@@ -118,6 +118,7 @@ export const studentApi = {
     // Recommendations & Interviews
     getRecommendations: () => api.get('/student/recommendations'),
     getInterviews: () => api.get('/student/interviews'),
+    analyzeAiMatch: (jobId) => api.get(`/student/ai/analyze-match/${jobId}`),
 };
 
 
