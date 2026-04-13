@@ -55,6 +55,9 @@ import UserManagement from './pages/admin/UserManagement'
 import JobApproval from './pages/admin/JobApproval'
 import Reports from './pages/admin/Reports'
 import AdminPasswordRequests from './pages/admin/AdminPasswordRequests'
+import ManageStudent from './pages/admin/ManageStudent'
+import ManageCompany from './pages/admin/ManageCompany'
+import ManageAppointment from './pages/admin/ManageAppointment'
 
 // Thành phần xử lý hiệu ứng load trang khi chuyển route
 const RouteChangeHandler = ({ setIsLoading }) => {
@@ -187,6 +190,9 @@ const AppContent = () => {
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="skills" element={<SkillManagement />} />
               <Route path="users" element={<UserManagement />} />
+              <Route path="students" element={<ManageStudent />} />
+              <Route path="appointments" element={<ManageAppointment />} />
+              <Route path="companies" element={<ManageCompany />} />
               <Route path="jobs" element={<JobApproval />} />
               <Route path="password-requests" element={<AdminPasswordRequests />} />
               <Route path="reports" element={<Reports />} />

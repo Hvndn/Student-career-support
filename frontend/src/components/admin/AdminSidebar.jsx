@@ -52,7 +52,7 @@ const AdminSidebar = () => {
                         <span className="material-symbols-outlined chevron">expand_more</span>
                     </div>
                     <div className="nav-submenu">
-                        <Link to="/admin/appointments" className={`admin-nav-item child-item active`}>
+                        <Link to="/admin/appointments" className={`admin-nav-item child-item ${location.pathname === '/admin/appointments' ? 'active' : ''}`}>
                             <span className="material-symbols-outlined">calendar_today</span>
                             <span className="item-label">Lịch hẹn</span>
                         </Link>

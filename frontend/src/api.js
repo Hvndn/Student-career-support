@@ -176,6 +176,10 @@ export const adminApi = {
     getPasswordRequests: () => api.get('/admin/password-requests'),
     getPasswordRequestStats: () => api.get('/admin/password-requests/stats'),
     approvePasswordRequest: (id) => api.post(`/admin/password-requests/${id}/approve`),
+    getInterviews: () => api.get('/admin/interviews'),
+    createStudent: (data) => api.post('/admin/create-student', data),
+    updateStudent: (id, data) => api.put(`/admin/users/${id}/student`, data),
+    updateCompany: (id, data) => api.put(`/admin/users/${id}/company`, data),
 };
 
 export default api;

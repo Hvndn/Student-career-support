@@ -21,6 +21,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 import com.fivecore.jobportal.repository.UserRepository;
+import com.fivecore.jobportal.repository.DailyStatRepository;
+import com.fivecore.jobportal.entity.DailyStat;
+import java.time.LocalDate;
 
 /**
  * REST API Controller cho Xác thực (Login & Register).
@@ -36,6 +39,7 @@ public class AuthRestController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider tokenProvider;
     private final UserRepository userRepository;
+    private final DailyStatRepository dailyStatRepository;
 
     /**
      * API Đăng nhập. Trả về JWT Token.
@@ -51,6 +55,12 @@ public class AuthRestController {
         
         // Tạo JWT Token
         String token = tokenProvider.generateToken(auth);
+
+        // Ghi nhận lượt truy cập trong ngày
+        LocalDate today = LocalDate.now();
+        DailyStat stat = dailyStatRepository.findById(today).orElse(new DailyStat(today, 0));
+        stat.setLoginCount(stat.getLoginCount() + 1);
+        dailyStatRepository.save(stat);
 
         String role = auth.getAuthorities().stream()
                 .map(r -> r.getAuthority())

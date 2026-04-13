@@ -28,6 +28,12 @@ public class Interview {
     @Column(length = 255)
     private String location;
 
+    @Column(length = 100)
+    private String department;
+
+    @Column(columnDefinition = "TEXT")
+    private String notes;
+
     @Column(length = 50)
     private String status;
 

@@ -1,6 +1,10 @@
 package com.fivecore.jobportal.controller.api.admin;
 
 import com.fivecore.jobportal.dto.ApiResponse;
+import com.fivecore.jobportal.dto.admin.AdminCompanyUpdateRequest;
+import com.fivecore.jobportal.dto.admin.AdminStudentCreateRequest;
+import com.fivecore.jobportal.dto.admin.AdminInterviewResponse;
+import com.fivecore.jobportal.dto.admin.AdminStudentUpdateRequest;
 import com.fivecore.jobportal.service.admin.AdminService;
 import com.fivecore.jobportal.service.auth.PasswordResetService;
 import com.fivecore.jobportal.service.auth.SkillService;
@@ -36,10 +40,32 @@ public class AdminRestController {
     @GetMapping("/users")
     public ResponseEntity<ApiResponse<org.springframework.data.domain.Page<com.fivecore.jobportal.entity.User>>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String role) {
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        com.fivecore.jobportal.entity.User.Role userRole = null;
+        if (role != null && !role.isEmpty() && !"all".equalsIgnoreCase(role)) {
+            try {
+                userRole = com.fivecore.jobportal.entity.User.Role.valueOf(role.toLowerCase());
+            } catch (IllegalArgumentException e) {
+                // Ignore invalid role
+            }
+        }
         return ResponseEntity
-                .ok(ApiResponse.success("Lấy danh sách người dùng thành công", adminService.getAllUsers(pageable)));
+                .ok(ApiResponse.success("Lấy danh sách người dùng thành công", adminService.getAllUsers(pageable, userRole)));
+    }
+
+    /**
+     * API Tạo mới sinh viên dành cho Admin.
+     */
+    @PostMapping("/create-student")
+    public ResponseEntity<ApiResponse<Object>> createStudentFromAdmin(@RequestBody AdminStudentCreateRequest request) {
+        try {
+            adminService.createStudentFromAdmin(request);
+            return ResponseEntity.ok(ApiResponse.success("Thêm sinh viên mới thành công", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(ApiResponse.error("Lỗi khi thêm sinh viên: " + e.getMessage(), "CREATE_ERROR"));
+        }
     }
 
     /**
@@ -100,7 +126,7 @@ public class AdminRestController {
 
     @PostMapping("/users/{id}/toggle-status")
     public ResponseEntity<ApiResponse<Object>> toggleUserStatus(@PathVariable Integer id) {
-        return adminService.getAllUsers(org.springframework.data.domain.PageRequest.of(0, 1000)).stream()
+        return adminService.getAllUsers(org.springframework.data.domain.PageRequest.of(0, 1000), null).stream()
                 .filter(u -> u.getId().equals(id))
                 .findFirst()
                 .map(user -> {
@@ -199,6 +225,40 @@ public class AdminRestController {
             return ResponseEntity.ok(ApiResponse.success("Đã cấp lại mật khẩu và gửi email thành công", null));
         } else {
             return ResponseEntity.badRequest().body(ApiResponse.error("Phê duyệt thất bại hoặc yêu cầu không tồn tại", "APPROVE_FAILED"));
+        }
+    }
+
+    /**
+     * API Lấy danh sách lịch hẹn.
+     */
+    @GetMapping("/interviews")
+    public ResponseEntity<ApiResponse<java.util.List<AdminInterviewResponse>>> getAllInterviews() {
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách lịch hẹn thành công", adminService.getAllInterviews()));
+    }
+
+    /**
+     * API Cập nhật thông tin sinh viên dành cho Admin.
+     */
+    @PutMapping("/users/{id}/student")
+    public ResponseEntity<ApiResponse<Object>> updateStudentFromAdmin(@PathVariable Integer id, @RequestBody AdminStudentUpdateRequest request) {
+        try {
+            adminService.updateStudentFromAdmin(id, request);
+            return ResponseEntity.ok(ApiResponse.success("Cập nhật thông tin sinh viên thành công", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi cập nhật: " + e.getMessage(), "UPDATE_ERROR"));
+        }
+    }
+
+    /**
+     * API Cập nhật thông tin doanh nghiệp dành cho Admin.
+     */
+    @PutMapping("/users/{id}/company")
+    public ResponseEntity<ApiResponse<Object>> updateCompanyFromAdmin(@PathVariable Integer id, @RequestBody AdminCompanyUpdateRequest request) {
+        try {
+            adminService.updateCompanyFromAdmin(id, request);
+            return ResponseEntity.ok(ApiResponse.success("Cập nhật thông tin doanh nghiệp thành công", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi cập nhật: " + e.getMessage(), "UPDATE_ERROR"));
         }
     }
 }
