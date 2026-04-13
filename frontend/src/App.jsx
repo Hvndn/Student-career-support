@@ -28,6 +28,8 @@ import Notifications from './pages/student/Notifications'
 import Interviews from './pages/student/Interviews'
 import CVManagement from './pages/student/CVManagement'
 import CVBuilder from './pages/student/CVBuilder'
+import CompanyList from './pages/student/CompanyList'
+import CompanyDetail from './pages/student/CompanyDetail'
 
 // company pages
 import CompanyDashboard from './pages/company/CompanyDashboard'
@@ -153,6 +155,8 @@ const AppContent = () => {
         {/* Cập nhật các route chung để hỗ trợ Layout Sinh viên nếu đã đăng nhập */}
         <Route path="/jobs" element={<StudentLayoutWrapper><JobList /></StudentLayoutWrapper>} />
         <Route path="/jobs/:id" element={<StudentLayoutWrapper><JobDetail /></StudentLayoutWrapper>} />
+        <Route path="/companies" element={<StudentLayoutWrapper><CompanyList /></StudentLayoutWrapper>} />
+        <Route path="/companies/:id" element={<StudentLayoutWrapper><CompanyDetail /></StudentLayoutWrapper>} />
         
         {/* Bảo vệ cho Doanh nghiệp (Dashboard & Management) */}
         <Route path="/company/*" element={
