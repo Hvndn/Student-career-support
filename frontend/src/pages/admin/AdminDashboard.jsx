@@ -7,65 +7,58 @@ import '../../assets/css/admin/AdminLayout.css';
 import '../../assets/css/admin/AdminSidebar.css';
 import '../../assets/css/admin/AdminNavbar.css';
 import '../../assets/css/admin/AdminDashboard.css';
-import globeImage from '../../assets/images/admin/global_reach_globe.png';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 const AdminDashboard = () => {
     const [stats, setStats] = useState({
-        totalStudents: 0,
-        totalCompanies: 0,
-        totalJobs: 0,
+        totalStudents: 50,
+        totalCompanies: 3,
+        totalJobs: 5,
         totalApplications: 0,
         pendingCompanies: 0,
         totalReports: 0,
         successRate: 0,
         recentJobs: []
     });
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchStats = async () => {
-            try {
-                const res = await adminApi.getStats();
-                if (res.data && res.data.data) {
-                    const data = res.data.data;
-                    setStats({
-                        totalStudents: data.totalStudents || 0,
-                        totalCompanies: data.totalCompanies || 0,
-                        totalJobs: data.totalJobs || 0,
-                        totalApplications: data.totalApplications || 0,
-                        pendingCompanies: data.pendingCompanies || 0,
-                        totalReports: data.totalReports || 0,
-                        successRate: data.successRate || 0,
-                        recentJobs: data.recentJobs || []
-                    });
-                }
-            } catch (err) {
-                console.error("Lấy thống kê admin thất bại:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
+    // Mock data based on design
+    const metrics = [
+        { label: 'Sinh viên', value: '50', icon: 'group', color: '#3b82f6', bg: '#eff6ff' },
+        { label: 'Doanh nghiệp', value: '3', icon: 'domain', color: '#ef4444', bg: '#fef2f2' },
+        { label: 'Việc làm', value: '5', icon: 'work', color: '#f59e0b', bg: '#fffbeb' },
+        { label: 'Thử thách dự án', value: '1', icon: 'emoji_events', color: '#10b981', bg: '#ecfdf5' },
+        { label: 'Lượt truy cập', value: '70', icon: 'show_chart', color: '#8b5cf6', bg: '#f5f3ff' },
+        { label: 'Ứng tuyển', value: '0', icon: 'assignment', color: '#ec4899', bg: '#fdf2f8' },
+        { label: 'Lịch hẹn', value: '3', icon: 'event', color: '#0ea5e9', bg: '#f0f9ff' },
+        { label: 'Bài viết tin tức', value: '2', icon: 'article', color: '#14b8a6', bg: '#f0fdfa' }
+    ];
 
-        fetchStats();
-    }, []);
+    const lineData = [
+        { name: '10', sv: 10, vl: 5 },
+        { name: '15', sv: 15, vl: 8 },
+        { name: '20', sv: 18, vl: 12 },
+        { name: '25', sv: 16, vl: 10 },
+        { name: '30', sv: 25, vl: 15 }
+    ];
+
+    const pieData = [
+        { name: 'CNTT', value: 35 },
+        { name: 'Xây dựng', value: 25 },
+        { name: 'Kiến trúc', value: 20 },
+        { name: 'Marketing', value: 12 },
+        { name: 'Khác', value: 8 }
+    ];
+    const COLORS = ['#3b82f6', '#ef4444', '#f97316', '#8b5cf6', '#94a3b8'];
 
     if (loading) return (
         <div className="admin-loading">
             <div className="loader"></div>
-            <span>Đang tải dữ liệu vận hành...</span>
+            <span>Đang tải dữ liệu...</span>
         </div>
     );
-
-    const metrics = [
-        { label: 'Sinh viên đăng ký', value: stats.totalStudents.toLocaleString(), trend: '+ 12%', trendType: 'up', icon: 'person', color: '#3b82f6' },
-        { label: 'Nhà tuyển dụng', value: stats.totalCompanies.toLocaleString(), trend: '+ 8.4%', trendType: 'up', icon: 'business_center', color: '#6366f1' },
-        { label: 'Tin tuyển dụng', value: stats.totalJobs.toLocaleString(), trend: 'Ổn định', trendType: 'stable', icon: 'work', color: '#f97316' },
-        { label: 'Tổng ứng tuyển', value: stats.totalApplications.toLocaleString(), trend: 'Mới', trendType: 'new', icon: 'person_add', color: '#ef4444' }
-    ];
-
-    const chartData = [35, 45, 30, 52, 38, 55, 40, 60, 45, 65, 58, 62, 50, 75, 85];
 
     return (
         <div className="admin-layout">
@@ -73,168 +66,236 @@ const AdminDashboard = () => {
             <div className="admin-main-content">
                 <AdminNavbar />
                 <main className="admin-body">
-                    <section className="admin-header-section">
-                        <div className="header-text">
-                            <h1>Tổng quan vận hành</h1>
-                            <p>Theo dõi hiệu suất hệ sinh thái ScholarBridge.</p>
+                    <section className="dau-header-section">
+                        <div className="dau-header-left">
+                            <div className="status-badge-dau">
+                                <span className="status-dot"></span>
+                                ADMIN DASHBOARD
+                            </div>
+                            <h1>Chào buổi tối, <span className="text-red">Admin</span> 👋</h1>
+                            <p>Tổng quan hệ thống DAU Connect hôm nay</p>
                         </div>
-                        <div className="header-actions">
-                            <button className="btn-secondary">
-                                <span className="material-symbols-outlined">file_download</span>
-                                Xuất báo cáo
-                            </button>
-                            <button className="btn-primary">
-                                <span className="material-symbols-outlined">add</span>
-                                Mới đối tác
+                        <div className="dau-header-right">
+                            <button className="btn-refresh">
+                                <span className="material-symbols-outlined">refresh</span>
+                                Làm mới
                             </button>
                         </div>
                     </section>
 
-                    <section className="metrics-grid">
+                    <section className="dau-metrics-grid">
                         {metrics.map((metric, i) => (
-                            <div key={i} className="metric-card">
-                                <div className="metric-header">
-                                    <div className="metric-icon" style={{ backgroundColor: metric.color + '15', color: metric.color }}>
-                                        <span className="material-symbols-outlined">{metric.icon}</span>
-                                    </div>
-                                    <div className={`metric-trend ${metric.trendType}`}>
-                                        {metric.trendType === 'up' && <span className="material-symbols-outlined">trending_up</span>}
-                                        {metric.trendType === 'stable' && <span className="material-symbols-outlined">sync</span>}
-                                        {metric.trend === 'New' && <span className="new-dot"></span>}
-                                        {metric.trend}
-                                    </div>
+                            <div key={i} className="dau-metric-card">
+                                <div className="dau-metric-icon" style={{ backgroundColor: metric.bg, color: metric.color }}>
+                                    <span className="material-symbols-outlined">{metric.icon}</span>
                                 </div>
-                                <div className="metric-info">
-                                    <span className="metric-label">{metric.label}</span>
-                                    <h2 className="metric-value">{metric.value}</h2>
+                                <div className="dau-metric-content">
+                                    <h2 className="dau-metric-value">{metric.value}</h2>
+                                    <span className="dau-metric-label">{metric.label}</span>
                                 </div>
                             </div>
                         ))}
                     </section>
 
-                    <div className="main-dashboard-grid">
-                        <div className="left-column">
-                            {/* GROWTH CHART */}
-                            <div className="dashboard-card growth-chart-card">
-                                <div className="card-header">
-                                    <div className="card-title-group">
-                                        <h3>Phân tích tăng trưởng</h3>
-                                        <p>Tỉ lệ chấp nhận người dùng (30 ngày)</p>
-                                    </div>
-                                    <button className="chart-filter-btn">30 ngày qua</button>
+                    <div className="dau-charts-grid">
+                        <div className="dau-chart-card">
+                            <div className="dau-chart-header">
+                                <div className="dau-chart-title">
+                                    <h3>Xu hướng tăng trưởng</h3>
+                                    <p>Sinh viên & Việc làm mới theo tháng</p>
                                 </div>
-                                <div className="bar-chart-container">
-                                    {chartData.map((val, idx) => (
-                                        <div key={idx} className="bar-wrapper">
-                                            <div
-                                                className={`chart-bar ${idx === chartData.length - 1 ? 'active' : ''}`}
-                                                style={{ height: `${val}%` }}
-                                            ></div>
+                                <div className="dau-chart-legend">
+                                    <div className="legend-item"><span className="dot" style={{background:'#a31919'}}></span>Sinh viên mới</div>
+                                    <div className="legend-item"><span className="dot" style={{background:'#f97316'}}></span>Việc làm mới</div>
+                                </div>
+                            </div>
+                            
+                            <div style={{ height: 300 }}>
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <LineChart data={lineData} margin={{ top: 20, right: 30, left: -20, bottom: 0 }}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                                        <XAxis dataKey="name" tick={{fill: '#94a3b8'}} axisLine={false} tickLine={false} />
+                                        <YAxis tick={{fill: '#94a3b8'}} axisLine={false} tickLine={false} />
+                                        <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                                        <Line type="monotone" dataKey="sv" stroke="#a31919" strokeWidth={3} dot={{r:6, fill:'#a31919'}} activeDot={{ r: 8 }} />
+                                        <Line type="monotone" dataKey="vl" stroke="#f97316" strokeWidth={3} dot={{r:6, fill:'#f97316'}} activeDot={{ r: 8 }} />
+                                    </LineChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+
+                        <div className="dau-chart-card">
+                            <div className="dau-chart-header">
+                                <div className="dau-chart-title">
+                                    <h3>Phân bố ngành nghề</h3>
+                                    <p>Doanh nghiệp theo lĩnh vực</p>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', height: 300, paddingRight: '20px' }}>
+                                <div style={{ flex: 1, height: '100%' }}>
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <PieChart>
+                                            <Pie
+                                                data={pieData}
+                                                cx="50%"
+                                                cy="50%"
+                                                innerRadius={70}
+                                                outerRadius={100}
+                                                paddingAngle={5}
+                                                dataKey="value"
+                                            >
+                                                {pieData.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                                ))}
+                                            </Pie>
+                                            <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                </div>
+                                <div className="pie-custom-legend">
+                                    {pieData.map((entry, index) => (
+                                        <div key={index} className="pie-legend-item">
+                                            <div className="pie-legend-left">
+                                                <span className="dot" style={{ background: COLORS[index % COLORS.length] }}></span>
+                                                <span className="name">{entry.name}</span>
+                                            </div>
+                                            <span className="value">{entry.value}%</span>
                                         </div>
                                     ))}
                                 </div>
-                                <div className="chart-labels">
-                                    <span>NGÀY 01</span>
-                                    <span>NGÀY 15</span>
-                                    <span>HÔM NAY</span>
-                                </div>
                             </div>
+                        </div>
+                    </div>
 
-                            {/* SYSTEM ACTIVITY */}
-                            <div className="dashboard-card activity-card">
-                                <div className="card-header">
-                                    <h3>Hoạt động hệ thống gần đây</h3>
-                                    <Link to="/admin/jobs" className="see-all-link">Xem tất cả việc làm</Link>
+                    <div className="dau-bottom-grid">
+                        <div className="dau-list-card">
+                            <div className="dau-list-header">
+                                <div className="dau-list-title">
+                                    <span className="material-symbols-outlined icon-orange">trending_up</span>
+                                    <div>
+                                        <h3>Top việc làm nổi bật</h3>
+                                        <p>Nhiều lượt xem nhất</p>
+                                    </div>
                                 </div>
-                                <div className="activity-list">
-                                    {stats.recentJobs && stats.recentJobs.length > 0 ? stats.recentJobs.map((job, index) => (
-                                        <div key={job.id || index} className="activity-item">
-                                            <div className="activity-avatar bg-blue">
-                                                {job.companyName ? job.companyName.charAt(0) : 'J'}
-                                            </div>
-                                            <div className="activity-content">
-                                                <p><span className="bold">{job.companyName}</span> đã đăng một công việc mới: <span className="bold">{job.title}</span></p>
-                                                <span className="time">{job.postedAt ? new Date(job.postedAt).toLocaleDateString('vi-VN') : 'Mới đây'}</span>
-                                            </div>
-                                            <span className="activity-tag job">BÀI ĐĂNG VIỆC</span>
-                                        </div>
-                                    )) : (
-                                        <div className="activity-item">
-                                            <p style={{ color: '#6b7280', fontSize: '0.9rem' }}>Chưa có hoạt động mới nào được ghi lại.</p>
-                                        </div>
-                                    )}
+                                <a href="#all" className="link-red">Xem tất cả <span className="material-symbols-outlined">arrow_forward</span></a>
+                            </div>
+                            <div className="dau-list-content">
+                                <div className="job-top-item">
+                                    <span className="rank-badge rank-1">#1</span>
+                                    <div className="job-info">
+                                        <h4>Họa viên Kiến trúc (Draftsman) 22</h4>
+                                        <p>CÔNG TY TNHH PHƯƠNG ANH</p>
+                                    </div>
+                                    <div className="job-stats">
+                                        <span className="stat"><span className="material-symbols-outlined">visibility</span> 23</span>
+                                        <span className="stat hl"><span className="material-symbols-outlined">person_outline</span> 0</span>
+                                    </div>
+                                </div>
+                                <div className="job-top-item">
+                                    <span className="rank-badge rank-2">#2</span>
+                                    <div className="job-info">
+                                        <h4>Chỉ Huy Trưởng Công Trình - Ưu Tiên Nam</h4>
+                                        <p>CÔNG TY TNHH PHƯƠNG ANH</p>
+                                    </div>
+                                    <div className="job-stats">
+                                        <span className="stat"><span className="material-symbols-outlined">visibility</span> 19</span>
+                                        <span className="stat hl"><span className="material-symbols-outlined">person_outline</span> 0</span>
+                                    </div>
+                                </div>
+                                <div className="job-top-item">
+                                    <span className="rank-badge rank-3">#3</span>
+                                    <div className="job-info">
+                                        <h4>Nhân Viên Kế Toán Xây Dựng (Tuyển Gấp)</h4>
+                                        <p>CÔNG TY TNHH PHƯƠNG ANH</p>
+                                    </div>
+                                    <div className="job-stats">
+                                        <span className="stat"><span className="material-symbols-outlined">visibility</span> 11</span>
+                                        <span className="stat hl"><span className="material-symbols-outlined">person_outline</span> 0</span>
+                                    </div>
+                                </div>
+                                <div className="job-top-item">
+                                    <span className="rank-badge rank-other">#5</span>
+                                    <div className="job-info">
+                                        <h4>Kỹ sư Thiết kế Kết cấu</h4>
+                                        <p>Green Space Construction</p>
+                                    </div>
+                                    <div className="job-stats">
+                                        <span className="stat"><span className="material-symbols-outlined">visibility</span> 8</span>
+                                        <span className="stat hl"><span className="material-symbols-outlined">person_outline</span> 0</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="right-column">
-                            {/* QUICK ACTIONS */}
-                            <div className="right-sidebar-section">
-                                <h3>Thao tác nhanh</h3>
-                                <div className="quick-action-list">
-                                    <div className="action-item" onClick={() => navigate('/admin/reports')} style={{ cursor: 'pointer' }}>
-                                        <div className="action-icon red">
-                                            <span className="material-symbols-outlined">policy</span>
-                                        </div>
-                                        <div className="action-info">
-                                            <h4>Báo cáo & Khiếu nại</h4>
-                                            <p>{stats.totalReports} báo cáo cần xử lý</p>
-                                        </div>
-                                    </div>
-                                    <div className="action-item" onClick={() => navigate('/admin/password-requests')} style={{ cursor: 'pointer' }}>
-                                        <div className="action-icon green">
-                                            <span className="material-symbols-outlined">lock_reset</span>
-                                        </div>
-                                        <div className="action-info">
-                                            <h4>Cấp lại mật khẩu</h4>
-                                            <p>Xử lý yêu cầu khôi phục tài khoản</p>
-                                        </div>
-                                    </div>
-                                    <div className="action-item">
-                                        <div className="action-icon purple">
-                                            <span className="material-symbols-outlined">hub</span>
-                                        </div>
-                                        <div className="action-info">
-                                            <h4>Thông báo hệ thống</h4>
-                                            <p>Gửi thông báo toàn hệ thống</p>
-                                        </div>
+                        <div className="dau-list-card">
+                            <div className="dau-list-header">
+                                <div className="dau-list-title">
+                                    <span className="material-symbols-outlined icon-blue">schedule</span>
+                                    <div>
+                                        <h3>Hoạt động gần đây</h3>
+                                        <p>Cập nhật real-time</p>
                                     </div>
                                 </div>
                             </div>
-
-                            {/* GLOBAL REACH */}
-                            <div className="dashboard-card global-reach-card">
-                                <div className="card-header">
-                                    <div className="card-title-group">
-                                        <h3>Phạm vi toàn cầu</h3>
-                                        <p>Lưu lượng truy cập theo khu vực</p>
+                            <div className="dau-list-content">
+                                <div className="activity-row">
+                                    <div className="avatar-icon"><span className="material-symbols-outlined">person_add</span></div>
+                                    <div className="activity-info">
+                                        <p>Sinh viên <strong>Tran Hoang Lan</strong> vừa tham gia hệ thống</p>
+                                        <span>18 ngày trước</span>
                                     </div>
                                 </div>
-                                <div className="globe-visualization">
-                                    <img src={globeImage} alt="Global Reach Map" />
-                                </div>
-                                <div className="region-stats">
-                                    <div className="region-item">
-                                        <span className="region-label">BẮC MỸ</span>
-                                        <span className="region-value">45%</span>
+                                <div className="activity-row">
+                                    <div className="avatar-icon"><span className="material-symbols-outlined">person_add</span></div>
+                                    <div className="activity-info">
+                                        <p>Sinh viên <strong>Vu Anh Tai</strong> vừa tham gia hệ thống</p>
+                                        <span>18 ngày trước</span>
                                     </div>
-                                    <div className="region-item">
-                                        <span className="region-label">CHÂU ÂU</span>
-                                        <span className="region-value">32%</span>
+                                </div>
+                                <div className="activity-row">
+                                    <div className="avatar-icon"><span className="material-symbols-outlined">person_add</span></div>
+                                    <div className="activity-info">
+                                        <p>Sinh viên <strong>Le Minh Dat</strong> vừa tham gia hệ thống</p>
+                                        <span>18 ngày trước</span>
+                                    </div>
+                                </div>
+                                <div className="activity-row">
+                                    <div className="avatar-icon"><span className="material-symbols-outlined">person_add</span></div>
+                                    <div className="activity-info">
+                                        <p>Sinh viên <strong>Pham Huu Tri</strong> vừa tham gia hệ thống</p>
+                                        <span>18 ngày trước</span>
+                                    </div>
+                                </div>
+                                <div className="activity-row">
+                                    <div className="avatar-icon"><span className="material-symbols-outlined">person_add</span></div>
+                                    <div className="activity-info">
+                                        <p>Sinh viên <strong>Hoang Hoang Trinh</strong> vừa tham gia hệ thống</p>
+                                        <span>18 ngày trước</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <footer className="admin-footer">
-                        <p>© 2024 ScholarBridge Inc. | Bảng điều khiển quản trị v2.4.0</p>
-                        <div className="footer-links">
-                            <Link to="#">Giao thức quyền riêng tư</Link>
-                            <Link to="#">Nhật ký kiểm tra</Link>
-                            <Link to="#">Tuân thủ</Link>
+                    <div className="dau-full-card mt-20">
+                        <div className="dau-list-header">
+                            <div className="dau-list-title">
+                                <span className="material-symbols-outlined icon-yellow">error</span>
+                                <div>
+                                    <h3>Doanh nghiệp chờ duyệt</h3>
+                                    <p>Cần xét duyệt để kích hoạt</p>
+                                </div>
+                            </div>
+                            <a href="#manage" className="link-red">Quản lý <span className="material-symbols-outlined">arrow_forward</span></a>
                         </div>
-                    </footer>
+                        <div className="dau-empty-state">
+                            <div className="empty-icon-wrapper">
+                                <span className="material-symbols-outlined success-icon">task_alt</span>
+                            </div>
+                            <h4>Không có doanh nghiệp nào chờ duyệt</h4>
+                            <p>Tất cả đã được xử lý ✨</p>
+                        </div>
+                    </div>
                 </main>
             </div>
         </div>

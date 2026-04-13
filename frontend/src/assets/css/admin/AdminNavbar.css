@@ -25,36 +25,26 @@
     flex: 1;
 }
 
-.admin-search-container {
+.breadcrumb {
     display: flex;
     align-items: center;
-    background: #f8fafc;
-    border: 1px solid #f1f5f9;
-    border-radius: 40px;
-    padding: 8px 20px;
-    width: 350px;
-    gap: 12px;
-    transition: all 0.2s ease;
+    gap: 8px;
+    font-size: 0.95rem;
 }
 
-.admin-search-container:focus-within {
-    background: white;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.05);
+.breadcrumb-main {
+    color: #a31919;
+    font-weight: 600;
 }
 
-.admin-search-input {
-    border: none;
-    background: transparent;
-    outline: none;
-    font-size: 0.9rem;
-    color: #1e293b;
-    width: 100%;
-}
-
-.search-icon {
+.separator {
     color: #94a3b8;
-    font-size: 20px;
+    font-size: 16px !important;
+}
+
+.breadcrumb-page {
+    color: #64748b;
+    font-weight: 500;
 }
 
 .admin-navbar-right {
@@ -76,7 +66,7 @@
     height: 40px;
     border: none;
     background: transparent;
-    color: #64748b;
+    color: #ef4444;
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -86,9 +76,13 @@
     transition: all 0.2s ease;
 }
 
+.notification-icon {
+    font-size: 24px !important;
+}
+
 .status-icon-btn:hover {
-    background: #f8fafc;
-    color: #1e293b;
+    background: #fdf2f2;
+    color: #dc2626;
 }
 
 .notification-badge {
@@ -106,24 +100,6 @@
     display: flex;
     align-items: center;
     gap: 16px;
-}
-
-.admin-user-details {
-    display: flex;
-    flex-direction: column;
-    text-align: right;
-}
-
-.admin-username {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #1e293b;
-}
-
-.admin-role {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: #94a3b8;
 }
 
 .admin-avatar img {
