@@ -9,7 +9,6 @@
 
 .student-main-content {
   flex: 1;
-  margin-left: 260px; /* Width of Sidebar */
   padding: 0;
   min-height: 100vh;
 }
