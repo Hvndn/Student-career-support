@@ -73,7 +73,9 @@ export const authApi = {
 
 export const jobApi = {
     getJobs: (params) => api.get('/jobs', { params }),
-    getJobDetail: (id) => api.get(`/jobs/${id}`)
+    getJobDetail: (id) => api.get(`/jobs/${id}`),
+    getCompanies: () => api.get('/companies'),
+    getCompanyDetail: (id) => api.get(`/companies/${id}`)
 };
 
 export const studentApi = {

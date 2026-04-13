@@ -1,0 +1,374 @@
+/* CompanyList.css - Premium DAU Connect Redesign */
+
+.cl-company-list-wrapper {
+  background-color: #f4f7f9;
+  min-height: 100vh;
+}
+
+.cl-top-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background-color: transparent;
+}
+
+.cl-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.cl-breadcrumb-prev {
+  color: #8b1538;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.cl-breadcrumb-sep {
+  color: #cbd5e1;
+}
+
+.cl-breadcrumb-current {
+  color: #64748b;
+}
+
+.cl-content-container {
+  padding: 0 2rem 2rem 2rem;
+}
+
+.cl-page-header {
+  margin-bottom: 2rem;
+}
+
+.cl-header-title h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+}
+
+/* Filter Bar */
+.cl-filter-bar {
+  background: white;
+  padding: 0.75rem 1rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border: 1px solid #e2e8f0;
+}
+
+.cl-search-box {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cl-search-icon {
+  position: absolute;
+  left: 12px;
+  color: #94a3b8;
+  font-size: 20px;
+}
+
+.cl-search-box input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  font-size: 0.9375rem;
+  outline: none;
+  background: #f8fafc;
+  transition: all 0.2s;
+}
+
+.cl-search-box input:focus {
+  background: white;
+  border-color: #8b1538;
+  box-shadow: 0 0 0 4px rgba(139, 21, 56, 0.05);
+}
+
+.cl-filter-select {
+  padding: 0.75rem 2rem 0.75rem 1rem;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  color: #475569;
+  background: #f8fafc;
+  cursor: pointer;
+  outline: none;
+  min-width: 180px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
+.cl-view-toggles {
+  display: flex;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 12px;
+}
+
+.cl-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: transparent;
+  color: #94a3b8;
+}
+
+.cl-toggle-btn.active {
+  background: white;
+  color: #8b1538;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Company Grid */
+.cl-company-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.cl-company-card {
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  padding: 1.5rem;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.cl-company-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+  border-color: #8b1538;
+}
+
+.cl-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.cl-chat-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f0f9ff;
+  border: none;
+  color: #0369a1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cl-chat-btn:hover {
+  background: #e0f2fe;
+  transform: scale(1.1);
+}
+
+.cl-verified-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #f0fdf4;
+  color: #16a34a;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.cl-verified-badge .material-symbols-outlined {
+  font-size: 14px;
+}
+
+.cl-card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+}
+
+.cl-company-logo-box {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  border: 1px solid #f1f5f9;
+}
+
+.cl-company-logo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cl-logo-placeholder {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #8b1538;
+}
+
+.cl-company-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.cl-company-industry {
+  font-size: 0.8125rem;
+  color: #ef4444;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+}
+
+.cl-company-location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: #94a3b8;
+}
+
+.cl-company-location .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.cl-card-footer {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.cl-job-count {
+  font-size: 0.8125rem;
+  color: #64748b;
+}
+
+.cl-job-count strong {
+  color: #1e293b;
+}
+
+.cl-contact-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.cl-contact-btn .material-symbols-outlined {
+  font-size: 16px;
+  color: #8b1538;
+}
+
+.cl-card-overlay-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+.cl-loading, .cl-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  color: #94a3b8;
+  gap: 1rem;
+}
+
+.cl-empty-state .material-symbols-outlined {
+  font-size: 3rem;
+}
+
+/* List view customization */
+.cl-company-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.cl-company-list .cl-company-card {
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+}
+
+.cl-company-list .cl-card-header {
+    margin: 0;
+    order: 3;
+}
+
+.cl-company-list .cl-card-body {
+    flex-direction: row;
+    text-align: left;
+    gap: 1.5rem;
+}
+
+.cl-company-list .cl-company-logo-box {
+    margin: 0;
+    width: 60px;
+    height: 60px;
+}
+
+.cl-company-list .cl-card-footer {
+    margin: 0;
+    border: none;
+    padding: 0;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .cl-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .cl-view-toggles {
+    justify-content: center;
+  }
+}
