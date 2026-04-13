@@ -19,13 +19,7 @@
   font-family: 'Inter', sans-serif;
 }
 
-.dau-main-content {
-  flex: 1;
-  margin-left: 260px; /* Width of sidebar */
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-}
+/* dau-main-content styles removed - handled by StudentLayout */
 
 /* Header / Breadcrumb */
 .dau-top-header {

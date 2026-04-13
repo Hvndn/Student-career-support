@@ -144,11 +144,8 @@ const CVManagement = () => {
   );
 
   return (
-    <div className="dau-student-layout">
-      <StudentSidebar />
-      
-      <main className="dau-main-content">
-        <header className="dau-top-header">
+    <div className="dau-cv-management-wrapper">
+      <header className="dau-top-header">
           <div className="dau-breadcrumb">
             <Link to="/student/dashboard" className="dau-breadcrumb-prev">DAU Connect</Link>
             <span className="dau-breadcrumb-sep">›</span>
@@ -201,7 +198,6 @@ const CVManagement = () => {
           isOpen={showTemplateSelector} 
           onClose={() => setShowTemplateSelector(false)} 
         />
-      </main>
     </div>
   );
 };

@@ -122,10 +122,8 @@ const Profile = () => {
     };
 
     return (
-        <div className="pf-profile-content-only">
-            
-            <main className="pf-main-content">
-                {/* Toast Notification */}
+        <div className="pf-profile-wrapper">
+            {/* Toast Notification */}
                 {message && (
                     <div className={`pf-toast ${message.startsWith('✅') ? 'is-success' : 'is-error'}`}>
                         {message}
@@ -417,7 +415,6 @@ const Profile = () => {
                         </div>
                     </div>
                 )}
-            </main>
         </div>
     );
 };

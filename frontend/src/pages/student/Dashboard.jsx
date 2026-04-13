@@ -91,11 +91,9 @@ const Dashboard = () => {
   const displayName = profile?.fullName || 'Sinh viên';
 
   return (
-    <div className="dau-dashboard-content-only">
-      
-      <main className="dau-main-content">
-        {/* Top Navigation / Breadcrumb */}
-        <header className="dau-top-header">
+    <div className="dau-dashboard-wrapper">
+      {/* Top Navigation / Breadcrumb */}
+      <header className="dau-top-header">
           <div className="dau-breadcrumb">
             <span className="dau-breadcrumb-prev">DAU Connect</span>
             <span className="dau-breadcrumb-sep">›</span>
@@ -341,12 +339,11 @@ const Dashboard = () => {
 
           </div>
         </div>
-      </main>
 
-      <ChangePasswordModal 
-        show={showPasswordModal} 
-        onClose={() => setShowPasswordModal(false)} 
-      />
+        <ChangePasswordModal 
+          show={showPasswordModal} 
+          onClose={() => setShowPasswordModal(false)} 
+        />
     </div>
   );
 };
