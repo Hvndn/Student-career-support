@@ -266,7 +266,7 @@ public class CompanyService {
         return companyRepository.findAll();
     }
 
-    private JobResponse mapToResponse(Job job) {
+    public JobResponse mapToResponse(Job job) {
         return JobResponse.builder()
                 .id(job.getId())
                 .title(job.getTitle())

@@ -54,6 +54,12 @@ public class Company {
     @Column(name = "logo_url", length = 255)
     private String logoUrl;
 
+    @Column(name = "tax_id", length = 50)
+    private String taxId;
+
+    @Column(length = 255)
+    private String representative;
+
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<Job> jobs;
 
