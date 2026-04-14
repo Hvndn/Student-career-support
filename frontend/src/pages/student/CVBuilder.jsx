@@ -274,20 +274,28 @@ const CVBuilder = () => {
 
   const handleSave = () => {
     if (!cv) return;
-    localStorage.setItem(`dau_cv_${id}`, JSON.stringify({...cv, _name:cvName}));
+    const saveData = { ...cv, _name: cvName, _updatedAt: new Date().toISOString() };
+    localStorage.setItem(`dau_cv_${id}`, JSON.stringify(saveData));
     setSaved(true);
-    setTimeout(()=>setSaved(false), 2200);
+    setTimeout(() => setSaved(false), 2200);
   };
 
   const handlePDF = () => {
-    const el = document.getElementById('cv-template-render');
-    if (!el) return;
-    html2pdf().set({
-      margin:0, filename:`CV_${(cv.fullName||'CV').replace(/\s+/g,'_')}.pdf`,
-      image:{type:'jpeg',quality:0.98},
-      html2canvas:{scale:2,useCORS:true},
-      jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
-    }).from(el).save();
+    // Lưu trước khi xuất PDF
+    handleSave();
+    const el = document.querySelector('.cvb-canvas-inner > div');
+    if (!el) { alert('Không tìm thấy nội dung CV để xuất!'); return; }
+    if (!window.html2pdf) {
+      import('html2pdf.js').then(mod => {
+        mod.default().set({
+          margin: 0,
+          filename: `CV_${(cv.fullName || 'CV').replace(/\s+/g, '_')}.pdf`,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, logging: false },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        }).from(el).save();
+      });
+    }
   };
 
   if (loading || !cv) return (
