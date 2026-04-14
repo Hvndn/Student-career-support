@@ -1,155 +1,430 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { studentApi } from '../../api';
 import { getTemplateComponent } from '../../components/student/templates/TemplateRegistry.jsx';
 import html2pdf from 'html2pdf.js';
 import '../../assets/css/student/CVBuilder.css';
 
+// ─── tiny svg icons ────────────────────────────────────────────────────────
+const IcoChevR = () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>;
+const IcoPlus  = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
+const IcoTrash = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>;
+const IcoSave  = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>;
+const IcoDl   = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>;
+const IcoBk   = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>;
+const IcoEye  = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>;
+const IcoGear = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>;
+
+// ─── section list ──────────────────────────────────────────────────────────
+const SECTIONS = [
+  { key: 'personal',       label: 'Thông tin cá nhân'    },
+  { key: 'contact',        label: 'Liên hệ'               },
+  { key: 'bio',            label: 'Mục tiêu nghề nghiệp' },
+  { key: 'educations',     label: 'Học vấn'              },
+  { key: 'experiences',    label: 'Kinh nghiệm làm việc' },
+  { key: 'projects',       label: 'Dự án đã tham gia'    },
+  { key: 'activities',     label: 'Hoạt động'            },
+  { key: 'certifications', label: 'Chứng chỉ'            },
+  { key: 'skills',         label: 'Kỹ năng'              },
+];
+
+const COLORS = [
+  '#dc2626','#1d4ed8','#16a34a','#d97706','#7c3aed','#db2777',
+  '#0891b2','#334155','#8b1538','#065f46',
+];
+
+const CATS = [
+  { key:'MODERN_1',   label:'Đơn giản'      },
+  { key:'PRO_1',      label:'Chuyên nghiệp' },
+  { key:'MODERN_2',   label:'Hiện đại'      },
+  { key:'CREATIVE_1', label:'Ấn tượng'      },
+  { key:'HARVARD_1',  label:'Harvard'       },
+  { key:'ATS_1',      label:'ATS'           },
+];
+
+// ─── tiny reusable field ───────────────────────────────────────────────────
+const F = ({ label, value='', onChange, multi=false, ph='' }) => (
+  <div className="cvb-f">
+    <label className="cvb-fl">{label}</label>
+    {multi
+      ? <textarea className="cvb-fi" rows={3} value={value} onChange={e=>onChange(e.target.value)} placeholder={ph}/>
+      : <input   className="cvb-fi" type="text" value={value} onChange={e=>onChange(e.target.value)} placeholder={ph}/>
+    }
+  </div>
+);
+
+// ─── right panel content per section ──────────────────────────────────────
+const Editor = ({ section, cv, setCV }) => {
+  const s = (k,v) => setCV({...cv,[k]:v});
+  const upItem = (field,i,k,v) => { const a=[...(cv[field]||[])]; a[i]={...a[i],[k]:v}; s(field,a); };
+  const addItem = (field,blank) => s(field,[...(cv[field]||[]),{...blank,id:Date.now()}]);
+  const delItem = (field,i) => { const a=[...(cv[field]||[])]; a.splice(i,1); s(field,a); };
+
+  if (section==='personal') return (
+    <div className="cvb-ep">
+      <div className="cvb-ep-title">THÔNG TIN CÁ NHÂN</div>
+      {/* avatar preview */}
+      <div className="cvb-av-wrap">
+        <div className="cvb-av-circle">
+          {(cv.avatar||cv.avatarUrl)
+            ? <img src={cv.avatar||cv.avatarUrl} alt="ava" className="cvb-av-img"/>
+            : <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          }
+        </div>
+        <div className="cvb-av-label">Ảnh đại diện</div>
+      </div>
+      <F label="Họ và Tên"       value={cv.fullName} onChange={v=>s('fullName',v)} ph="Nguyễn Văn A"/>
+      <F label="Vị trí ứng tuyển" value={cv.major}    onChange={v=>s('major',v)}    ph="Sinh viên / Designer"/>
+      <F label="URL ảnh đại diện" value={cv.avatar||cv.avatarUrl} onChange={v=>s('avatar',v)} ph="https://example.com/photo.jpg"/>
+      <F label="Ngày sinh"       value={cv.dob}     onChange={v=>s('dob',v)}     ph="01/01/2002"/>
+      <F label="Giới tính"       value={cv.gender}  onChange={v=>s('gender',v)}  ph="Nam / Nữ"/>
+    </div>
+  );
+
+  if (section==='contact') return (
+    <div className="cvb-ep">
+      <div className="cvb-ep-title">LIÊN HỆ</div>
+      <F label="Email"     value={cv.email}   onChange={v=>s('email',v)}   ph="email@example.com"/>
+      <F label="Điện thoại" value={cv.phone}  onChange={v=>s('phone',v)}   ph="0901 234 567"/>
+      <F label="Địa chỉ"   value={cv.address} onChange={v=>s('address',v)} ph="Đà Nẵng, Việt Nam"/>
+      <F label="LinkedIn"  value={cv.linkedin} onChange={v=>s('linkedin',v)} ph="linkedin.com/in/ten-ban"/>
+      <F label="GitHub"    value={cv.github}  onChange={v=>s('github',v)}  ph="github.com/username"/>
+      <F label="Website"   value={cv.website} onChange={v=>s('website',v)} ph="mysite.com"/>
+    </div>
+  );
+
+  if (section==='bio') return (
+    <div className="cvb-ep">
+      <div className="cvb-ep-title">MỤC TIÊU NGHỀ NGHIỆP</div>
+      <p className="cvb-ep-hint">Viết 2–4 câu mô tả định hướng, động lực và giá trị bạn mang lại.</p>
+      <F label="Nội dung" value={cv.bio} onChange={v=>s('bio',v)} multi ph="Mong muốn tìm kiếm môi trường làm việc chuyên nghiệp để phát triển kỹ năng..."/>
+    </div>
+  );
+
+  if (section==='educations') return (
+    <div className="cvb-ep">
+      <div className="cvb-ep-title">HỌC VẤN</div>
+      {(cv.educations||[]).map((e,i)=>(
+        <div key={e.id||i} className="cvb-card">
+          <div className="cvb-card-hd"><span className="cvb-card-num">#{i+1}</span><button className="cvb-del" onClick={()=>delItem('educations',i)}><IcoTrash/></button></div>
+          <F label="Tên trường"  value={e.schoolName}  onChange={v=>upItem('educations',i,'schoolName',v)}  ph="Đại học Đông Á"/>
+          <F label="Chuyên ngành" value={e.major}       onChange={v=>upItem('educations',i,'major',v)}       ph="Công nghệ thông tin"/>
+          <F label="Bằng cấp"   value={e.degree}       onChange={v=>upItem('educations',i,'degree',v)}      ph="Cử nhân / Thạc sĩ"/>
+          <div className="cvb-row2">
+            <F label="Bắt đầu"  value={e.startDate}    onChange={v=>upItem('educations',i,'startDate',v)}   ph="09/2021"/>
+            <F label="Kết thúc" value={e.endDate}       onChange={v=>upItem('educations',i,'endDate',v)}     ph="06/2025"/>
+          </div>
+          <F label="GPA / Ghi chú" value={e.description} onChange={v=>upItem('educations',i,'description',v)} multi ph="GPA: 3.5/4.0"/>
+        </div>
+      ))}
+      <button className="cvb-add" onClick={()=>addItem('educations',{schoolName:'',major:'',degree:'',startDate:'',endDate:'',description:''})}><IcoPlus/> Thêm học vấn</button>
+    </div>
+  );
+
+  if (section==='experiences') return (
+    <div className="cvb-ep">
+      <div className="cvb-ep-title">KINH NGHIỆM LÀM VIỆC</div>
+      {(cv.experiences||[]).map((e,i)=>(
+        <div key={e.id||i} className="cvb-card">
+          <div className="cvb-card-hd"><span className="cvb-card-num">#{i+1}</span><button className="cvb-del" onClick={()=>delItem('experiences',i)}><IcoTrash/></button></div>
+          <F label="Vị trí / Chức danh" value={e.jobTitle}     onChange={v=>upItem('experiences',i,'jobTitle',v)}     ph="Frontend Developer"/>
+          <F label="Tên công ty"         value={e.companyName}  onChange={v=>upItem('experiences',i,'companyName',v)}  ph="FPT Software"/>
+          <div className="cvb-row2">
+            <F label="Bắt đầu"  value={e.startDate}  onChange={v=>upItem('experiences',i,'startDate',v)}  ph="06/2023"/>
+            <F label="Kết thúc" value={e.endDate}     onChange={v=>upItem('experiences',i,'endDate',v)}    ph="Hiện tại"/>
+          </div>
+          <F label="Mô tả công việc" value={e.description} onChange={v=>upItem('experiences',i,'description',v)} multi ph="Phát triển tính năng X, đạt kết quả Y..."/>
+        </div>
+      ))}
+      <button className="cvb-add" onClick={()=>addItem('experiences',{jobTitle:'',companyName:'',startDate:'',endDate:'Hiện tại',description:''})}><IcoPlus/> Thêm kinh nghiệm</button>
+    </div>
+  );
+
+  if (section==='projects') return (
+    <div className="cvb-ep">
+      <div className="cvb-ep-title">DỰ ÁN ĐÃ THAM GIA</div>
+      {(cv.projects||[]).map((p,i)=>(
+        <div key={p.id||i} className="cvb-card">
+          <div className="cvb-card-hd"><span className="cvb-card-num">#{i+1}</span><button className="cvb-del" onClick={()=>delItem('projects',i)}><IcoTrash/></button></div>
+          <F label="Tên dự án"   value={p.name}        onChange={v=>upItem('projects',i,'name',v)}        ph="Đồ án tốt nghiệp / Hackathon"/>
+          <F label="Vai trò"     value={p.role}         onChange={v=>upItem('projects',i,'role',v)}         ph="Thiết kế chính / Backend Dev"/>
+          <F label="Năm"         value={p.year}         onChange={v=>upItem('projects',i,'year',v)}         ph="2023"/>
+          <F label="Công nghệ"   value={p.techStack}    onChange={v=>upItem('projects',i,'techStack',v)}    ph="React, Spring Boot, MySQL"/>
+          <F label="Link demo"   value={p.demoUrl}      onChange={v=>upItem('projects',i,'demoUrl',v)}      ph="https://demo.com"/>
+          <F label="Mô tả dự án" value={p.description}  onChange={v=>upItem('projects',i,'description',v)}  multi ph="Mô tả chức năng, kết quả đạt được..."/>
+        </div>
+      ))}
+      <button className="cvb-add" onClick={()=>addItem('projects',{name:'',role:'',year:'',techStack:'',demoUrl:'',description:''})}><IcoPlus/> Thêm dự án</button>
+    </div>
+  );
+
+  if (section==='activities') return (
+    <div className="cvb-ep">
+      <div className="cvb-ep-title">HOẠT ĐỘNG</div>
+      {(cv.activities||[]).map((a,i)=>(
+        <div key={a.id||i} className="cvb-card">
+          <div className="cvb-card-hd"><span className="cvb-card-num">#{i+1}</span><button className="cvb-del" onClick={()=>delItem('activities',i)}><IcoTrash/></button></div>
+          <F label="Tên hoạt động" value={a.name}         onChange={v=>upItem('activities',i,'name',v)}         ph="Tình nguyện viên / CLB Robotics"/>
+          <F label="Tổ chức"       value={a.organization}  onChange={v=>upItem('activities',i,'organization',v)}  ph="Hội Sinh viên Đà Nẵng"/>
+          <F label="Vai trò"       value={a.role}           onChange={v=>upItem('activities',i,'role',v)}           ph="Trưởng ban / Thành viên"/>
+          <div className="cvb-row2">
+            <F label="Bắt đầu"  value={a.startDate}  onChange={v=>upItem('activities',i,'startDate',v)} ph="07/2022"/>
+            <F label="Kết thúc" value={a.endDate}     onChange={v=>upItem('activities',i,'endDate',v)}   ph="Hiện tại"/>
+          </div>
+          <F label="Mô tả"  value={a.description}  onChange={v=>upItem('activities',i,'description',v)} multi ph="Tham gia tổ chức sự kiện..."/>
+        </div>
+      ))}
+      <button className="cvb-add" onClick={()=>addItem('activities',{name:'',organization:'',role:'',startDate:'',endDate:'',description:''})}><IcoPlus/> Thêm hoạt động</button>
+    </div>
+  );
+
+  if (section==='certifications') return (
+    <div className="cvb-ep">
+      <div className="cvb-ep-title">CHỨNG CHỈ</div>
+      {(cv.certifications||[]).map((c,i)=>(
+        <div key={c.id||i} className="cvb-card">
+          <div className="cvb-card-hd"><span className="cvb-card-num">#{i+1}</span><button className="cvb-del" onClick={()=>delItem('certifications',i)}><IcoTrash/></button></div>
+          <F label="Tên chứng chỉ" value={c.name}           onChange={v=>upItem('certifications',i,'name',v)}           ph="IELTS 7.0 / AWS SAA"/>
+          <F label="Đơn vị cấp"   value={c.issuer}          onChange={v=>upItem('certifications',i,'issuer',v)}          ph="Coursera / AWS / TOEIC"/>
+          <div className="cvb-row2">
+            <F label="Ngày cấp" value={c.issueDate}      onChange={v=>upItem('certifications',i,'issueDate',v)}      ph="05/2024"/>
+            <F label="Hết hạn"  value={c.expirationDate} onChange={v=>upItem('certifications',i,'expirationDate',v)} ph="Vĩnh viễn"/>
+          </div>
+          <F label="Link chứng chỉ" value={c.certificateUrl} onChange={v=>upItem('certifications',i,'certificateUrl',v)} ph="https://..."/>
+        </div>
+      ))}
+      <button className="cvb-add" onClick={()=>addItem('certifications',{name:'',issuer:'',issueDate:'',expirationDate:'',certificateUrl:''})}><IcoPlus/> Thêm chứng chỉ</button>
+    </div>
+  );
+
+  if (section==='skills') return (
+    <div className="cvb-ep">
+      <div className="cvb-ep-title">KỸ NĂNG</div>
+      <p className="cvb-ep-hint">Thêm kỹ năng và chọn mức độ thành thạo.</p>
+      <div className="cvb-skills-list">
+        {(cv.skills||[]).map((sk,i)=>(
+          <div key={sk.id||i} className="cvb-sk-row">
+            <input className="cvb-fi cvb-sk-name" value={sk.name||sk.skillName||''} onChange={e=>upItem('skills',i,'name',e.target.value)} placeholder="Tên kỹ năng (Java, Figma...)"/>
+            <select className="cvb-fi cvb-sk-lvl" value={sk.level||'Intermediate'} onChange={e=>upItem('skills',i,'level',e.target.value)}>
+              <option>Beginner</option>
+              <option>Intermediate</option>
+              <option>Advanced</option>
+              <option>Expert</option>
+            </select>
+            <button className="cvb-del" onClick={()=>delItem('skills',i)}><IcoTrash/></button>
+          </div>
+        ))}
+      </div>
+      <button className="cvb-add" onClick={()=>addItem('skills',{name:'',level:'Intermediate'})}><IcoPlus/> Thêm thẻ kỹ năng</button>
+    </div>
+  );
+
+  return null;
+};
+
+// ─── main component ────────────────────────────────────────────────────────
 const CVBuilder = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const layoutParam = searchParams.get('layout');
-  const [profile, setProfile] = useState(null);
-  const [cvData, setCvData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [zoom, setZoom] = useState(100);
-  const [primaryColor, setPrimaryColor] = useState('#1e293b');
-  const [saveStatus, setSaveStatus] = useState('Bản nháp');
 
-  // Load data
+  const [cv, setCV] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [zoom, setZoom] = useState(75);
+  const [saved, setSaved] = useState(false);
+  const [activeSection, setActiveSection] = useState('personal');
+  const [cvName, setCvName] = useState('CV MỚI CỦA TÔI');
+  const [editingTitle, setEditingTitle] = useState(false);
+
+  // Fix: nếu id === 'new', sinh UUID mới và redirect để tránh xung đột localStorage
+  useEffect(() => {
+    if (id === 'new') {
+      const newId = `cv_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+      navigate(`/student/cv-builder/${newId}?${searchParams.toString()}`, { replace: true });
+    }
+  }, [id]);
+
   useEffect(() => {
     studentApi.getProfile()
       .then(res => {
-        const data = res.data.data;
-        setProfile(data);
-        
-        const savedCV = localStorage.getItem(`dau_cv_${id}`);
-        if (savedCV) {
-          setCvData(JSON.parse(savedCV));
+        const d = res.data?.data || {};
+        const cached = localStorage.getItem(`dau_cv_${id}`);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          setCV(parsed);
+          if (parsed._name) setCvName(parsed._name);
         } else {
-          setCvData({
-            fullName: data.fullName,
-            major: data.major,
-            email: data.email,
-            phone: data.phone,
-            address: data.address,
-            bio: data.bio,
-            educations: data.educations || [],
-            experiences: data.experiences || [],
-            projects: data.projects || [],
-            skills: data.skills || [],
-            certifications: data.certifications || [],
-            languages: data.languages || [],
-            avatar: data.avatar || data.avatarUrl,
-            layoutKey: layoutParam || 'MODERN_1',
-            themeColor: '#1e293b'
+          setCV({
+            fullName: d.fullName||'', major: d.major||'', email: d.email||'',
+            phone: d.phone||'', address: d.address||'', bio: d.bio||'',
+            avatar: d.avatarUrl||'', avatarUrl: d.avatarUrl||'',
+            dob:'', gender:'', linkedin: d.linkedinUrl||'', github: d.githubUrl||'', website:'',
+            educations: d.educations||[],
+            certifications: d.certifications||[],
+            skills:[], experiences:[], projects:[], activities:[],
+            layoutKey: layoutParam||'MODERN_1',
+            themeColor:'#8b1538',
           });
         }
       })
-      .catch(err => console.error(err))
-      .finally(() => setLoading(false));
+      .catch(console.error)
+      .finally(()=>setLoading(false));
   }, [id]);
 
   const handleSave = () => {
-    localStorage.setItem(`dau_cv_${id}`, JSON.stringify(cvData));
-    setSaveStatus('Đã lưu');
-    setTimeout(() => setSaveStatus('Bản nháp'), 2000);
+    if (!cv) return;
+    localStorage.setItem(`dau_cv_${id}`, JSON.stringify({...cv, _name:cvName}));
+    setSaved(true);
+    setTimeout(()=>setSaved(false), 2200);
   };
 
-  const handleUpdateCV = (newData) => {
-    setCvData(newData);
+  const handlePDF = () => {
+    const el = document.getElementById('cv-template-render');
+    if (!el) return;
+    html2pdf().set({
+      margin:0, filename:`CV_${(cv.fullName||'CV').replace(/\s+/g,'_')}.pdf`,
+      image:{type:'jpeg',quality:0.98},
+      html2canvas:{scale:2,useCORS:true},
+      jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+    }).from(el).save();
   };
 
-  const handleDownloadPDF = () => {
-    const element = document.getElementById('cv-template-render');
-    const opt = {
-      margin: 0,
-      filename: `CV_${cvData.fullName.replace(/\s+/g, '_')}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, letterRendering: true },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
+  if (loading || !cv) return (
+    <div className="cvb-loading">
+      <div className="cvb-spin"/><p>Đang khởi tạo trình tạo CV...</p>
+    </div>
+  );
 
-    html2pdf().set(opt).from(element).save();
+  const Template = getTemplateComponent(cv.layoutKey||'MODERN_1');
+  const hasContent = (key) => {
+    if (['personal','contact','bio'].includes(key)) return !!(cv.fullName||cv.email||cv.bio);
+    return (cv[key]||[]).length > 0;
   };
-
-  if (loading || !cvData) return <div className="builder-loading">Đang chuẩn bị trình tạo CV...</div>;
 
   return (
-    <div className="dau-builder-layout">
-      <header className="builder-header">
-        <div className="header-left">
-           <button className="btn-back" onClick={() => navigate('/student/cv-template')}>
-             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-           </button>
-           <div className="title-box">
-             <h2 className="cv-name">CHỈNH SỬA TRỰC TIẾP</h2>
-             <span className="brand-sub">{saveStatus.toUpperCase()} • BẤM VÀO CHỮ ĐỂ SỬA</span>
-           </div>
+    <div className="cvb-wrap">
+
+      {/* ── HEADER ── */}
+      <header className="cvb-header">
+        <div className="cvb-header-l">
+          <button className="cvb-back" onClick={()=>navigate(-1)}><IcoBk/></button>
+          <div>
+            {editingTitle
+              ? <input autoFocus className="cvb-title-inp"
+                  value={cvName} onChange={e=>setCvName(e.target.value)}
+                  onBlur={()=>setEditingTitle(false)}
+                  onKeyDown={e=>e.key==='Enter'&&setEditingTitle(false)}/>
+              : <div className="cvb-title" onClick={()=>setEditingTitle(true)}>{cvName}</div>
+            }
+            <div className="cvb-brand">ĐẠI DAU CAREER BUILDER</div>
+          </div>
         </div>
-        <div className="header-right">
-           <button className="btn-save" onClick={handleSave} style={{ background: '#0f172a' }}>
-             <span className="material-symbols-outlined">save</span> Lưu bản nháp
-           </button>
-           <button className="btn-save" onClick={handleDownloadPDF} style={{ background: 'var(--accent-color, #2563eb)' }}>
-             <span className="material-symbols-outlined">download</span> Tải xuống PDF
-           </button>
+        <div className="cvb-header-r">
+          <button className="cvb-hbtn cvb-hbtn-ghost"><IcoEye/> CV Online</button>
+          <button className="cvb-hbtn cvb-hbtn-dark" onClick={handleSave}>
+            <IcoSave/>
+            {saved ? 'Đã lưu ✓' : 'Lưu'}
+          </button>
+          <button className="cvb-hbtn cvb-hbtn-red" onClick={()=>{handleSave();navigate(-1);}}>
+            <IcoDl/> Lưu &amp; Thoát
+          </button>
         </div>
       </header>
 
-      <div className="builder-body">
-        <aside className="structure-sidebar">
-           <div className="section-title">THIẾT KẾ & MÀU SẮC</div>
-           <div className="design-setting">
-              <label style={{ fontSize: '8pt', color: '#64748b', marginBottom: '10px', display: 'block' }}>MÀU CHỦ ĐẠO</label>
-              <div className="color-palette">
-                 {['#8b1538', '#1e293b', '#3b82f6', '#10b981', '#f59e0b', '#dc2626', '#7c3aed', '#db2777'].map(c => (
-                   <button key={c} className={`color-dot ${primaryColor === c ? 'active' : ''}`} style={{background: c}} onClick={() => { setPrimaryColor(c); setCvData({...cvData, themeColor: c}); }} />
-                 ))}
-              </div>
-              
-              <div className="builder-hint" style={{ marginTop: '30px', padding: '15px', background: '#f8fafc', borderRadius: '8px', fontSize: '9pt', color: '#475569', lineHeight: '1.5' }}>
-                 <p><strong>💡 Mẹo:</strong></p>
-                 <ul style={{ paddingLeft: '15px', marginTop: '5px' }}>
-                    <li>Bấm trực tiếp vào văn bản trên CV để sửa.</li>
-                    <li>Di chuột lên các mục để xóa.</li>
-                    <li>PDF tải về sẽ giống 100% như bạn thấy.</li>
-                 </ul>
-              </div>
-           </div>
+      <div className="cvb-body">
+
+        {/* ── LEFT SIDEBAR ── */}
+        <aside className="cvb-left">
+          <div className="cvb-sv-label">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            CẤU TRÚC CV
+          </div>
+
+          <div className="cvb-nav">
+            {SECTIONS.map(sec=>(
+              <button
+                key={sec.key}
+                className={`cvb-nav-item ${activeSection===sec.key?'active':''}`}
+                onClick={()=>setActiveSection(sec.key)}
+              >
+                <span className="cvb-nav-text">{sec.label}</span>
+                <span className={`cvb-nav-dot ${hasContent(sec.key)?'has':''}`}/>
+                <span className="cvb-nav-arr"><IcoChevR/></span>
+              </button>
+            ))}
+          </div>
+
+          {/* drag handle hider */}
+          <div className="cvb-nav-scroll-fade"/>
+
+          <div className="cvb-sv-label" style={{marginTop:'4px'}}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            GIAO DIỆN
+          </div>
+
+          <div className="cvb-design">
+            <p className="cvb-dl">Màu thương hiệu</p>
+            <div className="cvb-colors">
+              {COLORS.map(c=>(
+                <button key={c} className={`cvb-col ${cv.themeColor===c?'on':''}`}
+                  style={{background:c}} onClick={()=>setCV({...cv,themeColor:c})}/>
+              ))}
+            </div>
+            <p className="cvb-dl" style={{marginTop:'14px'}}>Danh mục mẫu CV</p>
+            <div className="cvb-cats">
+              {CATS.map(cat=>(
+                <button key={cat.key} className={`cvb-cat ${cv.layoutKey===cat.key?'on':''}`}
+                  onClick={()=>setCV({...cv,layoutKey:cat.key})}>
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </aside>
 
-        <main className="preview-container" style={{ flex: 1, background: '#e2e8f0', padding: '40px' }}>
-           <div className="preview-canvas-wrapper" style={{ 
-               transformOrigin: 'top center',
-               transform: `scale(${zoom/100})`,
-               boxShadow: '0 20px 50px rgba(0,0,0,0.15)',
-               margin: '0 auto'
-           }}>
-              <div className="builder-canvas">
-                {cvData && (() => {
-                  const TemplateComponent = getTemplateComponent(cvData.layoutKey || 'MODERN_1');
-                  return (
-                    <TemplateComponent 
-                      profile={profile}
-                      cvData={cvData}
-                      isEditMode={true}
-                      onUpdate={handleUpdateCV}
-                      themeColor={cvData.themeColor || primaryColor}
-                      zoom={zoom}
-                    />
-                  );
-                })()}
-              </div>
-           </div>
-           
-           <div className="zoom-controls">
-              <button onClick={() => setZoom(Math.max(50, zoom - 10))}>-</button>
-              <span className="zoom-value">{zoom}%</span>
-              <button onClick={() => setZoom(Math.min(150, zoom + 10))}>+</button>
-           </div>
+        {/* ── CENTER CANVAS ── */}
+        <main className="cvb-canvas">
+          <div className="cvb-canvas-scroll">
+            <div className="cvb-canvas-inner" style={{transform:`scale(${zoom/100})`,transformOrigin:'top center'}}>
+              <Template
+                profile={cv} cvData={cv}
+                isEditMode={true}
+                onUpdate={(d)=>setCV(d)}
+                themeColor={cv.themeColor||'#8b1538'}
+              />
+            </div>
+          </div>
+
+          {/* zoom bar */}
+          <div className="cvb-zoom">
+            <button className="cvb-zb" onClick={()=>setZoom(z=>Math.max(40,z-5))}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            </button>
+            <span className="cvb-zv">—</span>
+            <span className="cvb-zval">{zoom}%</span>
+            <span className="cvb-zv">—</span>
+            <button className="cvb-zb" onClick={()=>setZoom(z=>Math.min(130,z+5))}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            </button>
+            <button className="cvb-zfit" onClick={()=>setZoom(75)}>⊡</button>
+          </div>
         </main>
+
+        {/* ── RIGHT EDITOR ── */}
+        <aside className="cvb-right">
+          <div className="cvb-right-hd">
+            <span className="cvb-right-icon"><IcoGear/></span>
+            <div>
+              <div className="cvb-right-label">TRÌNH CHỈNH SỬA</div>
+              <div className="cvb-right-sec">{SECTIONS.find(s=>s.key===activeSection)?.label}</div>
+            </div>
+          </div>
+          <div className="cvb-right-body">
+            <Editor section={activeSection} cv={cv} setCV={setCV}/>
+          </div>
+        </aside>
+
       </div>
     </div>
   );
