@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { studentApi } from '../../api';
-import ChangePasswordModal from '../../components/student/ChangePasswordModal';
 import '../../assets/css/student/Dashboard.css';
 
 const DonutChart = ({ value, total }) => {
@@ -47,26 +46,6 @@ const Dashboard = () => {
   const [profile, setProfile] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const menuRef = useRef(null);
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    navigate('/login');
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setShowUserMenu(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -92,65 +71,6 @@ const Dashboard = () => {
 
   return (
     <div className="dau-dashboard-wrapper">
-      {/* Top Navigation / Breadcrumb */}
-      <header className="dau-top-header">
-          <div className="dau-breadcrumb">
-            <span className="dau-breadcrumb-prev">DAU Connect</span>
-            <span className="dau-breadcrumb-sep">›</span>
-            <span className="dau-breadcrumb-current">Tổng quan</span>
-          </div>
-          
-          <div className="dau-header-actions">
-            <button className="dau-notif-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-              <span className="dau-notif-dot"></span>
-            </button>
-            <div className="dau-user-menu-container" ref={menuRef}>
-              <div 
-                className={`dau-user-avatar ${showUserMenu ? 'active' : ''}`}
-                onClick={() => setShowUserMenu(!showUserMenu)}
-              >
-                <img src={profile?.avatar || "https://ui-avatars.com/api/?name=" + displayName} alt="User" />
-              </div>
-
-              {showUserMenu && (
-                <div className="dau-user-dropdown-premium fade-in-down">
-                  <div className="dau-dropdown-header-premium">
-                    <div className="dau-dropdown-user-info">
-                      <span className="dau-dropdown-name">{displayName}</span>
-                      <span className="dau-dropdown-role">student</span>
-                    </div>
-                  </div>
-                  
-                  <div className="dau-dropdown-body-premium">
-                    <Link to="/student/profile" className="dau-dropdown-item-premium" onClick={() => setShowUserMenu(false)}>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                      Hồ sơ
-                    </Link>
-                    <button 
-                      className="dau-dropdown-item-premium" 
-                      onClick={() => {
-                        setShowUserMenu(false);
-                        setShowPasswordModal(true);
-                      }}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                      Đổi mật khẩu
-                    </button>
-                    
-                    <div className="dau-dropdown-divider-premium"></div>
-                    
-                    <button className="dau-dropdown-item-premium dau-logout" onClick={handleLogout}>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg>
-                      Đăng xuất
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </header>
-
         <div className="dau-dashboard-body">
           {/* Greeting & Refresh */}
           <div className="dau-welcome-row">
@@ -326,7 +246,7 @@ const Dashboard = () => {
                        <h4><span className="dau-icon-inline red">✓</span> Đơn ứng tuyển của tôi</h4>
                        <p>Theo dõi trạng thái hồ sơ</p>
                     </div>
-                    <Link to="/student/applications" className="dau-link-all">Xem tất cả ›</Link>
+                    <Link to="/student/applications" className="dau-link-all">Xem tất cả &rsaquo;</Link>
                  </div>
                  <div className="dau-empty-apps">
                     <div className="dau-empty-icon">📄</div>
@@ -339,11 +259,6 @@ const Dashboard = () => {
 
           </div>
         </div>
-
-        <ChangePasswordModal 
-          show={showPasswordModal} 
-          onClose={() => setShowPasswordModal(false)} 
-        />
     </div>
   );
 };

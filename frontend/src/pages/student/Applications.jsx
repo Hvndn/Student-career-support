@@ -66,12 +66,6 @@ const Applications = () => {
         <div className="applications-page">
             <div className="applications-container">
                 {/* Header */}
-                <div className="apps-header">
-                    <nav className="apps-breadcrumb">
-                        <Link to="/">Trang chủ</Link>
-                        <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>chevron_right</span>
-                        <span style={{ color: 'var(--text)', fontWeight: 600 }}>Đơn ứng tuyển</span>
-                    </nav>
                     <div className="apps-header-main">
                         <div>
                             <h1 className="apps-title">Đơn ứng tuyển của tôi</h1>
@@ -83,7 +77,6 @@ const Applications = () => {
                             </span>
                         </div>
                     </div>
-                </div>
 
                 {/* Stats Row */}
                 <div className="apps-stats-grid">

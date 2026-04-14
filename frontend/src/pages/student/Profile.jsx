@@ -130,10 +130,7 @@ const Profile = () => {
                     </div>
                 )}
 
-                {/* Breadcrumbs */}
-                <div className="pf-breadcrumb">
-                   <span>DAU Connect</span> &nbsp; › &nbsp; <span>Hồ sơ cá nhân</span>
-                </div>
+                {/* Premium Banner */}
 
                 {/* Premium Banner */}
                 <div className="pf-premium-banner">
