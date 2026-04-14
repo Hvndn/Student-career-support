@@ -51,7 +51,11 @@ const CompanyDetail = () => {
                         Quay lại danh sách
                     </button>
                     
-                    <button className="cd-message-btn" style={{ float: 'right' }}>
+                    <button 
+                        className="cd-message-btn" 
+                        style={{ float: 'right' }} 
+                        onClick={() => navigate(`/student/chat?partnerId=${company.userId || company.id}`)}
+                    >
                         <span className="material-symbols-outlined">chat_bubble</span>
                         Nhắn tin với doanh nghiệp
                     </button>

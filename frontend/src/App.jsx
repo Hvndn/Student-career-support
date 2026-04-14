@@ -28,6 +28,7 @@ import Notifications from './pages/student/Notifications'
 import Interviews from './pages/student/Interviews'
 import CVManagement from './pages/student/CVManagement'
 import CVBuilder from './pages/student/CVBuilder'
+import Chat from './pages/common/Chat'
 import CompanyList from './pages/student/CompanyList'
 import CompanyDetail from './pages/student/CompanyDetail'
 
@@ -151,6 +152,7 @@ const AppContent = () => {
                 <Route path="interviews" element={<Interviews />} />
                 <Route path="cv-template" element={<CVManagement />} />
                 <Route path="cv-builder/:id" element={<CVBuilder />} />
+                <Route path="chat" element={<Chat />} />
               </Routes>
             </StudentLayout>
           </ProtectedRoute>
@@ -179,6 +181,7 @@ const AppContent = () => {
               <Route path="candidates/search" element={<CompanySearchCandidates />} />
               <Route path="candidates/tags" element={<CompanyCandidateTags />} />
               <Route path="candidates/notifications" element={<CompanyCandidateNotifications />} />
+              <Route path="chat" element={<Chat />} />
               <Route path="profile" element={<CompanyProfile />} />
             </Routes>
           </ProtectedRoute>

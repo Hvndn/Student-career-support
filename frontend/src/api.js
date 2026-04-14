@@ -172,4 +172,11 @@ export const adminApi = {
     toggleCvTemplateStatus: (id) => api.post(`/admin/cv-templates/${id}/toggle-status`),
 };
 
+// ── Chat ──────────────────────────────────────────────────────────────────
+export const chatApi = {
+    getConversations: () => api.get('/chat/conversations'),
+    getMessages: (partnerId) => api.get(`/chat/messages/${partnerId}`),
+    sendMessage: (partnerId, data) => api.post(`/chat/messages/${partnerId}`, data),
+};
+
 export default api;

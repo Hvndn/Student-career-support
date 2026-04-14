@@ -68,6 +68,7 @@ public class CompanyRestController {
     @AllArgsConstructor
     public static class CompanyDetailResponse {
         private Integer id;
+        private Integer userId;
         private String name;
         private String logoUrl;
         private String industry;
@@ -95,6 +96,7 @@ public class CompanyRestController {
 
         CompanyDetailResponse response = CompanyDetailResponse.builder()
                 .id(company.getId())
+                .userId(company.getUser().getId())
                 .name(company.getName())
                 .logoUrl(company.getLogoUrl())
                 .industry(company.getIndustry())
@@ -113,4 +115,5 @@ public class CompanyRestController {
 
         return ResponseEntity.ok(ApiResponse.success("Lấy thông tin chi tiết công ty thành công", response));
     }
+
 }
