@@ -11,5 +11,6 @@ import java.util.Optional;
 public interface CvTemplateRepository extends JpaRepository<CvTemplate, Integer> {
     List<CvTemplate> findByIsActiveTrue();
     List<CvTemplate> findByCategory(String category);
+    List<CvTemplate> findByIsActiveTrueAndCategory(String category);
     List<CvTemplate> findByLayoutKey(String layoutKey);
 }
