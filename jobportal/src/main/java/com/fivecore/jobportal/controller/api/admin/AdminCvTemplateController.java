@@ -1,4 +1,4 @@
-package com.fivecore.jobportal.controller.admin;
+package com.fivecore.jobportal.controller.api.admin;
 
 import com.fivecore.jobportal.entity.CvTemplate;
 import com.fivecore.jobportal.service.admin.CvTemplateService;
@@ -15,7 +15,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/admin/cv-templates")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('admin')")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminCvTemplateController {
 
     private final CvTemplateService cvTemplateService;
@@ -75,6 +75,7 @@ public class AdminCvTemplateController {
     @PostMapping("/cleanup-cv-tables")
     public ResponseEntity<?> cleanupTables() {
         try {
+            // Drop related tables as requested
             // Drop related tables as requested
             jdbcTemplate.execute("DROP TABLE IF EXISTS experience");
             jdbcTemplate.execute("DROP TABLE IF EXISTS education");

@@ -72,7 +72,6 @@ export const studentApi = {
     getProfile: () => api.get('/student/profile'),
     updateProfile: (data) => api.put('/student/profile', data),
     updateAvatar: (formData, onUploadProgress) => api.post('/student/profile/avatar', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
         onUploadProgress,
     }),
     // Education
@@ -108,7 +107,6 @@ export const companyApi = {
     updateProfile: (data, onUploadProgress) => {
         if (data instanceof FormData) {
             return api.put('/company/profile', data, {
-                headers: { 'Content-Type': 'multipart/form-data' },
                 onUploadProgress,
             });
         }
@@ -162,12 +160,8 @@ export const adminApi = {
     updateCompany: (id, data) => api.put(`/users/${id}/company`, data),
     // CV Templates
     getCvTemplates: () => api.get('/admin/cv-templates'),
-    createCvTemplate: (formData) => api.post('/admin/cv-templates', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-    }),
-    updateCvTemplate: (id, formData) => api.put(`/admin/cv-templates/${id}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-    }),
+    createCvTemplate: (formData) => api.post('/admin/cv-templates', formData),
+    updateCvTemplate: (id, formData) => api.put(`/admin/cv-templates/${id}`, formData),
     deleteCvTemplate: (id) => api.delete(`/admin/cv-templates/${id}`),
     toggleCvTemplateStatus: (id) => api.post(`/admin/cv-templates/${id}/toggle-status`),
 };
