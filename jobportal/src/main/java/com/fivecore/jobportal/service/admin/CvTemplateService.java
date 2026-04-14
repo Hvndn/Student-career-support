@@ -29,6 +29,10 @@ public class CvTemplateService {
         return cvTemplateRepository.findByCategory(category);
     }
 
+    public List<CvTemplate> getActivateTemplatesByCategory(String category) {
+        return cvTemplateRepository.findByIsActiveTrueAndCategory(category);
+    }
+
     public CvTemplate getTemplateById(Integer id) {
         return cvTemplateRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy mẫu CV với ID: " + id));

@@ -19,13 +19,12 @@ public class CvTemplateController {
     public ResponseEntity<?> getActiveTemplates(@RequestParam(required = false) String category) {
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
-        
-        if (category != null && !category.isEmpty() && !category.equals("Tất cả")) {
-            response.put("data", cvTemplateService.getTemplatesByCategory(category));
+        // Luôn lọc isActive=true để không trả template ẩn về frontend
+        if (category != null && !category.isBlank() && !category.equals("Tất cả")) {
+            response.put("data", cvTemplateService.getActivateTemplatesByCategory(category));
         } else {
             response.put("data", cvTemplateService.getActiveTemplates());
         }
-        
         return ResponseEntity.ok(response);
     }
 

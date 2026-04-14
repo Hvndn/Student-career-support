@@ -487,3 +487,35 @@
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* ── Empty state ── */
+.dau-cv-empty {
+    text-align: center;
+    padding: 80px 20px;
+    color: #94a3b8;
+}
+.dau-cv-empty p { margin: 16px 0 0; font-size: 1rem; }
+
+/* ── Stats bar ── */
+.dau-cv-stats {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+.dau-stat-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    background: white;
+    border-radius: 10px;
+    padding: 12px 20px;
+    border: 1px solid #f1f5f9;
+}
+.dau-stat-num { font-size: 1.5rem; font-weight: 800; color: #8b1538; }
+.dau-stat-label { font-size: .8rem; color: #64748b; font-weight: 600; }
+
+/* ── Card owner ── */
+.dau-cv-owner { font-size: .8rem; color: #64748b; margin: 4px 0 0; }
+
+/* ── Delete button ── */
+.dau-action-delete:hover { color: #dc2626 !important; border-color: #dc2626 !important; background: #fef2f2 !important; }
