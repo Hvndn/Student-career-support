@@ -3,20 +3,16 @@ import { getImageUrl } from '../../../utils/urlUtils';
 import EditableText from '../EditableText';
 
 const ModernTemplate = ({ 
-  profile, 
+  profile: profileProp,
+  cvData,
   avatarBase64, 
-  experiences, 
-  educations, 
-  skills, 
-  languages, 
-  interests, 
-  projects, 
-  activities, 
-  certifications, 
   theme,
   isEditMode = false,
   onUpdate = () => {}
 }) => {
+  // Ưu tiên cvData (từ builder), fallback sang profile (từ view)
+  const profile = cvData || profileProp || {};
+
   // Styles & Colors
   const sidebarBg = '#8b1538';
   const mainBg = '#ffffff';
@@ -183,54 +179,35 @@ const ModernTemplate = ({
                 {isEditMode && <button className="btn-delete-cv" onClick={() => deleteListItem('skills', i)}>&times;</button>}
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '8.5pt', fontWeight: 600, marginBottom: '4px' }}>
                   <EditableText 
-                    value={s.skillName || s.name} 
-                    onChange={(val) => updateListItem('skills', i, 'skillName', val)} 
+                    value={s.name || s.skillName} 
+                    onChange={(val) => updateListItem('skills', i, 'name', val)} 
                     placeholder="Tên kỹ năng" 
                   />
                 </div>
                 <div style={{ height: '3px', background: 'rgba(255,255,255,0.2)', borderRadius: '3px' }}>
-                  <div style={{ width: s.proficiency === 'Expert' ? '100%' : s.proficiency === 'Advanced' ? '85%' : '65%', height: '100%', background: '#ffffff', borderRadius: '3px' }}></div>
+                  <div style={{ width: s.level === 'Expert' ? '100%' : s.level === 'Advanced' ? '85%' : '65%', height: '100%', background: '#ffffff', borderRadius: '3px' }}></div>
                 </div>
               </div>
             ))}
-            {isEditMode && <button className="btn-add-cv" onClick={() => addListItem('skills', { skillName: 'Kỹ năng mới', proficiency: 'Advanced' })}>+ THÊM KỸ NĂNG</button>}
+            {isEditMode && <button className="btn-add-cv" onClick={() => addListItem('skills', { name: 'Kỹ năng mới', level: 'Intermediate' })}>+ THÊM KỸ NĂNG</button>}
           </div>
         </section>
 
-        {/* Languages */}
-        <section>
-          <h3 style={{ fontSize: '10pt', fontWeight: 800, color: '#ffffff', marginBottom: '1.25rem', letterSpacing: '0.05em', borderBottom: `2.5px solid rgba(255,255,255,0.3)`, paddingBottom: '4px', display: 'inline-block' }}>NGOẠI NGỮ</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', color: '#ffffff' }}>
-            {(profile.languages || []).map((lang, i) => (
-              <div key={i} className="list-item-container">
-                {isEditMode && <button className="btn-delete-cv" onClick={() => deleteListItem('languages', i)}>&times;</button>}
-                <EditableText 
-                    as="p"
-                    value={lang.languageName} 
-                    onChange={(val) => updateListItem('languages', i, 'languageName', val)} 
-                    placeholder="Tên ngôn ngữ" 
-                    style={{ margin: 0, fontSize: '9pt', fontWeight: 700, color: '#ffffff' }}
-                />
-                <div style={{ display: 'flex', gap: '4px' }}>
-                    <EditableText 
-                        value={lang.proficiency} 
-                        onChange={(val) => updateListItem('languages', i, 'proficiency', val)} 
-                        placeholder="Trình độ" 
-                        style={{ margin: 0, fontSize: '8pt', color: mutedText }}
-                    />
-                    <span style={{ fontSize: '8pt', color: 'rgba(255,255,255,0.7)' }}>•</span>
-                    <EditableText 
-                        value={lang.certificate} 
-                        onChange={(val) => updateListItem('languages', i, 'certificate', val)} 
-                        placeholder="Chứng chỉ" 
-                        style={{ margin: 0, fontSize: '8pt', color: mutedText }}
-                    />
+        {/* Certifications */}
+        {(profile.certifications || []).length > 0 && (
+          <section style={{ marginBottom: '1.5rem' }}>
+            <h3 style={{ fontSize: '10pt', fontWeight: 800, color: '#ffffff', marginBottom: '1rem', letterSpacing: '0.05em', borderBottom: `2.5px solid rgba(255,255,255,0.3)`, paddingBottom: '4px', display: 'inline-block' }}>CHỨNG CHỈ</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', color: '#ffffff' }}>
+              {(profile.certifications || []).map((c, i) => (
+                <div key={i} className="list-item-container">
+                  {isEditMode && <button className="btn-delete-cv" onClick={() => deleteListItem('certifications', i)}>&times;</button>}
+                  <EditableText as="p" value={c.name} onChange={(val) => updateListItem('certifications', i, 'name', val)} placeholder="Tên chứng chỉ" style={{ margin: 0, fontSize: '9pt', fontWeight: 700, color: '#ffffff' }} />
+                  <EditableText value={c.issuer} onChange={(val) => updateListItem('certifications', i, 'issuer', val)} placeholder="Đơn vị cấp" style={{ margin: 0, fontSize: '8pt', color: 'rgba(255,255,255,0.7)' }} />
                 </div>
-              </div>
-            ))}
-            {isEditMode && <button className="btn-add-cv" onClick={() => addListItem('languages', { languageName: 'Tiếng Anh', proficiency: 'C1', certificate: 'IELTS 7.0' })}>+ THÊM NGOẠI NGỮ</button>}
-          </div>
-        </section>
+              ))}
+            </div>
+          </section>
+        )}
       </aside>
 
       {/* ── MAIN CONTENT (70%) ── */}
