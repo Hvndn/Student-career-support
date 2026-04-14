@@ -163,24 +163,25 @@ public class DataInitializer implements CommandLineRunner {
         if (cvTemplateRepository.count() > 0) return;
 
         log.info("🌱 Khởi tạo danh sách mẫu CV...");
-        
-        createCvTemplate("Hiện đại 1", "Hiện đại", "MODERN_1", "/uploads/cv-templates/modern.png");
-        createCvTemplate("Hiện đại 2", "Hiện đại", "MODERN_2", "/uploads/cv-templates/modern.png");
-        createCvTemplate("Chuyên nghiệp 1", "Chuyên nghiệp", "PRO_1", "/uploads/cv-templates/professional.png");
-        createCvTemplate("Chuyên nghiệp 2", "Chuyên nghiệp", "PRO_2", "/uploads/cv-templates/professional.png");
-        createCvTemplate("Đơn giản 1", "Đơn giản", "CLASSIC_1", "/uploads/cv-templates/professional.png");
-        createCvTemplate("Ấn tượng 1", "Ấn tượng", "CREATIVE_1", "/uploads/cv-templates/creative.png");
-        createCvTemplate("Harvard 1", "Harvard", "HARVARD_1", "/uploads/cv-templates/professional.png");
-        createCvTemplate("ATS Standard", "ATS", "ATS_1", "/uploads/cv-templates/ats.png");
+
+        createCvTemplate("Hiện đại Classic",    "Hiện đại",      "MODERN_1",   "/uploads/cv-templates/modern_1.png",   "Bố cục 2 cột hiện đại, sidebar màu thương hiệu.");
+        createCvTemplate("Hiện đại Sáng tạo",   "Hiện đại",      "MODERN_2",   "/uploads/cv-templates/modern_2.png",   "Phong cách gradient, nhấn mạnh kỹ năng.");
+        createCvTemplate("Chuyên nghiệp Basic",  "Chuyên nghiệp", "PRO_1",      "/uploads/cv-templates/pro_1.png",      "Bố cục truyền thống, phù hợp doanh nghiệp lớn.");
+        createCvTemplate("Chuyên nghiệp Plus",   "Chuyên nghiệp", "PRO_2",      "/uploads/cv-templates/pro_2.png",      "Thêm timeline kinh nghiệm, phù hợp Manager.");
+        createCvTemplate("Đơn giản Tối giản",    "Đơn giản",      "CLASSIC_1",  "/uploads/cv-templates/classic_1.png",  "Thiết kế tối giản, trắng đen, dễ đọc.");
+        createCvTemplate("Ấn tượng Creative",    "Ấn tượng",      "CREATIVE_1", "/uploads/cv-templates/creative_1.png", "Màu sắc nổi bật, dành cho ngành sáng tạo.");
+        createCvTemplate("Harvard Format",       "Harvard",       "HARVARD_1",  "/uploads/cv-templates/harvard_1.png",  "Chuẩn format Harvard, tập trung học thuật.");
+        createCvTemplate("ATS Friendly",         "ATS",           "ATS_1",      "/uploads/cv-templates/ats_1.png",      "Tối ưu cho hệ thống ATS, không hình ảnh trang trí.");
     }
 
-    private void createCvTemplate(String name, String category, String key, String thumb) {
+    private void createCvTemplate(String name, String category, String key, String thumb, String description) {
         if (cvTemplateRepository.findByLayoutKey(key).isEmpty()) {
             cvTemplateRepository.save(CvTemplate.builder()
                     .name(name)
                     .category(category)
                     .layoutKey(key)
                     .thumbnailUrl(thumb)
+                    .description(description)
                     .isActive(true)
                     .build());
         }
