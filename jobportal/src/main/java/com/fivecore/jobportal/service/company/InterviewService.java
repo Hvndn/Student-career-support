@@ -39,6 +39,9 @@ public class InterviewService {
 
         Interview savedInterview = interviewRepository.save(interview);
 
+        // Cập nhật trạng thái đơn ứng tuyển sang 'interview'
+        application.setStatus(com.fivecore.jobportal.entity.Application.ApplicationStatus.interview);
+
         // Gửi email thông báo
         String studentEmail = application.getStudent().getUser().getEmail();
         String content = "Chào " + application.getStudent().getUser().getFullName() + ",\n\n" +

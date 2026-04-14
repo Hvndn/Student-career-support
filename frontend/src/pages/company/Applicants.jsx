@@ -139,12 +139,20 @@ const Applicants = () => {
                                                     <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
                                                         {!isDecided && (
                                                             <>
-                                                                <button onClick={() => handleStatusUpdate(app.id, 'accepted')} className="btn glass" style={{ fontSize: '0.8rem', color: 'var(--success, #10b981)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                                                                    <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>check_circle</span>
+                                                                <button onClick={() => handleStatusUpdate(app.id, 'review')} className="btn glass" style={{ fontSize: '0.75rem', color: '#f59e0b', padding: '0.4rem 0.6rem' }}>
+                                                                    <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>hourglass_top</span>
+                                                                    Xem xét
+                                                                </button>
+                                                                <button onClick={() => handleStatusUpdate(app.id, 'suitable')} className="btn glass" style={{ fontSize: '0.75rem', color: '#10b981', padding: '0.4rem 0.6rem' }}>
+                                                                    <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>thumb_up</span>
+                                                                    Phù hợp
+                                                                </button>
+                                                                <button onClick={() => handleStatusUpdate(app.id, 'accepted')} className="btn glass" style={{ fontSize: '0.75rem', color: '#10b981', padding: '0.4rem 0.6rem', border: '1px solid #10b981' }}>
+                                                                    <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>check_circle</span>
                                                                     Duyệt
                                                                 </button>
-                                                                <button onClick={() => handleStatusUpdate(app.id, 'rejected')} className="btn glass" style={{ fontSize: '0.8rem', color: 'var(--error, #ef4444)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                                                                    <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>cancel</span>
+                                                                <button onClick={() => handleStatusUpdate(app.id, 'rejected')} className="btn glass" style={{ fontSize: '0.75rem', color: '#ef4444', padding: '0.4rem 0.6rem' }}>
+                                                                    <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>cancel</span>
                                                                     Từ chối
                                                                 </button>
                                                             </>

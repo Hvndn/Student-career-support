@@ -31,9 +31,11 @@ const Notifications = () => {
     const getIcon = (title) => {
         const t = (title || '').toLowerCase();
         if (t.includes('chấp nhận') || t.includes('accepted')) return { icon: 'check_circle', class: 'icon-green' };
-        if (t.includes('từ chối') || t.includes('rejected')) return { icon: 'cancel', class: 'icon-red' };
-        if (t.includes('ứng tuyển') || t.includes('apply')) return { icon: 'send', class: 'icon-blue' };
+        if (t.includes('từ chối') || t.includes('rejected') || t.includes('kết quả')) return { icon: 'cancel', class: 'icon-red' };
+        if (t.includes('phù hợp') || t.includes('suitable')) return { icon: 'thumb_up', class: 'icon-green' };
         if (t.includes('phỏng vấn') || t.includes('interview')) return { icon: 'event', class: 'icon-purple' };
+        if (t.includes('xem xét') || t.includes('review')) return { icon: 'hourglass_top', class: 'icon-amber' };
+        if (t.includes('ứng tuyển') || t.includes('apply')) return { icon: 'send', class: 'icon-blue' };
         return { icon: 'notifications', class: 'icon-amber' };
     };
 

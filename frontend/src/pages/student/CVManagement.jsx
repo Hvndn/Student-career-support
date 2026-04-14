@@ -72,44 +72,108 @@ const CVCard = ({ id, title, date, template, isPublic }) => {
 };
 
 const TemplateSelectorModal = ({ isOpen, onClose }) => {
+  const [templates, setTemplates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [categoryFilter, setCategoryFilter] = useState('Tất cả');
+  const navigate = useNavigate();
+
+  const categories = ['Tất cả', 'Hiện đại', 'Chuyên nghiệp', 'Đơn giản', 'Ấn tượng', 'Harvard', 'ATS'];
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchTemplates();
+    }
+  }, [isOpen]);
+
+  const fetchTemplates = async () => {
+    try {
+      setLoading(true);
+      const res = await studentApi.getCvTemplates();
+      if (res.data && res.data.success) {
+        setTemplates(res.data.data);
+      }
+    } catch (error) {
+      console.error("Lỗi lấy danh sách mẫu:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSelectTemplate = (layoutKey) => {
+    // Navigate to builder with layoutKey as param or via state
+    navigate(`/student/cv-builder/new?layout=${layoutKey}`);
+    onClose();
+  };
+
   if (!isOpen) return null;
 
-  const templates = [
-    { id: 'blue', name: 'Chuyên nghiệp', color: '#1e293b' },
-    { id: 'red', name: 'Nổi bật', color: '#8b1538' },
-    { id: 'dark', name: 'Sang trọng', color: '#3f1011' },
-    { id: 'gray', name: 'Tổi giản', color: '#6b7280' },
-    { id: 'light', name: 'Sáng tạo', color: '#10b981' },
-  ];
+  const filteredTemplates = templates.filter(t => 
+    categoryFilter === 'Tất cả' || t.category === categoryFilter
+  );
 
   return (
     <div className="dau-modal-overlay" onClick={onClose}>
       <div className="dau-template-modal" onClick={e => e.stopPropagation()}>
         <div className="dau-modal-header">
-           <h3>Chọn mẫu thiết kế CV</h3>
+           <div className="modal-title-group">
+             <h3>Chọn mẫu thiết kế CV</h3>
+             <p>Chọn một mẫu để bắt đầu tạo hồ sơ chuyên nghiệp của bạn</p>
+           </div>
            <button onClick={onClose} className="dau-close-btn">&times;</button>
         </div>
-        <div className="dau-template-list">
-           {templates.map(t => (
-             <div key={t.id} className="dau-template-option">
-               <div className={`dau-template-preview template-${t.id}`}>
-                  <div className="dau-cv-thumb-content">
-                    <div className="dau-thumb-header" style={{background: t.color}}></div>
-                    <div className="dau-thumb-body">
-                      <div className="dau-thumb-sidebar" style={{background: t.id === 'gray' ? '#fff' : t.color}}></div>
-                      <div className="dau-thumb-main">
-                        <div className="dau-thumb-line"></div>
-                        <div className="dau-thumb-line short"></div>
-                      </div>
-                    </div>
-                  </div>
-               </div>
-               <div className="dau-template-info">
-                  <span className="dau-template-name">{t.name}</span>
-                  <button className="dau-btn-select-template">Sử dụng mẫu này</button>
-               </div>
-             </div>
+        
+        <div className="dau-modal-filters">
+           {categories.map(cat => (
+             <button 
+               key={cat} 
+               className={`filter-chip ${categoryFilter === cat ? 'active' : ''}`}
+               onClick={() => setCategoryFilter(cat)}
+             >
+               {cat}
+             </button>
            ))}
+        </div>
+
+        <div className="dau-template-list premium-scroll">
+           {loading ? (
+             <div className="loader-box"><div className="loader"></div></div>
+           ) : filteredTemplates.length > 0 ? (
+             filteredTemplates.map(t => (
+               <div key={t.id} className="dau-template-option">
+                 <div className="dau-template-preview">
+                    {t.thumbnailUrl && t.thumbnailUrl.startsWith('/') ? (
+                      <img src={t.thumbnailUrl} alt={t.name} />
+                    ) : (
+                      <div className="preview-placeholder">
+                        <span className="material-symbols-outlined">description</span>
+                      </div>
+                    )}
+                    <div className="template-hover-overlay">
+                       <button className="btn-preview-layout">
+                         <span className="material-symbols-outlined">zoom_in</span>
+                       </button>
+                    </div>
+                 </div>
+                 <div className="dau-template-info">
+                    <div className="template-meta">
+                      <span className="dau-template-name">{t.name}</span>
+                      <span className="template-cat">{t.category}</span>
+                    </div>
+                    <button 
+                      className="dau-btn-select-template"
+                      onClick={() => handleSelectTemplate(t.layoutKey)}
+                    >
+                      Dùng mẫu này
+                    </button>
+                 </div>
+               </div>
+             ))
+           ) : (
+             <div className="no-templates">
+               <span className="material-symbols-outlined">search_off</span>
+               <p>Không tìm thấy mẫu nào trong danh mục này</p>
+             </div>
+           )}
         </div>
       </div>
     </div>

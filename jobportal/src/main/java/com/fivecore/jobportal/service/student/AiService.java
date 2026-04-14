@@ -26,68 +26,39 @@ public class AiService {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
 
-        // 1. Extraction of keywords (Skills)
+        // 1. Extraction of keywords (Skills from job requirements only)
         Set<String> requiredSkills = new HashSet<>();
         if (job.getSkills() != null) {
             job.getSkills().forEach(js -> requiredSkills.add(js.getSkill().getName().toLowerCase()));
         }
-        // Fallback to text parsing if skill list is empty
         if (requiredSkills.isEmpty() && job.getRequirements() != null) {
             String reqs = job.getRequirements().toLowerCase();
             if (reqs.contains("autocad")) requiredSkills.add("autocad");
             if (reqs.contains("sketchup")) requiredSkills.add("sketchup");
             if (reqs.contains("photoshop")) requiredSkills.add("photoshop");
             if (reqs.contains("revit")) requiredSkills.add("revit");
-            if (reqs.contains("it") || reqs.contains("java")) requiredSkills.add("java");
+            if (reqs.contains("java")) requiredSkills.add("java");
         }
 
-        Set<String> studentSkills = new HashSet<>();
-        if (student.getSkills() != null) {
-            student.getSkills().forEach(ss -> studentSkills.add(ss.getSkill().getName().toLowerCase()));
-        }
-
-        // 2. Calculate Skill Match (40%)
-        long matchedCount = requiredSkills.stream().filter(studentSkills::contains).count();
-        double skillScore = requiredSkills.isEmpty() ? 40 : (matchedCount * 1.0 / requiredSkills.size()) * 40;
-
-        // 3. Experience Match (30%)
-        double expScore = 0;
-        int studentExpMonths = 0;
-        if (student.getExperiences() != null) {
-            for (Experience exp : student.getExperiences()) {
-                // Simplified: assuming some months for each exp. In a real app we'd calc dates.
-                studentExpMonths += 6; 
-            }
-        }
-        // Logic for experience matching
-        if (job.getExperience() == null || job.getExperience().contains("không") || job.getExperience().contains("thực tập")) {
-            expScore = 30;
-        } else if (studentExpMonths >= 12) {
-            expScore = 30;
-        } else {
-            expScore = (studentExpMonths / 12.0) * 30;
-        }
-
-        // 4. Major Relevance (20%)
+        // 2. Major Relevance (50%)
         double majorScore = 0;
         if (student.getMajor() != null && job.getIndustry() != null) {
             if (student.getMajor().toLowerCase().contains(job.getIndustry().toLowerCase()) ||
                 job.getIndustry().toLowerCase().contains(student.getMajor().toLowerCase())) {
-                majorScore = 20;
+                majorScore = 50;
             }
         }
 
-        // 5. Total Percentage
-        int totalPercentage = (int) (skillScore + expScore + majorScore + 10); // +10 base/other
+        // 3. Base score + education
+        double baseScore = 40;
+
+        // 4. Total Percentage
+        int totalPercentage = (int) (baseScore + majorScore);
         if (totalPercentage > 100) totalPercentage = 100;
-        if (totalPercentage < 30) totalPercentage = 30; // Min for "joy"
+        if (totalPercentage < 30) totalPercentage = 30;
 
-        // 6. Generate Feedback
+        // 5. Generate Feedback
         StringBuilder eval = new StringBuilder();
-        List<String> missing = requiredSkills.stream()
-                .filter(s -> !studentSkills.contains(s))
-                .collect(Collectors.toList());
-
         if (totalPercentage >= 80) {
             eval.append("Sinh viên có hồ sơ rất ấn tượng và cực kỳ phù hợp với vị trí này. ");
         } else if (totalPercentage >= 60) {
@@ -96,26 +67,12 @@ public class AiService {
             eval.append("Hồ sơ hiện tại còn một số khoảng cách so với kỳ vọng của nhà tuyển dụng. ");
         }
 
-        if (!studentSkills.isEmpty()) {
-            eval.append("Bạn sở hữu bộ kỹ năng mạnh về ").append(String.join(", ", studentSkills)).append(". ");
-        }
-
-        if (!missing.isEmpty()) {
-            eval.append("Tuy nhiên, hồ sơ chưa đề cập rõ các kỹ năng: ").append(String.join(", ", missing)).append(". ");
-        }
-
         StringBuilder advice = new StringBuilder();
-        if (!missing.isEmpty()) {
-            advice.append("Cần bổ sung các kỹ năng ").append(String.join(", ", missing))
-                  .append(" vào danh sách kỹ năng nếu bạn đã biết sử dụng. ");
-        }
-        
         if (student.getBio() == null || student.getBio().length() < 50) {
             advice.append("Bạn nên viết lại phần giới thiệu bản thân (Bio) chuyên nghiệp và dài hơn để thể hiện thái độ cầu tiến. ");
         }
-
-        if (expScore < 20) {
-            advice.append("Nên nhấn mạnh thêm các dự án thực tế hoặc đồ án môn học để khẳng định khả năng hỗ trợ công việc ngay lập tức. ");
+        if (!requiredSkills.isEmpty()) {
+            advice.append("Nhà tuyển dụng yêu cầu các kỹ năng: ").append(String.join(", ", requiredSkills)).append(". Hãy chuẩn bị kiến thức liên quan. ");
         }
 
         return AiAnalysisDTO.builder()

@@ -58,6 +58,7 @@ import AdminPasswordRequests from './pages/admin/AdminPasswordRequests'
 import ManageStudent from './pages/admin/ManageStudent'
 import ManageCompany from './pages/admin/ManageCompany'
 import ManageAppointment from './pages/admin/ManageAppointment'
+import ManageCVTemplates from './pages/admin/ManageCVTemplates'
 
 // Thành phần xử lý hiệu ứng load trang khi chuyển route
 const RouteChangeHandler = ({ setIsLoading }) => {
@@ -188,6 +189,7 @@ const AppContent = () => {
           <ProtectedRoute requiredRole="ROLE_ADMIN">
             <Routes>
               <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="cv-templates" element={<ManageCVTemplates />} />
               <Route path="skills" element={<SkillManagement />} />
               <Route path="users" element={<UserManagement />} />
               <Route path="students" element={<ManageStudent />} />

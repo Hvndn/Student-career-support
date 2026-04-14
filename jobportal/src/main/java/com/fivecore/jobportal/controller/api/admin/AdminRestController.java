@@ -5,9 +5,10 @@ import com.fivecore.jobportal.dto.admin.AdminCompanyUpdateRequest;
 import com.fivecore.jobportal.dto.admin.AdminStudentCreateRequest;
 import com.fivecore.jobportal.dto.admin.AdminInterviewResponse;
 import com.fivecore.jobportal.dto.admin.AdminStudentUpdateRequest;
+import com.fivecore.jobportal.entity.Skill;
+import com.fivecore.jobportal.repository.SkillRepository;
 import com.fivecore.jobportal.service.admin.AdminService;
 import com.fivecore.jobportal.service.auth.PasswordResetService;
-import com.fivecore.jobportal.service.auth.SkillService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AdminRestController {
 
-    private final SkillService skillService;
+    private final SkillRepository skillRepository;
     private final AdminService adminService;
     private final PasswordResetService passwordResetService;
 
@@ -82,8 +83,8 @@ public class AdminRestController {
      * API Lấy toàn bộ kỹ năng.
      */
     @GetMapping("/skills")
-    public ResponseEntity<ApiResponse<java.util.List<com.fivecore.jobportal.entity.Skill>>> getAllSkills() {
-        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách kỹ năng thành công", skillService.getAllSkills()));
+    public ResponseEntity<ApiResponse<java.util.List<Skill>>> getAllSkills() {
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách kỹ năng thành công", skillRepository.findAll()));
     }
 
     /**
@@ -101,7 +102,7 @@ public class AdminRestController {
     @PostMapping("/skills")
     public ResponseEntity<ApiResponse<Object>> createSkill(@RequestParam("name") String name,
             @RequestParam(value = "category", defaultValue = "General") String category) {
-        skillService.createNewSkill(name, category);
+        skillRepository.save(Skill.builder().name(name).category(category).build());
         return ResponseEntity.ok(ApiResponse.success("Thêm kỹ năng thành công", null));
     }
 
@@ -110,7 +111,7 @@ public class AdminRestController {
      */
     @DeleteMapping("/skills/{id}")
     public ResponseEntity<ApiResponse<Object>> deleteSkill(@PathVariable Integer id) {
-        skillService.deleteSkill(id);
+        skillRepository.deleteById(id);
         return ResponseEntity.ok(ApiResponse.success("Xóa kỹ năng thành công", null));
     }
 
@@ -120,7 +121,7 @@ public class AdminRestController {
     @PutMapping("/skills/{id}")
     public ResponseEntity<ApiResponse<Object>> updateSkill(@PathVariable Integer id, @RequestParam("name") String name,
             @RequestParam(value = "category", defaultValue = "General") String category) {
-        skillService.updateSkill(id, name, category);
+        skillRepository.findById(id).ifPresent(s -> { s.setName(name); s.setCategory(category); skillRepository.save(s); });
         return ResponseEntity.ok(ApiResponse.success("Cập nhật thành công", null));
     }
 

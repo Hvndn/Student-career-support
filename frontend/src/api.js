@@ -121,6 +121,7 @@ export const studentApi = {
     getRecommendations: () => api.get('/student/recommendations'),
     getInterviews: () => api.get('/student/interviews'),
     analyzeAiMatch: (jobId) => api.get(`/student/ai/analyze-match/${jobId}`),
+    getCvTemplates: (params) => api.get('/cv-templates', { params }),
 };
 
 
@@ -178,8 +179,19 @@ export const adminApi = {
     approvePasswordRequest: (id) => api.post(`/admin/password-requests/${id}/approve`),
     getInterviews: () => api.get('/admin/interviews'),
     createStudent: (data) => api.post('/admin/create-student', data),
-    updateStudent: (id, data) => api.put(`/admin/users/${id}/student`, data),
-    updateCompany: (id, data) => api.put(`/admin/users/${id}/company`, data),
+    updateStudent: (id, data) => api.put(`/users/${id}/student`, data),
+    updateCompany: (id, data) => api.put(`/users/${id}/company`, data),
+    
+    // CV Templates Management
+    getCvTemplates: () => api.get('/admin/cv-templates'),
+    createCvTemplate: (formData) => api.post('/admin/cv-templates', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    updateCvTemplate: (id, formData) => api.put(`/admin/cv-templates/${id}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    }),
+    deleteCvTemplate: (id) => api.delete(`/admin/cv-templates/${id}`),
+    toggleCvTemplateStatus: (id) => api.post(`/admin/cv-templates/${id}/toggle-status`),
 };
 
 export default api;

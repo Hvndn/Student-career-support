@@ -23,12 +23,13 @@ public class DataInitializer implements CommandLineRunner {
     private final CompanyRepository companyRepository;
     private final JobRepository jobRepository;
     private final SkillRepository skillRepository;
-    private final StudentSkillRepository studentSkillRepository;
+    private final CvTemplateRepository cvTemplateRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) {
         initializeAdmin();
+        initializeSampleCvTemplates();
         
         // Đã tắt tự động tạo dữ liệu mẫu theo lệnh của Người
         // initializeSampleSkills();
@@ -120,13 +121,7 @@ public class DataInitializer implements CommandLineRunner {
                 .gpa(3.5)
                 .graduationYear(2025)
                 .build();
-        student = studentRepository.save(student);
-
-        studentSkillRepository.save(StudentSkill.builder()
-                .student(student)
-                .skill(skill)
-                .level(StudentSkill.SkillLevel.intermediate)
-                .build());
+        studentRepository.save(student);
     }
 
     private Company createCompany(String email, String name, String desc, boolean isActive) {
@@ -162,5 +157,32 @@ public class DataInitializer implements CommandLineRunner {
                 .postedAt(LocalDateTime.now())
                 .build();
         jobRepository.save(job);
+    }
+
+    private void initializeSampleCvTemplates() {
+        if (cvTemplateRepository.count() > 0) return;
+
+        log.info("🌱 Khởi tạo danh sách mẫu CV...");
+        
+        createCvTemplate("Hiện đại 1", "Hiện đại", "MODERN_1", "/uploads/cv-templates/modern.png");
+        createCvTemplate("Hiện đại 2", "Hiện đại", "MODERN_2", "/uploads/cv-templates/modern.png");
+        createCvTemplate("Chuyên nghiệp 1", "Chuyên nghiệp", "PRO_1", "/uploads/cv-templates/professional.png");
+        createCvTemplate("Chuyên nghiệp 2", "Chuyên nghiệp", "PRO_2", "/uploads/cv-templates/professional.png");
+        createCvTemplate("Đơn giản 1", "Đơn giản", "CLASSIC_1", "/uploads/cv-templates/professional.png");
+        createCvTemplate("Ấn tượng 1", "Ấn tượng", "CREATIVE_1", "/uploads/cv-templates/creative.png");
+        createCvTemplate("Harvard 1", "Harvard", "HARVARD_1", "/uploads/cv-templates/professional.png");
+        createCvTemplate("ATS Standard", "ATS", "ATS_1", "/uploads/cv-templates/ats.png");
+    }
+
+    private void createCvTemplate(String name, String category, String key, String thumb) {
+        if (cvTemplateRepository.findByLayoutKey(key).isEmpty()) {
+            cvTemplateRepository.save(CvTemplate.builder()
+                    .name(name)
+                    .category(category)
+                    .layoutKey(key)
+                    .thumbnailUrl(thumb)
+                    .isActive(true)
+                    .build());
+        }
     }
 }

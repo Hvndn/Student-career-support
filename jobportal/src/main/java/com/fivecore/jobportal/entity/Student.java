@@ -80,41 +80,19 @@ public class Student {
     @Column(length = 255)
     private String address;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private java.util.List<StudentSkill> skills = new java.util.ArrayList<>();
+    @Column(name = "cv_data", columnDefinition = "LONGTEXT")
+    private String cvData;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     @Builder.Default
     private java.util.List<Education> educations = new java.util.ArrayList<>();
-
-
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
-    @Builder.Default
-    private java.util.List<Experience> experiences = new java.util.ArrayList<>();
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<Application> applications;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private java.util.List<Language> languages = new java.util.ArrayList<>();
-
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private java.util.List<Interest> interests = new java.util.ArrayList<>();
-
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private java.util.List<Activity> activities = new java.util.ArrayList<>();
-
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
     private java.util.List<Certification> certifications = new java.util.ArrayList<>();
-
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private java.util.List<Project> projects = new java.util.ArrayList<>();
 
     // Các bảng tham chiếu để hỗ trợ DELETE CASCADE
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -35,7 +35,6 @@ public class AdminService {
     private final SavedJobRepository savedJobRepository;
     private final SavedCandidateRepository savedCandidateRepository;
     private final InterviewRepository interviewRepository;
-    private final ProjectRepository projectRepository;
     private final PasswordEncoder passwordEncoder;
     private final DailyStatRepository dailyStatRepository;
 
@@ -52,7 +51,6 @@ public class AdminService {
         stats.put("totalStudents", studentRepository.count());
         stats.put("totalCompanies", companyRepository.count());
         stats.put("totalUsers", userRepository.count());
-        stats.put("totalProjects", projectRepository.count());
         stats.put("totalInterviews", interviewRepository.count());
         
         long totalVisits = dailyStatRepository.findAll().stream().mapToLong(com.fivecore.jobportal.entity.DailyStat::getLoginCount).sum();
@@ -303,11 +301,6 @@ public class AdminService {
                     .currentTerm(student.getCurrentTerm())
                     .bio(student.getBio())
                     .avatarUrl(student.getAvatarUrl())
-                    .skills(student.getSkills().stream().map(s -> com.fivecore.jobportal.dto.StudentProfileResponse.SkillDto.builder()
-                            .id(s.getSkill().getId())
-                            .name(s.getSkill().getName())
-                            .level(s.getLevel() != null ? s.getLevel().name() : null)
-                            .build()).collect(Collectors.toList()))
                     .educations(student.getEducations().stream().map(e -> com.fivecore.jobportal.dto.StudentProfileResponse.EducationDto.builder()
                             .id(e.getId())
                             .schoolName(e.getSchoolName())
@@ -317,38 +310,6 @@ public class AdminService {
                             .endDate(e.getEndDate())
                             .description(e.getDescription())
                             .build()).collect(Collectors.toList()))
-                    .experiences(student.getExperiences().stream().map(exp -> com.fivecore.jobportal.dto.StudentProfileResponse.ExperienceDto.builder()
-                            .id(exp.getId())
-                            .companyName(exp.getCompanyName())
-                            .jobTitle(exp.getJobTitle())
-                            .startDate(exp.getStartDate())
-                            .endDate(exp.getEndDate())
-                            .description(exp.getDescription())
-                            .build()).collect(Collectors.toList()))
-                    .projects(student.getProjects().stream().map(p -> com.fivecore.jobportal.dto.StudentProfileResponse.ProjectDto.builder()
-                            .id(p.getId())
-                            .name(p.getName())
-                            .description(p.getDescription())
-                            .repositoryUrl(p.getRepositoryUrl())
-                            .demoUrl(p.getDemoUrl())
-                            .techStack(p.getTechStack())
-                            .role(p.getRole())
-                            .build()).collect(Collectors.toList()))
-                    .languages(student.getLanguages().stream().map(l -> com.fivecore.jobportal.dto.StudentProfileResponse.LanguageDto.builder()
-                            .id(l.getId())
-                            .languageName(l.getLanguageName())
-                            .proficiency(l.getProficiency())
-                            .certificate(l.getCertificate())
-                            .build()).collect(Collectors.toList()))
-                    .activities(student.getActivities().stream().map(a -> com.fivecore.jobportal.dto.StudentProfileResponse.ActivityDto.builder()
-                            .id(a.getId())
-                            .name(a.getName())
-                            .organization(a.getOrganization())
-                            .role(a.getRole())
-                            .startDate(a.getStartDate() != null ? a.getStartDate().toString() : null)
-                            .endDate(a.getEndDate() != null ? a.getEndDate().toString() : null)
-                            .description(a.getDescription())
-                            .build()).collect(Collectors.toList()))
                     .certifications(student.getCertifications().stream().map(c -> com.fivecore.jobportal.dto.StudentProfileResponse.CertificationDto.builder()
                             .id(c.getId())
                             .name(c.getName())
@@ -356,10 +317,6 @@ public class AdminService {
                             .issueDate(c.getIssueDate() != null ? c.getIssueDate().toString() : null)
                             .expirationDate(c.getExpirationDate() != null ? c.getExpirationDate().toString() : null)
                             .certificateUrl(c.getCertificateUrl())
-                            .build()).collect(Collectors.toList()))
-                    .interests(student.getInterests().stream().map(i -> com.fivecore.jobportal.dto.StudentProfileResponse.InterestDto.builder()
-                            .id(i.getId())
-                            .name(i.getName())
                             .build()).collect(Collectors.toList()))
                     .build());
         } else if (user.getRole() == com.fivecore.jobportal.entity.User.Role.company && user.getCompany() != null) {

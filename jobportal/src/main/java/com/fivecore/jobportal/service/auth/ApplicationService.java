@@ -48,10 +48,6 @@ public class ApplicationService {
             throw new RuntimeException("Bạn đã ứng tuyển công việc này rồi");
         }
 
-        if (student.getSkills() == null || student.getSkills().isEmpty()) {
-            throw new RuntimeException("Vui lòng cập nhật Kỹ năng chuyên môn trước khi ứng tuyển.");
-        }
-
         Application application = Application.builder()
                 .student(student)
                 .job(job)
@@ -107,14 +103,36 @@ public class ApplicationService {
         log.info("Đã cập nhật trạng thái đơn ứng tuyển ID {} sang {}", applicationId, status);
         
         // Gửi thông báo cho ứng viên
-        if (status == Application.ApplicationStatus.accepted) {
-            notificationService.sendNotification(application.getStudent().getUser(),
-                    "Chúc mừng! Đơn ứng tuyển được duyệt",
-                    "Đơn ứng tuyển của bạn vào vị trí " + application.getJob().getTitle() + " đã được doanh nghiệp duyệt. Vui lòng chờ lịch phỏng vấn sắp tới!");
-        } else if (status == Application.ApplicationStatus.rejected) {
-            notificationService.sendNotification(application.getStudent().getUser(),
-                    "Cập nhật hồ sơ ứng tuyển",
-                    "Rất tiếc, đơn ứng tuyển của bạn vào vị trí " + application.getJob().getTitle() + " chưa phù hợp tại thời điểm này.");
+        String title = "Cập nhật đơn ứng tuyển";
+        String message = "Đơn ứng tuyển của bạn vào vị trí " + application.getJob().getTitle() + " đã được cập nhật.";
+
+        switch (status) {
+            case accepted:
+                title = "Chúc mừng! Đơn ứng tuyển được chấp nhận";
+                message = "Hồ sơ của bạn cho vị trí " + application.getJob().getTitle() + " đã được " + application.getJob().getCompany().getName() + " chấp nhận. Vui lòng chuẩn bị cho các bước tiếp theo.";
+                break;
+            case rejected:
+                title = "Kết quả đơn ứng tuyển";
+                message = "Cảm ơn bạn đã quan tâm. Rất tiếc, hồ sơ của bạn cho vị trí " + application.getJob().getTitle() + " chưa phù hợp tại thời điểm này.";
+                break;
+            case suitable:
+                title = "Hồ sơ phù hợp";
+                message = "Hồ sơ của bạn được đánh giá là phù hợp với vị trí " + application.getJob().getTitle() + ". Doanh nghiệp sẽ sớm liên hệ với bạn.";
+                break;
+            case interview:
+                title = "Mời phỏng vấn";
+                message = "Bạn có một lịch hẹn phỏng vấn cho vị trí " + application.getJob().getTitle() + ". Vui lòng kiểm tra email hoặc danh sách lịch phỏng vấn.";
+                break;
+            case review:
+                title = "Đang xem xét hồ sơ";
+                message = "Hồ sơ của bạn đang được " + application.getJob().getCompany().getName() + " xem xét kỹ hơn cho vị trí " + application.getJob().getTitle() + ".";
+                break;
+            default:
+                break;
+        }
+
+        if (status != Application.ApplicationStatus.pending) {
+            notificationService.sendNotification(application.getStudent().getUser(), title, message);
         }
     }
 

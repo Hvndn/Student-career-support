@@ -34,22 +34,9 @@ public class StudentProfileResponse {
     private String videoUrl;
     private String githubUrl;
     private String linkedinUrl;
-    private List<SkillDto> skills;
     private List<EducationDto> educations;
-    private List<ExperienceDto> experiences;
-    private List<ProjectDto> projects;
-    private List<LanguageDto> languages;
-    private List<InterestDto> interests;
-    private List<ActivityDto> activities;
     private List<CertificationDto> certifications;
-
-    @Data
-    @Builder
-    public static class SkillDto {
-        private Integer id;
-        private String name;
-        private String level;
-    }
+    private String cvData;
 
     @Data
     @Builder
@@ -60,57 +47,6 @@ public class StudentProfileResponse {
         private String degree;
         private LocalDate startDate;
         private LocalDate endDate;
-        private String description;
-    }
-
-    @Data
-    @Builder
-    public static class ExperienceDto {
-        private Integer id;
-        private String companyName;
-        private String jobTitle;
-        private LocalDate startDate;
-        private LocalDate endDate;
-        private String description;
-    }
-
-    @Data
-    @Builder
-    public static class ProjectDto {
-        private Integer id;
-        private String name;
-        private String description;
-        private String repositoryUrl;
-        private String demoUrl;
-        private String techStack;
-        private String role;
-    }
-
-    @Data
-    @Builder
-    public static class LanguageDto {
-        private Integer id;
-        private String languageName;
-        private String proficiency;
-        private String certificate;
-    }
-
-    @Data
-    @Builder
-    public static class InterestDto {
-        private Integer id;
-        private String name;
-    }
-
-    @Data
-    @Builder
-    public static class ActivityDto {
-        private Integer id;
-        private String name;
-        private String organization;
-        private String role;
-        private String startDate;
-        private String endDate;
         private String description;
     }
 

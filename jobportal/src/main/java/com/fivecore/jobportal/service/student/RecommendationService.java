@@ -10,12 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * Dịch vụ Gợi ý Việc làm (US-020).
- * Sử dụng thuật toán khớp kỹ năng cơ bản để đưa ra danh sách job phù hợp.
+ * Gợi ý việc làm phù hợp dựa trên chuyên ngành của sinh viên.
  */
 @Service
 @RequiredArgsConstructor
@@ -26,37 +25,41 @@ public class RecommendationService {
     private final StudentRepository studentRepository;
 
     /**
-     * Gợi ý các công việc phù hợp nhất cho sinh viên dựa trên kỹ năng.
+     * Gợi ý các công việc phù hợp nhất cho sinh viên dựa trên chuyên ngành.
      */
     public List<JobResponse> recommendJobs(Integer studentId) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
 
-        Set<String> studentSkillNames = student.getSkills().stream()
-                .map(ss -> ss.getSkill().getName().toLowerCase())
-                .collect(Collectors.toSet());
-
-        if (studentSkillNames.isEmpty()) {
-            log.warn("Sinh viên {} chưa cập nhật kỹ năng, không thể gợi ý.", studentId);
-            return List.of();
+        String major = student.getMajor();
+        if (major == null || major.isBlank()) {
+            log.warn("Sinh viên {} chưa cập nhật chuyên ngành, trả về danh sách mới nhất.", studentId);
         }
 
-        // Lấy toàn bộ Job đang mở
+        // Lấy toàn bộ Job đang mở, ưu tiên job liên quan đến ngành học
         List<Job> allJobs = jobRepository.findAll().stream()
                 .filter(j -> j.getStatus() == Job.JobStatus.open)
                 .collect(Collectors.toList());
 
-        // Thuật toán: Sắp xếp theo số lượng kỹ năng trùng khớp (Giả lập logic thông
-        // minh)
         return allJobs.stream()
                 .sorted((j1, j2) -> {
-                    long count1 = countMatchingSkills(j1, studentSkillNames);
-                    long count2 = countMatchingSkills(j2, studentSkillNames);
-                    return Long.compare(count2, count1); // Giảm dần
+                    long score1 = majorRelevanceScore(j1, major);
+                    long score2 = majorRelevanceScore(j2, major);
+                    return Long.compare(score2, score1);
                 })
-                .limit(5) // Lấy top 5
+                .limit(5)
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+    }
+
+    private long majorRelevanceScore(Job job, String major) {
+        if (major == null) return 0;
+        String m = major.toLowerCase();
+        long score = 0;
+        if (job.getTitle().toLowerCase().contains(m)) score += 2;
+        if (job.getIndustry() != null && job.getIndustry().toLowerCase().contains(m)) score += 2;
+        if (job.getDescription() != null && job.getDescription().toLowerCase().contains(m)) score += 1;
+        return score;
     }
 
     private JobResponse mapToResponse(Job job) {
@@ -70,14 +73,5 @@ public class RecommendationService {
                 .status(job.getStatus().name())
                 .deadline(job.getDeadline())
                 .build();
-    }
-
-    private long countMatchingSkills(Job job, Set<String> studentSkills) {
-        // Trong thực tế, Job sẽ có JobSkill. Ở đây ta giả lập search keyword trong
-        // description
-        return studentSkills.stream()
-                .filter(skill -> job.getTitle().toLowerCase().contains(skill) ||
-                        job.getDescription().toLowerCase().contains(skill))
-                .count();
     }
 }

@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { studentApi } from '../../api';
-import CVTemplate from '../../components/student/CVTemplate';
+import { getTemplateComponent } from '../../components/student/templates/TemplateRegistry.jsx';
+import html2pdf from 'html2pdf.js';
 import '../../assets/css/student/CVBuilder.css';
 
 const CVBuilder = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const layoutParam = searchParams.get('layout');
   const [profile, setProfile] = useState(null);
   const [cvData, setCvData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('PERSONAL');
   const [zoom, setZoom] = useState(100);
   const [primaryColor, setPrimaryColor] = useState('#1e293b');
-  const [templateId, setTemplateId] = useState('blue');
   const [saveStatus, setSaveStatus] = useState('Bản nháp');
 
   // Load data
@@ -23,12 +24,10 @@ const CVBuilder = () => {
         const data = res.data.data;
         setProfile(data);
         
-        // Try loading from localStorage first
         const savedCV = localStorage.getItem(`dau_cv_${id}`);
         if (savedCV) {
           setCvData(JSON.parse(savedCV));
         } else {
-          // Initialize from profile
           setCvData({
             fullName: data.fullName,
             major: data.major,
@@ -42,7 +41,9 @@ const CVBuilder = () => {
             skills: data.skills || [],
             certifications: data.certifications || [],
             languages: data.languages || [],
-            avatar: data.avatar || data.avatarUrl
+            avatar: data.avatar || data.avatarUrl,
+            layoutKey: layoutParam || 'MODERN_1',
+            themeColor: '#1e293b'
           });
         }
       })
@@ -56,125 +57,24 @@ const CVBuilder = () => {
     setTimeout(() => setSaveStatus('Bản nháp'), 2000);
   };
 
-  const handleSaveAndExit = () => {
-    handleSave();
-    navigate('/student/cv-template');
+  const handleUpdateCV = (newData) => {
+    setCvData(newData);
+  };
+
+  const handleDownloadPDF = () => {
+    const element = document.getElementById('cv-template-render');
+    const opt = {
+      margin: 0,
+      filename: `CV_${cvData.fullName.replace(/\s+/g, '_')}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save();
   };
 
   if (loading || !cvData) return <div className="builder-loading">Đang chuẩn bị trình tạo CV...</div>;
-
-  const updateField = (field, value) => {
-    setCvData(prev => ({ ...prev, [field]: value }));
-  };
-
-  const addItem = (field, blankItem) => {
-    updateField(field, [...cvData[field], { ...blankItem, id: Date.now() }]);
-  };
-
-  const deleteItem = (field, idx) => {
-    const newList = [...cvData[field]];
-    newList.splice(idx, 1);
-    updateField(field, newList);
-  };
-
-  const updateItem = (field, idx, key, value) => {
-    const newList = [...cvData[field]];
-    newList[idx] = { ...newList[idx], [key]: value };
-    updateField(field, newList);
-  };
-
-  const renderEditor = () => {
-    switch(activeTab) {
-      case 'PERSONAL':
-        return (
-          <div className="editor-pane">
-            <h3>THÔNG TIN CÁ NHÂN</h3>
-            <div className="editor-group avatar-editor">
-              <div className="avatar-preview-box">
-                 <img src={cvData.avatar || "https://ui-avatars.com/api/?name=" + cvData.fullName} alt="Avatar" />
-                 <button className="btn-change-photo">Đổi ảnh</button>
-              </div>
-            </div>
-            <div className="editor-group">
-              <label>HỌ VÀ TÊN</label>
-              <input type="text" value={cvData.fullName || ''} onChange={(e) => updateField('fullName', e.target.value)} />
-            </div>
-            <div className="editor-group">
-              <label>VỊ TRÍ ỨNG TUYỂN</label>
-              <input type="text" value={cvData.major || ''} onChange={(e) => updateField('major', e.target.value)} />
-            </div>
-          </div>
-        );
-      case 'CONTACT':
-        return (
-          <div className="editor-pane">
-            <h3>LIÊN HỆ</h3>
-            <div className="editor-group">
-              <label>SỐ ĐIỆN THOẠI</label>
-              <input type="text" value={cvData.phone || ''} onChange={(e) => updateField('phone', e.target.value)} />
-            </div>
-            <div className="editor-group">
-              <label>EMAIL</label>
-              <input type="text" value={cvData.email || ''} onChange={(e) => updateField('email', e.target.value)} />
-            </div>
-            <div className="editor-group">
-              <label>ĐỊA CHỈ</label>
-              <input type="text" value={cvData.address || ''} onChange={(e) => updateField('address', e.target.value)} />
-            </div>
-          </div>
-        );
-      case 'OBJECTIVE':
-         return (
-           <div className="editor-pane">
-              <h3>MỤC TIÊU NGHỀ NGHIỆP</h3>
-              <div className="ai-assist-box">
-                 <button className="btn-ai-write" onClick={() => updateField('bio', 'Sinh viên năng động, mong muốn tìm kiếm môi trường làm việc chuyên nghiệp để phát triển kỹ năng và đóng góp cho doanh nghiệp...')}>✨ VIẾT BẰNG AI</button>
-              </div>
-              <textarea rows="8" value={cvData.bio || ''} onChange={(e) => updateField('bio', e.target.value)} placeholder="Nhập mục tiêu..."></textarea>
-           </div>
-         );
-      case 'EDUCATION':
-        return (
-          <div className="editor-pane">
-            <h3>HỌC VẤN</h3>
-            {cvData.educations.map((edu, idx) => (
-              <div key={idx} className="editor-item-card">
-                <div className="item-header">
-                  <input className="item-title-input" value={edu.schoolName} onChange={(e) => updateItem('educations', idx, 'schoolName', e.target.value)} />
-                  <button className="btn-delete-item" onClick={() => deleteItem('educations', idx)}>&times;</button>
-                </div>
-                <input placeholder="Chuyên ngành" value={edu.major} onChange={(e) => updateItem('educations', idx, 'major', e.target.value)} />
-                <div className="row">
-                   <input placeholder="Bắt đầu" value={edu.startDate} onChange={(e) => updateItem('educations', idx, 'startDate', e.target.value)} />
-                   <input placeholder="Kết thúc" value={edu.endDate} onChange={(e) => updateItem('educations', idx, 'endDate', e.target.value)} />
-                </div>
-              </div>
-            ))}
-            <button className="btn-add-item" onClick={() => addItem('educations', { schoolName: 'Tên trường', major: '', startDate: '', endDate: '' })}>+ THÊM HỌC VẤN</button>
-          </div>
-        );
-      case 'PROJECTS':
-         return (
-           <div className="editor-pane">
-              <h3>DỰ ÁN ĐÃ THAM GIA</h3>
-              {cvData.projects.map((proj, idx) => (
-                <div key={idx} className="editor-item-card">
-                  <div className="item-header">
-                    <input className="item-title-input" value={proj.name} onChange={(e) => updateItem('projects', idx, 'name', e.target.value)} />
-                    <button className="btn-delete-item" onClick={() => deleteItem('projects', idx)}>&times;</button>
-                  </div>
-                  <input placeholder="Vai trò" value={proj.role} onChange={(e) => updateItem('projects', idx, 'role', e.target.value)} />
-                  <textarea placeholder="Mô tả..." value={proj.description} onChange={(e) => updateItem('projects', idx, 'description', e.target.value)} />
-                  <button className="btn-ai-mini">✨ VIẾT BẰNG AI</button>
-                </div>
-              ))}
-              <button className="btn-add-item" onClick={() => addItem('projects', { name: 'Tên dự án', role: '', description: '' })}>+ THÊM DỰ ÁN</button>
-           </div>
-         );
-      default:
-        return <div className="editor-pane">Chọn một phần để chỉnh sửa</div>;
-    }
-  };
 
   return (
     <div className="dau-builder-layout">
@@ -184,73 +84,72 @@ const CVBuilder = () => {
              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
            </button>
            <div className="title-box">
-             <h2 className="cv-name">CV MỚI CỦA TÔI</h2>
-             <span className="brand-sub">DAU CAREER BUILDER</span>
+             <h2 className="cv-name">CHỈNH SỬA TRỰC TIẾP</h2>
+             <span className="brand-sub">{saveStatus.toUpperCase()} • BẤM VÀO CHỮ ĐỂ SỬA</span>
            </div>
         </div>
         <div className="header-right">
-           <div className="save-indicator">
-             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path></svg>
-             CV ONLINE
-           </div>
-           <button className="btn-save" onClick={handleSave}>
-             <span className="material-symbols-outlined">save</span> Lưu
+           <button className="btn-save" onClick={handleSave} style={{ background: '#0f172a' }}>
+             <span className="material-symbols-outlined">save</span> Lưu bản nháp
            </button>
-           <button className="btn-save-exit" onClick={handleSaveAndExit}>Lưu & Thoát</button>
+           <button className="btn-save" onClick={handleDownloadPDF} style={{ background: 'var(--accent-color, #2563eb)' }}>
+             <span className="material-symbols-outlined">download</span> Tải xuống PDF
+           </button>
         </div>
       </header>
 
       <div className="builder-body">
         <aside className="structure-sidebar">
-           <div className="section-title">CẤU TRÚC CV</div>
-           <nav className="structure-nav">
-             {['PERSONAL', 'CONTACT', 'OBJECTIVE', 'EDUCATION', 'PROJECTS'].map(tab => (
-               <button key={tab} className={`nav-item ${activeTab === tab ? 'active' : ''}`} onClick={() => setActiveTab(tab)}>
-                  {tab === 'PERSONAL' ? 'THÔNG TIN CÁ NHÂN' : tab === 'CONTACT' ? 'LIÊN HỆ' : tab === 'OBJECTIVE' ? 'MỤC TIÊU' : tab === 'EDUCATION' ? 'HỌC VẤN' : 'DỰ ÁN'}
-                  <span className="status-tag">HIỆN</span>
-               </button>
-             ))}
-           </nav>
+           <div className="section-title">THIẾT KẾ & MÀU SẮC</div>
            <div className="design-setting">
+              <label style={{ fontSize: '8pt', color: '#64748b', marginBottom: '10px', display: 'block' }}>MÀU CHỦ ĐẠO</label>
               <div className="color-palette">
                  {['#8b1538', '#1e293b', '#3b82f6', '#10b981', '#f59e0b', '#dc2626', '#7c3aed', '#db2777'].map(c => (
-                   <button key={c} className={`color-dot ${primaryColor === c ? 'active' : ''}`} style={{background: c}} onClick={() => setPrimaryColor(c)} />
+                   <button key={c} className={`color-dot ${primaryColor === c ? 'active' : ''}`} style={{background: c}} onClick={() => { setPrimaryColor(c); setCvData({...cvData, themeColor: c}); }} />
                  ))}
               </div>
-              <div className="cat-grid">
-                 {['ĐƠN GIẢN', 'CHUYÊN NGHIỆP', 'HIỆN ĐẠI', 'ẤN TƯỢNG', 'HARVARD', 'ATS'].map(cat => (
-                   <button key={cat} className={`btn-cat ${cat === 'ĐƠN GIẢN' ? 'active' : ''}`}>{cat}</button>
-                 ))}
+              
+              <div className="builder-hint" style={{ marginTop: '30px', padding: '15px', background: '#f8fafc', borderRadius: '8px', fontSize: '9pt', color: '#475569', lineHeight: '1.5' }}>
+                 <p><strong>💡 Mẹo:</strong></p>
+                 <ul style={{ paddingLeft: '15px', marginTop: '5px' }}>
+                    <li>Bấm trực tiếp vào văn bản trên CV để sửa.</li>
+                    <li>Di chuột lên các mục để xóa.</li>
+                    <li>PDF tải về sẽ giống 100% như bạn thấy.</li>
+                 </ul>
               </div>
            </div>
         </aside>
 
-        <main className="preview-container">
-           <div className="preview-canvas-wrapper" style={{ transform: `scale(${zoom/100})` }}>
-              <CVTemplate 
-                profile={cvData}
-                experiences={cvData.experiences}
-                educations={cvData.educations}
-                skills={cvData.skills}
-                projects={cvData.projects}
-                languages={cvData.languages}
-                interests={cvData.interests}
-                activities={cvData.activities}
-                certifications={cvData.certifications}
-                theme={{ accentColor: primaryColor }}
-              />
+        <main className="preview-container" style={{ flex: 1, background: '#e2e8f0', padding: '40px' }}>
+           <div className="preview-canvas-wrapper" style={{ 
+               transformOrigin: 'top center',
+               transform: `scale(${zoom/100})`,
+               boxShadow: '0 20px 50px rgba(0,0,0,0.15)',
+               margin: '0 auto'
+           }}>
+              <div className="builder-canvas">
+                {cvData && (() => {
+                  const TemplateComponent = getTemplateComponent(cvData.layoutKey || 'MODERN_1');
+                  return (
+                    <TemplateComponent 
+                      profile={profile}
+                      cvData={cvData}
+                      isEditMode={true}
+                      onUpdate={handleUpdateCV}
+                      themeColor={cvData.themeColor || primaryColor}
+                      zoom={zoom}
+                    />
+                  );
+                })()}
+              </div>
            </div>
+           
            <div className="zoom-controls">
               <button onClick={() => setZoom(Math.max(50, zoom - 10))}>-</button>
               <span className="zoom-value">{zoom}%</span>
               <button onClick={() => setZoom(Math.min(150, zoom + 10))}>+</button>
            </div>
         </main>
-
-        <aside className="editor-sidebar">
-           <div className="editor-header">TRÌNH CHỈNH SỬA</div>
-           <div className="editor-content-scroll">{renderEditor()}</div>
-        </aside>
       </div>
     </div>
   );
