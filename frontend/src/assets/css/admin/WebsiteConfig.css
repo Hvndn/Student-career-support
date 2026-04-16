@@ -31,8 +31,8 @@
 }
 
 .config-tab-btn.active {
-    color: #a31919;
-    border-bottom-color: #a31919;
+    color: #0652dd;
+    border-bottom-color: #0652dd;
 }
 
 .config-tab-btn .material-symbols-outlined {
@@ -55,7 +55,7 @@
     align-items: center;
     gap: 12px;
     margin-bottom: 2rem;
-    color: #a31919;
+    color: #0652dd;
 }
 
 .config-section-title .material-symbols-outlined {
@@ -94,8 +94,8 @@
 .logo-upload-box {
     width: 200px;
     height: 200px;
-    border: 1px dashed #f87171;
-    background-color: #fffaf0;
+    border: 1px dashed #0652dd;
+    background-color: #eff6ff;
     border-radius: 12px;
     display: flex;
     flex-direction: column;
@@ -108,8 +108,8 @@
 }
 
 .logo-upload-box:hover {
-    background-color: #fee2e2;
-    border-color: #a31919;
+    background-color: #dbeafe;
+    border-color: #0540b0;
 }
 
 .logo-upload-box.favicon {
@@ -135,7 +135,7 @@
 
 .upload-placeholder .material-symbols-outlined {
     font-size: 32px;
-    color: #a31919;
+    color: #0652dd;
 }
 
 .upload-placeholder.favicon-ph .material-symbols-outlined {
@@ -146,7 +146,7 @@
     margin: 0;
     font-size: 0.75rem;
     font-weight: 700;
-    color: #ef4444;
+    color: #0652dd;
     text-transform: uppercase;
 }
 
@@ -236,8 +236,8 @@
 }
 
 .config-input:focus {
-    border-color: #a31919;
-    box-shadow: 0 0 0 3px rgba(163, 25, 25, 0.1);
+    border-color: #0652dd;
+    box-shadow: 0 0 0 3px rgba(6, 82, 221, 0.1);
 }
 
 .config-input::placeholder {
@@ -247,7 +247,7 @@
 .config-save-btn {
     margin-top: 3rem;
     padding: 0.85rem 2.5rem;
-    background-color: #a31919;
+    background-color: #0652dd;
     color: white;
     border: none;
     border-radius: 8px;
@@ -260,9 +260,9 @@
 }
 
 .config-save-btn:hover {
-    background-color: #8b1313;
+    background-color: #0540b0;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(163, 25, 25, 0.3);
+    box-shadow: 0 4px 12px rgba(6, 82, 221, 0.3);
 }
 
 .required-star {
@@ -347,11 +347,11 @@
 }
 
 input:checked + .slider {
-    background-color: #a31919;
+    background-color: #0652dd;
 }
 
 input:focus + .slider {
-    box-shadow: 0 0 1px #a31919;
+    box-shadow: 0 0 1px #0652dd;
 }
 
 input:checked + .slider:before {

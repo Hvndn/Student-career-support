@@ -3,7 +3,7 @@
 @import "./AdminSidebar.css";
 @import "./AdminNavbar.css";
 :root {
-    --primary: #2563eb;
+    --primary: #0652dd;
     --primary-light: #eff6ff;
     --secondary: #64748b;
     --success: #22c55e;
@@ -74,7 +74,7 @@
 }
 
 .dau-header-left h1 .text-red {
-    color: #a31919;
+    color: #0652dd;
 }
 
 .dau-header-left p {
@@ -312,7 +312,7 @@
     gap: 4px;
     font-size: 0.85rem;
     font-weight: 600;
-    color: #a31919;
+    color: #0d5cda;
     text-decoration: none;
 }
 

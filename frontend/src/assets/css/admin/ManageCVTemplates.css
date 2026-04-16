@@ -35,7 +35,7 @@
 
 .category-tab.active {
     background: #fff;
-    color: #8b1538;
+    color: #0652dd;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
@@ -126,7 +126,7 @@
     transform: scale(1.1);
 }
 
-.action-circle.edit:hover { color: #3b82f6; }
+.action-circle.edit:hover { color: #0652dd; }
 .action-circle.delete:hover { color: #ef4444; }
 
 .status-badge {
@@ -208,8 +208,8 @@
 }
 
 .thumbnail-upload-box:hover {
-    border-color: #8b1538;
-    background: #fff1f2;
+    border-color: #0652dd;
+    background: #eff6ff;
 }
 
 .thumbnail-upload-wrapper {
@@ -228,7 +228,7 @@
     background: #eef2ff;
     border: 1px solid #e0e7ff;
     border-radius: 8px;
-    color: #4338ca;
+    color: #0652dd;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
@@ -236,7 +236,7 @@
 
 .btn-auto-render:hover {
     background: #e0e7ff;
-    color: #3730a3;
+    color: #0652dd;
 }
 
 .btn-auto-render .material-symbols-outlined {
@@ -283,7 +283,7 @@
 }
 
 .checkbox-container input:checked ~ .checkmark {
-  background-color: #f59e0b;
+  background-color: #0652dd;
 }
 
 .checkmark:after {
@@ -407,11 +407,11 @@
 }
 
 input:checked + .slider {
-  background-color: #10b981;
+  background-color: #0652dd;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #10b981;
+  box-shadow: 0 0 1px #0652dd;
 }
 
 input:checked + .slider:before {

@@ -178,7 +178,7 @@ const ManageCategories = () => {
 
                         {loading ? (
                             <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem' }}>
-                                <div className="loading-spinner-simple" style={{ width: '40px', height: '40px', border: '3px solid #f1f5f9', borderTopColor: '#a31919', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                                <div className="loading-spinner-simple" style={{ width: '40px', height: '40px', border: '3px solid #f1f5f9', borderTopColor: '#0652dd', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
                                 <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
                             </div>
                         ) : filteredCategories.length > 0 ? (
