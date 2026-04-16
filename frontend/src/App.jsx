@@ -63,6 +63,11 @@ import ManageCompany from './pages/admin/ManageCompany'
 import ManageAppointment from './pages/admin/ManageAppointment'
 import ManageCVTemplates from './pages/admin/ManageCVTemplates'
 import AdminChat from './pages/admin/AdminChat'
+import ManageProjects from './pages/admin/ManageProjects'
+import ManageProjectStudents from './pages/admin/ManageProjectStudents'
+import WebsiteConfig from './pages/admin/WebsiteConfig'
+import ManageCategories from './pages/admin/ManageCategories'
+import ManageAdminAccounts from './pages/admin/ManageAdminAccounts'
 
 // Thành phần xử lý hiệu ứng load trang khi chuyển route
 const RouteChangeHandler = ({ setIsLoading }) => {
@@ -77,11 +82,11 @@ const RouteChangeHandler = ({ setIsLoading }) => {
     if (!isExcluded) {
       setIsLoading(true);
     }
-    
+
     const handleStop = () => {
       setIsLoading(false);
     };
-    
+
     const timeout = setTimeout(handleStop, 800);
 
     return () => {
@@ -110,8 +115,8 @@ const AppContent = () => {
 
   return (
     <MessagingProvider>
-      <Toaster 
-        position="top-right" 
+      <Toaster
+        position="top-right"
         reverseOrder={false}
         gutter={8}
         toastOptions={{
@@ -142,9 +147,9 @@ const AppContent = () => {
       />
       <RouteChangeHandler setIsLoading={setIsLoading} />
       {isLoading && <LoadingSpinner />}
-      
+
       <NavbarSelector />
-      
+
       <Routes>
         {/* Công khai */}
         <Route path="/" element={<Home />} />
@@ -153,7 +158,7 @@ const AppContent = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        
+
         {/* Nhà tuyển dụng (Landing & Pricing) */}
         <Route path="/employer" element={<CompanyDashboard />} />
         <Route path="/employer/pricing" element={<EmployerPricing />} />
@@ -182,7 +187,7 @@ const AppContent = () => {
         <Route path="/jobs/:id" element={<StudentLayoutWrapper><JobDetail /></StudentLayoutWrapper>} />
         <Route path="/companies" element={<StudentLayoutWrapper><CompanyList /></StudentLayoutWrapper>} />
         <Route path="/companies/:id" element={<StudentLayoutWrapper><CompanyDetail /></StudentLayoutWrapper>} />
-        
+
         {/* Bảo vệ cho Doanh nghiệp (Dashboard & Management) */}
         <Route path="/company/*" element={
           <ProtectedRoute requiredRole="ROLE_COMPANY">
@@ -222,6 +227,11 @@ const AppContent = () => {
               <Route path="password-requests" element={<AdminPasswordRequests />} />
               <Route path="reports" element={<Reports />} />
               <Route path="chat" element={<AdminChat />} />
+              <Route path="projects" element={<ManageProjects />} />
+              <Route path="project-students" element={<ManageProjectStudents />} />
+              <Route path="website/config" element={<WebsiteConfig />} />
+              <Route path="website/categories" element={<ManageCategories />} />
+              <Route path="accounts" element={<ManageAdminAccounts />} />
             </Routes>
           </ProtectedRoute>
         } />

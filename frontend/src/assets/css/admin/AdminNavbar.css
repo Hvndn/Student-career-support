@@ -33,7 +33,7 @@
 }
 
 .breadcrumb-main {
-    color: #a31919;
+    color: #0652dd;
     font-weight: 600;
 }
 
@@ -115,10 +115,10 @@
 /* --- Profile Dropdown --- */
 .admin-profile-dropdown {
     position: absolute;
-    top: 55px; 
+    top: 55px;
     right: 0;
     width: 200px;
-    background-color: #8b1313; 
+    background-color: #052668;
     border-radius: 8px;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -129,8 +129,15 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .dropdown-header {
@@ -148,7 +155,7 @@
 }
 
 .dropdown-role {
-    color: #ffcccc;
+    color: #cbd5e1;
     font-size: 0.85rem;
 }
 

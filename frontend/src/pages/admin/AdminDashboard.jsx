@@ -136,18 +136,18 @@ const AdminDashboard = () => {
                                     <p>Lượt đăng nhập theo ngày</p>
                                 </div>
                                 <div className="dau-chart-legend">
-                                    <div className="legend-item"><span className="dot" style={{background:'#a31919'}}></span>Lượt truy cập</div>
+                                    <div className="legend-item"><span className="dot" style={{ background: '#a31919' }}></span>Lượt truy cập</div>
                                 </div>
                             </div>
-                            
+
                             <div style={{ height: 300 }}>
                                 <ResponsiveContainer width="100%" height="100%">
                                     <LineChart data={stats.dailyVisits} margin={{ top: 20, right: 30, left: -20, bottom: 0 }}>
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                                        <XAxis dataKey="date" tick={{fill: '#94a3b8'}} axisLine={false} tickLine={false} />
-                                        <YAxis tick={{fill: '#94a3b8'}} axisLine={false} tickLine={false} />
+                                        <XAxis dataKey="date" tick={{ fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+                                        <YAxis tick={{ fill: '#94a3b8' }} axisLine={false} tickLine={false} />
                                         <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                                        <Line type="monotone" dataKey="truyCap" name="Lượt đăng nhập" stroke="#a31919" strokeWidth={3} dot={{r:6, fill:'#a31919'}} activeDot={{ r: 8 }} />
+                                        <Line type="monotone" dataKey="truyCap" name="Lượt đăng nhập" stroke="#a31919" strokeWidth={3} dot={{ r: 6, fill: '#a31919' }} activeDot={{ r: 8 }} />
                                     </LineChart>
                                 </ResponsiveContainer>
                             </div>
@@ -228,7 +228,7 @@ const AdminDashboard = () => {
                                         </div>
                                     ))
                                 ) : (
-                                    <p style={{textAlign: 'center', color: '#94a3b8', fontSize: '0.9rem', marginTop: '20px'}}>Chưa có tin tuyển dụng nào</p>
+                                    <p style={{ textAlign: 'center', color: '#94a3b8', fontSize: '0.9rem', marginTop: '20px' }}>Chưa có tin tuyển dụng nào</p>
                                 )}
                             </div>
                         </div>
@@ -258,7 +258,7 @@ const AdminDashboard = () => {
                                         );
                                     })
                                 ) : (
-                                    <p style={{textAlign: 'center', color: '#94a3b8', fontSize: '0.9rem', marginTop: '20px'}}>Chưa có hoạt động mới</p>
+                                    <p style={{ textAlign: 'center', color: '#94a3b8', fontSize: '0.9rem', marginTop: '20px' }}>Chưa có hoạt động mới</p>
                                 )}
                             </div>
                         </div>
@@ -284,11 +284,11 @@ const AdminDashboard = () => {
                                 <p>Tất cả đã được xử lý ✨</p>
                             </div>
                         ) : (
-                            <div className="dau-empty-state" style={{flexDirection: 'row', gap: '20px'}}>
-                                <div className="empty-icon-wrapper" style={{background: '#fefce8', color: '#eab308'}}>
-                                    <span className="material-symbols-outlined" style={{fontSize: '32px'}}>warning</span>
+                            <div className="dau-empty-state" style={{ flexDirection: 'row', gap: '20px' }}>
+                                <div className="empty-icon-wrapper" style={{ background: '#fefce8', color: '#eab308' }}>
+                                    <span className="material-symbols-outlined" style={{ fontSize: '32px' }}>warning</span>
                                 </div>
-                                <div style={{textAlign: 'left'}}>
+                                <div style={{ textAlign: 'left' }}>
                                     <h4>Đang có {stats.pendingCompanies} doanh nghiệp chờ duyệt</h4>
                                     <p>Vui lòng chuyển hướng sang trang Quản lý Sinh viên/Doanh nghiệp để xét duyệt nhanh.</p>
                                 </div>

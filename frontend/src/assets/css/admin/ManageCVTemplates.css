@@ -35,7 +35,7 @@
 
 .category-tab.active {
     background: #fff;
-    color: #8b1538;
+    color: #0652dd;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
@@ -126,7 +126,7 @@
     transform: scale(1.1);
 }
 
-.action-circle.edit:hover { color: #3b82f6; }
+.action-circle.edit:hover { color: #0652dd; }
 .action-circle.delete:hover { color: #ef4444; }
 
 .status-badge {
@@ -208,8 +208,8 @@
 }
 
 .thumbnail-upload-box:hover {
-    border-color: #8b1538;
-    background: #fff1f2;
+    border-color: #0652dd;
+    background: #eff6ff;
 }
 
 .thumbnail-upload-wrapper {
@@ -228,7 +228,7 @@
     background: #eef2ff;
     border: 1px solid #e0e7ff;
     border-radius: 8px;
-    color: #4338ca;
+    color: #0652dd;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
@@ -236,7 +236,7 @@
 
 .btn-auto-render:hover {
     background: #e0e7ff;
-    color: #3730a3;
+    color: #0652dd;
 }
 
 .btn-auto-render .material-symbols-outlined {
@@ -244,8 +244,65 @@
 }
 
 .featured-toggle {
-    margin-top: -10px;
-    margin-bottom: 10px;
+    margin: 10px 0 20px 0;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    color: #1e293b;
+    background-color: #f8fafc;
+    transition: all 0.2s ease;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.form-control:hover {
+    border-color: #cbd5e1;
+    background-color: #fff;
+}
+
+.form-control:focus {
+    border-color: #0652dd;
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(6, 82, 221, 0.1);
+}
+
+.form-control::placeholder {
+    color: #94a3b8;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.5;
+}
+
+select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.25rem;
+    padding-right: 2.5rem;
 }
 
 .checkbox-container {
@@ -283,7 +340,7 @@
 }
 
 .checkbox-container input:checked ~ .checkmark {
-  background-color: #f59e0b;
+  background-color: #0652dd;
 }
 
 .checkmark:after {
@@ -407,11 +464,11 @@
 }
 
 input:checked + .slider {
-  background-color: #10b981;
+  background-color: #0652dd;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #10b981;
+  box-shadow: 0 0 1px #0652dd;
 }
 
 input:checked + .slider:before {

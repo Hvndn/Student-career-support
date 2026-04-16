@@ -2,10 +2,13 @@ package com.fivecore.jobportal.controller.api.admin;
 
 import com.fivecore.jobportal.dto.ApiResponse;
 import com.fivecore.jobportal.dto.admin.AdminCompanyUpdateRequest;
+import com.fivecore.jobportal.dto.admin.AdminCreateRequest;
 import com.fivecore.jobportal.dto.admin.AdminStudentCreateRequest;
 import com.fivecore.jobportal.dto.admin.AdminInterviewResponse;
 import com.fivecore.jobportal.dto.admin.AdminStudentUpdateRequest;
+import com.fivecore.jobportal.entity.Category;
 import com.fivecore.jobportal.entity.Skill;
+import com.fivecore.jobportal.repository.CategoryRepository;
 import com.fivecore.jobportal.repository.SkillRepository;
 import com.fivecore.jobportal.service.admin.AdminService;
 import com.fivecore.jobportal.service.auth.PasswordResetService;
@@ -13,7 +16,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.List;
 
 /**
  * REST API Controller cho Quản trị viên.
@@ -24,6 +29,7 @@ import java.util.Map;
 public class AdminRestController {
 
     private final SkillRepository skillRepository;
+    private final CategoryRepository categoryRepository;
     private final AdminService adminService;
     private final PasswordResetService passwordResetService;
 
@@ -66,6 +72,19 @@ public class AdminRestController {
             return ResponseEntity.ok(ApiResponse.success("Thêm sinh viên mới thành công", null));
         } catch (Exception e) {
             return ResponseEntity.status(400).body(ApiResponse.error("Lỗi khi thêm sinh viên: " + e.getMessage(), "CREATE_ERROR"));
+        }
+    }
+
+    /**
+     * API Tạo mới tài khoản quản trị dành cho Admin.
+     */
+    @PostMapping("/create-admin")
+    public ResponseEntity<ApiResponse<Object>> createAdminFromAdmin(@RequestBody AdminCreateRequest request) {
+        try {
+            adminService.createAdminFromAdmin(request);
+            return ResponseEntity.ok(ApiResponse.success("Thêm tài khoản quản trị mới thành công", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(ApiResponse.error("Lỗi khi thêm tài khoản: " + e.getMessage(), "CREATE_ERROR"));
         }
     }
 
@@ -262,4 +281,38 @@ public class AdminRestController {
             return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi cập nhật: " + e.getMessage(), "UPDATE_ERROR"));
         }
     }
+
+    /**
+     * API Quản lý Danh mục (Categories)
+     */
+    @GetMapping("/categories")
+    public ResponseEntity<ApiResponse<List<Category>>> getAllCategories() {
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách danh mục thành công", categoryRepository.findAll()));
+    }
+
+    @PostMapping("/categories")
+    public ResponseEntity<ApiResponse<Category>> createCategory(@RequestBody Category category) {
+        return ResponseEntity.ok(ApiResponse.success("Thêm danh mục thành công", categoryRepository.save(category)));
+    }
+
+    @PutMapping("/categories/{id}")
+    public ResponseEntity<ApiResponse<Category>> updateCategory(@PathVariable Integer id, @RequestBody Category category) {
+        return categoryRepository.findById(id)
+                .map(existing -> {
+                    existing.setName(category.getName());
+                    existing.setSlug(category.getSlug());
+                    existing.setDescription(category.getDescription());
+                    existing.setIcon(category.getIcon());
+                    existing.setStatus(category.getStatus());
+                    return ResponseEntity.ok(ApiResponse.success("Cập nhật danh mục thành công", categoryRepository.save(existing)));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/categories/{id}")
+    public ResponseEntity<ApiResponse<Object>> deleteCategory(@PathVariable Integer id) {
+        categoryRepository.deleteById(id);
+        return ResponseEntity.ok(ApiResponse.success("Xóa danh mục thành công", null));
+    }
+}
 }

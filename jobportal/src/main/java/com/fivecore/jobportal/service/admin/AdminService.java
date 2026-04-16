@@ -52,14 +52,15 @@ public class AdminService {
         stats.put("totalCompanies", companyRepository.count());
         stats.put("totalUsers", userRepository.count());
         stats.put("totalInterviews", interviewRepository.count());
-        
-        long totalVisits = dailyStatRepository.findAll().stream().mapToLong(com.fivecore.jobportal.entity.DailyStat::getLoginCount).sum();
+
+        long totalVisits = dailyStatRepository.findAll().stream()
+                .mapToLong(com.fivecore.jobportal.entity.DailyStat::getLoginCount).sum();
         stats.put("totalVisits", totalVisits);
-        
+
         stats.put("pendingCompanies", companyRepository.findAll().stream()
                 .filter(c -> !c.getUser().isActive())
                 .count());
-        stats.put("totalReports", 0L); 
+        stats.put("totalReports", 0L);
 
         // Success rate: applications/jobs
         double successRate = totalJobs > 0 ? (double) totalApplications / totalJobs * 10 : 0;
@@ -81,25 +82,28 @@ public class AdminService {
                     return r;
                 })
                 .collect(Collectors.toList());
-                
+
         // Lỡ chưa có data truy cập, ta nhét 1 vài ngày mock cho biểu đồ vẽ đẹp
         if (dailyVisits.size() < 2) {
-             java.time.LocalDate td = java.time.LocalDate.now();
-             dailyVisits.add(0, Map.of("date", td.minusDays(2).toString(), "truyCap", 12));
-             dailyVisits.add(0, Map.of("date", td.minusDays(3).toString(), "truyCap", 24));
-             dailyVisits.add(0, Map.of("date", td.minusDays(4).toString(), "truyCap", 18));
-             dailyVisits.add(0, Map.of("date", td.minusDays(5).toString(), "truyCap", 35));
+            java.time.LocalDate td = java.time.LocalDate.now();
+            dailyVisits.add(0, Map.of("date", td.minusDays(2).toString(), "truyCap", 12));
+            dailyVisits.add(0, Map.of("date", td.minusDays(3).toString(), "truyCap", 24));
+            dailyVisits.add(0, Map.of("date", td.minusDays(4).toString(), "truyCap", 18));
+            dailyVisits.add(0, Map.of("date", td.minusDays(5).toString(), "truyCap", 35));
         }
         stats.put("dailyVisits", dailyVisits);
 
         // Hoạt động gần đây: 5 User mới nhất
-        org.springframework.data.domain.Pageable top5 = org.springframework.data.domain.PageRequest.of(0, 5, org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "createdAt"));
+        org.springframework.data.domain.Pageable top5 = org.springframework.data.domain.PageRequest.of(0, 5,
+                org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC,
+                        "createdAt"));
         List<Map<String, Object>> recentActivities = userRepository.findAll(top5).stream()
                 .map(user -> {
                     Map<String, Object> r = new HashMap<>();
                     r.put("name", user.getFullName());
                     r.put("role", user.getRole().name());
-                    r.put("createdAt", user.getCreatedAt() != null ? user.getCreatedAt().toString() : java.time.LocalDateTime.now().toString());
+                    r.put("createdAt", user.getCreatedAt() != null ? user.getCreatedAt().toString()
+                            : java.time.LocalDateTime.now().toString());
                     return r;
                 }).collect(Collectors.toList());
         stats.put("recentActivities", recentActivities);
@@ -107,9 +111,9 @@ public class AdminService {
         // Top 5 việc làm nổi bật (nhiều lượt xem nhất, dummy check)
         List<Map<String, Object>> topJobs = jobRepository.findAll().stream()
                 .sorted((j1, j2) -> {
-                     Integer v1 = j1.getViews() != null ? j1.getViews() : 0;
-                     Integer v2 = j2.getViews() != null ? j2.getViews() : 0;
-                     return v2.compareTo(v1);
+                    Integer v1 = j1.getViews() != null ? j1.getViews() : 0;
+                    Integer v2 = j2.getViews() != null ? j2.getViews() : 0;
+                    return v2.compareTo(v1);
                 })
                 .limit(5)
                 .map(job -> {
@@ -127,6 +131,7 @@ public class AdminService {
 
         return stats;
     }
+
     /**
      * Danh sách tài khoản doanh nghiệp chờ duyệt (US-010).
      */
@@ -153,18 +158,20 @@ public class AdminService {
     public List<com.fivecore.jobportal.dto.admin.AdminJobResponse> getAllJobs() {
         return jobRepository.findAll().stream().map(job -> {
             String status = "PENDING";
-            if (job.getStatus() == com.fivecore.jobportal.entity.Job.JobStatus.open) status = "APPROVED";
-            else if (job.getStatus() == com.fivecore.jobportal.entity.Job.JobStatus.rejected) status = "REJECTED";
-            
+            if (job.getStatus() == com.fivecore.jobportal.entity.Job.JobStatus.open)
+                status = "APPROVED";
+            else if (job.getStatus() == com.fivecore.jobportal.entity.Job.JobStatus.rejected)
+                status = "REJECTED";
+
             return com.fivecore.jobportal.dto.admin.AdminJobResponse.builder()
-                .id(job.getId())
-                .title(job.getTitle())
-                .companyName(job.getCompany() != null ? job.getCompany().getName() : "N/A")
-                .createdAt(job.getPostedAt())
-                .minSalary(job.getMinSalary())
-                .maxSalary(job.getMaxSalary())
-                .status(status)
-                .build();
+                    .id(job.getId())
+                    .title(job.getTitle())
+                    .companyName(job.getCompany() != null ? job.getCompany().getName() : "N/A")
+                    .createdAt(job.getPostedAt())
+                    .minSalary(job.getMinSalary())
+                    .maxSalary(job.getMaxSalary())
+                    .status(status)
+                    .build();
         }).collect(Collectors.toList());
     }
 
@@ -186,7 +193,8 @@ public class AdminService {
     }
 
     /**
-     * Xóa vĩnh viễn tài khoản người dùng và dọn dẹp thủ công toàn bộ dữ liệu liên quan.
+     * Xóa vĩnh viễn tài khoản người dùng và dọn dẹp thủ công toàn bộ dữ liệu liên
+     * quan.
      * Giải quyết triệt để lỗi ràng buộc khóa ngoại (Foreign Key Constraints).
      */
     public void deleteUser(Integer userId) {
@@ -216,7 +224,7 @@ public class AdminService {
                     interviewRepository.deleteByApplicationId(app.getId());
                 }
                 applicationRepository.deleteByStudentId(studentId);
-                
+
                 studentRepository.delete(student);
 
             } else if (user.getRole() == User.Role.company && user.getCompany() != null) {
@@ -248,8 +256,9 @@ public class AdminService {
             log.error("❌ Lỗi nghiêm trọng khi xóa người dùng {}: {}", user.getEmail(), e.getMessage());
             try {
                 java.nio.file.Path logPath = java.nio.file.Paths.get("C:\\CNPM\\Student-career-support\\error_log.txt");
-                String errorInfo = "User: " + user.getEmail() + "\nError: " + e.toString() + "\nCause: " + e.getCause() + "\nStack: " + 
-                    java.util.Arrays.toString(e.getStackTrace());
+                String errorInfo = "User: " + user.getEmail() + "\nError: " + e.toString() + "\nCause: " + e.getCause()
+                        + "\nStack: " +
+                        java.util.Arrays.toString(e.getStackTrace());
                 java.nio.file.Files.writeString(logPath, errorInfo);
             } catch (Exception logEx) {
                 log.error("Không thể ghi log lỗi ra file: {}", logEx.getMessage());
@@ -276,7 +285,8 @@ public class AdminService {
         com.fivecore.jobportal.entity.User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
 
-        com.fivecore.jobportal.dto.UserDetailResponse.UserDetailResponseBuilder builder = com.fivecore.jobportal.dto.UserDetailResponse.builder()
+        com.fivecore.jobportal.dto.UserDetailResponse.UserDetailResponseBuilder builder = com.fivecore.jobportal.dto.UserDetailResponse
+                .builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .fullName(user.getFullName())
@@ -301,23 +311,28 @@ public class AdminService {
                     .currentTerm(student.getCurrentTerm())
                     .bio(student.getBio())
                     .avatarUrl(student.getAvatarUrl())
-                    .educations(student.getEducations().stream().map(e -> com.fivecore.jobportal.dto.StudentProfileResponse.EducationDto.builder()
-                            .id(e.getId())
-                            .schoolName(e.getSchoolName())
-                            .major(e.getMajor())
-                            .degree(e.getDegree())
-                            .startDate(e.getStartDate())
-                            .endDate(e.getEndDate())
-                            .description(e.getDescription())
-                            .build()).collect(Collectors.toList()))
-                    .certifications(student.getCertifications().stream().map(c -> com.fivecore.jobportal.dto.StudentProfileResponse.CertificationDto.builder()
-                            .id(c.getId())
-                            .name(c.getName())
-                            .issuer(c.getIssuer())
-                            .issueDate(c.getIssueDate() != null ? c.getIssueDate().toString() : null)
-                            .expirationDate(c.getExpirationDate() != null ? c.getExpirationDate().toString() : null)
-                            .certificateUrl(c.getCertificateUrl())
-                            .build()).collect(Collectors.toList()))
+                    .educations(student.getEducations().stream()
+                            .map(e -> com.fivecore.jobportal.dto.StudentProfileResponse.EducationDto.builder()
+                                    .id(e.getId())
+                                    .schoolName(e.getSchoolName())
+                                    .major(e.getMajor())
+                                    .degree(e.getDegree())
+                                    .startDate(e.getStartDate())
+                                    .endDate(e.getEndDate())
+                                    .description(e.getDescription())
+                                    .build())
+                            .collect(Collectors.toList()))
+                    .certifications(student.getCertifications().stream()
+                            .map(c -> com.fivecore.jobportal.dto.StudentProfileResponse.CertificationDto.builder()
+                                    .id(c.getId())
+                                    .name(c.getName())
+                                    .issuer(c.getIssuer())
+                                    .issueDate(c.getIssueDate() != null ? c.getIssueDate().toString() : null)
+                                    .expirationDate(
+                                            c.getExpirationDate() != null ? c.getExpirationDate().toString() : null)
+                                    .certificateUrl(c.getCertificateUrl())
+                                    .build())
+                            .collect(Collectors.toList()))
                     .build());
         } else if (user.getRole() == com.fivecore.jobportal.entity.User.Role.company && user.getCompany() != null) {
             com.fivecore.jobportal.entity.Company company = user.getCompany();
@@ -339,7 +354,8 @@ public class AdminService {
     /**
      * Lấy danh sách người dùng có phân trang.
      */
-    public org.springframework.data.domain.Page<com.fivecore.jobportal.entity.User> getAllUsers(org.springframework.data.domain.Pageable pageable, com.fivecore.jobportal.entity.User.Role role) {
+    public org.springframework.data.domain.Page<com.fivecore.jobportal.entity.User> getAllUsers(
+            org.springframework.data.domain.Pageable pageable, com.fivecore.jobportal.entity.User.Role role) {
         if (role != null) {
             return userRepository.findByRole(role, pageable);
         }
@@ -354,15 +370,15 @@ public class AdminService {
             Job job = (i.getApplication() != null) ? i.getApplication().getJob() : null;
             Company company = (job != null) ? job.getCompany() : null;
             return AdminInterviewResponse.builder()
-                .id(i.getId())
-                .companyName(company != null ? company.getName() : "N/A")
-                .companyLogo(company != null ? company.getLogoUrl() : null)
-                .industry(company != null ? company.getIndustry() : "N/A")
-                .department(i.getDepartment())
-                .interviewDate(i.getInterviewDate())
-                .notes(i.getNotes())
-                .status(i.getStatus())
-                .build();
+                    .id(i.getId())
+                    .companyName(company != null ? company.getName() : "N/A")
+                    .companyLogo(company != null ? company.getLogoUrl() : null)
+                    .industry(company != null ? company.getIndustry() : "N/A")
+                    .department(i.getDepartment())
+                    .interviewDate(i.getInterviewDate())
+                    .notes(i.getNotes())
+                    .status(i.getStatus())
+                    .build();
         }).collect(Collectors.toList());
     }
 
@@ -372,7 +388,7 @@ public class AdminService {
     public void updateStudentFromAdmin(Integer userId, AdminStudentUpdateRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
-        
+
         user.setFullName(request.getFullName());
         user.setActive(request.isActive());
         userRepository.save(user);
@@ -393,7 +409,7 @@ public class AdminService {
     public void updateCompanyFromAdmin(Integer userId, AdminCompanyUpdateRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
-        
+
         user.setFullName(request.getFullName());
         user.setActive(request.isActive());
         userRepository.save(user);
@@ -420,7 +436,7 @@ public class AdminService {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email đã tồn tại trên hệ thống");
         }
-        
+
         if (studentRepository.findByStudentIdStr(request.getStudentIdStr()).isPresent()) {
             throw new RuntimeException("Mã số sinh viên (MSSV) đã tồn tại!");
         }
@@ -444,5 +460,26 @@ public class AdminService {
 
         studentRepository.save(student);
         log.info("Admin đã tạo SINH VIÊN mới: {} (MSSV: {})", user.getEmail(), student.getStudentIdStr());
+    }
+
+    /**
+     * Tạo mới tài khoản Quản trị từ tài khoản quản trị khác.
+     */
+    @Transactional
+    public void createAdminFromAdmin(AdminCreateRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Email đã tồn tại trên hệ thống");
+        }
+
+        User user = User.builder()
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .fullName(request.getFullName())
+                .role(User.Role.admin)
+                .isActive(true)
+                .build();
+
+        userRepository.save(user);
+        log.info("Admin đã tạo QUẢN TRỊ VIÊN mới: {}", user.getEmail());
     }
 }

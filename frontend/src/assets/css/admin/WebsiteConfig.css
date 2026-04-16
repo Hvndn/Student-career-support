@@ -1,0 +1,359 @@
+/* WebsiteConfig.css */
+
+.config-tabs {
+    display: flex;
+    background: white;
+    border-radius: 12px 12px 0 0;
+    margin-bottom: 0;
+    border-bottom: 1px solid #e2e8f0;
+    overflow-x: auto;
+}
+
+.config-tab-btn {
+    padding: 1.25rem 1.5rem;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.config-tab-btn:hover {
+    color: #1e293b;
+    background-color: #f8fafc;
+}
+
+.config-tab-btn.active {
+    color: #0652dd;
+    border-bottom-color: #0652dd;
+}
+
+.config-tab-btn .material-symbols-outlined {
+    font-size: 20px;
+}
+
+.config-content {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.config-section {
+    margin-bottom: 3.5rem;
+}
+
+.config-section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 2rem;
+    color: #0652dd;
+}
+
+.config-section-title .material-symbols-outlined {
+    font-size: 28px;
+}
+
+.config-section-title h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* Upload Style */
+.identity-grid {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+}
+
+.upload-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.upload-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+}
+
+.logo-upload-box {
+    width: 200px;
+    height: 200px;
+    border: 1px dashed #0652dd;
+    background-color: #eff6ff;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+}
+
+.logo-upload-box:hover {
+    background-color: #dbeafe;
+    border-color: #0540b0;
+}
+
+.logo-upload-box.favicon {
+    width: 150px;
+    height: 150px;
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.logo-upload-box.favicon:hover {
+    background-color: #f1f5f9;
+    border-color: #64748b;
+}
+
+.upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+    padding: 1rem;
+}
+
+.upload-placeholder .material-symbols-outlined {
+    font-size: 32px;
+    color: #0652dd;
+}
+
+.upload-placeholder.favicon-ph .material-symbols-outlined {
+    color: #64748b;
+}
+
+.upload-placeholder p {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #0652dd;
+    text-transform: uppercase;
+}
+
+.upload-placeholder.favicon-ph p {
+    color: #64748b;
+}
+
+.upload-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 1.5rem;
+}
+
+.upload-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.logo-upload-box:hover .upload-overlay {
+    opacity: 1;
+}
+
+.upload-overlay span {
+    color: white;
+    font-size: 32px;
+}
+
+/* Form Styles */
+.config-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.config-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.config-form-group.full-width {
+    grid-column: span 2;
+}
+
+.config-form-group label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+.config-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.config-input-wrapper .material-symbols-outlined {
+    position: absolute;
+    left: 12px;
+    font-size: 20px;
+    color: #94a3b8;
+}
+
+.config-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.config-input-wrapper .config-input {
+    padding-left: 2.75rem;
+}
+
+.config-input:focus {
+    border-color: #0652dd;
+    box-shadow: 0 0 0 3px rgba(6, 82, 221, 0.1);
+}
+
+.config-input::placeholder {
+    color: #cbd5e1;
+}
+
+.config-save-btn {
+    margin-top: 3rem;
+    padding: 0.85rem 2.5rem;
+    background-color: #0652dd;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: block;
+    margin-left: auto;
+}
+
+.config-save-btn:hover {
+    background-color: #0540b0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(6, 82, 221, 0.3);
+}
+
+.required-star {
+    color: #ef4444;
+    margin-left: 2px;
+}
+
+/* Module Config Styles */
+.module-list-container {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem;
+    background-color: #f8fafc;
+}
+
+.module-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.module-item:last-child {
+    border-bottom: none;
+}
+
+.module-info {
+    flex: 1;
+}
+
+.module-info h5 {
+    margin: 0 0 4px 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.module-info p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+/* Switch Style */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 32px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 24px;
+    width: 24px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+input:checked + .slider {
+    background-color: #0652dd;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #0652dd;
+}
+
+input:checked + .slider:before {
+    transform: translateX(28px);
+}

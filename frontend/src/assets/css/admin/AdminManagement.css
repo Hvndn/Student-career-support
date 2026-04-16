@@ -33,7 +33,7 @@
 }
 
 .btn-add-main {
-    background-color: #a31919;
+    background-color: #0652dd;
     color: white;
     border: none;
     padding: 0.6rem 1.25rem;
@@ -47,9 +47,9 @@
 }
 
 .btn-add-main:hover {
-    background-color: #8b1313;
+    background-color: #0540b0;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(163, 25, 25, 0.2);
+    box-shadow: 0 4px 12px rgba(6, 82, 221, 0.2);
 }
 
 .btn-add-small {
@@ -119,7 +119,7 @@
 }
 
 .search-input-premium:focus {
-    border-color: #a31919;
+    border-color: #0652dd;
 }
 
 /* Table Style */
@@ -383,7 +383,7 @@
 }
 
 .form-control:focus {
-    border-color: #a31919;
+    border-color: #0652dd;
 }
 
 .btn-secondary {
@@ -399,7 +399,7 @@
     padding: 0.6rem 1.5rem;
     border-radius: 8px;
     border: none;
-    background: #a31919;
+    background: #0652dd;
     color: white;
     font-weight: 600;
     cursor: pointer;
@@ -441,7 +441,7 @@
 }
 
 .section-title .material-symbols-outlined {
-    color: #a31919;
+    color: #0652dd;
     font-size: 22px;
 }
 
@@ -484,7 +484,7 @@
 /* Timeline specific */
 .timeline-date {
     font-weight: 600;
-    color: #a31919;
+    color: #0652dd;
 }
 
 /* Pills / Tags */
@@ -507,8 +507,8 @@
 }
 
 .pill-tag.skill-tag {
-    background: #fee2e2;
-    color: #a31919;
+    background: #eff6ff;
+    color: #0652dd;
 }
 
 .pill-tag .level {

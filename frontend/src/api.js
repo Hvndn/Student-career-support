@@ -150,6 +150,7 @@ export const recruitmentApi = {
 export const adminApi = {
     getStats: () => api.get('/admin/statistics'),
     getUsers: (params) => api.get('/admin/users', { params }),
+    createAdmin: (data) => api.post('/admin/create-admin', data),
     getUserDetail: (id) => api.get(`/admin/users/${id}`),
     toggleUserStatus: (userId) => api.post(`/admin/users/${userId}/toggle-status`),
     updateUserRole: (userId, role) => api.patch(`/admin/users/${userId}/role?role=${role}`),
@@ -176,6 +177,11 @@ export const adminApi = {
     updateCvTemplate: (id, formData) => api.put(`/admin/cv-templates/${id}`, formData),
     deleteCvTemplate: (id) => api.delete(`/admin/cv-templates/${id}`),
     toggleCvTemplateStatus: (id) => api.post(`/admin/cv-templates/${id}/toggle-status`),
+    // Categories
+    getCategories: () => api.get('/admin/categories'),
+    addCategory: (data) => api.post('/admin/categories', data),
+    updateCategory: (id, data) => api.put(`/admin/categories/${id}`, data),
+    deleteCategory: (id) => api.delete(`/admin/categories/${id}`),
 };
 
 // ── Chat ──────────────────────────────────────────────────────────────────

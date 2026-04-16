@@ -24,12 +24,14 @@ public class DataInitializer implements CommandLineRunner {
     private final JobRepository jobRepository;
     private final SkillRepository skillRepository;
     private final CvTemplateRepository cvTemplateRepository;
+    private final CategoryRepository categoryRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) {
         initializeAdmin();
         initializeSampleCvTemplates();
+        initializeCategories();
         
         // Đã tắt tự động tạo dữ liệu mẫu theo lệnh của Người
         // initializeSampleSkills();
@@ -183,6 +185,33 @@ public class DataInitializer implements CommandLineRunner {
                     .thumbnailUrl(thumb)
                     .description(description)
                     .isActive(true)
+                    .build());
+        }
+    }
+
+    private void initializeCategories() {
+        if (categoryRepository.count() > 0) return;
+
+        log.info("🌱 Khởi tạo danh mục Công nghệ thông tin mẫu...");
+
+        createCategory("Lập trình Web", "web-development", "window", "Phát triển các ứng dụng web chuyên nghiệp.");
+        createCategory("Lập trình Di động", "mobile-development", "smartphone", "Xây dựng ứng dụng đa nền tảng iOS & Android.");
+        createCategory("Trí tuệ nhân tạo", "ai-ml", "psychology", "Nghiên cứu và triển khai các mô hình AI/Machine Learning.");
+        createCategory("An ninh mạng", "cyber-security", "security", "Bảo mật hệ thống và an toàn thông tin.");
+        createCategory("Điện toán đám mây", "cloud-computing", "cloud", "Triển khai hạ tầng trên AWS, Azure, Google Cloud.");
+        createCategory("Tester / QA QC", "tester-qa-qc", "verified", "Đảm bảo chất lượng sản phẩm phần mềm.");
+        createCategory("Quản trị cơ sở dữ liệu", "database-administration", "database", "Thiết kế và tối ưu hóa hệ quản trị dữ liệu.");
+        createCategory("UI-UX Design", "ui-ux-design", "palette", "Thiết kế trải nghiệm và giao diện người dùng.");
+    }
+
+    private void createCategory(String name, String slug, String icon, String desc) {
+        if (categoryRepository.findBySlug(slug).isEmpty()) {
+            categoryRepository.save(Category.builder()
+                    .name(name)
+                    .slug(slug)
+                    .icon(icon)
+                    .description(desc)
+                    .status(Category.CategoryStatus.ACTIVE)
                     .build());
         }
     }

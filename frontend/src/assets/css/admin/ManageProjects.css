@@ -1,0 +1,166 @@
+/* ManageProjects.css */
+
+.projects-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+}
+
+.stat-info h3 {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+}
+
+.stat-info .stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-icon.total { background-color: #eff6ff; color: #3b82f6; }
+.stat-icon.active { background-color: #ecfdf5; color: #10b981; }
+.stat-icon.hidden { background-color: #fff7ed; color: #f59e0b; }
+
+.project-table-grid {
+    grid-template-columns: 100px 2.5fr 1fr 1fr 1fr 1.5fr;
+    align-items: center;
+}
+
+.project-students-grid {
+    grid-template-columns: 1.5fr 1.8fr 2fr 120px 80px 140px 180px;
+    align-items: center;
+}
+
+.project-img-cell {
+    width: 60px;
+    height: 40px;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: #f1f5f9;
+}
+
+.project-img-cell img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Badges */
+.badge {
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Difficulty Badges */
+.badge-difficulty.easy { background-color: #ecfdf5; color: #10b981; }
+.badge-difficulty.medium { background-color: #fff7ed; color: #f59e0b; }
+.badge-difficulty.hard { background-color: #fef2f2; color: #ef4444; }
+.badge-difficulty.advanced { background-color: #fffbeb; color: #d97706; }
+
+/* Status Badges */
+.badge-status.active { color: #10b981; }
+.badge-status.hidden { color: #94a3b8; }
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.status-indicator.active { background-color: #10b981; }
+.status-indicator.hidden { background-color: #94a3b8; }
+
+.actions-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.action-link {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.85rem;
+    color: #64748b;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.action-link:hover { color: #1e293b; }
+.action-link.edit:hover { color: #3b82f6; }
+.action-link.delete:hover { color: #ef4444; }
+
+.action-link .material-symbols-outlined {
+    font-size: 18px;
+}
+
+/* Modal specific */
+.project-modal {
+    max-width: 800px;
+}
+
+.image-upload-preview {
+    width: 100%;
+    height: 200px;
+    border: 2px dashed #e2e8f0;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.image-upload-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.upload-hint {
+    color: #94a3b8;
+    text-align: center;
+}
+
+.upload-hint .material-symbols-outlined {
+    font-size: 48px;
+    margin-bottom: 0.5rem;
+}

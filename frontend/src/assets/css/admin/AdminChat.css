@@ -206,7 +206,7 @@
 }
 
 .admin-msg-row.mine .admin-msg-bubble {
-    background: #3182ce;
+    background: #0652dd;
     color: #fff;
     border-bottom-right-radius: 4px;
 }
@@ -245,7 +245,7 @@
     width: 48px;
     height: 48px;
     border-radius: 12px;
-    background: #3182ce;
+    background: #0652dd;
     color: #fff;
     border: none;
     display: flex;
@@ -256,7 +256,7 @@
 }
 
 .admin-chat-send-btn:hover {
-    background: #2b6cb0;
+    background: #0540b0;
     transform: scale(1.05);
 }
 
