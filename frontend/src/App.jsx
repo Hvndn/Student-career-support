@@ -62,6 +62,10 @@ import ManageCompany from './pages/admin/ManageCompany'
 import ManageAppointment from './pages/admin/ManageAppointment'
 import ManageCVTemplates from './pages/admin/ManageCVTemplates'
 import AdminChat from './pages/admin/AdminChat'
+import ManageProjects from './pages/admin/ManageProjects'
+import ManageProjectStudents from './pages/admin/ManageProjectStudents'
+import WebsiteConfig from './pages/admin/WebsiteConfig'
+import ManageCategories from './pages/admin/ManageCategories'
 
 // Thành phần xử lý hiệu ứng load trang khi chuyển route
 const RouteChangeHandler = ({ setIsLoading }) => {
@@ -204,6 +208,10 @@ const AppContent = () => {
               <Route path="password-requests" element={<AdminPasswordRequests />} />
               <Route path="reports" element={<Reports />} />
               <Route path="chat" element={<AdminChat />} />
+              <Route path="projects" element={<ManageProjects />} />
+              <Route path="project-students" element={<ManageProjectStudents />} />
+              <Route path="website/config" element={<WebsiteConfig />} />
+              <Route path="website/categories" element={<ManageCategories />} />
             </Routes>
           </ProtectedRoute>
         } />
