@@ -11,6 +11,7 @@ const ManageCategories = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isViewMode, setIsViewMode] = useState(false);
     const [editingCategory, setEditingCategory] = useState(null);
     const [formData, setFormData] = useState({
         name: '',
@@ -43,7 +44,8 @@ const ManageCategories = () => {
         'engineering', 'architecture', 'construction', 'design_services', 'home_work', 'layers'
     ];
 
-    const handleOpenModal = (category = null) => {
+    const handleOpenModal = (category = null, forView = false) => {
+        setIsViewMode(forView);
         if (category) {
             setEditingCategory(category);
             setFormData({ ...category });
@@ -204,11 +206,11 @@ const ManageCategories = () => {
                                         </div>
                                     </div>
                                     <div className="actions-cell" style={{ display: 'flex', justifyContent: 'flex-end', gap: '15px' }}>
-                                        <button className="action-link-flat">
+                                        <button className="action-link-flat" onClick={() => handleOpenModal(cat, true)}>
                                             <span className="material-symbols-outlined">visibility</span>
                                             Xem
                                         </button>
-                                        <button className="action-link-flat" onClick={() => handleOpenModal(cat)}>
+                                        <button className="action-link-flat" onClick={() => handleOpenModal(cat, false)}>
                                             <span className="material-symbols-outlined">edit</span>
                                             Sửa
                                         </button>
@@ -233,7 +235,9 @@ const ManageCategories = () => {
                 <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
                     <div className="premium-modal" onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
-                            <h3>{editingCategory ? 'Chỉnh sửa Danh mục' : 'Thêm Danh mục mới'}</h3>
+                            <h3>
+                                {isViewMode ? 'Chi tiết Danh mục' : (editingCategory ? 'Chỉnh sửa Danh mục' : 'Thêm Danh mục mới')}
+                            </h3>
                             <button className="close-btn" onClick={() => setIsModalOpen(false)}>
                                 <span className="material-symbols-outlined">close</span>
                             </button>
@@ -251,6 +255,7 @@ const ManageCategories = () => {
                                             onChange={handleInputChange} 
                                             placeholder="Vd: Kiến trúc sư..."
                                             required 
+                                            disabled={isViewMode}
                                         />
                                     </div>
                                     <div className="form-group full-width">
@@ -263,6 +268,7 @@ const ManageCategories = () => {
                                             onChange={handleInputChange} 
                                             placeholder="kien-truc-su"
                                             required 
+                                            disabled={isViewMode}
                                         />
                                     </div>
                                     <div className="form-group full-width">
@@ -274,6 +280,7 @@ const ManageCategories = () => {
                                             onChange={handleInputChange} 
                                             rows="2"
                                             placeholder="Mô tả tóm tắt về danh mục này..."
+                                            disabled={isViewMode}
                                         ></textarea>
                                     </div>
                                     <div className="form-group">
@@ -283,6 +290,7 @@ const ManageCategories = () => {
                                             name="status" 
                                             value={formData.status} 
                                             onChange={handleInputChange}
+                                            disabled={isViewMode}
                                         >
                                             <option value="ACTIVE">Hoạt động</option>
                                             <option value="INACTIVE">Tạm dừng</option>
@@ -295,20 +303,41 @@ const ManageCategories = () => {
                                                 <div 
                                                     key={icon} 
                                                     className={`icon-option ${formData.icon === icon ? 'selected' : ''}`}
-                                                    onClick={() => setFormData({ ...formData, icon })}
+                                                    onClick={() => !isViewMode && setFormData({ ...formData, icon })}
+                                                    style={{ cursor: isViewMode ? 'default' : 'pointer' }}
                                                 >
                                                     <span className="material-symbols-outlined">{icon}</span>
                                                 </div>
                                             ))}
                                         </div>
                                     </div>
+                                    {isViewMode && (
+                                        <div className="form-group full-width" style={{ marginTop: '1rem', borderTop: '1px solid #f1f5f9', paddingTop: '1rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                            <div>
+                                                <label style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Ngày tạo</label>
+                                                <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>
+                                                    {formData.createdAt ? new Date(formData.createdAt).toLocaleString('vi-VN') : '---'}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <label style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Cập nhật lần cuối</label>
+                                                <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>
+                                                    {formData.updatedAt ? new Date(formData.updatedAt).toLocaleString('vi-VN') : '---'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             <div className="modal-footer">
-                                <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>Hủy</button>
-                                <button type="submit" className="btn-primary">
-                                    {editingCategory ? 'Lưu thay đổi' : 'Tạo danh mục'}
+                                <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>
+                                    {isViewMode ? 'Đóng' : 'Hủy'}
                                 </button>
+                                {!isViewMode && (
+                                    <button type="submit" className="btn-primary">
+                                        {editingCategory ? 'Lưu thay đổi' : 'Tạo danh mục'}
+                                    </button>
+                                )}
                             </div>
                         </form>
                     </div>
