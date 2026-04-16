@@ -1,5 +1,8 @@
 import ArtisticTemplate from './ArtisticTemplate';
 import ProfessionalTemplate from './ProfessionalTemplate';
+import ClassicTemplate from './ClassicTemplate';
+import CreativeTemplate from './CreativeTemplate';
+import ModernTemplate from './ModernTemplate';
 import React from 'react';
 
 /**
@@ -26,6 +29,9 @@ const FallbackTemplate = () => (
 export const TEMPLATE_REGISTRY = {
   'ARTISTIC_1': ArtisticTemplate,
   'PRO_1':      ProfessionalTemplate,
+  'CLASSIC_1':  ClassicTemplate,
+  'CREATIVE_1': CreativeTemplate,
+  'MODERN_1':   ModernTemplate,
 };
 
 /**
