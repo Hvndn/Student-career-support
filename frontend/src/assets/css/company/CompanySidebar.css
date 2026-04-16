@@ -5,8 +5,8 @@ body {
 .company-sidebar {
   width: 70px;
   min-height: 100vh;
-  background: #fff;
-  border-right: 1px solid #e2e8f0;
+  background: #1e3a8a; /* Blue-900 */
+  border-right: 1px solid #1e3a8a;
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -25,21 +25,21 @@ body {
 }
 
 .cs-toggle {
-  background: #fff;
+  background: transparent;
   border: none;
   height: 70px; /* Match topbar exactly */
   width: 100%;
   cursor: pointer;
-  color: #64748b;
+  color: rgba(255, 255, 255, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
   transition: color 0.2s;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .cs-toggle:hover {
-  color: #2563eb;
+  color: #ffffff;
 }
 
 .cs-nav-group {
@@ -55,7 +55,7 @@ body {
   padding: 0.8rem 0;
   border-radius: 8px;
   text-decoration: none;
-  color: #64748b;
+  color: rgba(255, 255, 255, 0.7);
   font-size: 0.62rem;
   font-weight: 700;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -63,13 +63,13 @@ body {
 }
 
 .cs-nav-item:hover, .cs-nav-item.active {
-  background: #f1f5f9;
-  color: #2563eb;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 .cs-nav-item.active .cs-icon {
-  background: #eff6ff;
-  color: #2563eb;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
 }
 
 .cs-icon {
@@ -204,7 +204,7 @@ body.sidebar-pinned .cd-main {
 /* Bottom Actions */
 .cs-bottom {
   padding: 1.5rem 0;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -221,16 +221,16 @@ body.sidebar-pinned .cd-main {
   background: none;
   border: none;
   cursor: pointer;
-  color: #64748b;
+  color: rgba(255, 255, 255, 0.7);
   transition: all 0.2s;
 }
 
 .cs-logout:hover {
-  background: #fef2f2;
-  color: #ef4444;
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
 }
 
 .cs-bottom-link:hover {
-  background: #f1f5f9;
-  color: #2563eb;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
