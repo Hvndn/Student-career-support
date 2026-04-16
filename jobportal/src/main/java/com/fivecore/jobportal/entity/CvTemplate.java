@@ -1,5 +1,7 @@
 package com.fivecore.jobportal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CvTemplate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,10 +38,16 @@ public class CvTemplate {
 
     @Builder.Default
     @Column(name = "is_active", nullable = false)
+    @JsonProperty("isActive")
     private boolean isActive = true;
 
     @Column(length = 255)
     private String description;
+
+    @Builder.Default
+    @Column(name = "is_featured", nullable = false)
+    @JsonProperty("isFeatured")
+    private boolean isFeatured = false;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
