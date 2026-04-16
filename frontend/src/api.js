@@ -143,6 +143,7 @@ export const recruitmentApi = {
 export const adminApi = {
     getStats: () => api.get('/admin/statistics'),
     getUsers: (params) => api.get('/admin/users', { params }),
+    createAdmin: (data) => api.post('/admin/create-admin', data),
     getUserDetail: (id) => api.get(`/admin/users/${id}`),
     toggleUserStatus: (userId) => api.post(`/admin/users/${userId}/toggle-status`),
     updateUserRole: (userId, role) => api.patch(`/admin/users/${userId}/role?role=${role}`),

@@ -67,6 +67,7 @@ import ManageProjects from './pages/admin/ManageProjects'
 import ManageProjectStudents from './pages/admin/ManageProjectStudents'
 import WebsiteConfig from './pages/admin/WebsiteConfig'
 import ManageCategories from './pages/admin/ManageCategories'
+import ManageAdminAccounts from './pages/admin/ManageAdminAccounts'
 
 // Thành phần xử lý hiệu ứng load trang khi chuyển route
 const RouteChangeHandler = ({ setIsLoading }) => {
@@ -214,6 +215,7 @@ const AppContent = () => {
               <Route path="project-students" element={<ManageProjectStudents />} />
               <Route path="website/config" element={<WebsiteConfig />} />
               <Route path="website/categories" element={<ManageCategories />} />
+              <Route path="accounts" element={<ManageAdminAccounts />} />
             </Routes>
           </ProtectedRoute>
         } />

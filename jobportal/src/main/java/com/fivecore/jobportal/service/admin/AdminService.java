@@ -461,4 +461,25 @@ public class AdminService {
         studentRepository.save(student);
         log.info("Admin đã tạo SINH VIÊN mới: {} (MSSV: {})", user.getEmail(), student.getStudentIdStr());
     }
+
+    /**
+     * Tạo mới tài khoản Quản trị từ tài khoản quản trị khác.
+     */
+    @Transactional
+    public void createAdminFromAdmin(AdminCreateRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Email đã tồn tại trên hệ thống");
+        }
+
+        User user = User.builder()
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .fullName(request.getFullName())
+                .role(User.Role.admin)
+                .isActive(true)
+                .build();
+
+        userRepository.save(user);
+        log.info("Admin đã tạo QUẢN TRỊ VIÊN mới: {}", user.getEmail());
+    }
 }

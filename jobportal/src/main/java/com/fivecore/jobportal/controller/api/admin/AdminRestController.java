@@ -2,6 +2,7 @@ package com.fivecore.jobportal.controller.api.admin;
 
 import com.fivecore.jobportal.dto.ApiResponse;
 import com.fivecore.jobportal.dto.admin.AdminCompanyUpdateRequest;
+import com.fivecore.jobportal.dto.admin.AdminCreateRequest;
 import com.fivecore.jobportal.dto.admin.AdminStudentCreateRequest;
 import com.fivecore.jobportal.dto.admin.AdminInterviewResponse;
 import com.fivecore.jobportal.dto.admin.AdminStudentUpdateRequest;
@@ -71,6 +72,19 @@ public class AdminRestController {
             return ResponseEntity.ok(ApiResponse.success("Thêm sinh viên mới thành công", null));
         } catch (Exception e) {
             return ResponseEntity.status(400).body(ApiResponse.error("Lỗi khi thêm sinh viên: " + e.getMessage(), "CREATE_ERROR"));
+        }
+    }
+
+    /**
+     * API Tạo mới tài khoản quản trị dành cho Admin.
+     */
+    @PostMapping("/create-admin")
+    public ResponseEntity<ApiResponse<Object>> createAdminFromAdmin(@RequestBody AdminCreateRequest request) {
+        try {
+            adminService.createAdminFromAdmin(request);
+            return ResponseEntity.ok(ApiResponse.success("Thêm tài khoản quản trị mới thành công", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(ApiResponse.error("Lỗi khi thêm tài khoản: " + e.getMessage(), "CREATE_ERROR"));
         }
     }
 
