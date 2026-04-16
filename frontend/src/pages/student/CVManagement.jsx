@@ -27,7 +27,8 @@ const getAllLocalCVs = () => {
 };
 
 const TEMPLATE_COLORS = {
-  MODERN_1: '#8b1538', MODERN_2: '#1d4ed8', PRO_1: '#1e293b',
+  MODERN_1: '#8b1538', MODERN_2: '#1d4ed8', PRO_1: '#334e5a',
+  ARTISTIC_1: '#2c73b3',
   PRO_2: '#374151', CREATIVE_1: '#7c3aed', HARVARD_1: '#047857',
   ATS_1: '#0891b2', CLASSIC_1: '#6b7280',
 };
@@ -66,21 +67,25 @@ const CVCard = ({ cv, onDelete }) => {
           </button>
         </div>
 
-        {/* Template thumbnail mock */}
-        <div className="dau-cv-thumb-content">
-          <div className="dau-thumb-header" style={{ background: color + '20' }}>
-            <div style={{ width: '40%', height: '8px', background: color, borderRadius: '4px', margin: '16px auto 0' }}/>
-          </div>
-          <div className="dau-thumb-body">
-            <div className="dau-thumb-sidebar" style={{ background: color + '15' }}/>
-            <div className="dau-thumb-main">
-              <div className="dau-thumb-line"/>
-              <div className="dau-thumb-line short"/>
-              <div className="dau-thumb-line"/>
-              <div className="dau-thumb-line short"/>
+        {/* Real Thumbnail or Mock Fallback */}
+        {cv._raw?.thumbnail ? (
+          <img src={cv._raw.thumbnail} className="dau-cv-thumb-img" alt="CV Thumb" />
+        ) : (
+          <div className="dau-cv-thumb-content">
+            <div className="dau-thumb-header" style={{ background: color + '20' }}>
+              <div style={{ width: '40%', height: '8px', background: color, borderRadius: '4px', margin: '16px auto 0' }}/>
+            </div>
+            <div className="dau-thumb-body">
+              <div className="dau-thumb-sidebar" style={{ background: color + '15' }}/>
+              <div className="dau-thumb-main">
+                <div className="dau-thumb-line"/>
+                <div className="dau-thumb-line short"/>
+                <div className="dau-thumb-line"/>
+                <div className="dau-thumb-line short"/>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="dau-cv-info">
@@ -114,7 +119,7 @@ const TemplateSelectorModal = ({ isOpen, onClose }) => {
   const [categoryFilter, setCategoryFilter] = useState('Tất cả');
   const navigate = useNavigate();
 
-  const categories = ['Tất cả', 'Hiện đại', 'Chuyên nghiệp', 'Đơn giản', 'Ấn tượng', 'Harvard', 'ATS'];
+  const categories = ['Tất cả', 'Nghệ thuật', 'Hiện đại', 'Chuyên nghiệp', 'Đơn giản', 'Ấn tượng', 'Harvard', 'ATS'];
 
   useEffect(() => {
     if (!isOpen) return;
