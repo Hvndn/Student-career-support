@@ -314,7 +314,195 @@ const PostJob = () => {
                                                 <button type="button" onClick={() => handleSkillRemove(skill)} className="pj-tag-remove">×</button>
                                             </span>
                                         ))}
-        </div>
+                                        <input
+                                            type="text"
+                                            className="pj-tag-input"
+                                            placeholder="Thêm kỹ năng..."
+                                            value={skillInput}
+                                            onChange={e => setSkillInput(e.target.value)}
+                                            onKeyDown={handleKeyDown}
+                                            onBlur={handleSkillAdd}
+                                        />
+                                    </div>
+                                    <div className="pj-quick-skills">
+                                        {SKILLS_LIST.filter(s => !selectedSkills.includes(s)).slice(0, 8).map(s => (
+                                            <button key={s} type="button" className="pj-skill-btn" onClick={() => handleSkillToggle(s)}>+ {s}</button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="pj-card intro-y delay-3">
+                                <div className="pj-card-title">
+                                    <span className="pj-card-icon green">03</span>
+                                    Lương & Địa điểm
+                                </div>
+                                <div className="pj-row-2">
+                                    <div className="pj-field">
+                                        <label>Loại tiền tệ/Lương</label>
+                                        <select className="pj-select" value={form.salaryType} onChange={e => handleChange('salaryType', e.target.value)}>
+                                            <option value="range">Khoảng lương (VNĐ)</option>
+                                            <option value="agreement">Thỏa thuận</option>
+                                        </select>
+                                    </div>
+                                    <div className="pj-field">
+                                        <label>Hạn chót nộp hồ sơ *</label>
+                                        <input type="date" className="pj-input" value={form.deadline} onChange={e => handleChange('deadline', e.target.value)} />
+                                    </div>
+                                </div>
+
+                                {form.salaryType === 'range' && (
+                                    <div className="pj-row-2 animate-fade-in">
+                                        <div className="pj-field">
+                                            <label>Lương tối thiểu (VNĐ)</label>
+                                            <input type="number" className="pj-input" placeholder="Ví dụ: 10000000" value={form.minSalary} onChange={e => handleChange('minSalary', e.target.value)} />
+                                        </div>
+                                        <div className="pj-field">
+                                            <label>Lương tối đa (VNĐ)</label>
+                                            <input type="number" className="pj-input" placeholder="Ví dụ: 20000000" value={form.maxSalary} onChange={e => handleChange('maxSalary', e.target.value)} />
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="pj-row-2">
+                                    <div className="pj-field">
+                                        <label>Tỉnh/Thành phố *</label>
+                                        <select className="pj-select" value={form.region} onChange={e => handleChange('region', e.target.value)}>
+                                            <option value="">Chọn địa điểm</option>
+                                            {REGIONS.map(r => <option key={r} value={r}>{r}</option>)}
+                                        </select>
+                                    </div>
+                                    <div className="pj-field">
+                                        <label>Địa chỉ cụ thể *</label>
+                                        <input className="pj-input" placeholder="Số tòa nhà, tên đường..." value={form.location} onChange={e => handleChange('location', e.target.value)} />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="pj-card intro-y delay-4">
+                                <div className="pj-card-title">
+                                    <span className="pj-card-icon purple">04</span>
+                                    Nội dung tuyển dụng
+                                </div>
+                                <div className="pj-field">
+                                    <label>Mô tả công việc *</label>
+                                    <RichTextEditor value={form.description} onChange={val => handleChange('description', val)} placeholder="Mô tả các nhiệm vụ và trách nhiệm chính..." />
+                                </div>
+                                <div className="pj-field">
+                                    <label>Yêu cầu ứng viên *</label>
+                                    <RichTextEditor value={form.requirements} onChange={val => handleChange('requirements', val)} placeholder="Các kỹ năng, kinh nghiệm và tính cách cần thiết..." />
+                                </div>
+                                <div className="pj-field">
+                                    <label>Quyền lợi</label>
+                                    <RichTextEditor value={form.benefits} onChange={val => handleChange('benefits', val)} placeholder="Chế độ bảo hiểm, thưởng, du lịch..." />
+                                </div>
+                            </div>
+
+                            <div className="pj-card intro-y delay-5">
+                                <div className="pj-card-title">
+                                    <span className="pj-card-icon grey">05</span>
+                                    Thông tin liên hệ
+                                </div>
+                                <div className="pj-row-3">
+                                    <div className="pj-field">
+                                        <label>Tên người liên hệ</label>
+                                        <input className="pj-input" value={form.contactName} onChange={e => handleChange('contactName', e.target.value)} />
+                                    </div>
+                                    <div className="pj-field">
+                                        <label>Email liên hệ</label>
+                                        <input className="pj-input" value={form.contactEmail} onChange={e => handleChange('contactEmail', e.target.value)} />
+                                    </div>
+                                    <div className="pj-field">
+                                        <label>Số điện thoại</label>
+                                        <input className="pj-input" value={form.contactPhone} onChange={e => handleChange('contactPhone', e.target.value)} />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="pj-col-preview">
+                            <div className="pj-preview-sticky">
+                                <div className="pj-card preview-card intro-x">
+                                    <div className="preview-header">
+                                        <div className="company-logo-main">
+                                            {companyProfile?.logoUrl ? (
+                                                <img src={getImageUrl(companyProfile.logoUrl)} alt="logo" />
+                                            ) : (
+                                                <div className="logo-placeholder">{companyProfile?.companyName?.charAt(0) || 'C'}</div>
+                                            )}
+                                        </div>
+                                        <div className="preview-title-block">
+                                            <h3 className="job-title-preview">{form.title || 'Tiêu đề công việc'}</h3>
+                                            <p className="company-name-preview">{companyProfile?.companyName || 'Tên công ty'}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="preview-stats">
+                                        <div className="stat-item">
+                                            <span className="stat-icon">💰</span>
+                                            <span className="stat-val">
+                                                {form.salaryType === 'agreement' 
+                                                    ? 'Thỏa thuận' 
+                                                    : (form.minSalary || form.maxSalary 
+                                                        ? `${Number(form.minSalary || 0).toLocaleString()} - ${Number(form.maxSalary || 0).toLocaleString()} VNĐ` 
+                                                        : 'Cập nhật lương')}
+                                            </span>
+                                        </div>
+                                        <div className="stat-item">
+                                            <span className="stat-icon">📍</span>
+                                            <span className="stat-val">{form.region || 'Địa điểm'}</span>
+                                        </div>
+                                        <div className="stat-item">
+                                            <span className="stat-icon">🕒</span>
+                                            <span className="stat-val">
+                                                {JOB_TYPES.find(t => t.value === form.jobType)?.label || 'Toàn thời gian'}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="preview-score-box">
+                                        <div className="score-header">
+                                            <span>Chỉ số tin cậy tin tuyển dụng</span>
+                                            <span className="score-val" style={{ color: matchColor }}>{matchScore}%</span>
+                                        </div>
+                                        <div className="score-bar-bg">
+                                            <div className="score-bar-fill" style={{ width: `${matchScore}%`, backgroundColor: matchColor }}></div>
+                                        </div>
+                                        <p className="score-hint">Trạng thái: <strong>{matchLabel}</strong></p>
+                                    </div>
+
+                                    <div className="preview-tags">
+                                        {selectedSkills.slice(0, 5).map(s => <span key={s} className="preview-tag">#{s}</span>)}
+                                        {selectedSkills.length > 5 && <span className="preview-tag-more">+{selectedSkills.length - 5}</span>}
+                                    </div>
+                                </div>
+
+                                <div className="pj-card action-card intro-x delay-1">
+                                    <button 
+                                        className="pj-btn-primary" 
+                                        onClick={() => handleSubmit(false)}
+                                        disabled={submitting}
+                                    >
+                                        {submitting ? <div className="btn-spinner"></div> : (id ? 'Cập nhật tin ngay' : 'Đăng tuyển dụng ngay')}
+                                    </button>
+                                    <button 
+                                        className="pj-btn-outline" 
+                                        onClick={() => handleSubmit(true)}
+                                        disabled={submitting}
+                                    >
+                                        Lưu bản nháp
+                                    </button>
+                                    <button className="pj-btn-ghost" onClick={() => navigate('/company/management')}>Hủy bỏ</button>
+                                    
+                                    <div className="pj-action-info">
+                                        <p>💡 <b>Mẹo:</b> Tin đăng có đầy đủ kỹ năng và mức lương rõ ràng sẽ có tỷ lệ ứng tuyển cao hơn 45%.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
 
             {toast.show && (
                 <div className={`pj-toast ${toast.type} animate-slide-down`}>
