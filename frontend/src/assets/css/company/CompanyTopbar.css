@@ -161,6 +161,12 @@
   font-size: 0.6rem;
   color: #94a3b8;
   margin-left: 0.5rem;
+  transition: transform 0.2s ease;
+  display: inline-block;
+}
+
+.cd-dropdown-arrow.open {
+  transform: rotate(180deg);
 }
 
 .cd-dropdown-divider {
@@ -228,7 +234,16 @@
   margin-top: 0.5rem;
 }
 
+/* Show on HOVER */
 .cd-user-container:hover .cd-profile-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Show on CLICK (via React class) */
+.cd-user-container.dropdown-open .cd-profile-dropdown {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
