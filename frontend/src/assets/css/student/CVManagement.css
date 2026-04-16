@@ -7,8 +7,8 @@
 }
 
 .dau-cv-body {
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 1400px;
+    margin: 0;
 }
 
 /* Header Section */
@@ -205,7 +205,18 @@
     color: #10b981;
 }
 
-/* Mock Thumb Content */
+/* Real Thumbnail Image */
+.dau-cv-thumb-img {
+    width: 210mm;
+    height: 297mm;
+    object-fit: contain;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transform: scale(0.35); /* Scale down naturally to fit the preview container */
+    transform-origin: top center;
+}
+
+/* Mock Thumb Content (Fallback) */
 .dau-cv-thumb-content {
     background: white;
     width: 80%;

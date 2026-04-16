@@ -33,5 +33,14 @@ public class JobResponse {
     private String contactEmail;
     private String contactPhone;
     private boolean isApplied;
+    @com.fasterxml.jackson.annotation.JsonProperty("isSaved")
+    private boolean isSaved;
+
+    @com.fasterxml.jackson.annotation.JsonProperty("isSaved")
+    public boolean getIsSaved() {
+        return isSaved;
+    }
+    private String industry;
+    private String imageUrl;
     private List<String> skills;
 }

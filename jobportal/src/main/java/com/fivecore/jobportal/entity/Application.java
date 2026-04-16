@@ -35,9 +35,24 @@ public class Application {
     @Builder.Default
     private ApplicationStatus status = ApplicationStatus.pending;
 
+    @Column(columnDefinition = "TEXT")
+    private String coverLetter;
+
+    @Column(name = "cv_url", length = 255)
+    private String cvUrl;
+
     @CreationTimestamp
     @Column(name = "applied_at", nullable = false, updatable = false)
     private LocalDateTime appliedAt;
+
+    @Column(name = "full_name", length = 100)
+    private String fullName;
+
+    @Column(length = 100)
+    private String email;
+
+    @Column(length = 20)
+    private String phone;
 
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore

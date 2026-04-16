@@ -56,6 +56,7 @@ public class CvTemplateService {
         template.setLayoutKey(templateDetails.getLayoutKey());
         template.setDescription(templateDetails.getDescription());
         template.setActive(templateDetails.isActive());
+        template.setFeatured(templateDetails.isFeatured());
 
         if (thumbnail != null && !thumbnail.isEmpty()) {
             String thumbUrl = storageService.saveFile(thumbnail, "cv-templates");

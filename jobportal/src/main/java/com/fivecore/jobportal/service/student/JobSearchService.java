@@ -6,6 +6,7 @@ import com.fivecore.jobportal.repository.JobRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +34,9 @@ public class JobSearchService {
     /**
      * Tìm kiếm việc làm với nhiều bộ lọc (US-006).
      */
-    public List<JobResponse> searchJobs(String keyword, String location, String skill, String jobType) {
+    @Transactional(readOnly = true)
+    public List<JobResponse> searchJobs(String keyword, String location, String industry, String jobType, 
+                                       java.math.BigDecimal minSalary, java.math.BigDecimal maxSalary, Integer studentId) {
         // Sử dụng conjunction để tránh lỗi ambiguous call Specification.where(null)
         Specification<Job> spec = (root, query, cb) -> cb.conjunction();
 
@@ -43,10 +46,16 @@ public class JobSearchService {
                     cb.like(cb.lower(root.get("description")), "%" + keyword.toLowerCase() + "%")));
         }
 
-        if (skill != null && !skill.isEmpty()) {
-            spec = spec.and((root, query, cb) -> cb.or(
-                    cb.like(cb.lower(root.get("title")), "%" + skill.toLowerCase() + "%"),
-                    cb.like(cb.lower(root.get("description")), "%" + skill.toLowerCase() + "%")));
+        if (industry != null && !industry.isEmpty() && !"all".equalsIgnoreCase(industry)) {
+            spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("industry")), "%" + industry.toLowerCase() + "%"));
+        }
+
+        if (minSalary != null) {
+            spec = spec.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("minSalary"), minSalary));
+        }
+
+        if (maxSalary != null) {
+            spec = spec.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("maxSalary"), maxSalary));
         }
 
         if (location != null && !location.isEmpty()) {
@@ -67,8 +76,15 @@ public class JobSearchService {
         spec = spec.and((root, query, cb) -> cb.equal(root.get("status"), Job.JobStatus.open));
 
         List<Job> jobs = jobRepository.findAll(spec);
+        
+        List<Integer> savedJobIds = List.of();
+        if (studentId != null) {
+            savedJobIds = jobRepository.findSavedJobIdsByStudentId(studentId);
+        }
+
+        final List<Integer> finalSavedJobIds = savedJobIds;
         return jobs.stream()
-                .map(this::mapToResponse)
+                .map(job -> mapToResponse(job, finalSavedJobIds.contains(job.getId())))
                 .collect(Collectors.toList());
     }
 
@@ -85,21 +101,31 @@ public class JobSearchService {
      */
     public JobResponse getJobById(Integer id, Integer studentId) {
         return jobRepository.findById(id)
-                .map(this::mapToResponse)
+                .map(job -> {
+                    boolean isSaved = false;
+                    if (studentId != null) {
+                        isSaved = jobRepository.findSavedJobIdsByStudentId(studentId).contains(job.getId());
+                    }
+                    return mapToResponse(job, isSaved);
+                })
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy công việc với ID: " + id));
     }
 
-    private JobResponse mapToResponse(Job job) {
+    public JobResponse mapToResponse(Job job, boolean isSaved) {
         return JobResponse.builder()
                 .id(job.getId())
                 .title(job.getTitle())
-                .companyName(job.getCompany().getName())
+                .companyName(job.getCompany() != null ? job.getCompany().getName() : "DAU Partner")
                 .location(job.getLocation())
                 .salary(job.getMaxSalary() != null ? job.getMinSalary() + " - " + job.getMaxSalary() : (job.getMinSalary() != null ? job.getMinSalary().toString() : "Thỏa thuận"))
                 .jobType(job.getJobType().name())
                 .status(job.getStatus().name())
                 .description(job.getDescription())
+                .industry(job.getIndustry())
                 .deadline(job.getDeadline())
+                .postedAt(job.getPostedAt())
+                .imageUrl(job.getCompany() != null ? job.getCompany().getLogoUrl() : null)
+                .isSaved(isSaved)
                 .build();
     }
 }

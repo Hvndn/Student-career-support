@@ -8,6 +8,7 @@ import NavbarSelector from './components/common/NavbarSelector';
 
 import ProtectedRoute from './components/common/ProtectedRoute';
 import StudentLayout from './components/layout/StudentLayout';
+import { MessagingProvider } from './context/MessagingContext';
 
 // common pages
 import Home from './pages/common/Home'
@@ -106,7 +107,7 @@ const AppContent = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   return (
-    <>
+    <MessagingProvider>
       <Toaster 
         position="top-right" 
         reverseOrder={false}
@@ -205,10 +206,7 @@ const AppContent = () => {
           </ProtectedRoute>
         } />
       </Routes>
-      
-    
-
-    </>
+    </MessagingProvider>
   );
 };
 

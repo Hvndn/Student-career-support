@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { jobApi, studentApi } from '../../api';
+import { toast } from 'react-hot-toast';
 import '../../assets/css/common/JobList.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
@@ -46,6 +47,38 @@ const JobList = () => {
     const menuRef = useRef(null);
     const navigate = useNavigate();
 
+    const fetchJobs = useCallback(async () => {
+        setLoading(true);
+        try {
+            const params = {
+                keyword: search || undefined,
+                location: locationSearch || undefined,
+                industry: industryFilter !== 'all' ? industryFilter : undefined,
+                jobType: typeFilter !== 'all' ? typeFilter : undefined
+            };
+
+            // Map salary levels
+            if (salaryFilter === 'low') {
+                params.maxSalary = 5000000;
+            } else if (salaryFilter === 'mid') {
+                params.minSalary = 5000000;
+                params.maxSalary = 10000000;
+            } else if (salaryFilter === 'high') {
+                params.minSalary = 10000000;
+            }
+
+            const res = await jobApi.getJobs(params);
+            const data = res.data.data || [];
+            setJobs(data);
+            setFiltered(data);
+        } catch (err) {
+            console.error("Error fetching jobs:", err);
+            toast.error("Không thể tải danh sách công việc");
+        } finally {
+            setLoading(false);
+        }
+    }, [search, locationSearch, industryFilter, typeFilter, salaryFilter]);
+
     useEffect(() => {
         const savedUser = JSON.parse(localStorage.getItem('user'));
         setUser(savedUser);
@@ -54,42 +87,49 @@ const JobList = () => {
                 .then(res => setProfile(res.data.data))
                 .catch(console.error);
         }
-
-        jobApi.getJobs()
-            .then(res => {
-                const data = res.data.data || [];
-                setJobs(data);
-                setFiltered(data);
-                setLoading(false);
-            })
-            .catch(err => {
-                console.error(err);
-                setLoading(false);
-            });
     }, []);
 
     useEffect(() => {
-        const q = search.toLowerCase();
-        const loc = locationSearch.toLowerCase();
-        
-        setFiltered(
-            jobs.filter(j => {
-                const matchesSearch = (j.title?.toLowerCase().includes(q) || j.companyName?.toLowerCase().includes(q));
-                const matchesLocation = loc === '' || j.location?.toLowerCase().includes(loc);
-                const matchesIndustry = industryFilter === 'all' || j.industry === industryFilter;
-                const matchesType = typeFilter === 'all' || j.jobType === typeFilter;
-                
-                let matchesSalary = true;
-                if (salaryFilter !== 'all') {
-                    if (salaryFilter === 'low') matchesSalary = j.salary?.includes('triệu') && parseInt(j.salary) < 5;
-                    if (salaryFilter === 'mid') matchesSalary = j.salary?.includes('triệu') && parseInt(j.salary) >= 5 && parseInt(j.salary) <= 10;
-                    if (salaryFilter === 'high') matchesSalary = j.salary?.includes('triệu') && parseInt(j.salary) > 10;
-                }
+        fetchJobs();
+    }, [fetchJobs]);
 
-                return matchesSearch && matchesLocation && matchesIndustry && matchesType && matchesSalary;
-            })
-        );
-    }, [search, locationSearch, industryFilter, typeFilter, salaryFilter, jobs]);
+    const handleToggleSave = async (e, jobId) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (!isStudent) {
+            toast.error("Vui lòng đăng nhập với quyền sinh viên để lưu công việc");
+            return;
+        }
+
+        // Optimistic UI update
+        setJobs(prevJobs => prevJobs.map(j => 
+            j.id === jobId ? { ...j, isSaved: !j.isSaved } : j
+        ));
+        setFiltered(prevFiltered => prevFiltered.map(j => 
+            j.id === jobId ? { ...j, isSaved: !j.isSaved } : j
+        ));
+
+        try {
+            await studentApi.saveJob(jobId);
+            const job = jobs.find(j => j.id === jobId);
+            if (job.isSaved) {
+                toast.success("Đã bỏ lưu công việc");
+            } else {
+                toast.success("Đã lưu công việc vào danh sách yêu thích");
+            }
+        } catch (error) {
+            console.error("Save job error:", error);
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
+            // Revert on error
+            setJobs(prevJobs => prevJobs.map(j => 
+                j.id === jobId ? { ...j, isSaved: !j.isSaved } : j
+            ));
+            setFiltered(prevFiltered => prevFiltered.map(j => 
+                j.id === jobId ? { ...j, isSaved: !j.isSaved } : j
+            ));
+        }
+    };
 
     const handleLogout = () => {
         localStorage.removeItem('user');
@@ -102,43 +142,6 @@ const JobList = () => {
 
     const renderContent = () => (
         <div className="job-list-container-inner">
-            {/* Breadcrumb / Top Bar */}
-            <header className="job-list-top-bar">
-                <div className="breadcrumb-premium">
-                    <span className="breadcrumb-prev">DAU Connect</span>
-                    <span className="breadcrumb-sep">›</span>
-                    <span className="breadcrumb-current">Tìm việc làm</span>
-                </div>
-                
-                {isStudent && (
-                    <div className="header-actions-premium">
-                        <button className="notif-btn-premium">
-                            <span className="material-symbols-outlined">notifications</span>
-                            <span className="notif-dot-premium"></span>
-                        </button>
-                        <div className="user-menu-wrap-premium" ref={menuRef}>
-                            <div className="user-avatar-premium" onClick={() => setShowUserMenu(!showUserMenu)}>
-                                <img src={profile?.avatarUrl || "https://ui-avatars.com/api/?name=" + displayName} alt="User" />
-                            </div>
-                            {showUserMenu && (
-                                <div className="user-dropdown-premium">
-                                    <div className="dropdown-info-premium">
-                                        <p className="dropdown-name">{displayName}</p>
-                                        <p className="dropdown-role">student</p>
-                                    </div>
-                                    <div className="dropdown-divider"></div>
-                                    <Link to="/student/profile" className="dropdown-item-premium">
-                                        <span className="material-symbols-outlined">person</span> Hồ sơ
-                                    </Link>
-                                    <button onClick={handleLogout} className="dropdown-item-premium logout">
-                                        <span className="material-symbols-outlined">logout</span> Đăng xuất
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                )}
-            </header>
 
             {/* Horizontal Filter Bar */}
             <div className="filter-bar-premium">
@@ -217,38 +220,62 @@ const JobList = () => {
                     <div className="job-grid-premium">
                         {filtered.map(job => (
                             <div key={job.id} className="job-card-premium fade-in">
-                                <div className="card-top-media">
+                                <div className="card-top-media" style={{ background: '#f1f5f9' }}>
                                     <div className="media-placeholder">
-                                        <span className="material-symbols-outlined">corporate_fare</span>
+                                        {job.imageUrl ? (
+                                            <img src={job.imageUrl} alt={job.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        ) : (
+                                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: '#cbd5e1' }}>
+                                                <span className="material-symbols-outlined" style={{ fontSize: '4rem' }}>apartment</span>
+                                            </div>
+                                        )}
                                     </div>
-                                    <span className="card-type-tag">Thực tập</span>
-                                    <button className="card-fav-btn">
-                                        <span className="material-symbols-outlined">bookmark_outline</span>
+                                    <span className="card-type-tag" style={{ background: '#1e293b', padding: '6px 12px', borderRadius: '8px' }}>{job.jobType || 'Thực tập'}</span>
+                                    <button 
+                                        className="card-fav-btn"
+                                        onClick={(e) => handleToggleSave(e, job.id)}
+                                        style={{ 
+                                            right: '12px', 
+                                            top: '12px', 
+                                            background: (job.isSaved || job.saved) ? '#f97316' : 'rgba(255, 255, 255, 0.9)', 
+                                            color: (job.isSaved || job.saved) ? 'white' : '#64748b', 
+                                            borderRadius: '50%', 
+                                            width: '40px', 
+                                            height: '40px',
+                                            boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s ease'
+                                        }}
+                                    >
+                                        <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
+                                            {job.isSaved ? 'bookmark' : 'bookmark_border'}
+                                        </span>
                                     </button>
                                 </div>
-                                <div className="card-main-body">
-                                    <h3 className="job-title-premium">{job.title}</h3>
-                                    <div className="company-info-row">
-                                        <div className="company-logo-placeholder">
+                                <div className="card-main-body" style={{ padding: '20px' }}>
+                                    <h3 className="job-title-premium" style={{ fontSize: '1.2rem', marginBottom: '16px' }}>{job.title}</h3>
+                                    <div className="company-info-row" style={{ marginBottom: '20px' }}>
+                                        <div className="company-logo-placeholder" style={{ background: '#1e293b', color: 'white' }}>
                                             {job.companyName ? job.companyName.charAt(0) : 'C'}
                                         </div>
-                                        <span className="company-name-premium">{job.companyName}</span>
+                                        <span className="company-name-premium" style={{ color: '#64748b' }}>{job.companyName}</span>
                                     </div>
-                                    <div className="job-detail-box">
-                                        <span className="material-symbols-outlined">payments</span>
-                                        <span className="detail-text">{job.salary || '3 - 5 triệu'}</span>
+                                    <div className="job-detail-box" style={{ background: '#f8fafc', border: 'none' }}>
+                                        <span className="material-symbols-outlined" style={{ color: '#10b981', fontSize: '20px' }}>payments</span>
+                                        <span className="detail-text" style={{ fontWeight: '600' }}>{job.salary || '3 - 5 triệu'}</span>
                                     </div>
-                                    <div className="job-detail-box">
-                                        <span className="material-symbols-outlined">location_on</span>
-                                        <span className="detail-text">{job.location || 'Hải Châu, Đà Nẵng'}</span>
+                                    <div className="job-detail-box" style={{ background: '#f8fafc', border: 'none' }}>
+                                        <span className="material-symbols-outlined" style={{ color: '#f59e0b', fontSize: '20px' }}>location_on</span>
+                                        <span className="detail-text" style={{ fontWeight: '500' }}>{job.location || 'Hải Châu, Đà Nẵng'}</span>
                                     </div>
                                 </div>
-                                <div className="card-footer-premium">
+                                <div className="card-footer-premium" style={{ borderTop: '1px solid #f1f5f9', paddingTop: '15px' }}>
                                     <div className="posted-time">
                                         <span className="material-symbols-outlined">schedule</span> 5/1/2026
                                     </div>
-                                    <Link to={`/jobs/${job.id}`} className="apply-btn-premium">
-                                        Ứng tuyển <span className="material-symbols-outlined">chevron_right</span>
+                                    <Link to={`/jobs/${job.id}`} className="apply-btn-premium" style={{ background: '#8b1538', padding: '8px 20px' }}>
+                                        Ứng tuyển <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>chevron_right</span>
                                     </Link>
                                 </div>
                             </div>

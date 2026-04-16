@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import toast from 'react-hot-toast';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { studentApi } from '../../api';
 import { getTemplateComponent } from '../../components/student/templates/TemplateRegistry.jsx';
 import html2pdf from 'html2pdf.js';
+import html2canvas from 'html2canvas';
 import '../../assets/css/student/CVBuilder.css';
 
 // ─── tiny svg icons ────────────────────────────────────────────────────────
@@ -25,6 +27,7 @@ const SECTIONS = [
   { key: 'projects',       label: 'Dự án đã tham gia'    },
   { key: 'activities',     label: 'Hoạt động'            },
   { key: 'certifications', label: 'Chứng chỉ'            },
+  { key: 'awards',         label: 'Danh hiệu và giải thưởng' },
   { key: 'skills',         label: 'Kỹ năng'              },
 ];
 
@@ -34,13 +37,9 @@ const COLORS = [
 ];
 
 const CATS = [
-  { key:'MODERN_1',   label:'Đơn giản'      },
-  { key:'PRO_1',      label:'Chuyên nghiệp' },
-  { key:'MODERN_2',   label:'Hiện đại'      },
-  { key:'CREATIVE_1', label:'Ấn tượng'      },
-  { key:'HARVARD_1',  label:'Harvard'       },
-  { key:'ATS_1',      label:'ATS'           },
-];
+  { key:'ARTISTIC_1', label:'Nghệ thuật' },
+  { key:'PRO_1',      label:'Chuyên nghiệp' }
+]; 
 
 // ─── tiny reusable field ───────────────────────────────────────────────────
 const F = ({ label, value='', onChange, multi=false, ph='' }) => (
@@ -54,7 +53,7 @@ const F = ({ label, value='', onChange, multi=false, ph='' }) => (
 );
 
 // ─── right panel content per section ──────────────────────────────────────
-const Editor = ({ section, cv, setCV }) => {
+const Editor = ({ section, cv, setCV, onAvatarClick }) => {
   const s = (k,v) => setCV({...cv,[k]:v});
   const upItem = (field,i,k,v) => { const a=[...(cv[field]||[])]; a[i]={...a[i],[k]:v}; s(field,a); };
   const addItem = (field,blank) => s(field,[...(cv[field]||[]),{...blank,id:Date.now()}]);
@@ -64,14 +63,19 @@ const Editor = ({ section, cv, setCV }) => {
     <div className="cvb-ep">
       <div className="cvb-ep-title">THÔNG TIN CÁ NHÂN</div>
       {/* avatar preview */}
-      <div className="cvb-av-wrap">
+      <div className="cvb-av-wrap" onClick={onAvatarClick} style={{ cursor: 'pointer' }}>
         <div className="cvb-av-circle">
           {(cv.avatar||cv.avatarUrl)
             ? <img src={cv.avatar||cv.avatarUrl} alt="ava" className="cvb-av-img"/>
             : <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
           }
         </div>
-        <div className="cvb-av-label">Ảnh đại diện</div>
+        <div className="cvb-av-label">Ảnh đại diện (Click để thay đổi)</div>
+      </div>
+      <div style={{ marginBottom: '15px' }}>
+        <button className="cvb-add" style={{ width: '100%', justifyContent: 'center' }} onClick={onAvatarClick}>
+          Tải ảnh lên từ máy tính
+        </button>
       </div>
       <F label="Họ và Tên"       value={cv.fullName} onChange={v=>s('fullName',v)} ph="Nguyễn Văn A"/>
       <F label="Vị trí ứng tuyển" value={cv.major}    onChange={v=>s('major',v)}    ph="Sinh viên / Designer"/>
@@ -197,6 +201,21 @@ const Editor = ({ section, cv, setCV }) => {
     </div>
   );
 
+  if (section==='awards') return (
+    <div className="cvb-ep">
+      <div className="cvb-ep-title">DANH HIỆU VÀ GIẢI THƯỞNG</div>
+      {(cv.awards||[]).map((a,i)=>(
+        <div key={a.id||i} className="cvb-card">
+          <div className="cvb-card-hd"><span className="cvb-card-num">#{i+1}</span><button className="cvb-del" onClick={()=>delItem('awards',i)}><IcoTrash/></button></div>
+          <F label="Tên danh hiệu"  value={a.name} onChange={v=>upItem('awards',i,'name',v)} ph="Top 5 Chiến dịch Content..."/>
+          <F label="Năm / Thời gian" value={a.time} onChange={v=>upItem('awards',i,'time',v)} ph="2022"/>
+          <F label="Mô tả ngắn"      value={a.description} onChange={v=>upItem('awards',i,'description',v)} multi ph="Giải thưởng do khoa/công ty trao tặng..."/>
+        </div>
+      ))}
+      <button className="cvb-add" onClick={()=>addItem('awards',{name:'',time:'',description:''})}><IcoPlus/> Thêm giải thưởng</button>
+    </div>
+  );
+
   if (section==='skills') return (
     <div className="cvb-ep">
       <div className="cvb-ep-title">KỸ NĂNG</div>
@@ -236,14 +255,60 @@ const CVBuilder = () => {
   const [activeSection, setActiveSection] = useState('personal');
   const [cvName, setCvName] = useState('CV MỚI CỦA TÔI');
   const [editingTitle, setEditingTitle] = useState(false);
+  const avatarInputRef = useRef(null);
+
+  const handleAvatarFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    console.log("Starting upload for:", file.name);
+
+    const formData = new FormData();
+    formData.append('avatarFile', file);
+
+    const loadingToast = toast.loading('Đang gửi ảnh lên...');
+    try {
+      const res = await studentApi.updateAvatar(formData);
+      console.log("Upload result:", res.data);
+      if (res.data?.success) {
+        let newUrl = res.data.data;
+        // Nếu là đường dẫn tương đối, đảm bảo có thể hiển thị được
+        if (newUrl && newUrl.startsWith('/') && !newUrl.startsWith('http')) {
+           // Giữ nguyên để proxy xử lý, hoặc thêm host nếu cần debug
+           console.log("Avatar relative path detected:", newUrl);
+        }
+        setCV(prev => ({ ...prev, avatar: newUrl, avatarUrl: newUrl }));
+        toast.success('Cập nhật ảnh đại diện thành công!', { id: loadingToast });
+      } else {
+        toast.error(res.data?.message || 'Lỗi từ máy chủ', { id: loadingToast });
+      }
+    } catch (error) {
+      console.error('Upload error details:', error);
+      const msg = error.response?.data?.message || error.message || 'Lỗi kết nối!';
+      toast.error('Lỗi hệ thống: ' + msg, { id: loadingToast });
+    }
+  };
 
   // Fix: nếu id === 'new', sinh UUID mới và redirect để tránh xung đột localStorage
   useEffect(() => {
-    if (id === 'new') {
-      const newId = `cv_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+    if (id && !cv && !loading) {
+      const newId = `cv_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
       navigate(`/student/cv-builder/${newId}?${searchParams.toString()}`, { replace: true });
     }
-  }, [id]);
+  }, [id, cv, loading, navigate, searchParams]);
+
+  useEffect(() => {
+    if (id && searchParams.get('action') === 'download' && !loading && cv) {
+      const timer = setTimeout(() => {
+        handlePDF();
+        // Xoá action sau khi trigger để không lặp lại
+        const newParams = new URLSearchParams(searchParams);
+        newParams.delete('action');
+        navigate(`${window.location.pathname}?${newParams.toString()}`, { replace: true });
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [id, searchParams, loading, cv]);
 
   useEffect(() => {
     studentApi.getProfile()
@@ -262,6 +327,7 @@ const CVBuilder = () => {
             dob:'', gender:'', linkedin: d.linkedinUrl||'', github: d.githubUrl||'', website:'',
             educations: d.educations||[],
             certifications: d.certifications||[],
+            awards: [],
             skills:[], experiences:[], projects:[], activities:[],
             layoutKey: layoutParam||'MODERN_1',
             themeColor:'#8b1538',
@@ -272,30 +338,62 @@ const CVBuilder = () => {
       .finally(()=>setLoading(false));
   }, [id]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!cv) return;
-    const saveData = { ...cv, _name: cvName, _updatedAt: new Date().toISOString() };
+    const toastId = toast.loading('Đang lưu CV và tạo ảnh bìa...');
+    
+    let thumbnail = cv.thumbnail;
+    try {
+      const el = document.querySelector('.cvb-canvas-inner');
+      if (el) {
+        // Đợi 500ms để đảm bảo layout & fonts render xong
+        await new Promise(r => setTimeout(r, 500));
+        
+        const canvas = await html2canvas(el, {
+          scale: 0.8,
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          logging: false
+        });
+        
+        const thumbCanvas = document.createElement('canvas');
+        const width = 280;
+        const height = (canvas.height / canvas.width) * width;
+        thumbCanvas.width = width;
+        thumbCanvas.height = height;
+        const ctx = thumbCanvas.getContext('2d');
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(canvas, 0, 0, width, height);
+        
+        thumbnail = thumbCanvas.toDataURL('image/jpeg', 0.6);
+      }
+    } catch (err) {
+      console.warn("Failed to generate thumbnail:", err);
+    }
+
+    const saveData = { ...cv, thumbnail, _name: cvName, _updatedAt: new Date().toISOString() };
     localStorage.setItem(`dau_cv_${id}`, JSON.stringify(saveData));
+    setCV(saveData);
+    toast.success('Đã lưu CV thành công!', { id: toastId });
     setSaved(true);
     setTimeout(() => setSaved(false), 2200);
   };
 
-  const handlePDF = () => {
-    // Lưu trước khi xuất PDF
-    handleSave();
+  const handlePDF = async () => {
+    // Lưu trước khi xuất PDF (đợi lưu xong ảnh bìa)
+    await handleSave();
+    
     const el = document.querySelector('.cvb-canvas-inner > div');
     if (!el) { alert('Không tìm thấy nội dung CV để xuất!'); return; }
-    if (!window.html2pdf) {
-      import('html2pdf.js').then(mod => {
-        mod.default().set({
-          margin: 0,
-          filename: `CV_${(cv.fullName || 'CV').replace(/\s+/g, '_')}.pdf`,
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, logging: false },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        }).from(el).save();
-      });
-    }
+    
+    html2pdf().set({
+      margin: 0,
+      filename: `CV_${(cv.fullName || 'CV').replace(/\s+/g, '_')}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, logging: false },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    }).from(el).save();
   };
 
   if (loading || !cv) return (
@@ -400,6 +498,8 @@ const CVBuilder = () => {
                 isEditMode={true}
                 onUpdate={(d)=>setCV(d)}
                 themeColor={cv.themeColor||'#8b1538'}
+                onSectionClick={setActiveSection}
+                onAvatarClick={() => avatarInputRef.current?.click()}
               />
             </div>
           </div>
@@ -429,11 +529,20 @@ const CVBuilder = () => {
             </div>
           </div>
           <div className="cvb-right-body">
-            <Editor section={activeSection} cv={cv} setCV={setCV}/>
+            <Editor section={activeSection} cv={cv} setCV={setCV} onAvatarClick={() => avatarInputRef.current?.click()}/>
           </div>
         </aside>
 
       </div>
+      
+      {/* Hidden Avatar Input */}
+      <input 
+        type="file" 
+        ref={avatarInputRef} 
+        hidden 
+        accept="image/*" 
+        onChange={handleAvatarFileChange} 
+      />
     </div>
   );
 };

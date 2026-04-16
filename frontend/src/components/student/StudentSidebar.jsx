@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useMessaging } from '../../context/MessagingContext';
 import '../../assets/css/student/StudentSidebar.css';
 
 const NAV_ITEMS = [
@@ -12,7 +13,7 @@ const NAV_ITEMS = [
       { label: 'Tìm việc làm', to: '/jobs' },
       { label: 'Thực tập tốt nghiệp', to: '/student/internships' },
       { label: 'Việc làm đã ứng tuyển', to: '/student/applications' },
-      { label: 'Việc làm yêu thích', to: '/student/saved-jobs' }
+      { label: 'Việc làm yêu thích', to: '/student/saved' }
     ]
   },
   { icon: 'award', label: 'Thử thách dự án', to: '/student/challenges' },
@@ -26,6 +27,7 @@ const NAV_ITEMS = [
 const StudentSidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { setIsChatOpen, isChatOpen } = useMessaging();
   const [expandedItem, setExpandedItem] = useState('Việc làm');
 
   const handleLogout = () => {
@@ -107,6 +109,15 @@ const StudentSidebar = () => {
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                   </span>
                 </button>
+              ) : item.label === 'Trò chuyện' ? (
+                <div
+                  className={`ss-nav-item ${isActive || isChatOpen ? 'active' : ''}`}
+                  onClick={() => setIsChatOpen(!isChatOpen)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <span className="ss-nav-icon">{getIcon(item.icon)}</span>
+                  <span className="ss-nav-label">{item.label}</span>
+                </div>
               ) : (
                 <Link
                   to={item.to}
