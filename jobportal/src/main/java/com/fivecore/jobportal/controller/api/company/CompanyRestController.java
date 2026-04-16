@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 /**
  * REST API Controller cho Doanh nghiệp.
  */
-@RestController
+@RestController("employerCompanyRestController")
 @RequestMapping("/api/company")
 @RequiredArgsConstructor
 @Slf4j
