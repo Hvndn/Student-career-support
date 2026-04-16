@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { adminApi } from '../../api';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import AdminNavbar from '../../components/admin/AdminNavbar';
@@ -10,6 +10,7 @@ const ManageCVTemplates = () => {
     const [templates, setTemplates] = useState([]);
     const [loading, setLoading] = useState(true);
     const [categoryFilter, setCategoryFilter] = useState('Tất cả');
+    const fileInputRef = useRef(null);
     
     // Modal states
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,18 +21,28 @@ const ManageCVTemplates = () => {
         category: 'Hiện đại',
         layoutKey: '',
         description: '',
-        isActive: true
+        isActive: true,
+        isFeatured: false
     });
     const [thumbnailFile, setThumbnailFile] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState(null);
 
     const categories = ['Tất cả', 'Hiện đại', 'Chuyên nghiệp', 'Đơn giản', 'Ấn tượng', 'Harvard', 'ATS'];
-    const layoutKeys = [
-        'MODERN_1', 'MODERN_2', 'PRO_1', 'PRO_2', 'CLASSIC_1', 'CREATIVE_1', 'HARVARD_1', 'ATS_1'
-    ];
+    const layoutKeys = ['ARTISTIC_1', 'PRO_1']; // Mẫu Artistic và mẫu Chuyên nghiệp mới
 
     useEffect(() => {
         fetchTemplates();
     }, []);
+
+    useEffect(() => {
+        if (!thumbnailFile) {
+            setPreviewUrl(null);
+            return;
+        }
+        const objectUrl = URL.createObjectURL(thumbnailFile);
+        setPreviewUrl(objectUrl);
+        return () => URL.revokeObjectURL(objectUrl);
+    }, [thumbnailFile]);
 
     const fetchTemplates = async () => {
         try {
@@ -56,7 +67,8 @@ const ManageCVTemplates = () => {
                 category: template.category,
                 layoutKey: template.layoutKey,
                 description: template.description || '',
-                isActive: template.active
+                isActive: template.active,
+                isFeatured: template.isFeatured || false
             });
         } else {
             setFormData({
@@ -64,7 +76,8 @@ const ManageCVTemplates = () => {
                 category: 'Hiện đại',
                 layoutKey: '',
                 description: '',
-                isActive: true
+                isActive: true,
+                isFeatured: false
             });
         }
         setThumbnailFile(null);
@@ -248,19 +261,23 @@ const ManageCVTemplates = () => {
                                 </div>
                                 <div className="form-group">
                                     <label>Ảnh Xem Trước (Thumbnail)</label>
-                                    <div className="thumbnail-upload-box">
-                                        <input 
-                                            type="file" 
-                                            accept="image/*" 
-                                            onChange={(e) => setThumbnailFile(e.target.files[0])}
-                                            id="thumb-upload"
-                                            hidden
-                                        />
-                                        <label htmlFor="thumb-upload" className="upload-label">
-                                            {thumbnailFile ? (
-                                                <div className="upload-preview">
-                                                    <p>{thumbnailFile.name}</p>
-                                                    <span>Bấm để thay đổi</span>
+                                    <div className="thumbnail-upload-wrapper">
+                                        <div className="thumbnail-upload-box" onClick={() => fileInputRef.current?.click()}>
+                                            <input 
+                                                type="file" 
+                                                ref={fileInputRef}
+                                                accept="image/*" 
+                                                onChange={(e) => setThumbnailFile(e.target.files[0])}
+                                                id="thumb-upload"
+                                                hidden
+                                            />
+                                            {previewUrl ? (
+                                                <div className="upload-preview-container">
+                                                    <img src={previewUrl} alt="Preview" className="thumbnail-img-preview" />
+                                                    <div className="preview-overlay">
+                                                        <span className="material-symbols-outlined">sync</span>
+                                                        <p>Bấm để thay đổi</p>
+                                                    </div>
                                                 </div>
                                             ) : (
                                                 <div className="upload-placeholder">
@@ -268,8 +285,29 @@ const ManageCVTemplates = () => {
                                                     <p>Tải Thumbnail thủ công</p>
                                                 </div>
                                             )}
-                                        </label>
+                                        </div>
+                                        
+                                        <button 
+                                            type="button" 
+                                            className="btn-auto-render"
+                                            onClick={() => toast.loading('Tính năng đang được triển khai...')}
+                                        >
+                                            <span className="material-symbols-outlined">auto_fix</span>
+                                            TỰ ĐỘNG RENDER ẢNH BÌA
+                                        </button>
                                     </div>
+                                </div>
+                                <div className="form-group featured-toggle">
+                                    <label className="checkbox-container">
+                                        <input 
+                                            type="checkbox" 
+                                            name="isFeatured"
+                                            checked={formData.isFeatured}
+                                            onChange={handleFormChange}
+                                        />
+                                        <span className="checkmark"></span>
+                                        Đánh dấu đây là Mẫu Nổi Bật ⭐
+                                    </label>
                                 </div>
                                 <div className="form-group">
                                     <label>Mô tả (Ghi chú)</label>
