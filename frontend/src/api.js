@@ -83,6 +83,11 @@ export const studentApi = {
     deleteCertification: (id) => api.delete(`/student/profile/certifications/${id}`),
     // Jobs
     applyJob: (jobId) => api.post(`/student/jobs/${jobId}/apply`),
+    applyJobWithData: (jobId, formData) => api.post(`/student/jobs/${jobId}/apply`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    }),
     saveJob: (jobId) => api.post(`/student/jobs/${jobId}/save`),
     getSavedJobs: () => api.get('/student/jobs/saved'),
     cancelApplication: (jobId) => api.delete(`/student/jobs/${jobId}/apply`),
