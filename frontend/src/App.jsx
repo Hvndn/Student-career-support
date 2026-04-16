@@ -48,6 +48,7 @@ import CompanyCandidateTags from './pages/company/CompanyCandidateTags'
 import CompanyCandidateNotifications from './pages/company/CompanyCandidateNotifications'
 // import EmployerHome from './pages/company/EmployerHome' (Đã đổi tên sang CompanyDashboard)
 import EmployerPricing from './pages/company/EmployerPricing'
+import CompanyBooking from './pages/company/CompanyBooking'
 
 // admin pages
 import AdminDashboard from './pages/admin/AdminDashboard'
@@ -181,6 +182,7 @@ const AppContent = () => {
               <Route path="candidates/search" element={<CompanySearchCandidates />} />
               <Route path="candidates/tags" element={<CompanyCandidateTags />} />
               <Route path="candidates/notifications" element={<CompanyCandidateNotifications />} />
+              <Route path="booking" element={<CompanyBooking />} />
               <Route path="chat" element={<Chat />} />
               <Route path="profile" element={<CompanyProfile />} />
             </Routes>
