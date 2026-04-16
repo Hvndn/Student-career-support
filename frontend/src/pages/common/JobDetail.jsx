@@ -78,29 +78,12 @@ const JobDetail = () => {
             <div className="text-center">
                 <span className="material-symbols-outlined" style={{ fontSize: '4rem', color: '#cbd5e1' }}>search_off</span>
                 <h2 style={{marginTop: '1rem'}}>Không tìm thấy công việc</h2>
-                <Link to="/jobs" style={{ color: '#8b1538', fontWeight: 600 }}>← Quay lại danh sách</Link>
             </div>
         </div>
     );
 
     const renderContent = () => (
         <div className="job-detail-inner">
-            {/* Control Bar */}
-            <div className="jd-control-bar">
-                <div className="jd-breadcrumb-wrap">
-                    <span className="jd-bc-prev">DAU Connect</span>
-                    <span className="jd-bc-sep">›</span>
-                    <span className="jd-bc-curr">Tìm việc làm</span>
-                </div>
-                <div className="jd-actions-top">
-                    <Link to="/jobs" className="jd-btn-back">
-                        <span className="material-symbols-outlined">west</span>
-                        Quay lại danh sách
-                    </Link>
-                    <button className="jd-btn-icon"><span className="material-symbols-outlined">share</span></button>
-                    <button className="jd-btn-icon"><span className="material-symbols-outlined">bookmark</span></button>
-                </div>
-            </div>
 
             <div className="jd-grid">
                 {/* Left Column: Job Info */}
