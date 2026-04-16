@@ -13,6 +13,8 @@ import java.util.List;
 public interface InterviewRepository extends JpaRepository<Interview, Integer> {
     List<Interview> findByApplication_Student_Id(Integer studentId);
 
+    List<Interview> findByApplication_Job_Company_Id(Integer companyId);
+
     @Modifying
     @Query("DELETE FROM Interview i WHERE i.application.id = :applicationId")
     void deleteByApplicationId(@Param("applicationId") Integer applicationId);

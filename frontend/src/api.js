@@ -136,6 +136,7 @@ export const recruitmentApi = {
     updateStatus: (appId, status) => api.patch(`/company/management/applications/${appId}/status?status=${status}`),
     searchCandidates: (params) => api.get('/company/management/candidates/search', { params }),
     scheduleInterview: (appId, data) => api.post(`/company/management/applications/${appId}/schedule`, null, { params: data }),
+    getInterviews: () => api.get('/company/management/interviews'),
 };
 
 // ── Admin ─────────────────────────────────────────────────────────────────

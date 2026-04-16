@@ -86,6 +86,7 @@ public class CompanyService {
                 .jobType(Enum.valueOf(Job.JobType.class, request.getJobType().toLowerCase()))
                 .deadline(request.getDeadline())
                 .status(Job.JobStatus.open)
+                .bannerUrl(request.getBannerUrl())
                 .build();
 
         Job savedJob = jobRepository.save(job);
@@ -159,6 +160,7 @@ public class CompanyService {
         job.setContactEmail(request.getContactEmail());
         job.setContactPhone(request.getContactPhone());
         job.setStatus(Enum.valueOf(Job.JobStatus.class, request.getStatus().toLowerCase()));
+        job.setBannerUrl(request.getBannerUrl());
         job.setPostedAt(java.time.LocalDateTime.now()); // Cập nhật thời gian thực tế khi có bất kỳ thay đổi nào
 
         // Cập nhật kỹ năng
@@ -230,6 +232,7 @@ public class CompanyService {
                 .contactEmail(job.getContactEmail())
                 .contactPhone(job.getContactPhone())
                 .status(Job.JobStatus.draft) // Luôn để ở dạng nháp
+                .bannerUrl(job.getBannerUrl())
                 .postedAt(java.time.LocalDateTime.now())
                 .build();
         
@@ -283,6 +286,7 @@ public class CompanyService {
                 .contactName(job.getContactName())
                 .contactEmail(job.getContactEmail())
                 .contactPhone(job.getContactPhone())
+                .bannerUrl(job.getBannerUrl())
                 .skills(job.getSkills().stream()
                         .map(js -> js.getSkill().getName())
                         .collect(Collectors.toList()))

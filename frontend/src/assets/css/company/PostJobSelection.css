@@ -8,12 +8,12 @@
 .pjs-main {
   flex: 1;
   transition: margin-left 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  margin-left: 70px;
+  margin-left: 260px;
   position: relative;
 }
 
 body.sidebar-pinned .pjs-main {
-  margin-left: 270px;
+  margin-left: 260px;
 }
 
 .pjs-content-wrapper {

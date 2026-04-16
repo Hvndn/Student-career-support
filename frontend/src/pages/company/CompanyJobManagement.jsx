@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import '../../assets/css/company/CompanyJobManagement.css';
+import '../../assets/css/CompanyJobManagement.css';
 import CompanySidebar from '../../components/company/CompanySidebar';
 import CompanyNavbar from '../../components/company/CompanyNavbar';
 import { Link } from 'react-router-dom';
 import { companyApi } from '../../api';
+import PostJobModal from '../../components/company/PostJobModal';
 
 const CompanyJobManagement = () => {
   const [jobs, setJobs] = useState([]);
@@ -14,6 +15,8 @@ const CompanyJobManagement = () => {
   const [publishingId, setPublishingId] = useState(null);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [currentPage, setCurrentPage] = useState(1);
+  const [showPostModal, setShowPostModal] = useState(false);
+  const [editingJob, setEditingJob] = useState(null);
   const [filters, setFilters] = useState({
     search: '',
     status: 'Tất cả trạng thái',
@@ -166,6 +169,22 @@ const CompanyJobManagement = () => {
     } catch (err) {
       console.error('Extend error:', err);
       showToast('Không thể gia hạn tin tuyển dụng.', 'error');
+      setLoading(false);
+    }
+  };
+
+  const handleEdit = async (jobId) => {
+    try {
+      setLoading(true);
+      const detailsRes = await companyApi.getJobDetailsForEdit(jobId);
+      if (detailsRes.data.status === 'success') {
+        setEditingJob(detailsRes.data.data);
+        setShowPostModal(true);
+      }
+    } catch (err) {
+      console.error('Edit error:', err);
+      showToast('Không thể tải thông tin tin đăng.', 'error');
+    } finally {
       setLoading(false);
     }
   };
@@ -348,96 +367,46 @@ const CompanyJobManagement = () => {
   };
 
   return (
-    <div className="company-dashboard-container">
+    <div className="cd-layout">
       <CompanySidebar />
-      <div className="company-main-content">
+      <div className="cd-main">
         <CompanyNavbar />
-        <main className="cd-main">
+        <div className="cd-content dau-style">
           <div className="cjm-content">
-            <div className="cjm-header">
-              <Link to="/company/jobs/post" className="cjm-post-btn">
-                <span className="plus-icon">+</span> Đăng tin ngay
-              </Link>
-            </div>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#1e293b', marginBottom: '1.5rem' }}>Quản lý tuyển dụng</h2>
+            <div className="cjm-header intro-y" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+              <button 
+                className="cjm-post-btn-maroon" 
+                onClick={() => { setEditingJob(null); setShowPostModal(true); }}
+              >
+                Đăng tin tuyển dụng
+              </button>
 
-            <div className="cjm-filter-card">
-              <div className="cjm-filter-row">
-                <span className="cjm-filter-label">Bộ lọc</span>
-                <div className="cjm-filter-group search">
-                  <span className="cjm-icon">🔍</span>
-                  <input 
-                    type="text" 
-                    placeholder="Tìm theo tên hoặc ID..." 
-                    value={filters.search}
-                    onChange={(e) => {
-                      setFilters({...filters, search: e.target.value});
-                      setCurrentPage(1);
-                    }}
-                  />
-                </div>
-                <div className="cjm-filter-group">
-                  <select 
-                    value={filters.status}
-                    onChange={(e) => {
-                      setFilters({...filters, status: e.target.value});
-                      setCurrentPage(1);
-                    }}
-                  >
-                    <option>Tất cả trạng thái</option>
-                    <option>Đã duyệt</option>
-                    <option>Hết hạn</option>
-                    <option>Chờ duyệt</option>
-                    <option>Chưa đăng</option>
-                    <option>Đã ẩn</option>
-                    <option>Đã hủy</option>
-                  </select>
-                </div>
-                <div className="cjm-filter-group">
-                  <select
-                    value={filters.type}
-                    onChange={(e) => {
-                      setFilters({...filters, type: e.target.value});
-                      setCurrentPage(1);
-                    }}
-                  >
-                    <option>Tất cả loại tin</option>
-                    {JOB_TYPES.map(t => (
-                      <option key={t.value} value={t.value}>{t.label}</option>
-                    ))}
-                  </select>
-                </div>
-                <div className="cjm-filter-group">
-                  <select
-                    value={filters.region}
-                    onChange={(e) => {
-                      setFilters({...filters, region: e.target.value});
-                      setCurrentPage(1);
-                    }}
-                  >
-                    <option>Tất cả khu vực</option>
-                    {REGIONS.map(r => (
-                      <option key={r} value={r}>{r}</option>
-                    ))}
-                  </select>
-                </div>
-                <button className="cjm-export-btn" onClick={handleExport}>
-                  <span className="cjm-icon">📥</span> Tải danh sách
-                </button>
+              <div className="cjm-search-box">
+                <input 
+                  type="text" 
+                  placeholder="Tìm kiếm..." 
+                  value={filters.search}
+                  onChange={(e) => {
+                    setFilters({...filters, search: e.target.value});
+                    setCurrentPage(1);
+                  }}
+                />
+                <i className="fa-solid fa-magnifying-glass search-icon"></i>
               </div>
             </div>
 
-            <div className="cjm-table-container">
-              <table className="cjm-table">
+            <div className="cjm-table-container intro-y delay-2">
+              <table className="cjm-table-modern">
                 <thead>
                   <tr>
-                    <th className="text-center">Hiển thị</th>
-                    <th>Tên tin đăng</th>
-                    <th>Ngày cập nhật</th>
-                    <th>Hạn chốt</th>
-                    <th className="text-center">Hồ sơ nộp</th>
-                    <th className="text-center">Lượt xem</th>
-                    <th className="text-center">PHẢN HỒI</th>
-                    <th className="text-left" style={{width: '160px'}}>HÀNH ĐỘNG</th>
+                    <th style={{width: '10%'}}>HÌNH ẢNH</th>
+                    <th style={{width: '35%'}}>TÊN TIN TUYỂN DỤNG</th>
+                    <th style={{width: '15%'}}>NGÀNH NGHỀ</th>
+                    <th className="text-center" style={{width: '10%'}}>LƯỢT XEM</th>
+                    <th className="text-center" style={{width: '10%'}}>ỨNG TUYỂN</th>
+                    <th className="text-center" style={{width: '10%'}}>TRẠNG THÁI</th>
+                    <th className="text-center" style={{width: '10%'}}>HÀNH ĐỘNG</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -467,126 +436,51 @@ const CompanyJobManagement = () => {
                       const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
                       
                       return currentJobs.map(job => {
-                        const statusInfo = getJobStatusInfo(job);
+                        let statusText = 'Hoạt động';
+                        let statusColor = '#65a30d'; // Green
+                        if (job.status?.toLowerCase() === 'draft') { statusText = 'Bản nháp'; statusColor = '#64748b'; }
+                        else if (job.status?.toLowerCase() === 'pending') { statusText = 'Chờ duyệt'; statusColor = '#f59e0b'; }
+                        else if (job.status?.toLowerCase() === 'rejected') { statusText = 'Từ chối'; statusColor = '#ef4444'; }
                         
                         return (
-                          <tr key={job.id}>
-                            <td className="text-center">
-                              <div className="cjm-status-cell">
-                                <label className="cjm-switch">
-                                  <input 
-                                    type="checkbox" 
-                                    checked={statusInfo.checked} 
-                                    disabled={!statusInfo.canToggle}
-                                    onChange={() => handleToggleStatus(job.id, statusInfo.checked)}
-                                  />
-                                  <span className="cjm-slider"></span>
-                                </label>
-                                <span className={`cjm-status-text ${statusInfo.colorClass}`}>
-                                  {statusInfo.label}
-                                </span>
+                          <tr key={job.id} className="modern-row">
+                            <td>
+                              <div className="modern-avatar">
+                                {job.bannerUrl ? (
+                                  <img src={`http://localhost:8080${job.bannerUrl}`} alt="Banner" />
+                                ) : (
+                                  <div className="avatar-placeholder"><i className="fa-solid fa-briefcase"></i></div>
+                                )}
                               </div>
                             </td>
                             <td>
-                              <div className="cjm-job-title">
+                              <div className="modern-job-title">
                                 {job.title}
-                                {statusInfo.label === 'Hết hạn' ? (
-                                  <span className="cjm-expired-tag">
-                                    <i className="fas fa-history"></i> Hết hạn
-                                  </span>
-                                ) : (
-                                  <>
-                                    {(job.status?.toLowerCase() === 'open' || job.status?.toLowerCase() === 'active') && (
-                                      <span className="cjm-active-tag">
-                                        <i className="fas fa-check-circle"></i> Đã duyệt
-                                      </span>
-                                    )}
-                                    {job.status?.toLowerCase() === 'draft' && (
-                                      <span className="cjm-draft-tag">
-                                        <i className="fas fa-edit"></i> Chưa đăng
-                                      </span>
-                                    )}
-                                    {job.status?.toLowerCase() === 'pending' && (
-                                      <span className="cjm-pending-tag">
-                                        <i className="far fa-clock"></i> Chờ duyệt
-                                      </span>
-                                    )}
-                                    {(job.status?.toLowerCase() === 'rejected' || job.status?.toLowerCase() === 'canceled') && (
-                                      <span className="cjm-rejected-tag">
-                                        <i className="fas fa-times-circle"></i> Đã hủy
-                                      </span>
-                                    )}
-                                  </>
-                                )}
                               </div>
-                              <div className="cjm-job-info">
-                                {job.id} • {job.location}
+                              <div className="modern-job-skills">
+                                Kỹ năng: {Array.isArray(job.skills) ? job.skills.join(', ') : (job.skills || 'Không yêu cầu')}
                               </div>
                             </td>
-                             <td>
-                               {formatDateTimeVertical(job.postedAt)}
-                             </td>
-                             <td>
-                               <div className="cjm-deadline-only">
-                                 {formatDate(job.deadline)}
-                               </div>
-                             </td>
+                            <td className="modern-industry">
+                               {job.industry || 'Chưa cập nhật'}
+                            </td>
+                            <td className="text-center modern-stats">
+                              <i className="fa-regular fa-eye"></i> {job.viewsCount || 0}
+                            </td>
+                            <td className="text-center modern-applicants">
+                              <i className="fa-solid fa-user-group"></i> {job.applicantsCount || 0}
+                            </td>
+                            <td className="text-center modern-status" style={{ color: statusColor }}>
+                              <i className="fa-regular fa-circle-check"></i> {statusText}
+                            </td>
                             <td className="text-center">
-                              <Link to={`/company/management/jobs/${job.id}/applicants`} className="cjm-applicants-link">
-                                {job.applicantsCount || 0}
-                              </Link>
-                            </td>
-                            <td className="text-center">{job.viewsCount || 0}</td>
-                            <td className="text-center">
-                              <div className="cjm-conversion">
-                                {job.viewsCount > 0 
-                                  ? `${((job.applicantsCount / job.viewsCount) * 100).toFixed(0)}%` 
-                                  : '0%'}
-                              </div>
-                            </td>
-                            <td className="text-left">
-                              <div className="cjm-actions-cell">
-                                {job.status?.toLowerCase() === 'draft' ? (
-                                  <button 
-                                    className="cjm-publish-btn"
-                                    onClick={() => handlePublish(job.id)}
-                                    disabled={publishingId === job.id}
-                                  >
-                                    {publishingId === job.id ? (
-                                      <>
-                                        <div className="loading-spinner-publish"></div> Đang xử lý...
-                                      </>
-                                    ) : 'Xuất bản'}
-                                  </button>
-                                ) : (
-                                  <div className="cjm-publish-placeholder"></div>
-                                )}
-                                <div className="cjm-more-dropdown">
-                                  <button 
-                                    className="cjm-more-btn"
-                                    onClick={(e) => toggleDropdown(e, job.id)}
-                                  >
-                                    •••
-                                  </button>
-                                  <div className={`cjm-dropdown-menu ${openDropdownId === job.id ? 'show' : ''}`}>
-                                    <button className="dropdown-item" onClick={() => handleDuplicate(job.id)}>
-                                      <span className="item-icon">📋</span> Sao chép tin
-                                    </button>
-                                    <Link to={`/company/jobs/edit/${job.id}`} className="dropdown-item">
-                                      <span className="item-icon">✏️</span> Sửa tin
-                                    </Link>
-                                    <button className="dropdown-item" onClick={() => handleExtend(job.id)}>
-                                      <span className="item-icon">📅</span> Gia hạn
-                                    </button>
-                                    <Link to={`/jobs/${job.id}`} target="_blank" className="dropdown-item">
-                                      <span className="item-icon">👁️</span> Xem lại
-                                    </Link>
-                                    <div className="dropdown-divider"></div>
-                                    <button className="dropdown-item danger" onClick={() => handleDelete(job.id)}>
-                                      <span className="item-icon">🗑️</span> Xóa tin đăng
-                                    </button>
-                                  </div>
-                                </div>
+                              <div className="modern-actions">
+                                <button className="action-btn edit" onClick={() => handleEdit(job.id)}>
+                                  <i className="fa-solid fa-pencil"></i> Sửa
+                                </button>
+                                <button className="action-btn delete" onClick={() => handleDelete(job.id)}>
+                                  <i className="fa-regular fa-trash-can"></i> Xóa
+                                </button>
                               </div>
                             </td>
                           </tr>
@@ -608,9 +502,9 @@ const CompanyJobManagement = () => {
                           </div>
                           <h3 style={{color: '#1e293b', marginBottom: '0.5rem'}}>Chưa có tin đăng nào</h3>
                           <p style={{color: '#64748b', marginBottom: '1.5rem'}}>Hãy bắt đầu tìm kiếm nhân tài bằng cách đăng tin tuyển dụng đầu tiên của bạn.</p>
-                          <Link to="/company/jobs/post" className="cjm-post-btn-small">
+                          <button onClick={() => { setEditingJob(null); setShowPostModal(true); }} className="cjm-post-btn-small">
                             + Đăng tin ngay
-                          </Link>
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -660,8 +554,8 @@ const CompanyJobManagement = () => {
              ⓘ Để đảm bảo tin đăng hợp lệ, tham khảo <a href="#">Quy định duyệt tin tuyển dụng</a> tại đây
           </div>
         </div>
-      </main>
       </div>
+    </div>
 
       {/* Toast Notification */}
       {toast.show && (
@@ -672,6 +566,17 @@ const CompanyJobManagement = () => {
           <span className="cjm-toast-message">{toast.message}</span>
         </div>
       )}
+
+      {/* Post Job Modal */}
+      <PostJobModal 
+        isOpen={showPostModal} 
+        onClose={() => setShowPostModal(false)}
+        jobToEdit={editingJob}
+        onSuccess={() => {
+            setShowPostModal(false);
+            fetchJobs();
+        }}
+      />
     </div>
   );
 };

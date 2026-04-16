@@ -1,7 +1,7 @@
 .pjai-layout {
   display: flex;
   min-height: 100vh;
-  background-color: #f6f6f6;
+  background-color: #f8fafc;
   font-family: 'Inter', sans-serif;
 }
 
@@ -29,11 +29,13 @@ body.sidebar-pinned .pjai-main {
 .pjai-breadcrumb {
   font-size: 0.8rem;
   color: #64748b;
-  font-weight: 600;
+  font-weight: 700;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .pjai-breadcrumb a {
@@ -43,270 +45,97 @@ body.sidebar-pinned .pjai-main {
 }
 
 .pjai-breadcrumb a:hover {
-  color: #5a30b9;
+  color: #1e3a8a;
 }
 
 .pjai-breadcrumb .active-crumb {
-  color: #5a30b9;
-}
-
-.pjai-body {
-  display: flex;
-  gap: 2rem;
-  align-items: flex-start;
-}
-
-.pjai-col-left {
-  flex: 5;
-}
-
-.pjai-col-right {
-  flex: 7;
+  color: #1e3a8a;
 }
 
 /* Left Card Styling */
 .pjai-card {
   background: #ffffff;
   border-radius: 20px;
-  padding: 2rem;
+  padding: 2.5rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e7e7e8;
-}
-
-.pjai-title-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  border: 1px solid #f1f5f9;
 }
 
 .pjai-icon-bg {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #c3a8ff 0%, #5a30b9 100%);
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  font-size: 1.5rem;
 }
 
 .pjai-title {
-  font-size: 1.4rem;
-  color: #1a1a1a;
-  margin: 0 0 0.25rem 0;
-}
-
-.pjai-subtitle {
-  font-size: 0.9rem;
-  color: #666;
-  margin: 0;
-  line-height: 1.5;
-}
-
-.pjai-form-group {
-  margin-bottom: 1.5rem;
-}
-
-.pjai-form-group label {
-  display: block;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #475569;
-  margin-bottom: 0.5rem;
-  letter-spacing: 0.5px;
-}
-
-.pjai-form-group input,
-.pjai-form-group select,
-.pjai-form-group textarea {
-  width: 100%;
-  padding: 0.9rem 1rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 10px;
-  font-family: inherit;
-  font-size: 0.95rem;
+  font-size: 1.75rem;
+  font-weight: 800;
   color: #1e293b;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  background: #fff;
-  box-sizing: border-box;
+  margin: 0 0 0.5rem 0;
 }
 
 .pjai-form-group input:focus,
 .pjai-form-group select:focus,
 .pjai-form-group textarea:focus {
   outline: none;
-  border-color: #5a30b9;
-  box-shadow: 0 0 0 3px rgba(90, 48, 185, 0.1);
-}
-
-.pjai-form-group textarea {
-  resize: vertical;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .pjai-btn-generate {
   width: 100%;
   padding: 1rem;
-  background: linear-gradient(135deg, #5a30b9 0%, #451da0 100%);
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
   color: white;
   border: none;
   border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.1rem;
+  font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 4px 15px rgba(90, 48, 185, 0.25);
+  gap: 0.75rem;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
 }
 
 .pjai-btn-generate:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(90, 48, 185, 0.4);
-}
-
-.pjai-btn-generate:disabled {
-  opacity: 0.8;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.pjai-spinner {
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255,255,255,0.3);
-  border-radius: 50%;
-  border-top-color: #fff;
-  animation: spin 1s ease-in-out infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-/* Right Card Styling */
-.pjai-preview-card {
-  background: #ffffff;
-  border-radius: 20px;
-  height: calc(100vh - 180px);
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e7e7e8;
-  overflow: hidden;
-}
-
-.pjai-preview-header {
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid #f1f5f9;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #f8fafc;
-}
-
-.pjai-preview-header h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  color: #1e293b;
+  box-shadow: 0 8px 20px rgba(30, 58, 138, 0.3);
 }
 
 .pjai-btn-outline {
-  padding: 0.6rem 1rem;
-  border: 1px solid #5a30b9;
+  padding: 0.6rem 1.25rem;
+  border: 1px solid #1e3a8a;
   background: transparent;
-  color: #5a30b9;
+  color: #1e3a8a;
   border-radius: 8px;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .pjai-btn-outline:hover {
-  background: #f0ebff;
+  background: #eff6ff;
+  border-color: #2563eb;
+  color: #2563eb;
 }
 
-.pjai-preview-content {
-  flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
-}
-
-/* State: Empty */
-.pjai-empty-state {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: #64748b;
-}
-
-.pjai-empty-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-  opacity: 0.5;
-}
-
-/* State: Loading Skeleton */
-.pjai-loading-state {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.skeleton-line {
-  height: 12px;
-  background: #e2e8f0;
-  border-radius: 6px;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-}
-
-.skeleton-line.title {
-  height: 20px;
-  width: 40%;
-  margin-bottom: 0.5rem;
-}
-
-.skeleton-line.short {
-  width: 60%;
-}
-
+/* Skeleton Animation */
 .skeleton-line::after {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+  background: linear-gradient(90deg, transparent, rgba(30, 58, 138, 0.05), transparent);
   transform: translateX(-100%);
   animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  100% { transform: translateX(100%); }
-}
-
-/* State: Result Text */
-.pjai-result-text {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: #334155;
-}
-
-@media (max-width: 992px) {
-  .pjai-body {
-    flex-direction: column;
-  }
-  .pjai-col-left, .pjai-col-right {
-    width: 100%;
-  }
-  .pjai-preview-card {
-    height: 500px;
-  }
 }

@@ -44,7 +44,7 @@ body.sidebar-pinned .pjs-main {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #5a30b9;
+  color: #1e3a8a;
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 500;
@@ -72,8 +72,8 @@ body.sidebar-pinned .pjs-main {
 
 .pjs-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  border-color: #5a30b9;
+  box-shadow: 0 10px 15px -3px rgba(30, 58, 138, 0.1);
+  border-color: #1e3a8a;
 }
 
 .pjs-card-icon-box {
@@ -87,8 +87,8 @@ body.sidebar-pinned .pjs-main {
 }
 
 .ai-bg {
-  background-color: #f6f6f6;
-  color: #5a30b9;
+  background-color: #f8fafc;
+  color: #1e3a8a;
 }
 
 .jd-bg {
@@ -140,21 +140,21 @@ body.sidebar-pinned .pjs-main {
 }
 
 .pjs-btn-primary {
-  background-color: #5a30b9;
+  background-color: #1e3a8a;
   color: #ffffff;
 }
 
 .pjs-btn-primary:hover {
-  background-color: #451da0;
+  background-color: #1e40af;
 }
 
 .pjs-btn-secondary {
-  background-color: rgba(195, 168, 255, 0.16);
-  color: #451da0;
+  background-color: #eff6ff;
+  color: #1e3a8a;
 }
 
 .pjs-btn-secondary:hover {
-  background-color: rgba(195, 168, 255, 0.25);
+  background-color: #dbeafe;
 }
 
 .pjs-manual-text {
@@ -164,7 +164,7 @@ body.sidebar-pinned .pjs-main {
 }
 
 .pjs-manual-text a {
-  color: #5a30b9;
+  color: #1e3a8a;
   text-decoration: none;
   font-weight: 700;
 }

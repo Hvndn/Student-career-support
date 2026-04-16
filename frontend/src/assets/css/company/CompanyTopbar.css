@@ -5,10 +5,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 2rem;
+  padding: 0 1.5rem 0 0; /* Padding left sẽ được xử lý qua margin nội dung hoặc padding của Topbar-left */
   position: fixed;
   top: 0;
-  left: 70px;
+  left: 260px;
   right: 0;
   z-index: 480;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -18,7 +18,16 @@
 
 .cd-topbar-left {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
+  align-items: center;
+  padding-left: 1rem;
+}
+
+.cd-breadcrumbs {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+  display: flex;
   align-items: center;
 }
 
@@ -149,8 +158,55 @@
 }
 
 .cd-dropdown-arrow {
-  font-size: 0.7rem;
+  font-size: 0.6rem;
   color: #94a3b8;
+  margin-left: 0.5rem;
+}
+
+.cd-dropdown-divider {
+  height: 1px;
+  background: #f1f5f9;
+  margin: 0.5rem -1.5rem;
+}
+
+.cd-dropdown-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.cd-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  color: #475569;
+  font-weight: 500;
+  font-size: 0.875rem;
+  text-decoration: none;
+  background: transparent;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.cd-dropdown-item:hover {
+  background: #f8fafc;
+  color: #1e3a8a;
+  padding-left: 1rem;
+}
+
+.cd-dropdown-item.logout {
+  color: #ef4444;
+}
+
+.cd-dropdown-item.logout:hover {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.item-icon {
+  font-size: 1.1rem;
 }
 
 /* Hover Dropdown Animation */
@@ -158,7 +214,7 @@
   position: absolute;
   top: 100%;
   right: 0;
-  width: 320px;
+  width: 260px;
   background: white;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
@@ -167,8 +223,9 @@
   visibility: hidden;
   transform: translateY(10px);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  padding: 1.5rem;
+  padding: 1.25rem;
   pointer-events: none;
+  margin-top: 0.5rem;
 }
 
 .cd-user-container:hover .cd-profile-dropdown {
@@ -259,48 +316,66 @@
   border: none;
   width: 24px;
   height: 24px;
-  border-radius: 50%;
+  background: #e2e8f0;
+}
+
+/* User Profile */
+.cd-user-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cd-user-profile:hover {
+  background: #f8fafc;
+}
+
+.user-avatar-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid #f1f5f9;
+}
+
+.tb-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tb-avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #dbeafe;
+  color: #1e40af;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
+  font-weight: 700;
+  font-size: 1.1rem;
 }
 
-.action-arrow:hover {
-  background: #e2e8f0;
-  color: #2563eb;
-}
-
-.cd-dropdown-links {
-  border-top: 1px solid #f1f5f9;
-  padding-top: 1rem;
+.user-info {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 }
 
-.cd-dropdown-link {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  padding: 0.7rem 0.8rem;
-  text-decoration: none;
-  color: #475569;
+.user-name {
   font-size: 0.9rem;
   font-weight: 600;
-  border-radius: 8px;
-  transition: all 0.15s;
+  color: #1e293b;
+  line-height: 1.2;
 }
 
-.cd-dropdown-link:hover {
-  background: #f8fafc;
-  color: #2563eb;
-}
-
-.cd-dropdown-link.text-danger:hover {
-  color: #ef4444;
-  background: #fef2f2;
+.user-role {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 500;
 }
 
 .cd-lang-switch {

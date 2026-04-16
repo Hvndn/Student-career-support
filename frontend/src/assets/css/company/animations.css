@@ -1,0 +1,74 @@
+/* DAU Connect Animation System */
+
+:root {
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base Keyframes */
+@keyframes intro-y-animation {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes intro-x-animation {
+    0% {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Utility Classes */
+.intro-y {
+    animation: intro-y-animation 0.5s var(--ease-out-expo) forwards;
+    opacity: 0; /* Start hidden */
+}
+
+.intro-x {
+    animation: intro-x-animation 0.5s var(--ease-out-expo) forwards;
+    opacity: 0; /* Start hidden */
+}
+
+.fade-in {
+    animation: fade-in 0.4s ease-out forwards;
+}
+
+/* Staggered Delays */
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
+
+/* Micro-interactions */
+.smooth-transition {
+    transition: all 0.3s var(--ease-in-out);
+}
+
+.hover-lift {
+    transition: transform 0.3s var(--ease-out-expo), box-shadow 0.3s var(--ease-out-expo);
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.active-scale:active {
+    transform: scale(0.95);
+}

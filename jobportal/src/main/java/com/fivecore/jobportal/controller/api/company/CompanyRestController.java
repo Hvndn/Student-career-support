@@ -9,6 +9,7 @@ import com.fivecore.jobportal.entity.*;
 import com.fivecore.jobportal.repository.*;
 import com.fivecore.jobportal.service.auth.ApplicationService;
 import com.fivecore.jobportal.service.company.CompanyService;
+import com.fivecore.jobportal.service.common.StorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 /**
  * REST API Controller cho Doanh nghiệp.
  */
-@RestController
+@RestController("employerCompanyRestController")
 @RequestMapping("/api/company")
 @RequiredArgsConstructor
 @Slf4j
@@ -38,6 +39,7 @@ public class CompanyRestController {
     private final SavedCandidateRepository savedCandidateRepository;
     private final StudentRepository studentRepository;
     private final CompanyRepository companyRepository;
+    private final StorageService storageService;
 
     private Integer getCurrentCompanyId(Authentication authentication) {
         return userRepository.findByEmail(authentication.getName())
@@ -75,6 +77,20 @@ public class CompanyRestController {
                 .build();
 
         return ResponseEntity.ok(ApiResponse.success("Lấy dashboard thành công", dashboard));
+    }
+
+    /**
+     * API Upload Banner cho tin tuyển dụng.
+     */
+    @PostMapping("/jobs/upload-banner")
+    public ResponseEntity<ApiResponse<String>> uploadBanner(@RequestParam("file") MultipartFile file) {
+        try {
+            String bannerUrl = storageService.saveFile(file, "banners");
+            return ResponseEntity.ok(ApiResponse.success("Upload banner thành công", bannerUrl));
+        } catch (Exception e) {
+            log.error("Lỗi upload banner: ", e);
+            return ResponseEntity.badRequest().body(ApiResponse.error("Lỗi upload: " + e.getMessage(), "UPLOAD_ERROR"));
+        }
     }
 
     /**

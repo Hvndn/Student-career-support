@@ -1,0 +1,309 @@
+/* ─── Post Job Modal V2 - Premium Design ─── */
+.pjm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  animation: pjm-fade-in 0.3s ease-out;
+}
+
+.pjm-container {
+  background: #ffffff;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  position: relative;
+  animation: pjm-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes pjm-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pjm-slide-up {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Header */
+.pjm-header {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  z-index: 10;
+}
+
+.pjm-header h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.pjm-header h2 i {
+  color: #2563eb;
+}
+
+.btn-close-modal {
+  background: #f1f5f9;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: #64748b;
+  font-size: 1.2rem;
+  transition: all 0.2s;
+}
+
+.btn-close-modal:hover {
+  background: #fee2e2;
+  color: #ef4444;
+  transform: rotate(90deg);
+}
+
+/* Body */
+.pjm-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  background: #f8fafc;
+}
+
+.pjm-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.pjm-body::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 10px;
+}
+
+/* Banner Upload */
+.pjm-banner-upload {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  border-radius: 16px;
+  background: #e2e8f0;
+  border: 2px dashed #94a3b8;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  transition: all 0.3s;
+}
+
+.pjm-banner-upload:hover {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.pjm-banner-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pjm-banner-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #64748b;
+  gap: 0.5rem;
+}
+
+.pjm-banner-placeholder i {
+  font-size: 2.5rem;
+  color: #94a3b8;
+}
+
+.pjm-banner-placeholder span {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.pjm-banner-placeholder small {
+  font-size: 0.8rem;
+}
+
+.pjm-upload-input {
+  display: none;
+}
+
+/* Sections */
+.pjm-section {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  margin-bottom: 1.5rem;
+  border: 1px solid #f1f5f9;
+}
+
+.pjm-section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 2px solid #eff6ff;
+  padding-bottom: 0.75rem;
+}
+
+.pjm-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.pjm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pjm-field label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.pjm-input, .pjm-select {
+  padding: 0.75rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: #1e293b;
+  outline: none;
+  transition: all 0.2s;
+  background: #fff;
+}
+
+.pjm-input:focus, .pjm-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Tag style matching original PostJob */
+.pjm-tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  min-height: 48px;
+}
+
+.pjm-tag {
+  background: #dbeafe;
+  color: #1d4ed8;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: zoomIn 0.2s;
+}
+
+.pjm-tag button {
+  background: none;
+  border: none;
+  color: #1d4ed8;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+}
+
+.pjm-tag-input {
+  border: none;
+  outline: none;
+  flex: 1;
+  min-width: 120px;
+  background: transparent;
+  font-size: 0.95rem;
+}
+
+/* Footer */
+.pjm-footer {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid #e2e8f0;
+  background: #ffffff;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  z-index: 10;
+}
+
+.pjm-btn-draft {
+  padding: 0.75rem 1.5rem;
+  background: #f1f5f9;
+  color: #475569;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pjm-btn-draft:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.pjm-btn-submit {
+  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, #1e40af, #2563eb);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  transition: all 0.2s;
+}
+
+.pjm-btn-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+}
+
+.pjm-btn-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

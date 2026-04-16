@@ -40,5 +40,6 @@ public class JobRequest {
     private String contactEmail;
     private String contactPhone;
     private String status;
+    private String bannerUrl;
     private List<String> skills;
 }

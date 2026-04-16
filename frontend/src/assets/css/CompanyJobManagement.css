@@ -794,3 +794,184 @@ input:disabled + .cjm-slider {
     text-align: center;
   }
 }
+
+/* ─── NEW MODERN TABLE STYLES (Red Theme) ─── */
+.cjm-post-btn-maroon {
+  background-color: #8b1014;
+  color: white;
+  padding: 0.6rem 1.25rem;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cjm-post-btn-maroon:hover {
+  background-color: #a01016;
+}
+
+.cjm-search-box {
+  position: relative;
+  width: 300px;
+}
+
+.cjm-search-box input {
+  width: 100%;
+  padding: 0.6rem 1rem 0.6rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.cjm-search-box input:focus {
+  border-color: #8b1014;
+}
+
+.cjm-search-box .search-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+}
+
+.cjm-table-modern {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 10px; /* Space between rows */
+  text-align: left;
+}
+
+.cjm-table-modern thead th {
+  padding: 0 1.25rem 0.5rem 1.25rem;
+  color: #64748b;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border: none;
+}
+
+.modern-row td {
+  background: white;
+  padding: 1.25rem;
+  border-top: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.modern-row td:first-child {
+  border-left: 1px solid #f1f5f9;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.modern-row td:last-child {
+  border-right: 1px solid #f1f5f9;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.modern-row:hover td {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.modern-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #f1f5f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #e2e8f0;
+}
+
+.modern-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  color: #94a3b8;
+  font-size: 1.25rem;
+}
+
+.modern-job-title {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.modern-job-skills {
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+.modern-industry {
+  color: #475569;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.modern-stats, .modern-applicants {
+  color: #475569;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.modern-stats i, .modern-applicants i {
+  color: #94a3b8;
+  margin-right: 0.25rem;
+}
+
+.modern-applicants {
+  color: #e11d48; /* Red for applicants as in screenshot */
+}
+
+.modern-applicants i {
+  color: #e11d48;
+}
+
+.modern-status {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.modern-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0;
+}
+
+.action-btn.edit {
+  color: #64748b;
+}
+.action-btn.edit:hover {
+  color: #1e293b;
+}
+
+.action-btn.delete {
+  color: #ef4444;
+}
+.action-btn.delete:hover {
+  color: #b91c1c;
+}
