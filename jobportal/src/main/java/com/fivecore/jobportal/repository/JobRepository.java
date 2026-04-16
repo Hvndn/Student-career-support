@@ -11,4 +11,7 @@ public interface JobRepository extends JpaRepository<Job, Integer>, JpaSpecifica
     List<Job> findByCompanyId(Integer companyId);
 
     long countByCompanyId(Integer companyId);
+
+    @org.springframework.data.jpa.repository.Query("SELECT sj.job.id FROM SavedJob sj WHERE sj.student.id = :studentId")
+    List<Integer> findSavedJobIdsByStudentId(Integer studentId);
 }
