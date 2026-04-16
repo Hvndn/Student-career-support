@@ -122,6 +122,13 @@ export const companyApi = {
     getJobs: () => api.get('/company/jobs'),
     deleteJob: (id) => api.delete(`/company/jobs/${id}`),
     duplicateJob: (id) => api.post(`/company/jobs/${id}/duplicate`),
+    uploadBanner: (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        return api.post('/company/jobs/upload-banner', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+    },
     saveCandidate: (studentId) => api.post(`/company/saved-candidates/${studentId}`),
     unsaveCandidate: (studentId) => api.delete(`/company/saved-candidates/${studentId}`),
     getSavedCandidates: () => api.get('/company/saved-candidates'),

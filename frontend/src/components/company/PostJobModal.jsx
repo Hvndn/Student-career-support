@@ -157,12 +157,8 @@ const PostJobModal = ({ isOpen, onClose, jobToEdit, onSuccess }) => {
     };
 
     const uploadBanner = async (file) => {
-        const formData = new FormData();
-        formData.append('file', file);
         try {
-            const res = await companyApi.post('/jobs/upload-banner', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
+            const res = await companyApi.uploadBanner(file);
             if (res.data.status === 'success') {
                 return res.data.data; // trả về url
             }
@@ -189,7 +185,7 @@ const PostJobModal = ({ isOpen, onClose, jobToEdit, onSuccess }) => {
                 if (uploadedUrl) {
                     finalBannerUrl = uploadedUrl;
                 } else {
-                    alert('Lỗi khi tải ảnh bìa lên. Sẽ sử dụng dữ liệu không có ảnh.');
+                    console.warn('Upload banner thất bại, sẽ giữ nguyên banner cũ hoặc không có banner.');
                 }
             }
 
