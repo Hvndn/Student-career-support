@@ -77,20 +77,54 @@ const CompanyTopbar = () => {
         </div>
 
         <div className="divider"></div>
-
-        <div className="cd-user-profile">
-          <div className="user-avatar-box">
-             {companyData.logoUrl ? (
+        
+        <div className="cd-user-container">
+          <div className="cd-user-profile">
+            <div className="user-avatar-box">
+              {companyData.logoUrl ? (
                 <img src={getImageUrl(companyData.logoUrl)} alt="Logo" className="tb-avatar" />
               ) : (
                 <div className="tb-avatar-placeholder">
-                {String(companyName || 'D').charAt(0)}
+                  {String(companyName || 'D').charAt(0)}
                 </div>
               )}
+            </div>
+            <div className="user-info">
+              <span className="user-name">{companyName}</span>
+              <span className="user-role">Quản trị viên</span>
+            </div>
+            <span className="cd-dropdown-arrow">▼</span>
           </div>
-          <div className="user-info">
-            <span className="user-name">{companyName}</span>
-            <span className="user-role">Quản trị viên</span>
+
+          <div className="cd-profile-dropdown shadow-lg">
+             <div className="cd-dropdown-header">
+                <h4>{companyName}</h4>
+                <p className="cd-dropdown-email">{companyData.email}</p>
+             </div>
+             
+             <div className="cd-dropdown-divider"></div>
+             
+             <div className="cd-dropdown-menu">
+                <Link to="/company/profile" className="cd-dropdown-item">
+                  <span className="item-icon">🏢</span>
+                  Hồ sơ công ty
+                </Link>
+                <Link to="/company/employer/pricing" className="cd-dropdown-item">
+                  <span className="item-icon">💳</span>
+                  Dịch vụ & Gói tin
+                </Link>
+                <div className="cd-dropdown-divider"></div>
+                <button 
+                  className="cd-dropdown-item logout" 
+                  onClick={() => {
+                    localStorage.removeItem('user');
+                    navigate('/login');
+                  }}
+                >
+                  <span className="item-icon">🚪</span>
+                  Đăng xuất
+                </button>
+             </div>
           </div>
         </div>
       </div>
