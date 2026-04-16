@@ -680,6 +680,7 @@ const CompanyJobManagement = () => {
           </div>
         </div>
       </div>
+    </div>
 
       {/* Toast Notification */}
       {toast.show && (

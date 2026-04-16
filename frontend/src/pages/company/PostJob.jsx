@@ -214,7 +214,7 @@ const PostJob = () => {
     return (
         <div className="cd-layout">
             <CompanySidebar />
-            <div className="cd-wrapper">
+            <div className="cd-main">
                 <CompanyNavbar />
                 <main className="pj-wrapper">
                     <div className="pj-header-container intro-y">
