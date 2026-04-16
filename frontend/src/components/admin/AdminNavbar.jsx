@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../../assets/css/admin/AdminNavbar.css';
+import ChangePasswordModal from './ChangePasswordModal';
 
 const AdminNavbar = ({ title }) => {
-    // const user = JSON.parse(localStorage.getItem('user'));
+    const user = JSON.parse(localStorage.getItem('user'));
     const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+    const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
     const dropdownRef = useRef(null);
 
     useEffect(() => {
@@ -49,11 +51,17 @@ const AdminNavbar = ({ title }) => {
                         {showProfileDropdown && (
                             <div className="admin-profile-dropdown">
                                 <div className="dropdown-header">
-                                    <h4 className="dropdown-name">DAU Admin</h4>
-                                    <span className="dropdown-role">admin</span>
+                                    <h4 className="dropdown-name">{user?.fullName || 'Admin'}</h4>
+                                    <span className="dropdown-role">{user?.email || 'admin'}</span>
                                 </div>
                                 <div className="dropdown-divider"></div>
-                                <button className="dropdown-item">
+                                <button 
+                                    className="dropdown-item" 
+                                    onClick={() => {
+                                        setIsPasswordModalOpen(true);
+                                        setShowProfileDropdown(false);
+                                    }}
+                                >
                                     <span className="material-symbols-outlined">lock</span>
                                     Đổi mật khẩu
                                 </button>
@@ -67,6 +75,9 @@ const AdminNavbar = ({ title }) => {
                     </div>
                 </div>
             </div>
+            {isPasswordModalOpen && (
+                <ChangePasswordModal onClose={() => setIsPasswordModalOpen(false)} />
+            )}
         </header>
     );
 };

@@ -204,14 +204,40 @@
     border-radius: 10px;
     font-size: 1rem;
     color: #1a1a1a;
-    transition: all 0.2s ease;
     outline: none;
+    caret-color: black;
 }
 
 .form-input:focus {
     background: #fff;
     border-color: #0d5cda;
     box-shadow: 0 0 0 3px rgba(13, 92, 218, 0.1);
+}
+
+.password-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.password-toggle-btn:hover {
+    color: #0d5cda;
 }
 
 /* SUBMIT BTN - Shared Button Style */

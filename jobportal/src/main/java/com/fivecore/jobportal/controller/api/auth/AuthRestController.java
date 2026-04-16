@@ -132,7 +132,13 @@ public class AuthRestController {
             return ResponseEntity.status(401).body(ApiResponse.error("Vui lòng đăng nhập để thực hiện hành động này", "UNAUTHORIZED"));
         }
 
-        boolean success = registerService.changePassword(authentication.getName(), request);
+        String email = authentication.getName();
+        // Hỗ trợ lấy email nếu đăng nhập qua Google OAuth2
+        if (authentication.getPrincipal() instanceof org.springframework.security.oauth2.core.user.OAuth2User oauth2User) {
+            email = oauth2User.getAttribute("email");
+        }
+
+        boolean success = registerService.changePassword(email, request);
         
         if (success) {
             return ResponseEntity.ok(ApiResponse.success("Đổi mật khẩu thành công", null));

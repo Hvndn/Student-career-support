@@ -23,6 +23,7 @@ const Login = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [role, setRole] = useState('student'); // Default role is student
 
@@ -156,14 +157,25 @@ const Login = () => {
                                 <label style={{ marginBottom: 0 }}>MẬT KHẨU</label>
                                 <Link to="/forgot-password" style={{ fontSize: '0.8rem', color: '#0d5cda', fontWeight: '600' }}>Quên mật khẩu?</Link>
                             </div>
-                            <input
-                                type="password"
-                                className="form-input"
-                                placeholder="••••••••"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                            />
+                            <div className="password-input-wrapper">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    className="form-input"
+                                    placeholder="••••••••"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                />
+                                <button 
+                                    type="button" 
+                                    className="password-toggle-btn"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
+                                        {showPassword ? 'visibility_off' : 'visibility'}
+                                    </span>
+                                </button>
+                            </div>
                         </div>
 
                         <button type="submit" className="btn-submit">
