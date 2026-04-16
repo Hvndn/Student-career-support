@@ -53,12 +53,12 @@
 
 .submenu-item:hover {
   background: #f8fafc;
-  color: #2563eb;
+  color: #1e3a8a;
 }
 
 .submenu-item.active {
-  background: #eff6ff;
-  color: #2563eb;
+  background: #dbeafe;
+  color: #1e3a8a;
 }
 
 .badge-count {
@@ -72,7 +72,7 @@
 }
 
 .submenu-item.active .badge-count {
-  background: #2563eb;
+  background: #1e3a8a;
   color: white;
 }
 
@@ -131,9 +131,9 @@
 
 .filter-control:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: #1e3a8a;
   background: white;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
 }
 
 select.filter-control {
@@ -165,7 +165,7 @@ select.filter-control {
 }
 
 .tab-item.active {
-  color: #2563eb;
+  color: #1e3a8a;
 }
 
 .tab-item.active::after {
@@ -175,7 +175,7 @@ select.filter-control {
   left: 0;
   width: 100%;
   height: 3px;
-  background: #2563eb;
+  background: #1e3a8a;
   border-radius: 3px 3px 0 0;
 }
 
@@ -284,7 +284,7 @@ select.filter-control {
 }
 
 .job-link:hover {
-    color: #2563eb;
+    color: #1e3a8a;
 }
 
 /* Status Pill */
@@ -301,7 +301,7 @@ select.filter-control {
 .status-pending { color: #6366f1; background: #eef2ff; }
 .status-review { color: #f59e0b; background: #fffbeb; }
 .status-suitable { color: #10b981; background: #ecfdf5; }
-.status-interview { color: #3b82f6; background: #eff6ff; }
+.status-interview { color: #1e40af; background: #dbeafe; }
 .status-offered { color: #f59e0b; background: #fff7ed; }
 .status-accepted { color: #059669; background: #f0fdf4; }
 .status-rejected { color: #ef4444; background: #fef2f2; }
@@ -381,9 +381,9 @@ select.filter-control {
 }
 
 .action-btn.view:hover {
-    background: #eff6ff;
-    color: #3b82f6;
-    border-color: #dbeafe;
+    background: #dbeafe;
+    color: #1e40af;
+    border-color: #bfdbfe;
 }
 
 .action-btn.undo:hover {
