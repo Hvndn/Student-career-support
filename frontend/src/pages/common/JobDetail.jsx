@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { jobApi, studentApi } from '../../api';
 import '../../assets/css/common/JobDetail.css';
+import ApplyModal from '../../components/common/ApplyModal';
 
 const JobDetail = () => {
     const { id } = useParams();
@@ -9,7 +11,11 @@ const JobDetail = () => {
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState('');
     const [user, setUser] = useState(null);
+    const [profile, setProfile] = useState(null);
     const navigate = useNavigate();
+
+    // Modal State
+    const [showApplyModal, setShowApplyModal] = useState(false);
 
     // AI Analysis State
     const [aiState, setAiState] = useState('idle'); // 'idle', 'loading', 'result'
@@ -18,6 +24,12 @@ const JobDetail = () => {
     useEffect(() => {
         const savedUser = JSON.parse(localStorage.getItem('user'));
         setUser(savedUser);
+
+        if (savedUser?.role === 'ROLE_STUDENT') {
+            studentApi.getProfile()
+                .then(res => setProfile(res.data.data))
+                .catch(err => console.error(err));
+        }
 
         jobApi.getJobDetail(id)
             .then(res => {
@@ -43,14 +55,17 @@ const JobDetail = () => {
             });
     }, [id]);
 
-    const handleApply = async () => {
-        try {
-            const res = await studentApi.applyJob(id);
-            setMessage(res.data.message);
-            setJob(prev => ({ ...prev, isApplied: true, applied: true }));
-        } catch (err) {
-            setMessage(err.response?.data?.message || 'Bạn cần đăng nhập để ứng tuyển!');
+    const handleApplyClick = () => {
+        if (!user) {
+            toast.error("Bạn cần đăng nhập để ứng tuyển!");
+            navigate('/login');
+            return;
         }
+        setShowApplyModal(true);
+    };
+
+    const handleApplySuccess = () => {
+        setJob(prev => ({ ...prev, isApplied: true, applied: true }));
     };
 
     const handleAnalyze = async () => {
@@ -232,7 +247,7 @@ const JobDetail = () => {
                     {/* Apply Action */}
                     <button 
                         className={`jd-btn-apply-full ${job.isApplied ? '' : 'active'}`}
-                        onClick={!job.isApplied ? handleApply : null}
+                        onClick={!job.isApplied ? handleApplyClick : null}
                         disabled={job.isApplied}
                     >
                         {job.isApplied ? 'Đã ứng tuyển' : 'Ứng tuyển ngay'}
@@ -296,6 +311,15 @@ const JobDetail = () => {
     return (
         <div className="jd-page-standard">
             {renderContent()}
+
+            {showApplyModal && (
+                <ApplyModal 
+                    job={job}
+                    profile={profile}
+                    onClose={() => setShowApplyModal(false)}
+                    onApplySuccess={handleApplySuccess}
+                />
+            )}
         </div>
     );
 };
