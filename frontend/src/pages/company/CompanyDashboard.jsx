@@ -41,12 +41,12 @@ const CompanyDashboard = () => {
     
     // Define chart data based on real API data
     const chartData = data ? [
-        { name: 'Hồ sơ ứng tuyển', value: data.totalCandidatesCount || 0, color: '#bfdbfe' },
-        { name: 'Chưa xem', value: data.pendingCount || 0, color: '#bfdbfe' },
-        { name: 'Chờ đánh giá', value: data.reviewCount || 0, color: '#bfdbfe' },
-        { name: 'Phù hợp', value: data.suitableCount || 0, color: '#bfdbfe' },
-        { name: 'Phỏng vấn', value: data.interviewCount || 0, color: '#bfdbfe' },
-        { name: 'Đã tuyển', value: data.acceptedCount || 0, color: '#3b82f6' },
+        { name: 'Hồ sơ ứng tuyển', value: data.totalCandidatesCount || 0, color: '#dbeafe' },
+        { name: 'Chưa xem', value: data.pendingCount || 0, color: '#dbeafe' },
+        { name: 'Chờ đánh giá', value: data.reviewCount || 0, color: '#dbeafe' },
+        { name: 'Phù hợp', value: data.suitableCount || 0, color: '#dbeafe' },
+        { name: 'Phỏng vấn', value: data.interviewCount || 0, color: '#dbeafe' },
+        { name: 'Đã tuyển', value: data.acceptedCount || 0, color: '#1e40af' },
     ] : [];
 
     if (loading) return (
