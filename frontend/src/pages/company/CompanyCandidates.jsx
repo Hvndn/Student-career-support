@@ -154,151 +154,119 @@ const CompanyCandidates = () => {
 
                     <div className="candidates-container">
                         <div className="candidates-main-content full-width">
-                            {/* Filter Panel */}
-                            <div className="filter-panel glass intro-y delay-1">
-                                <div className="filter-group">
-                                    <label>Lọc theo tin đăng</label>
+                            
+                            {/* DAU Connect Standard Filter Bar */}
+                            <div className="dau-filter-bar intro-y" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px', alignItems: 'center' }}>
+                                <div className="filter-left" style={{ display: 'flex', gap: '16px' }}>
+                                    {/* Lọc Trạng Thái */}
                                     <select 
-                                        className="filter-control"
+                                        className="dau-select filter-control"
+                                        value={activeTab}
+                                        onChange={(e) => setActiveTab(e.target.value)}
+                                        style={{ minWidth: '180px', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 16px', color: '#64748b', fontSize: '14px' }}
+                                    >
+                                        <option value="all">Tất cả trạng thái</option>
+                                        <option value="pending">Chờ duyệt</option>
+                                        <option value="suitable">Đã duyệt</option>
+                                        <option value="interview">Phỏng vấn</option>
+                                        <option value="offered">Đã gửi offer</option>
+                                        <option value="accepted">Đã nhận</option>
+                                        <option value="rejected">Từ chối</option>
+                                    </select>
+
+                                    {/* Chọn vị trí ứng tuyển */}
+                                    <select 
+                                        className="dau-select filter-control"
                                         value={selectedJobId}
                                         onChange={(e) => setSelectedJobId(e.target.value)}
+                                        style={{ minWidth: '220px', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 16px', color: '#64748b', fontSize: '14px' }}
                                     >
-                                        <option value="all">Tất cả tin tuyển dụng</option>
-                                        {jobs.map(job => (
-                                            <option key={job.id} value={job.id}>{job.title}</option>
-                                        ))}
+                                        <option value="all">Chọn ngày...</option>
                                     </select>
                                 </div>
-                                <div className="filter-group">
-                                    <label>Lọc theo thẻ</label>
-                                    <select 
-                                        className="filter-control"
-                                        value={selectedTagId}
-                                        onChange={(e) => setSelectedTagId(e.target.value)}
-                                    >
-                                        <option value="all">Tất cả các thẻ</option>
-                                        {allTags.map(tag => (
-                                            <option key={tag.id} value={tag.id}>{tag.name}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="filter-group">
-                                    <label>Tìm kiếm ứng viên</label>
-                                    <div className="search-input-wrapper">
-                                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                
+                                <div className="filter-right">
+                                    <div className="search-input-wrapper" style={{ position: 'relative' }}>
                                         <input 
                                             type="text" 
-                                            placeholder="Tên ứng viên, tên tin đăng..." 
-                                            className="filter-control"
+                                            placeholder="Tìm ứng viên hoặc vị trí..." 
+                                            className="filter-control dau-search-pill"
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
+                                            style={{ minWidth: '280px', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '10px 36px 10px 16px', fontSize: '14px' }}
                                         />
+                                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="#94a3b8" strokeWidth="2" fill="none" style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)' }}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Status Tabs */}
-                            <div className="status-tabs">
-                                <div className={`tab-item ${activeTab === 'all' ? 'active' : ''}`} onClick={() => setActiveTab('all')}>Tất cả ({applications.length})</div>
-                                <div className={`tab-item ${activeTab === 'pending' ? 'active' : ''}`} onClick={() => setActiveTab('pending')}>Chờ đánh giá</div>
-                                <div className={`tab-item ${activeTab === 'suitable' ? 'active' : ''}`} onClick={() => setActiveTab('suitable')}>Đã duyệt</div>
-                                <div className={`tab-item ${activeTab === 'interview' ? 'active' : ''}`} onClick={() => setActiveTab('interview')}>Phỏng vấn</div>
-                                <div className={`tab-item ${activeTab === 'offered' ? 'active' : ''}`} onClick={() => setActiveTab('offered')}>Đã gửi offer</div>
-                                <div className={`tab-item ${activeTab === 'accepted' ? 'active' : ''}`} onClick={() => setActiveTab('accepted')}>Đã nhận</div>
-                                <div className={`tab-item ${activeTab === 'rejected' ? 'active' : ''}`} onClick={() => setActiveTab('rejected')}>Từ chối</div>
-                            </div>
-
-                            {/* List Table */}
-                            <div className="candidates-list-card glass intro-y delay-2">
-                                <table className="candidates-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Ứng viên</th>
-                                            <th>Phân loại</th>
-                                            <th className="text-center">Mức phù hợp</th>
-                                            <th>Tin đăng</th>
-                                            <th>Trạng thái</th>
-                                            <th className="text-right">Thao tác</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+                            {/* Standard DAU Table */}
+                            <div className="dau-table-container intro-y delay-1">
+                                <div className="candidates-list-card" style={{ background: '#fff', borderRadius: '8px', overflow: 'hidden', border: '1px solid #f1f5f9' }}>
+                                    <table className="candidates-table dau-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                        <thead style={{ background: '#f8fafc', borderBottom: '1px solid #f1f5f9' }}>
+                                            <tr>
+                                                <th style={{ padding: '16px 20px', color: '#64748b', fontSize: '13px', fontWeight: 'bold', textAlign: 'left', textTransform: 'uppercase' }}>ỨNG VIÊN</th>
+                                                <th style={{ padding: '16px 20px', color: '#64748b', fontSize: '13px', fontWeight: 'bold', textAlign: 'left', textTransform: 'uppercase' }}>VỊ TRÍ ỨNG TUYỂN</th>
+                                                <th style={{ padding: '16px 20px', color: '#64748b', fontSize: '13px', fontWeight: 'bold', textAlign: 'left', textTransform: 'uppercase' }}>NGÀY NỘP</th>
+                                                <th style={{ padding: '16px 20px', color: '#64748b', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', textTransform: 'uppercase' }}>TRẠNG THÁI</th>
+                                                <th style={{ padding: '16px 20px', color: '#64748b', fontSize: '13px', fontWeight: 'bold', textAlign: 'right', textTransform: 'uppercase' }}>HÀNH ĐỘNG</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
                                         {filteredApps.map(app => (
-                                            <tr key={app.id} onClick={() => handleOpenModal(app.studentId, app.id, app.status)}>
-                                                <td>
-                                                    <div className="candidate-info-cell">
-                                                        <img src={app.studentAvatar || `https://ui-avatars.com/api/?name=${app.studentName}&background=random`} alt={app.studentName} className="candidate-avatar" />
-                                                        <div className="candidate-name-group">
-                                                            <span className="candidate-name">{app.studentName}</span>
-                                                            <span className="candidate-meta">ID: S{app.studentId}</span>
+                                            <tr key={app.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                                                {/* Cột 1: Ứng viên */}
+                                                <td style={{ padding: '16px 20px' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                        <img src={app.studentAvatar || `https://ui-avatars.com/api/?name=${app.studentName}&background=random`} alt={app.studentName} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                                                        <div>
+                                                            <div style={{ fontWeight: '600', color: '#0f172a', fontSize: '14.5px' }}>{app.studentName}</div>
+                                                            <div style={{ fontSize: '13px', color: '#94a3b8', marginTop: '2px' }}>{app.studentSkills?.split(',')[0] || 'Kiến trúc'}</div>
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td>
-                                                    <div className="candidate-table-tags">
-                                                        {(tagMappings[app.studentId] || []).map(tagId => {
-                                                            const tag = allTags.find(t => t.id === tagId);
-                                                            if (!tag) return null;
-                                                            return (
-                                                                <span 
-                                                                    key={tag.id} 
-                                                                    className="mini-tag-badge"
-                                                                    style={{ backgroundColor: `${tag.color}15`, color: tag.color, borderColor: `${tag.color}40` }}
-                                                                >
-                                                                    {tag.name}
-                                                                </span>
-                                                            );
-                                                        })}
-                                                    </div>
+
+                                                {/* Cột 2: Vị trí */}
+                                                <td style={{ padding: '16px 20px' }}>
+                                                    <div style={{ fontWeight: '600', color: '#0f172a', fontSize: '14.5px' }}>{app.jobTitle}</div>
+                                                    <div style={{ fontSize: '13px', color: '#94a3b8', marginTop: '2px' }}>Full-time - Vị trí ứng tuyển</div>
                                                 </td>
-                                                <td className="match-cell" onClick={e => e.stopPropagation()}>
-                                                    <span className={`match-badge ${getMatchClass(app.matchPercentage)}`}>
-                                                        {app.matchPercentage}%
+
+                                                {/* Cột 3: Ngày nộp */}
+                                                <td style={{ padding: '16px 20px', color: '#0f172a', fontSize: '14px', fontWeight: '500' }}>
+                                                    {new Date(app.appliedAt).toLocaleDateString('vi-VN')}
+                                                </td>
+
+                                                {/* Cột 4: Trạng thái */}
+                                                <td style={{ padding: '16px 20px', textAlign: 'center' }}>
+                                                    <span style={{ 
+                                                        display: 'inline-flex', alignItems: 'center', gap: '6px', 
+                                                        color: app.status === 'pending' ? '#ea580c' : app.status === 'suitable' ? '#16a34a' : app.status === 'rejected' ? '#dc2626' : '#2563eb', 
+                                                        fontSize: '14px', fontWeight: '600'
+                                                    }}>
+                                                        {app.status === 'pending' ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> : null}
+                                                        {app.status === 'suitable' ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> : null}
+                                                        {app.status === 'rejected' ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> : null}
+                                                        {app.status === 'pending' ? 'Chờ duyệt' : app.status === 'suitable' ? 'Đã duyệt' : app.status === 'rejected' ? 'Từ chối' : 'Chờ xử lý'}
                                                     </span>
                                                 </td>
-                                                <td className="job-title-cell" onClick={e => e.stopPropagation()}>
-                                                    <Link to={`/jobs/${app.jobId}`} className="job-link">{app.jobTitle}</Link>
-                                                </td>
-                                                <td onClick={e => e.stopPropagation()}>
-                                                    <span className={`status-pill status-${app.status.toLowerCase()}`}>
-                                                        {getStatusLabel(app.status)}
-                                                    </span>
-                                                </td>
-                                                <td className="text-right" onClick={e => e.stopPropagation()}>
-                                                    <div className="quick-actions-group">
-                                                        {app.status === 'pending' ? (
-                                                            <>
-                                                                <button 
-                                                                    className="action-btn approve" 
-                                                                    title="Duyệt hồ sơ"
-                                                                    onClick={(e) => handleUpdateStatus(app.id, 'suitable', e)}
-                                                                >
-                                                                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                                                </button>
-                                                                <button 
-                                                                    className="action-btn reject" 
-                                                                    title="Từ chối"
-                                                                    onClick={(e) => handleUpdateStatus(app.id, 'rejected', e)}
-                                                                >
-                                                                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                                                </button>
-                                                            </>
-                                                        ) : (
-                                                            <button 
-                                                                className="action-btn undo" 
-                                                                title="Bỏ duyệt (Đặt lại về Chờ đánh giá)"
-                                                                onClick={(e) => handleUpdateStatus(app.id, 'pending', e)}
-                                                            >
-                                                                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none">
-                                                                    <path d="M3 10h10a5 5 0 0 1 0 10H11M3 10l4-4M3 10l4 4" />
-                                                                </svg>
-                                                            </button>
-                                                        )}
+
+                                                {/* Cột 5: Hành động */}
+                                                <td style={{ padding: '16px 20px', textAlign: 'right' }}>
+                                                    <div style={{ display: 'flex', gap: '16px', justifyContent: 'flex-end', alignItems: 'center' }}>
                                                         <button 
-                                                            className="action-btn view" 
-                                                            title="Xem chi tiết"
+                                                            style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13.5px', fontWeight: '500' }}
                                                             onClick={() => handleOpenModal(app.studentId, app.id, app.status)}
                                                         >
-                                                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                                            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                                            Xem
+                                                        </button>
+                                                        <button 
+                                                            style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13.5px', fontWeight: '500' }}
+                                                        >
+                                                            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                                            Xóa
                                                         </button>
                                                     </div>
                                                 </td>
@@ -311,8 +279,9 @@ const CompanyCandidates = () => {
                                                 </td>
                                             </tr>
                                         )}
-                                    </tbody>
-                                </table>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>

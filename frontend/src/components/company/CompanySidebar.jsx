@@ -39,11 +39,13 @@ const CompanySidebar = () => {
   const [activeCategory, setActiveCategory] = useState('');
 
   React.useEffect(() => {
-    const currentItem = NAV_ITEMS.find(item => {
-      if (location.pathname === item.to) return true;
-      if (item.to !== '/company/dashboard' && item.to !== '#' && location.pathname.startsWith(item.to)) return true;
-      return false;
-    });
+    let currentItem = NAV_ITEMS.find(item => location.pathname === item.to);
+    
+    if (!currentItem) {
+      currentItem = [...NAV_ITEMS]
+        .filter(item => item.to !== '/company/dashboard' && item.to !== '#' && location.pathname.startsWith(item.to))
+        .sort((a, b) => b.to.length - a.to.length)[0];
+    }
     
     setActiveCategory(currentItem?.label || '');
   }, [location.pathname]);
