@@ -129,23 +129,37 @@ const CompanyDashboard = () => {
                                     </button>
                                 </div>
                                 <div className="widget-body">
-                                    <ResponsiveContainer width="100%" height={300}>
-                                        <BarChart layout="vertical" data={chartData} margin={{ top: 5, right: 30, left: 100, bottom: 5 }}>
+                                    <ResponsiveContainer width="100%" height={260}>
+                                        <BarChart 
+                                            layout="vertical" 
+                                            data={chartData} 
+                                            margin={{ top: 5, right: 40, left: 100, bottom: 5 }}
+                                        >
                                             <XAxis type="number" hide />
                                             <YAxis 
                                                 type="category" 
                                                 dataKey="name" 
                                                 axisLine={false} 
                                                 tickLine={false} 
-                                                width={100}
-                                                tick={{ fill: '#4b5563', fontSize: 13 }}
+                                                width={90}
+                                                tick={{ fill: '#64748b', fontSize: 13, fontWeight: 500 }}
                                             />
-                                            <Tooltip cursor={{ fill: '#f3f4f6' }} />
-                                            <Bar dataKey="value" radius={[0, 10, 10, 0]} barSize={25}>
+                                            <Tooltip cursor={{ fill: 'transparent' }} />
+                                            <Bar 
+                                                dataKey="value" 
+                                                radius={[0, 6, 6, 0]} 
+                                                barSize={18}
+                                                minPointSize={2}
+                                            >
                                                 {chartData.map((entry, index) => (
                                                     <Cell key={`cell-${index}`} fill={entry.color} />
                                                 ))}
-                                                <LabelList dataKey="value" position="right" style={{ fontSize: 13, fontWeight: 700, fill: '#1f2937' }} />
+                                                <LabelList 
+                                                    dataKey="value" 
+                                                    position="right" 
+                                                    style={{ fontSize: 12, fontWeight: 700, fill: '#64748b' }} 
+                                                    offset={12}
+                                                />
                                             </Bar>
                                         </BarChart>
                                     </ResponsiveContainer>
