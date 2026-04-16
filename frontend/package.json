@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@stomp/stompjs": "^7.3.0",
     "axios": "^1.13.6",
     "html2pdf.js": "^0.14.0",
     "leaflet": "^1.9.4",
@@ -21,7 +22,8 @@
     "react-leaflet": "^5.0.0",
     "react-quill-new": "^3.8.3",
     "react-router-dom": "^7.13.1",
-    "recharts": "^3.8.1"
+    "recharts": "^3.8.1",
+    "sockjs-client": "^1.6.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
