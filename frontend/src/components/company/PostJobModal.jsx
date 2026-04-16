@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import toast from 'react-hot-toast';
 import RichTextEditor from '../common/RichTextEditor';
 import { companyApi } from '../../api';
 import { vietnamLocations } from '../../utils/vietnamLocations';
@@ -171,7 +172,7 @@ const PostJobModal = ({ isOpen, onClose, jobToEdit, onSuccess }) => {
 
     const handleSubmit = async (isDraft = false) => {
         if (!form.title || !form.industry || !form.region || !form.description) {
-            alert('Vui lòng điền các trường bắt buộc (*)');
+            toast.error('Vui lòng điền đầy đủ các trường bắt buộc (*)');
             return;
         }
 
@@ -185,7 +186,7 @@ const PostJobModal = ({ isOpen, onClose, jobToEdit, onSuccess }) => {
                 if (uploadedUrl) {
                     finalBannerUrl = uploadedUrl;
                 } else {
-                    console.warn('Upload banner thất bại, sẽ giữ nguyên banner cũ hoặc không có banner.');
+                    toast.error('Không thể tải ảnh bìa lên, tin sẽ được lưu không có ảnh.');
                 }
             }
 
@@ -196,7 +197,7 @@ const PostJobModal = ({ isOpen, onClose, jobToEdit, onSuccess }) => {
                 maxSalary: form.salaryType === 'agreement' ? null : (form.maxSalary ? parseFloat(form.maxSalary) : null),
                 skills: selectedSkills,
                 bannerUrl: finalBannerUrl,
-                status: isDraft ? 'draft' : 'open'
+                status: isDraft ? 'draft' : (jobToEdit ? jobToEdit.status : 'open')
             };
 
             const response = jobToEdit 
@@ -204,11 +205,11 @@ const PostJobModal = ({ isOpen, onClose, jobToEdit, onSuccess }) => {
                 : await companyApi.postJob(payload);
 
             if (response.data.status === 'success') {
-                alert(jobToEdit ? 'Cập nhật tin thành công!' : 'Đã đăng tin thành công!');
-                onSuccess();
+                toast.success(jobToEdit ? 'Cập nhật tin tuyển dụng thành công!' : 'Đăng tin tuyển dụng thành công!');
+                setTimeout(() => onSuccess(), 300);
             }
         } catch (err) {
-            alert(err.response?.data?.message || 'Đã có lỗi xảy ra!');
+            toast.error(err.response?.data?.message || 'Đã có lỗi xảy ra, vui lòng thử lại!');
         } finally {
             setSubmitting(false);
         }

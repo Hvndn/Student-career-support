@@ -113,14 +113,30 @@ const AppContent = () => {
       <Toaster 
         position="top-right" 
         reverseOrder={false}
+        gutter={8}
         toastOptions={{
-          className: 'react-hot-toast',
-          duration: 4000,
+          duration: 3500,
+          style: {
+            borderRadius: '10px',
+            fontSize: '0.875rem',
+            fontWeight: '500',
+            boxShadow: '0 10px 25px -5px rgba(0,0,0,0.2)',
+          },
           success: {
-            className: 'react-hot-toast react-hot-toast-success',
+            iconTheme: { primary: '#22c55e', secondary: '#fff' },
+            style: {
+              background: '#fff',
+              color: '#166534',
+              border: '1px solid #bbf7d0',
+            },
           },
           error: {
-            className: 'react-hot-toast react-hot-toast-error',
+            iconTheme: { primary: '#ef4444', secondary: '#fff' },
+            style: {
+              background: '#fff',
+              color: '#991b1b',
+              border: '1px solid #fecaca',
+            },
           },
         }}
       />

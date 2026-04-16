@@ -22,6 +22,7 @@ const CompanyCandidates = () => {
     const [tagMappings, setTagMappings] = useState({});
     
     // State for Modal
+    const [selectedApp, setSelectedApp] = useState(null);
     const [selectedStudentId, setSelectedStudentId] = useState(null);
     const [selectedAppId, setSelectedAppId] = useState(null);
     const [currentStatus, setCurrentStatus] = useState(null);
@@ -61,10 +62,11 @@ const CompanyCandidates = () => {
         setTagMappings(tagService.getAllMappings());
     };
 
-    const handleOpenModal = (studentId, appId, status) => {
-        setSelectedStudentId(studentId);
-        setSelectedAppId(appId);
-        setCurrentStatus(status);
+    const handleOpenModal = (app) => {
+        setSelectedApp(app);
+        setSelectedStudentId(app.studentId);
+        setSelectedAppId(app.id);
+        setCurrentStatus(app.status);
         setShowModal(true);
     };
 
@@ -257,7 +259,7 @@ const CompanyCandidates = () => {
                                                     <div style={{ display: 'flex', gap: '16px', justifyContent: 'flex-end', alignItems: 'center' }}>
                                                         <button 
                                                             style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13.5px', fontWeight: '500' }}
-                                                            onClick={() => handleOpenModal(app.studentId, app.id, app.status)}
+                                                            onClick={() => handleOpenModal(app)}
                                                         >
                                                             <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                                                             Xem
@@ -294,6 +296,12 @@ const CompanyCandidates = () => {
                 studentId={selectedStudentId}
                 applicationId={selectedAppId}
                 initialStatus={currentStatus}
+                jobTitle={selectedApp?.jobTitle}
+                jobType={selectedApp?.jobType}
+                jobLocation={selectedApp?.jobLocation}
+                appliedAt={selectedApp?.appliedAt}
+                coverLetter={selectedApp?.coverLetter}
+                cvFileName={selectedApp?.cvFileName}
                 onClose={handleCloseModal}
                 onStatusUpdate={(newStatus) => {
                     setApplications(prev => prev.map(app => 
