@@ -18,8 +18,11 @@ import java.util.UUID;
 public class StorageService {
 
     private final String baseUploadDir = "uploads";
-    private final List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "webp", "pdf");
-    private final List<String> allowedMimeTypes = Arrays.asList("image/jpeg", "image/png", "image/webp", "application/pdf");
+    private final List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "webp", "pdf", "doc", "docx");
+    private final List<String> allowedMimeTypes = Arrays.asList(
+        "image/jpeg", "image/png", "image/webp", "application/pdf",
+        "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    );
 
     /**
      * Lưu file an toàn theo các bước:

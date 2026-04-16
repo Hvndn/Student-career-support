@@ -27,6 +27,7 @@ public class StudentActionRestController {
     private final RecommendationService recommendationService;
     private final InterviewService interviewService;
     private final UserRepository userRepository;
+    private final com.fivecore.jobportal.service.common.StorageService storageService;
 
     private Integer getCurrentStudentId(Authentication authentication) {
         return userRepository.findByEmail(authentication.getName())
@@ -41,17 +42,27 @@ public class StudentActionRestController {
     }
 
     /**
-     * API Ứng tuyển công việc.
+     * API Ứng tuyển công việc (Premium with CV and Cover Letter).
      */
     @PostMapping("/jobs/{jobId}/apply")
     public ResponseEntity<ApiResponse<Object>> applyJob(@PathVariable("jobId") Integer jobId,
+            @RequestParam(value = "fullName", required = false) String fullName,
+            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(value = "phone", required = false) String phone,
+            @RequestParam(value = "coverLetter", required = false) String coverLetter,
+            @RequestParam(value = "cvFile", required = false) org.springframework.web.multipart.MultipartFile cvFile,
             Authentication authentication) {
         Integer studentId = getCurrentStudentId(authentication);
         if (studentId == null)
             return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
 
         try {
-            applicationService.applyForJob(studentId, jobId);
+            String cvUrl = null;
+            if (cvFile != null && !cvFile.isEmpty()) {
+                cvUrl = storageService.saveFile(cvFile, "cvs");
+            }
+
+            applicationService.applyForJob(studentId, jobId, fullName, email, phone, coverLetter, cvUrl);
             return ResponseEntity.ok(ApiResponse.success("Ứng tuyển thành công", null));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage(), "APPLY_ERROR"));

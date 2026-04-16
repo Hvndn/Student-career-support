@@ -38,7 +38,7 @@ public class ApplicationService {
      * Sinh viên nộp đơn ứng tuyển (US-007).
      */
     @Transactional
-    public ApplicationDto applyForJob(Integer studentId, Integer jobId) {
+    public ApplicationDto applyForJob(Integer studentId, Integer jobId, String fullName, String email, String phone, String coverLetter, String cvUrl) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
         Job job = jobRepository.findById(jobId)
@@ -53,10 +53,15 @@ public class ApplicationService {
                 .job(job)
                 .status(Application.ApplicationStatus.pending)
                 .appliedAt(LocalDateTime.now())
+                .coverLetter(coverLetter)
+                .cvUrl(cvUrl)
+                .fullName(fullName)
+                .email(email)
+                .phone(phone)
                 .build();
 
         Application savedApp = applicationRepository.save(application);
-        log.info("Sinh viên {} đã ứng tuyển vào vị trí {}", student.getUser().getFullName(), job.getTitle());
+        log.info("Sinh viên {} đã ứng tuyển vào vị trí {} với CV: {}", student.getUser().getFullName(), job.getTitle(), cvUrl);
 
         // Bắn thông báo nội sinh cho Student (US-019)
         notificationService.sendNotification(student.getUser(),
@@ -67,17 +72,42 @@ public class ApplicationService {
     }
 
     private com.fivecore.jobportal.dto.ApplicationDto mapToDto(Application app) {
+        Job job = app.getJob();
+        String salaryRange = "Thỏa thuận";
+        if (job.getMinSalary() != null && job.getMaxSalary() != null) {
+            salaryRange = String.format("%d - %d triệu", job.getMinSalary().intValue(), job.getMaxSalary().intValue());
+        } else if (job.getMinSalary() != null) {
+            salaryRange = String.format("Từ %d triệu", job.getMinSalary().intValue());
+        }
+
+        java.util.List<String> skills = job.getSkills().stream()
+                .map(js -> js.getSkill().getName())
+                .collect(java.util.stream.Collectors.toList());
+
         return com.fivecore.jobportal.dto.ApplicationDto.builder()
                 .id(app.getId())
-                .jobId(app.getJob().getId())
-                .jobTitle(app.getJob().getTitle())
-                .companyName(app.getJob().getCompany().getName())
+                .jobId(job.getId())
+                .jobTitle(job.getTitle())
+                .jobType(job.getJobType() != null ? job.getJobType().name() : "intern")
+                .jobLocation(job.getLocation())
+                .companyName(job.getCompany().getName())
+                .companyLogoUrl(job.getCompany().getLogoUrl())
+                .companyId(job.getCompany().getId())
+                .companyUserId(job.getCompany().getUser().getId())
                 .studentName(app.getStudent().getUser().getFullName())
-                .studentAvatar(((com.fivecore.jobportal.entity.Student) app.getStudent()).getAvatarUrl())
+                .studentAvatar(app.getStudent().getAvatarUrl())
                 .studentId(app.getStudent().getId())
-                .matchPercentage(70 + (app.getId() % 26)) // Giả lập tỷ lệ phù hợp từ 70-95%
+                .matchPercentage(85) // Giả lập tỷ lệ phù hợp
                 .status(app.getStatus().name())
                 .appliedAt(app.getAppliedAt())
+                .salaryRange(salaryRange)
+                .skills(skills)
+                .coverLetter(app.getCoverLetter())
+                .cvUrl(app.getCvUrl())
+                // Snapshot Data with Fallback to current profile
+                .fullName(app.getFullName() != null ? app.getFullName() : app.getStudent().getUser().getFullName())
+                .email(app.getEmail() != null ? app.getEmail() : app.getStudent().getUser().getEmail())
+                .phone(app.getPhone() != null ? app.getPhone() : app.getStudent().getPhone())
                 .build();
     }
 
