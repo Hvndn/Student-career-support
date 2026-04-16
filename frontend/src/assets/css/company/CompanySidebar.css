@@ -130,12 +130,13 @@
 /* Global Content Shifts */
 .cd-main {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  margin-left: 70px;
+  margin-left: 260px;
   padding-top: 70px; /* Offset for fixed topbar height */
+  padding-left: 1rem;
 }
 
 body.sidebar-pinned .cd-main {
-  margin-left: 300px;
+  margin-left: 260px;
 }
 
 /* Bottom Actions */

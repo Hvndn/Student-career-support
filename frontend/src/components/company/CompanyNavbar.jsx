@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { companyApi } from '../../api';
 import { getImageUrl } from '../../utils/urlUtils';
 import '../../assets/css/company/CompanyTopbar.css';
@@ -7,10 +7,12 @@ import '../../assets/css/company/CompanyTopbar.css';
 const CompanyTopbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const rawUser = localStorage.getItem('user');
+  const user = rawUser && rawUser !== 'undefined' ? JSON.parse(rawUser) : {};
+  
   const [companyData, setCompanyData] = useState({
-    name: user.fullName || 'Đang tải...',
-    email: user.email || '...'
+    name: user?.fullName || 'Doanh nghiệp',
+    email: user?.email || ''
   });
 
   const fetchCompanyProfile = async () => {
@@ -35,7 +37,7 @@ const CompanyTopbar = () => {
   // Breadcrumb mapping
   const getBreadcrumbs = () => {
     const path = location.pathname;
-    const crumbs = [{ label: 'Student Career', to: '/company/dashboard' }];
+    const crumbs = [{ label: 'DAU Connect', to: '/company/dashboard' }];
     
     if (path.includes('/dashboard')) crumbs.push({ label: 'Tổng quan' });
     else if (path.includes('/management/candidates')) crumbs.push({ label: 'Quản lý ứng viên' });
@@ -82,7 +84,7 @@ const CompanyTopbar = () => {
                 <img src={getImageUrl(companyData.logoUrl)} alt="Logo" className="tb-avatar" />
               ) : (
                 <div className="tb-avatar-placeholder">
-                  {companyName.charAt(0)}
+                {String(companyName || 'D').charAt(0)}
                 </div>
               )}
           </div>

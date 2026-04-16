@@ -61,7 +61,7 @@ const CompanySidebar = () => {
             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </div>
-        <span className="brand-name">Student Career</span>
+        <span className="brand-name">DAU Connect</span>
       </div>
 
       <nav className="cs-nav">

@@ -5,10 +5,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 2rem;
+  padding: 0 1.5rem 0 0; /* Padding left sẽ được xử lý qua margin nội dung hoặc padding của Topbar-left */
   position: fixed;
   top: 0;
-  left: 70px;
+  left: 260px;
   right: 0;
   z-index: 480;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -18,7 +18,16 @@
 
 .cd-topbar-left {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
+  align-items: center;
+  padding-left: 1rem;
+}
+
+.cd-breadcrumbs {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+  display: flex;
   align-items: center;
 }
 
