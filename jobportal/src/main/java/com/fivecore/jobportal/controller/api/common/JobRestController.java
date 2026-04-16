@@ -27,10 +27,19 @@ public class JobRestController {
     public ResponseEntity<ApiResponse<List<JobResponse>>> searchJobs(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String location,
-            @RequestParam(required = false) String skill,
-            @RequestParam(required = false) String jobType) {
+            @RequestParam(required = false) String industry,
+            @RequestParam(required = false) String jobType,
+            @RequestParam(required = false) java.math.BigDecimal minSalary,
+            @RequestParam(required = false) java.math.BigDecimal maxSalary,
+            org.springframework.security.core.Authentication authentication) {
 
-        List<JobResponse> jobs = jobSearchService.searchJobs(keyword, location, skill, jobType);
+        Integer studentId = null;
+        if (authentication != null && authentication.isAuthenticated() 
+            && !(authentication instanceof org.springframework.security.authentication.AnonymousAuthenticationToken)) {
+            studentId = jobSearchService.getStudentIdByEmail(authentication.getName());
+        }
+
+        List<JobResponse> jobs = jobSearchService.searchJobs(keyword, location, industry, jobType, minSalary, maxSalary, studentId);
         return ResponseEntity.ok(ApiResponse.success("Lấy danh sách công việc thành công", jobs));
     }
 
