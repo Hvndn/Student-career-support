@@ -354,13 +354,13 @@ const CompanyJobManagement = () => {
         <CompanyNavbar />
         <main className="cd-main">
           <div className="cjm-content">
-            <div className="cjm-header">
+            <div className="cjm-header intro-y">
               <Link to="/company/jobs/post" className="cjm-post-btn">
                 <span className="plus-icon">+</span> Đăng tin ngay
               </Link>
             </div>
 
-            <div className="cjm-filter-card">
+            <div className="cjm-filter-card intro-y delay-1">
               <div className="cjm-filter-row">
                 <span className="cjm-filter-label">Bộ lọc</span>
                 <div className="cjm-filter-group search">
@@ -426,7 +426,7 @@ const CompanyJobManagement = () => {
               </div>
             </div>
 
-            <div className="cjm-table-container">
+            <div className="cjm-table-container intro-y delay-2">
               <table className="cjm-table">
                 <thead>
                   <tr>

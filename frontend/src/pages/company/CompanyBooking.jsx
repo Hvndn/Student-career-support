@@ -68,7 +68,7 @@ const CompanyBooking = () => {
                 <CompanyNavbar activeTab="Đặt lịch làm việc" />
 
                 <div className="booking-page">
-                    <div className="section-header">
+                    <div className="section-header intro-y">
                         <div className="header-title-group">
                             <h3><span className="icon">📅</span> Lịch phỏng vấn</h3>
                             <p className="subtitle">Quản lý và theo dõi các buổi hẹn phỏng vấn với ứng viên.</p>
@@ -82,7 +82,7 @@ const CompanyBooking = () => {
                     </div>
 
                     <div className="booking-container">
-                        <div className="filter-panel glass">
+                        <div className="filter-panel glass intro-y delay-1">
                             <div className="filter-group">
                                 <label>Tìm kiếm</label>
                                 <div className="search-input-wrapper">
@@ -112,13 +112,17 @@ const CompanyBooking = () => {
 
                         <div className="booking-list">
                             {filteredInterviews.length > 0 ? (
-                                filteredInterviews.map((interview) => {
+                                filteredInterviews.map((interview, idx) => {
                                     const dateInfo = formatDate(interview.interviewDate);
                                     const student = interview.application?.student;
                                     const job = interview.application?.job;
 
                                     return (
-                                        <div key={interview.id} className="booking-card glass">
+                                        <div 
+                                            key={interview.id} 
+                                            className="booking-card glass intro-y hover-lift"
+                                            style={{ animationDelay: `${(idx + 2) * 0.1}s` }}
+                                        >
                                             <div className="booking-date-side">
                                                 <div className="date-badge">
                                                     <span className="d-day">{dateInfo.day}</span>

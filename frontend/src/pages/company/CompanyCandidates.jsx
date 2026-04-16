@@ -138,7 +138,7 @@ const CompanyCandidates = () => {
                 <CompanyNavbar activeTab="Ứng viên" />
 
                 <div className="candidates-page">
-                    <div className="section-header">
+                    <div className="section-header intro-y">
                         <h3><span className="icon">👥</span> Quản lý ứng viên</h3>
                         <div className="header-actions">
                             <Link to="/company/candidate-tags" className="btn-respond" style={{ width: 'auto', padding: '0.6rem 1.2rem', textDecoration: 'none', background: '#eef2ff', color: '#6366f1', marginRight: '10px' }}>
@@ -155,7 +155,7 @@ const CompanyCandidates = () => {
                     <div className="candidates-container">
                         <div className="candidates-main-content full-width">
                             {/* Filter Panel */}
-                            <div className="filter-panel glass">
+                            <div className="filter-panel glass intro-y delay-1">
                                 <div className="filter-group">
                                     <label>Lọc theo tin đăng</label>
                                     <select 
@@ -209,7 +209,7 @@ const CompanyCandidates = () => {
                             </div>
 
                             {/* List Table */}
-                            <div className="candidates-list-card glass">
+                            <div className="candidates-list-card glass intro-y delay-2">
                                 <table className="candidates-table">
                                     <thead>
                                         <tr>
