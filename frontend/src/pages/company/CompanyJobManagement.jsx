@@ -4,6 +4,7 @@ import CompanySidebar from '../../components/company/CompanySidebar';
 import CompanyNavbar from '../../components/company/CompanyNavbar';
 import { Link } from 'react-router-dom';
 import { companyApi } from '../../api';
+import PostJobModal from '../../components/company/PostJobModal';
 
 const CompanyJobManagement = () => {
   const [jobs, setJobs] = useState([]);
@@ -14,6 +15,8 @@ const CompanyJobManagement = () => {
   const [publishingId, setPublishingId] = useState(null);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [currentPage, setCurrentPage] = useState(1);
+  const [showPostModal, setShowPostModal] = useState(false);
+  const [editingJob, setEditingJob] = useState(null);
   const [filters, setFilters] = useState({
     search: '',
     status: 'Tất cả trạng thái',
@@ -166,6 +169,22 @@ const CompanyJobManagement = () => {
     } catch (err) {
       console.error('Extend error:', err);
       showToast('Không thể gia hạn tin tuyển dụng.', 'error');
+      setLoading(false);
+    }
+  };
+
+  const handleEdit = async (jobId) => {
+    try {
+      setLoading(true);
+      const detailsRes = await companyApi.getJobDetailsForEdit(jobId);
+      if (detailsRes.data.status === 'success') {
+        setEditingJob(detailsRes.data.data);
+        setShowPostModal(true);
+      }
+    } catch (err) {
+      console.error('Edit error:', err);
+      showToast('Không thể tải thông tin tin đăng.', 'error');
+    } finally {
       setLoading(false);
     }
   };
@@ -348,16 +367,16 @@ const CompanyJobManagement = () => {
   };
 
   return (
-    <div className="company-dashboard-container">
+    <div className="cd-layout">
       <CompanySidebar />
-      <div className="company-main-content">
+      <div className="cd-main">
         <CompanyNavbar />
-        <main className="cd-main">
+        <div className="cd-content dau-style">
           <div className="cjm-content">
             <div className="cjm-header intro-y">
-              <Link to="/company/jobs/post" className="cjm-post-btn">
+              <button className="cjm-post-btn" onClick={() => { setEditingJob(null); setShowPostModal(true); }}>
                 <span className="plus-icon">+</span> Đăng tin ngay
-              </Link>
+              </button>
             </div>
 
             <div className="cjm-filter-card intro-y delay-1">
@@ -572,9 +591,9 @@ const CompanyJobManagement = () => {
                                     <button className="dropdown-item" onClick={() => handleDuplicate(job.id)}>
                                       <span className="item-icon">📋</span> Sao chép tin
                                     </button>
-                                    <Link to={`/company/jobs/edit/${job.id}`} className="dropdown-item">
+                                    <button className="dropdown-item" onClick={() => handleEdit(job.id)}>
                                       <span className="item-icon">✏️</span> Sửa tin
-                                    </Link>
+                                    </button>
                                     <button className="dropdown-item" onClick={() => handleExtend(job.id)}>
                                       <span className="item-icon">📅</span> Gia hạn
                                     </button>
@@ -608,9 +627,9 @@ const CompanyJobManagement = () => {
                           </div>
                           <h3 style={{color: '#1e293b', marginBottom: '0.5rem'}}>Chưa có tin đăng nào</h3>
                           <p style={{color: '#64748b', marginBottom: '1.5rem'}}>Hãy bắt đầu tìm kiếm nhân tài bằng cách đăng tin tuyển dụng đầu tiên của bạn.</p>
-                          <Link to="/company/jobs/post" className="cjm-post-btn-small">
+                          <button onClick={() => { setEditingJob(null); setShowPostModal(true); }} className="cjm-post-btn-small">
                             + Đăng tin ngay
-                          </Link>
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -660,7 +679,6 @@ const CompanyJobManagement = () => {
              ⓘ Để đảm bảo tin đăng hợp lệ, tham khảo <a href="#">Quy định duyệt tin tuyển dụng</a> tại đây
           </div>
         </div>
-      </main>
       </div>
 
       {/* Toast Notification */}
@@ -672,6 +690,17 @@ const CompanyJobManagement = () => {
           <span className="cjm-toast-message">{toast.message}</span>
         </div>
       )}
+
+      {/* Post Job Modal */}
+      <PostJobModal 
+        isOpen={showPostModal} 
+        onClose={() => setShowPostModal(false)}
+        jobToEdit={editingJob}
+        onSuccess={() => {
+            setShowPostModal(false);
+            fetchJobs();
+        }}
+      />
     </div>
   );
 };

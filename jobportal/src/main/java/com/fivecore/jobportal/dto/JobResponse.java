@@ -42,5 +42,6 @@ public class JobResponse {
     }
     private String industry;
     private String imageUrl;
+    private String bannerUrl;
     private List<String> skills;
 }

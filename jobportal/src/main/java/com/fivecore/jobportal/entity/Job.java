@@ -97,6 +97,9 @@ public class Job {
     @Column(nullable = false)
     private JobStatus status;
 
+    @Column(name = "banner_url", length = 500)
+    private String bannerUrl;
+
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<JobSkill> skills = new ArrayList<>();
