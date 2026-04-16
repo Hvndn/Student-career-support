@@ -93,4 +93,17 @@ public class RecruitmentRestController {
         interviewService.scheduleInterview(appEntity, LocalDateTime.now().plusDays(1), location);
         return ResponseEntity.ok(ApiResponse.success("Đặt lịch phỏng vấn thành công", null));
     }
+
+    /**
+     * API Lấy danh sách lịch phỏng vấn của doanh nghiệp.
+     */
+    @GetMapping("/interviews")
+    public ResponseEntity<ApiResponse<Object>> getInterviews(Authentication authentication) {
+        Integer companyId = getCurrentCompanyId(authentication);
+        if (companyId == null)
+            return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách lịch phỏng vấn thành công",
+                interviewService.getInterviewsByCompany(companyId)));
+    }
 }

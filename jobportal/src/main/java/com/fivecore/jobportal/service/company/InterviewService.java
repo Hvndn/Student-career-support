@@ -65,4 +65,11 @@ public class InterviewService {
     public java.util.List<Interview> getInterviewsByStudent(Integer studentId) {
         return interviewRepository.findByApplication_Student_Id(studentId);
     }
+
+    /**
+     * Lấy danh sách phỏng vấn của doanh nghiệp.
+     */
+    public java.util.List<Interview> getInterviewsByCompany(Integer companyId) {
+        return interviewRepository.findByApplication_Job_Company_Id(companyId);
+    }
 }
