@@ -1,104 +1,28 @@
-/* ─── Company Candidate Notifications Page ─── */
-.candidate-notifications-page {
-    padding: 1rem 2rem;
-    max-width: 900px;
-}
-
-.notif-header {
-    margin-bottom: 2rem;
-}
-
-.notification-settings-card {
-    background: white;
-    border-radius: 24px;
-    padding: 2.5rem;
-    margin-bottom: 2rem;
-}
-
+/* ─── Company Candidate Notifications Page - Navy Blue ─── */
 .setting-info-box {
-    display: flex;
-    gap: 24px;
-    align-items: center;
-    background: #f5f3ff;
-    padding: 1.5rem;
-    border-radius: 16px;
-    margin-bottom: 2rem;
-}
-
-.info-text h4 {
-    margin: 0 0 5px 0;
-    color: #1e293b;
-    font-size: 1.1rem;
-}
-
-.info-text p {
-    margin: 0;
-    color: #64748b;
-    font-size: 0.95rem;
-}
-
-.setup-guide h5 {
-    font-size: 1rem;
-    color: #1e293b;
-    margin-bottom: 1rem;
-}
-
-.guide-steps {
-    padding-left: 1.25rem;
-    color: #475569;
-    margin-bottom: 2rem;
-}
-
-.guide-steps li {
-    margin-bottom: 12px;
-    line-height: 1.5;
+    background: #eff6ff;
+    border: 1px solid #dbeafe;
 }
 
 .btn-go-search {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 24px;
-    background: #7c3aed;
+    background: #1e3a8a;
     color: white;
-    border: none;
+    padding: 0.75rem 1.5rem;
     border-radius: 12px;
-    font-weight: 700;
-    cursor: pointer;
+    font-weight: 800;
     transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
 }
 
 .btn-go-search:hover {
-    background: #6d28d9;
+    background: #1e40af;
     transform: translateX(5px);
+    box-shadow: 0 6px 15px rgba(30, 58, 138, 0.3);
 }
 
-.notification-status-panel {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-}
-
-.status-item {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    padding: 1.25rem;
-    border-radius: 16px;
-}
-
-.status-label {
-    font-size: 0.8rem;
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 6px;
-}
-
-.status-value {
-    font-weight: 700;
-    color: #1e293b;
-}
-
-.status-value.active {
-    color: #10b981;
+.notif-header h2 {
+    font-size: 2rem;
+    font-weight: 850;
+    color: #0f172a;
+    letter-spacing: -0.03em;
 }
