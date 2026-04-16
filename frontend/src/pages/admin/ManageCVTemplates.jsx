@@ -3,6 +3,8 @@ import { adminApi } from '../../api';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import AdminNavbar from '../../components/admin/AdminNavbar';
 import toast from 'react-hot-toast';
+import html2canvas from 'html2canvas';
+import { getTemplateComponent } from '../../components/student/templates/TemplateRegistry';
 import '../../assets/css/admin/AdminManagement.css';
 import '../../assets/css/admin/ManageCVTemplates.css';
 
@@ -11,6 +13,59 @@ const ManageCVTemplates = () => {
     const [loading, setLoading] = useState(true);
     const [categoryFilter, setCategoryFilter] = useState('Tất cả');
     const fileInputRef = useRef(null);
+    const snapshotRef = useRef(null);
+    const [isRendering, setIsRendering] = useState(false);
+
+    // Dữ liệu mẫu chuyên nghiệp để render ảnh bìa
+    const MOCK_CV_DATA = {
+        fullName: 'NGUYỄN VĂN A',
+        major: 'SOFTWARE ENGINEER',
+        phone: '0987 654 321',
+        email: 'nguyenvana@gmail.com',
+        address: 'Quận 1, TP. Hồ Chí Minh',
+        dob: '01/01/1990',
+        website: 'linkedin.com/in/nguyenvana',
+        bio: 'Kỹ sư phần mềm với hơn 5 năm kinh nghiệm phát triển Web. Chuyên gia về các công nghệ Modern JavaScript, React và Node.js. Đam mê xây dựng các sản phẩm chất lượng cao, có trải nghiệm người dùng tốt và khả năng mở rộng mạnh mẽ.',
+        skills: [
+            { name: 'JavaScript / ES6+', level: 'Chuyên gia' },
+            { name: 'React.js / Redux', level: 'Chuyên gia' },
+            { name: 'Node.js / Express', level: 'Nâng cao' },
+            { name: 'TypeScript', level: 'Nâng cao' },
+            { name: 'SQL & NoSQL', level: 'Nâng cao' }
+        ],
+        educations: [
+            {
+                schoolName: 'Đại học Bách Khoa TP.HCM',
+                major: 'Kỹ thuật Phần mềm',
+                startDate: '2008',
+                endDate: '2012',
+                description: 'Tốt nghiệp loại Giỏi. Tham gia nghiên cứu khoa học cấp trường.'
+            }
+        ],
+        experiences: [
+            {
+                companyName: 'FPT Software',
+                jobTitle: 'Senior Web Developer',
+                startDate: '2015',
+                endDate: 'Hiện tại',
+                description: 'Dẫn dắt team 5 người phát triển hệ thống quản lý giao dịch lớn.\nTối ưu hóa hiệu năng ứng dụng giảm 30% thời gian tải trang.\nXây dựng kiến trúc frontend có thể tái sử dụng cao.'
+            },
+            {
+                companyName: 'VNG Corporation',
+                jobTitle: 'Frontend Developer',
+                startDate: '2012',
+                endDate: '2015',
+                description: 'Phát triển các tính năng mới cho mạng xã hội Zalo.\nLàm việc chặt chẽ với team UI/UX để hiện thực hóa thiết kế.'
+            }
+        ],
+        interests: ['Đọc sách công nghệ', 'Du lịch', 'Chạy bộ'],
+        certifications: [
+            { name: 'AWS Certified Solutions Architect', issuer: 'Amazon Web Services', issueDate: '2022' }
+        ],
+        awards: [
+            { name: 'Nhân viên xuất sắc năm 2021', time: '2021', description: 'Ghi nhận những đóng góp vượt bậc cho sự phát triển của dự án A.' }
+        ]
+    };
     
     // Modal states
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,7 +83,7 @@ const ManageCVTemplates = () => {
     const [previewUrl, setPreviewUrl] = useState(null);
 
     const categories = ['Tất cả', 'Hiện đại', 'Chuyên nghiệp', 'Đơn giản', 'Ấn tượng', 'Harvard', 'ATS'];
-    const layoutKeys = ['ARTISTIC_1', 'PRO_1']; // Mẫu Artistic và mẫu Chuyên nghiệp mới
+    const layoutKeys = ['ARTISTIC_1', 'PRO_1', 'CLASSIC_1', 'CREATIVE_1', 'MODERN_1']; // Danh sách các mẫu thiết kế khả dụng
 
     useEffect(() => {
         fetchTemplates();
@@ -67,9 +122,15 @@ const ManageCVTemplates = () => {
                 category: template.category,
                 layoutKey: template.layoutKey,
                 description: template.description || '',
-                isActive: template.active,
+                isActive: template.active ?? template.isActive,
                 isFeatured: template.isFeatured || false
             });
+            // Hiển thị preview ảnh cũ từ backend
+            if (template.thumbnailUrl) {
+                setPreviewUrl(`http://localhost:8080${template.thumbnailUrl}`);
+            } else {
+                setPreviewUrl(null);
+            }
         } else {
             setFormData({
                 name: '',
@@ -79,9 +140,70 @@ const ManageCVTemplates = () => {
                 isActive: true,
                 isFeatured: false
             });
+            setPreviewUrl(null);
         }
         setThumbnailFile(null);
         setIsModalOpen(true);
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setThumbnailFile(file);
+            setPreviewUrl(URL.createObjectURL(file));
+        }
+    };
+
+    const handleAutoRenderThumbnail = async () => {
+        if (isRendering) return;
+        
+        const Template = getTemplateComponent(formData.layoutKey);
+        if (!Template) {
+            toast.error('Không tìm thấy Component cho Layout này');
+            return;
+        }
+
+        setIsRendering(true);
+        const loadingToast = toast.loading('Đang chuẩn bị render...');
+
+        try {
+            // Đợi một chút để React render component ra vùng ẩn hoàn toàn
+            await new Promise(resolve => setTimeout(resolve, 800));
+            
+            if (!snapshotRef.current) {
+                throw new Error('Không tìm thấy vùng snapshot');
+            }
+
+            toast.loading('Đang chụp ảnh preview...', { id: loadingToast });
+            
+            const canvas = await html2canvas(snapshotRef.current, {
+                useCORS: true,
+                scale: 1.5, // Tăng chất lượng một chút nhưng không quá nặng
+                logging: false,
+                backgroundColor: '#ffffff'
+            });
+
+            toast.loading('Đang nén ảnh...', { id: loadingToast });
+            
+            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.85));
+            const file = new File([blob], 'captured-thumb.jpg', { type: 'image/jpeg' });
+            
+            // Xóa preview cũ nếu có
+            if (previewUrl && previewUrl.startsWith('blob:')) {
+                URL.revokeObjectURL(previewUrl);
+            }
+
+            const preview = URL.createObjectURL(blob);
+            setPreviewUrl(preview);
+            setThumbnailFile(file);
+            
+            toast.success('Đã tự động render ảnh bìa thành công!', { id: loadingToast });
+        } catch (error) {
+            console.error('Render error:', error);
+            toast.error('Lỗi khi render: ' + error.message, { id: loadingToast });
+        } finally {
+            setIsRendering(false);
+        }
     };
 
     const handleFormChange = (e) => {
@@ -178,8 +300,13 @@ const ManageCVTemplates = () => {
                             {filteredTemplates.map(t => (
                                 <div key={t.id} className="cv-template-card">
                                     <div className="template-preview">
-                                        {t.thumbnailUrl && t.thumbnailUrl.startsWith('/') ? (
-                                            <img src={t.thumbnailUrl} alt={t.name} />
+                                        {(t.thumbnailUrl || t.thumbnail) ? (
+                                            <img 
+                                                src={t.thumbnailUrl?.startsWith('/uploads') 
+                                                    ? `http://localhost:8080${t.thumbnailUrl}` 
+                                                    : t.thumbnailUrl} 
+                                                alt={t.name} 
+                                            />
                                         ) : (
                                             <div className="preview-placeholder">
                                                 <span className="material-symbols-outlined">description</span>
@@ -194,8 +321,8 @@ const ManageCVTemplates = () => {
                                                 <span className="material-symbols-outlined">delete</span>
                                             </button>
                                         </div>
-                                        <div className={`status-badge ${t.active ? 'active' : 'inactive'}`}>
-                                            {t.active ? 'ĐANG BẬT' : 'ĐANG TẮT'}
+                                        <div className={`status-badge ${(t.active ?? t.isActive) ? 'active' : 'inactive'}`}>
+                                            {(t.active ?? t.isActive) ? 'ĐANG BẬT' : 'ĐANG TẮT'}
                                         </div>
                                     </div>
                                     <div className="template-info">
@@ -208,8 +335,11 @@ const ManageCVTemplates = () => {
                                             <label className="switch">
                                                 <input 
                                                     type="checkbox" 
-                                                    checked={t.active} 
-                                                    onChange={() => handleToggleStatus(t.id)} 
+                                                    checked={t.active ?? t.isActive} 
+                                                    onChange={(e) => {
+                                                        e.stopPropagation();
+                                                        handleToggleStatus(t.id);
+                                                    }} 
                                                 />
                                                 <span className="slider round"></span>
                                             </label>
@@ -290,10 +420,13 @@ const ManageCVTemplates = () => {
                                         <button 
                                             type="button" 
                                             className="btn-auto-render"
-                                            onClick={() => toast.loading('Tính năng đang được triển khai...')}
+                                            onClick={handleAutoRenderThumbnail}
+                                            disabled={isRendering || !formData.layoutKey}
                                         >
-                                            <span className="material-symbols-outlined">auto_fix</span>
-                                            TỰ ĐỘNG RENDER ẢNH BÌA
+                                            <span className={`material-symbols-outlined ${isRendering ? 'spinning' : ''}`}>
+                                                {isRendering ? 'sync' : 'auto_fix'}
+                                            </span>
+                                            {isRendering ? 'ĐANG RENDER...' : 'TỰ ĐỘNG RENDER ẢNH BÌA'}
                                         </button>
                                     </div>
                                 </div>
@@ -329,6 +462,16 @@ const ManageCVTemplates = () => {
                     </div>
                 </div>
             )}
+            {/* Vùng Render Ảnh Bìa Ẩn (Snapshot Container) */}
+            <div className="cv-snapshot-outer">
+                <div ref={snapshotRef} className="cv-snapshot-inner">
+                    {formData.layoutKey && (
+                        React.createElement(getTemplateComponent(formData.layoutKey), {
+                            cvData: MOCK_CV_DATA
+                        })
+                    )}
+                </div>
+            </div>
         </div>
     );
 };

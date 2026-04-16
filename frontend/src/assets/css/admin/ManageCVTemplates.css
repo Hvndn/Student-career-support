@@ -373,8 +373,13 @@
 
 .switch input { 
   opacity: 0;
-  width: 0;
-  height: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+  z-index: 2;
 }
 
 .slider {
@@ -421,4 +426,34 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+/* Hidden snapshot container for auto-render */
+.cv-snapshot-outer {
+    position: fixed;
+    top: -9999px;
+    left: -9999px;
+    width: 794px; /* A4 width in pixels at standard DPI */
+    z-index: -1000;
+    pointer-events: none;
+}
+
+.cv-snapshot-inner {
+    width: 100%;
+    background: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.btn-auto-render:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-auto-render .material-symbols-outlined.spinning {
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }

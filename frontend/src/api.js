@@ -176,6 +176,7 @@ export const chatApi = {
     getConversations: () => api.get('/chat/conversations'),
     getMessages: (partnerId) => api.get(`/chat/messages/${partnerId}`),
     sendMessage: (partnerId, data) => api.post(`/chat/messages/${partnerId}`, data),
+    getDirectory: () => api.get('/users/directory'),
 };
 
 export default api;

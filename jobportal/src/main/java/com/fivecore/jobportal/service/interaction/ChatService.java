@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,6 +22,7 @@ public class ChatService {
 
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public List<ConversationResponse> getConversations(Integer userId) {
         List<Message> latestMessages = messageRepository.findLatestConversationsForUser(userId);
@@ -72,13 +75,24 @@ public class ChatService {
 
         Message savedMsg = messageRepository.save(message);
 
-        return MessageResponse.builder()
+        MessageResponse response = MessageResponse.builder()
                 .id(savedMsg.getId())
                 .senderId(senderId)
                 .receiverId(receiverId)
                 .content(savedMsg.getContent())
                 .createdAt(savedMsg.getCreatedAt())
-                .isMine(true)
+                .isMine(false) // For the receiver
                 .build();
+
+        // Gửi tin nhắn real-time qua WebSocket tới người nhận
+        messagingTemplate.convertAndSendToUser(
+                receiverId.toString(),
+                "/queue/messages",
+                response
+        );
+
+        // Trả về response cho người gửi (isMine = true)
+        response.setMine(true);
+        return response;
     }
 }
