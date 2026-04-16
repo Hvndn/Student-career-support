@@ -169,6 +169,11 @@ export const adminApi = {
     updateCvTemplate: (id, formData) => api.put(`/admin/cv-templates/${id}`, formData),
     deleteCvTemplate: (id) => api.delete(`/admin/cv-templates/${id}`),
     toggleCvTemplateStatus: (id) => api.post(`/admin/cv-templates/${id}/toggle-status`),
+    // Categories
+    getCategories: () => api.get('/admin/categories'),
+    addCategory: (data) => api.post('/admin/categories', data),
+    updateCategory: (id, data) => api.put(`/admin/categories/${id}`, data),
+    deleteCategory: (id) => api.delete(`/admin/categories/${id}`),
 };
 
 // ── Chat ──────────────────────────────────────────────────────────────────

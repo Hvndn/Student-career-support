@@ -1,18 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import AdminNavbar from '../../components/admin/AdminNavbar';
+import { adminApi } from '../../api';
+import toast from 'react-hot-toast';
 import '../../assets/css/admin/AdminManagement.css';
 import '../../assets/css/admin/ManageCategories.css';
 
 const ManageCategories = () => {
-    const [categories, setCategories] = useState([
-        { id: 1, name: 'Cảnh quan', description: 'Thiết kế cảnh quan sân vườn...', slug: 'canh-quan', jobsCount: 3, status: 'Active', icon: 'window' },
-        { id: 2, name: 'Dự toán / QS', description: 'Lập dự toán, kiểm soát khối l...', slug: 'du-toan-qs', jobsCount: 0, status: 'Active', icon: 'verified' },
-        { id: 3, name: 'Giám sát thi công', description: 'Giám sát chất lượng và an to...', slug: 'giam-sat', jobsCount: 0, status: 'Active', icon: 'domain' },
-        { id: 4, name: 'Họa viên / BIM', description: 'Triển khai bản vẽ, mô hình th...', slug: 'hoa-vien-bim', jobsCount: 0, status: 'Active', icon: 'palette' },
-        { id: 5, name: 'Kiến trúc sư', description: 'Thiết kế kiến trúc công trình...', slug: 'kien-truc-su', jobsCount: 0, status: 'Active', icon: 'account_balance' }
-    ]);
-
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCategory, setEditingCategory] = useState(null);
@@ -20,9 +16,27 @@ const ManageCategories = () => {
         name: '',
         description: '',
         slug: '',
-        status: 'Active',
+        status: 'ACTIVE',
         icon: 'category'
     });
+
+    useEffect(() => {
+        fetchCategories();
+    }, []);
+
+    const fetchCategories = async () => {
+        try {
+            setLoading(true);
+            const response = await adminApi.getCategories();
+            if (response.data.status === 'success') {
+                setCategories(response.data.data);
+            }
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const iconsList = [
         'category', 'window', 'verified', 'domain', 'palette', 'account_balance', 
@@ -39,7 +53,7 @@ const ManageCategories = () => {
                 name: '',
                 description: '',
                 slug: '',
-                status: 'Active',
+                status: 'ACTIVE',
                 icon: 'category'
             });
         }
@@ -57,19 +71,39 @@ const ManageCategories = () => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (editingCategory) {
-            setCategories(categories.map(c => c.id === editingCategory.id ? { ...formData, id: c.id, jobsCount: c.jobsCount } : c));
-        } else {
-            setCategories([...categories, { ...formData, id: Date.now(), jobsCount: 0 }]);
+        try {
+            if (editingCategory) {
+                const response = await adminApi.updateCategory(editingCategory.id, formData);
+                if (response.data.status === 'success') {
+                    toast.success('Cập nhật danh mục thành công');
+                    fetchCategories();
+                }
+            } else {
+                const response = await adminApi.addCategory(formData);
+                if (response.data.status === 'success') {
+                    toast.success('Thêm danh mục thành công');
+                    fetchCategories();
+                }
+            }
+            setIsModalOpen(false);
+        } catch (error) {
+            console.error('Error saving category:', error);
         }
-        setIsModalOpen(false);
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         if (window.confirm('Bạn có chắc chắn muốn xóa danh mục này?')) {
-            setCategories(categories.filter(c => c.id !== id));
+            try {
+                const response = await adminApi.deleteCategory(id);
+                if (response.data.status === 'success') {
+                    toast.success('Xóa danh mục thành công');
+                    fetchCategories();
+                }
+            } catch (error) {
+                console.error('Error deleting category:', error);
+            }
         }
     };
 
@@ -80,7 +114,7 @@ const ManageCategories = () => {
 
     const stats = [
         { label: 'Tổng danh mục', value: categories.length, icon: 'inventory_2', color: 'blue' },
-        { label: 'Đang hoạt động', value: categories.filter(c => c.status === 'Active').length, icon: 'verified', color: 'green' },
+        { label: 'Đang hoạt động', value: categories.filter(c => c.status === 'ACTIVE').length, icon: 'verified', color: 'green' },
         { label: 'Tổng việc làm', value: categories.reduce((sum, c) => sum + (c.jobsCount || 0), 0), icon: 'work', color: 'yellow' }
     ];
 
@@ -140,7 +174,12 @@ const ManageCategories = () => {
                             <div style={{ textAlign: 'right' }}>THAO TÁC</div>
                         </div>
 
-                        {filteredCategories.length > 0 ? (
+                        {loading ? (
+                            <div style={{ display: 'flex', justifyContent: 'center', padding: '5rem' }}>
+                                <div className="loading-spinner-simple" style={{ width: '40px', height: '40px', border: '3px solid #f1f5f9', borderTopColor: '#a31919', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+                            </div>
+                        ) : filteredCategories.length > 0 ? (
                             filteredCategories.map((cat) => (
                                 <div key={cat.id} className="management-card-row category-table-grid" style={{ marginBottom: '0.75rem', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
                                     <div>
@@ -156,8 +195,12 @@ const ManageCategories = () => {
                                     <div className="jobs-count-cell" style={{ textAlign: 'center', fontWeight: 700 }}>{cat.jobsCount}</div>
                                     <div>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            <span className="material-symbols-outlined" style={{ color: '#84cc16', fontSize: '20px' }}>verified</span>
-                                            <span style={{ color: '#84cc16', fontWeight: 700, fontSize: '0.85rem' }}>Hoạt động</span>
+                                            <span className="material-symbols-outlined" style={{ color: cat.status === 'ACTIVE' ? '#84cc16' : '#94a3b8', fontSize: '20px' }}>
+                                                {cat.status === 'ACTIVE' ? 'verified' : 'cancel'}
+                                            </span>
+                                            <span style={{ color: cat.status === 'ACTIVE' ? '#84cc16' : '#94a3b8', fontWeight: 700, fontSize: '0.85rem' }}>
+                                                {cat.status === 'ACTIVE' ? 'Hoạt động' : 'Tạm dừng'}
+                                            </span>
                                         </div>
                                     </div>
                                     <div className="actions-cell" style={{ display: 'flex', justifyContent: 'flex-end', gap: '15px' }}>
@@ -241,8 +284,8 @@ const ManageCategories = () => {
                                             value={formData.status} 
                                             onChange={handleInputChange}
                                         >
-                                            <option value="Active">Hoạt động</option>
-                                            <option value="Inactive">Tạm dừng</option>
+                                            <option value="ACTIVE">Hoạt động</option>
+                                            <option value="INACTIVE">Tạm dừng</option>
                                         </select>
                                     </div>
                                     <div className="form-group">
