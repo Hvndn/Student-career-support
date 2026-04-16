@@ -81,11 +81,11 @@ const RouteChangeHandler = ({ setIsLoading }) => {
     if (!isExcluded) {
       setIsLoading(true);
     }
-    
+
     const handleStop = () => {
       setIsLoading(false);
     };
-    
+
     const timeout = setTimeout(handleStop, 800);
 
     return () => {
@@ -114,8 +114,8 @@ const AppContent = () => {
 
   return (
     <MessagingProvider>
-      <Toaster 
-        position="top-right" 
+      <Toaster
+        position="top-right"
         reverseOrder={false}
         toastOptions={{
           className: 'react-hot-toast',
@@ -130,9 +130,9 @@ const AppContent = () => {
       />
       <RouteChangeHandler setIsLoading={setIsLoading} />
       {isLoading && <LoadingSpinner />}
-      
+
       <NavbarSelector />
-      
+
       <Routes>
         {/* Công khai */}
         <Route path="/" element={<Home />} />
@@ -141,7 +141,7 @@ const AppContent = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        
+
         {/* Nhà tuyển dụng (Landing & Pricing) */}
         <Route path="/employer" element={<CompanyDashboard />} />
         <Route path="/employer/pricing" element={<EmployerPricing />} />
@@ -170,7 +170,7 @@ const AppContent = () => {
         <Route path="/jobs/:id" element={<StudentLayoutWrapper><JobDetail /></StudentLayoutWrapper>} />
         <Route path="/companies" element={<StudentLayoutWrapper><CompanyList /></StudentLayoutWrapper>} />
         <Route path="/companies/:id" element={<StudentLayoutWrapper><CompanyDetail /></StudentLayoutWrapper>} />
-        
+
         {/* Bảo vệ cho Doanh nghiệp (Dashboard & Management) */}
         <Route path="/company/*" element={
           <ProtectedRoute requiredRole="ROLE_COMPANY">

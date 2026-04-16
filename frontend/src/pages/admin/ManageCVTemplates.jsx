@@ -367,6 +367,7 @@ const ManageCVTemplates = () => {
                                         <label>Tên mẫu CV</label>
                                         <input 
                                             name="name"
+                                            className="form-control"
                                             value={formData.name}
                                             onChange={handleFormChange}
                                             placeholder="Vd: CV Sinh viên IT Hiện đại"
@@ -377,13 +378,24 @@ const ManageCVTemplates = () => {
                                 <div className="form-row">
                                     <div className="form-group">
                                         <label>Danh mục</label>
-                                        <select name="category" value={formData.category} onChange={handleFormChange}>
+                                        <select 
+                                            name="category" 
+                                            className="form-control"
+                                            value={formData.category} 
+                                            onChange={handleFormChange}
+                                        >
                                             {categories.slice(1).map(c => <option key={c} value={c}>{c}</option>)}
                                         </select>
                                     </div>
                                     <div className="form-group">
                                         <label>Layout Key (Component Gốc)</label>
-                                        <select name="layoutKey" value={formData.layoutKey} onChange={handleFormChange} required>
+                                        <select 
+                                            name="layoutKey" 
+                                            className="form-control"
+                                            value={formData.layoutKey} 
+                                            onChange={handleFormChange} 
+                                            required
+                                        >
                                             <option value="">Chọn một layout...</option>
                                             {layoutKeys.map(k => <option key={k} value={k}>{k}</option>)}
                                         </select>
@@ -446,9 +458,11 @@ const ManageCVTemplates = () => {
                                     <label>Mô tả (Ghi chú)</label>
                                     <textarea 
                                         name="description"
+                                        className="form-control"
                                         value={formData.description}
                                         onChange={handleFormChange}
                                         rows="3"
+                                        placeholder="Nhập mô tả chi tiết về mẫu CV này..."
                                     />
                                 </div>
                             </div>
