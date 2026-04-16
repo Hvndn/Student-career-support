@@ -20,6 +20,8 @@ const Register = () => {
     });
     const [agreed, setAgreed] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
@@ -171,25 +173,47 @@ const Register = () => {
                         <div className="form-row">
                             <div className="form-group">
                                 <label>MẬT KHẨU</label>
-                                <input
-                                    type="password"
-                                    className="form-input"
-                                    placeholder="••••••••"
-                                    value={formData.password}
-                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                    required
-                                />
+                                <div className="password-input-wrapper">
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        className="form-input"
+                                        placeholder="••••••••"
+                                        value={formData.password}
+                                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                        required
+                                    />
+                                    <button 
+                                        type="button" 
+                                        className="password-toggle-btn"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
+                                        <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
+                                            {showPassword ? 'visibility_off' : 'visibility'}
+                                        </span>
+                                    </button>
+                                </div>
                             </div>
                             <div className="form-group">
                                 <label>XÁC NHẬN MẬT KHẨU</label>
-                                <input
-                                    type="password"
-                                    className="form-input"
-                                    placeholder="••••••••"
-                                    value={formData.confirmPassword}
-                                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                                    required
-                                />
+                                <div className="password-input-wrapper">
+                                    <input
+                                        type={showConfirmPassword ? "text" : "password"}
+                                        className="form-input"
+                                        placeholder="••••••••"
+                                        value={formData.confirmPassword}
+                                        onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                                        required
+                                    />
+                                    <button 
+                                        type="button" 
+                                        className="password-toggle-btn"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    >
+                                        <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
+                                            {showConfirmPassword ? 'visibility_off' : 'visibility'}
+                                        </span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 

@@ -43,6 +43,23 @@
   padding: 0;
 }
 
+input, textarea, select {
+  caret-color: #000 !important;
+  color: #000 !important;
+  transition: none !important;
+}
+
+input::selection, textarea::selection {
+  background: #333 !important;
+  color: #fff !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #000 !important;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1) !important;
+  outline: none !important;
+}
+
 /* Body */
 body {
   font-family: 'Inter', sans-serif;
