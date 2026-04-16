@@ -1,0 +1,192 @@
+import React, { useState, useEffect } from 'react';
+import CompanySidebar from '../../components/company/CompanySidebar';
+import CompanyNavbar from '../../components/company/CompanyNavbar';
+import { recruitmentApi } from '../../api';
+import toast from 'react-hot-toast';
+import '../../assets/css/company/CompanyBooking.css';
+
+const CompanyBooking = () => {
+    const [interviews, setInterviews] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState('all');
+
+    useEffect(() => {
+        const fetchInterviews = async () => {
+            try {
+                const response = await recruitmentApi.getInterviews();
+                if (response.data.status === 'success') {
+                    setInterviews(response.data.data || []);
+                }
+            } catch (error) {
+                console.error('Error fetching interviews:', error);
+                toast.error('Không thể tải danh sách lịch hẹn');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchInterviews();
+    }, []);
+
+    const formatDate = (dateString) => {
+        if (!dateString) return { day: '--', month: '--', year: '----', time: '--:--' };
+        const date = new Date(dateString);
+        return {
+            day: date.getDate(),
+            month: date.toLocaleString('vi-VN', { month: 'short' }),
+            year: date.getFullYear(),
+            time: date.toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+            full: date.toLocaleDateString('vi-VN')
+        };
+    };
+
+    const filteredInterviews = interviews.filter(item => {
+        const matchesSearch = 
+            item.application?.student?.user?.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.application?.job?.title?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
+        return matchesSearch && matchesStatus;
+    });
+
+    if (loading) return (
+        <div className="cd-layout">
+            <CompanySidebar />
+            <div className="cd-main">
+                <div className="loading-container">
+                    <div className="loader"></div>
+                    <p>Đang tải lịch phỏng vấn...</p>
+                </div>
+            </div>
+        </div>
+    );
+
+    return (
+        <div className="cd-layout">
+            <CompanySidebar />
+            <div className="cd-main">
+                <CompanyNavbar activeTab="Đặt lịch làm việc" />
+
+                <div className="booking-page">
+                    <div className="section-header">
+                        <div className="header-title-group">
+                            <h3><span className="icon">📅</span> Lịch phỏng vấn</h3>
+                            <p className="subtitle">Quản lý và theo dõi các buổi hẹn phỏng vấn với ứng viên.</p>
+                        </div>
+                        <div className="header-actions">
+                            <button className="btn-respond primary">
+                                <span className="material-symbols-outlined">add</span>
+                                Tạo lịch mới
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="booking-container">
+                        <div className="filter-panel glass">
+                            <div className="filter-group">
+                                <label>Tìm kiếm</label>
+                                <div className="search-input-wrapper">
+                                    <span className="material-symbols-outlined">search</span>
+                                    <input 
+                                        type="text" 
+                                        placeholder="Tìm ứng viên, vị trí..." 
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="filter-group">
+                                <label>Trạng thái</label>
+                                <select 
+                                    className="filter-control"
+                                    value={statusFilter}
+                                    onChange={(e) => setStatusFilter(e.target.value)}
+                                >
+                                    <option value="all">Tất cả trạng thái</option>
+                                    <option value="scheduled">Đã lên lịch</option>
+                                    <option value="completed">Đã hoàn thành</option>
+                                    <option value="cancelled">Đã hủy</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div className="booking-list">
+                            {filteredInterviews.length > 0 ? (
+                                filteredInterviews.map((interview) => {
+                                    const dateInfo = formatDate(interview.interviewDate);
+                                    const student = interview.application?.student;
+                                    const job = interview.application?.job;
+
+                                    return (
+                                        <div key={interview.id} className="booking-card glass">
+                                            <div className="booking-date-side">
+                                                <div className="date-badge">
+                                                    <span className="d-day">{dateInfo.day}</span>
+                                                    <span className="d-month">{dateInfo.month}</span>
+                                                    <span className="d-year">{dateInfo.year}</span>
+                                                </div>
+                                                <div className="time-badge">
+                                                    <span className="material-symbols-outlined">schedule</span>
+                                                    {dateInfo.time}
+                                                </div>
+                                            </div>
+
+                                            <div className="booking-main-content">
+                                                <div className="candidate-info">
+                                                    <img 
+                                                        src={student?.user?.avatarUrl || `https://ui-avatars.com/api/?name=${student?.user?.fullName}&background=random`} 
+                                                        alt={student?.user?.fullName} 
+                                                        className="c-avatar"
+                                                    />
+                                                    <div className="c-text">
+                                                        <h4>{student?.user?.fullName}</h4>
+                                                        <p className="c-job">Ứng tuyển: <strong>{job?.title}</strong></p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="interview-details">
+                                                    <div className="detail-item">
+                                                        <span className="material-symbols-outlined">location_on</span>
+                                                        <span className="text">{interview.location || 'Địa điểm chưa xác định'}</span>
+                                                    </div>
+                                                    <div className="detail-item">
+                                                        <span className="material-symbols-outlined">mail</span>
+                                                        <span className="text">{student?.user?.email}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="booking-status-side">
+                                                <span className={`status-pill status-${interview.status.toLowerCase()}`}>
+                                                    {interview.status === 'scheduled' ? 'Sắp diễn ra' : 
+                                                     interview.status === 'completed' ? 'Hoàn thành' : 
+                                                     interview.status === 'cancelled' ? 'Đã hủy' : interview.status}
+                                                </span>
+                                                <div className="card-actions">
+                                                    <button className="icon-btn" title="Xem chi tiết">
+                                                        <span className="material-symbols-outlined">visibility</span>
+                                                    </button>
+                                                    <button className="icon-btn delete" title="Hủy lịch">
+                                                        <span className="material-symbols-outlined">close</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <div className="no-data-card glass">
+                                    <div className="no-data-icon">📅</div>
+                                    <h3>Chưa có lịch hẹn nào</h3>
+                                    <p>Các buổi phỏng vấn bạn đã lên lịch sẽ xuất hiện tại đây.</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default CompanyBooking;
