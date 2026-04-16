@@ -12,7 +12,7 @@ const NAV_ITEMS = [
       { label: 'Tìm việc làm', to: '/jobs' },
       { label: 'Thực tập tốt nghiệp', to: '/student/internships' },
       { label: 'Việc làm đã ứng tuyển', to: '/student/applications' },
-      { label: 'Việc làm yêu thích', to: '/student/saved-jobs' }
+      { label: 'Việc làm yêu thích', to: '/student/saved' }
     ]
   },
   { icon: 'award', label: 'Thử thách dự án', to: '/student/challenges' },

@@ -165,10 +165,15 @@
 }
 
 .cvb-canvas-inner {
+  width: 210mm;
+  min-height: 297mm;
+  background: #fff;
   transition: transform .2s ease;
   box-shadow: 0 16px 48px rgba(0,0,0,.22);
   transform-origin: top center;
   display: inline-block;
+  position: relative;
+  overflow: hidden;
 }
 
 /* ── Zoom bar ── */
