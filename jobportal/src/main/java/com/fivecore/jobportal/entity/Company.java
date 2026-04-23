@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Thực thể Công ty/Nhà tuyển dụng - Chứa thông tin chi tiết của người dùng có
  * vai trò là công ty.
@@ -14,6 +16,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

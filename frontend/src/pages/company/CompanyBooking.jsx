@@ -46,8 +46,8 @@ const CompanyBooking = () => {
 
     const filteredInterviews = interviews.filter(item => {
         const matchesSearch = 
-            item.application?.student?.user?.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.application?.job?.title?.toLowerCase().includes(searchTerm.toLowerCase());
+            item.studentName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.jobTitle?.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
         return matchesSearch && matchesStatus;
     });
@@ -120,8 +120,6 @@ const CompanyBooking = () => {
                             {filteredInterviews.length > 0 ? (
                                 filteredInterviews.map((interview, idx) => {
                                     const dateInfo = formatDate(interview.interviewDate);
-                                    const student = interview.application?.student;
-                                    const job = interview.application?.job;
 
                                     return (
                                         <div 
@@ -144,13 +142,13 @@ const CompanyBooking = () => {
                                             <div className="booking-main-content">
                                                 <div className="candidate-info">
                                                     <img 
-                                                        src={student?.user?.avatarUrl || `https://ui-avatars.com/api/?name=${student?.user?.fullName}&background=random`} 
-                                                        alt={student?.user?.fullName} 
+                                                        src={interview.studentAvatar || `https://ui-avatars.com/api/?name=${interview.studentName}&background=random`} 
+                                                        alt={interview.studentName} 
                                                         className="c-avatar"
                                                     />
                                                     <div className="c-text">
-                                                        <h4>{student?.user?.fullName}</h4>
-                                                        <p className="c-job">Ứng tuyển: <strong>{job?.title}</strong></p>
+                                                        <h4>{interview.studentName}</h4>
+                                                        <p className="c-job">Ứng tuyển: <strong>{interview.jobTitle}</strong></p>
                                                     </div>
                                                 </div>
 
@@ -161,7 +159,7 @@ const CompanyBooking = () => {
                                                     </div>
                                                     <div className="detail-item">
                                                         <span className="material-symbols-outlined">mail</span>
-                                                        <span className="text">{student?.user?.email}</span>
+                                                        <span className="text">{interview.studentEmail}</span>
                                                     </div>
                                                 </div>
                                             </div>

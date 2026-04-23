@@ -1,7 +1,9 @@
 package com.fivecore.jobportal.controller.api.company;
 
 import com.fivecore.jobportal.dto.ApiResponse;
+import com.fivecore.jobportal.dto.InterviewResponse;
 import com.fivecore.jobportal.entity.Application;
+import com.fivecore.jobportal.entity.Interview;
 import com.fivecore.jobportal.service.auth.ApplicationService;
 import com.fivecore.jobportal.service.company.CandidateSearchService;
 import com.fivecore.jobportal.service.company.InterviewService;
@@ -106,16 +108,31 @@ public class RecruitmentRestController {
         return ResponseEntity.ok(ApiResponse.success("Đặt lịch phỏng vấn thành công", null));
     }
 
-    /**
-     * API Lấy danh sách lịch phỏng vấn của doanh nghiệp.
-     */
     @GetMapping("/interviews")
     public ResponseEntity<ApiResponse<Object>> getInterviews(Authentication authentication) {
         Integer companyId = getCurrentCompanyId(authentication);
         if (companyId == null)
             return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
 
-        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách lịch phỏng vấn thành công",
-                interviewService.getInterviewsByCompany(companyId)));
+        java.util.List<Interview> interviews = interviewService.getInterviewsByCompany(companyId);
+        
+        java.util.List<InterviewResponse> response = interviews.stream().map(i -> {
+            Application app = i.getApplication();
+            return InterviewResponse.builder()
+                .id(i.getId())
+                .interviewDate(i.getInterviewDate())
+                .location(i.getLocation())
+                .notes(i.getNotes())
+                .status(i.getStatus())
+                .result(i.getResult())
+                .applicationId(app.getId())
+                .studentName(app.getStudent() != null && app.getStudent().getUser() != null ? app.getStudent().getUser().getFullName() : app.getFullName())
+                .studentEmail(app.getStudent() != null && app.getStudent().getUser() != null ? app.getStudent().getUser().getEmail() : app.getEmail())
+                .studentAvatar(app.getStudent() != null ? app.getStudent().getAvatarUrl() : null)
+                .jobTitle(app.getJob() != null ? app.getJob().getTitle() : "N/A")
+                .build();
+        }).collect(java.util.stream.Collectors.toList());
+
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách lịch phỏng vấn thành công", response));
     }
 }

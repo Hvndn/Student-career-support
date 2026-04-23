@@ -1,10 +1,11 @@
 package com.fivecore.jobportal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.List;
 
 /**
  * Thực thể Ứng tuyển - Kết nối sinh viên với các công việc cụ thể.
@@ -15,19 +16,20 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Application {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "applications", "educations", "certifications", "savedJobs", "savedByCompanies"})
     private Student student;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "applications", "company"})
     private Job job;
 
     @Enumerated(EnumType.STRING)
@@ -55,8 +57,8 @@ public class Application {
     private String phone;
 
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private java.util.List<Interview> interviews;
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "application"})
+    private List<Interview> interviews;
 
     public enum ApplicationStatus {
         pending, review, suitable, interview, accepted, rejected
