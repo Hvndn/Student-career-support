@@ -34,96 +34,79 @@
 /* Floating Crystal Card */
 .mr-auth-crystal-card {
   width: 90%;
-  max-width: 1200px;
-  height: 800px;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(40px);
-  border-radius: 48px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-width: 1300px;
+  height: 850px;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(50px);
+  border-radius: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
+  flex-direction: row; /* FORM LEFT, IMAGE RIGHT */
   overflow: hidden;
-  box-shadow: 
-    0 50px 100px rgba(0, 0, 0, 0.3),
-    inset 0 0 80px rgba(255, 255, 255, 0.02);
+  box-shadow: 0 100px 200px rgba(0, 0, 0, 0.5);
   position: relative;
   z-index: 10;
-  animation: cardAppear 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes cardAppear {
-  from { opacity: 0; transform: scale(0.9) translateY(40px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+/* Form Side (Left) */
+.mr-auth-form-side {
+  flex: 0.85;
+  padding: 5rem 6rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.02);
 }
 
-/* Side Experience (Left) */
+/* Side Experience (Right) */
 .mr-auth-side-art {
-  flex: 1.1;
-  padding: 5rem;
+  flex: 1.15;
   position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), transparent);
-}
-
-.mr-art-logo {
-  font-family: 'Outfit', sans-serif;
-  font-size: 2.5rem;
-  font-weight: 900;
-  color: white;
-  letter-spacing: -0.04em;
-  background: linear-gradient(to right, #fff, rgba(255,255,255,0.5));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.mr-art-content h1 {
-  font-family: 'Outfit', sans-serif;
-  font-size: 4.5rem;
-  font-weight: 900;
-  color: white;
-  line-height: 0.95;
-  margin-bottom: 2rem;
-  letter-spacing: -0.05em;
-}
-
-.mr-art-content h1 span {
-  display: block;
-  background: linear-gradient(135deg, #818cf8, #c084fc, #38bdf8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.mr-art-desc {
-  font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.5);
-  line-height: 1.6;
-  max-width: 400px;
+  padding: 5rem;
+  background: #0f172a;
 }
 
 .mr-art-3d-visual {
   position: absolute;
-  bottom: 0;
-  right: -50px;
-  width: 120%;
-  height: 60%;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: bottom right;
-  opacity: 0.8;
-  filter: drop-shadow(0 0 50px rgba(79, 70, 229, 0.2));
-  pointer-events: none;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out, transform 8s linear;
+  transform: scale(1.1);
 }
 
-/* Form Side (Right) */
-.mr-auth-form-side {
-  flex: 0.9;
-  padding: 5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.mr-art-3d-visual.active {
+  opacity: 0.7;
+  transform: scale(1);
 }
+
+.mr-art-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, #0f172a, transparent 40%, transparent 60%, #0f172a);
+  z-index: 2;
+}
+
+.mr-art-logo {
+  position: relative;
+  z-index: 10;
+  font-family: 'Outfit', sans-serif;
+  font-size: 2rem;
+  font-weight: 900;
+  color: white;
+}
+
 
 .mr-form-header { margin-bottom: 3.5rem; }
 .mr-form-header h2 {

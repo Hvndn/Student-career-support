@@ -5,6 +5,20 @@ import toast from 'react-hot-toast';
 import '../../assets/css/common/Auth.css';
 
 const Register = () => {
+    const navigate = useNavigate();
+    const [currentImage, setCurrentImage] = useState(0);
+    const images = [
+        '/premium_auth_3d_visual_1776959386504.png',
+        '/premium_auth_3d_visual_2_1776959540655.png'
+    ];
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentImage((prev) => (prev + 1) % images.length);
+        }, 6000);
+        return () => clearInterval(timer);
+    }, []);
+
     useEffect(() => {
         document.body.style.paddingTop = '0';
         return () => { document.body.style.paddingTop = ''; };
@@ -22,7 +36,6 @@ const Register = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [error, setError] = useState('');
-    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -45,26 +58,12 @@ const Register = () => {
     return (
         <div className="mr-auth-page">
             <div className="mr-auth-crystal-card">
-                {/* Visual Experience Side */}
-                <div className="mr-auth-side-art">
-                    <div className="mr-art-logo">Fivecore</div>
-                    <div className="mr-art-content">
-                        <h1>
-                            Khởi đầu <span>Vững chãi</span> <br /> 
-                            Vươn tới <span>Tầm cao</span>
-                        </h1>
-                        <p className="mr-art-desc">
-                            Gia nhập mạng lưới nhân tài số 1 để mở khóa những cơ hội nghề nghiệp độc quyền và bứt phá sự nghiệp.
-                        </p>
-                    </div>
-                    <div className="mr-art-3d-visual" style={{ backgroundImage: `url('/premium_auth_3d_visual_1776959386504.png')` }}></div>
-                </div>
-
-                {/* Crystal Form Side */}
+                
+                {/* Crystal Form Side (LEFT) */}
                 <div className="mr-auth-form-side">
                     <div className="mr-form-header">
                         <h2>Tạo tài khoản</h2>
-                        <p>Bắt đầu hành trình của bạn ngay hôm nay</p>
+                        <p>Bắt đầu hành trình sự nghiệp tại Fivecore</p>
                     </div>
 
                     <div className="mr-role-switcher">
@@ -120,6 +119,30 @@ const Register = () => {
                         </p>
                     </form>
                 </div>
+
+                {/* Visual Experience Side (RIGHT) */}
+                <div className="mr-auth-side-art">
+                    <div className="mr-art-overlay"></div>
+                    {images.map((img, idx) => (
+                        <div 
+                            key={idx}
+                            className={`mr-art-3d-visual ${idx === currentImage ? 'active' : ''}`}
+                            style={{ backgroundImage: `url('${img}')` }}
+                        ></div>
+                    ))}
+                    
+                    <div className="mr-art-logo">Fivecore</div>
+                    <div className="mr-art-content" style={{ position: 'relative', zIndex: 10 }}>
+                        <h1 style={{ fontSize: '3.5rem', fontWeight: 900, color: 'white', lineHeight: 1 }}>
+                            Khởi đầu <span style={{ color: '#818cf8' }}>Vững chãi</span> <br /> 
+                            Vươn tới <span style={{ color: '#c084fc' }}>Tầm cao</span>
+                        </h1>
+                        <p style={{ color: 'rgba(255,255,255,0.5)', marginTop: '2rem', maxWidth: '400px' }}>
+                            Trở thành một phần của mạng lưới nhân tài Fivecore ngay hôm nay.
+                        </p>
+                    </div>
+                </div>
+
             </div>
         </div>
     );

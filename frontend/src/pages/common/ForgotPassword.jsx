@@ -5,6 +5,19 @@ import toast from 'react-hot-toast';
 import '../../assets/css/common/Auth.css';
 
 const ForgotPassword = () => {
+    const [currentImage, setCurrentImage] = useState(0);
+    const images = [
+        '/premium_auth_3d_visual_1776959386504.png',
+        '/premium_auth_3d_visual_2_1776959540655.png'
+    ];
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentImage((prev) => (prev + 1) % images.length);
+        }, 6000);
+        return () => clearInterval(timer);
+    }, []);
+
     useEffect(() => {
         document.body.style.paddingTop = '0';
         return () => { document.body.style.paddingTop = ''; };
@@ -31,24 +44,12 @@ const ForgotPassword = () => {
     return (
         <div className="mr-auth-page">
             <div className="mr-auth-crystal-card">
-                <div className="mr-auth-side-art">
-                    <div className="mr-art-logo">Fivecore</div>
-                    <div className="mr-art-content">
-                        <h1>
-                            Khôi phục <span>Truy cập</span> <br /> 
-                            Bảo mật <span>Tối ưu</span>
-                        </h1>
-                        <p className="mr-art-desc">
-                            Hệ thống bảo vệ tài khoản thông minh giúp bạn luôn làm chủ hành trình nghề nghiệp của mình.
-                        </p>
-                    </div>
-                    <div className="mr-art-3d-visual" style={{ backgroundImage: `url('/premium_auth_3d_visual_1776959386504.png')` }}></div>
-                </div>
-
+                
+                {/* Crystal Form Side (LEFT) */}
                 <div className="mr-auth-form-side">
                     <div className="mr-form-header">
                         <h2>{isSent ? "Kiểm tra Email" : "Quên mật khẩu?"}</h2>
-                        <p>{isSent ? "Yêu cầu đã được gửi. Vui lòng kiểm tra hộp thư của bạn." : "Nhập email để nhận liên kết khôi phục mật khẩu."}</p>
+                        <p>{isSent ? "Yêu cầu đã được gửi. Vui lòng kiểm tra hộp thư." : "Nhập email để nhận liên kết khôi phục mật khẩu."}</p>
                     </div>
 
                     {!isSent ? (
@@ -71,6 +72,30 @@ const ForgotPassword = () => {
                         Quay lại trang <Link to="/login">Đăng nhập</Link>
                     </p>
                 </div>
+
+                {/* Visual Experience Side (RIGHT) */}
+                <div className="mr-auth-side-art">
+                    <div className="mr-art-overlay"></div>
+                    {images.map((img, idx) => (
+                        <div 
+                            key={idx}
+                            className={`mr-art-3d-visual ${idx === currentImage ? 'active' : ''}`}
+                            style={{ backgroundImage: `url('${img}')` }}
+                        ></div>
+                    ))}
+                    
+                    <div className="mr-art-logo">Fivecore</div>
+                    <div className="mr-art-content" style={{ position: 'relative', zIndex: 10 }}>
+                        <h1 style={{ fontSize: '3.5rem', fontWeight: 900, color: 'white', lineHeight: 1 }}>
+                            Bảo mật <span style={{ color: '#818cf8' }}>Tối ưu</span> <br /> 
+                            An tâm <span style={{ color: '#c084fc' }}>Sự nghiệp</span>
+                        </h1>
+                        <p style={{ color: 'rgba(255,255,255,0.5)', marginTop: '2rem', maxWidth: '400px' }}>
+                            Hệ thống bảo vệ tài khoản giúp bạn luôn làm chủ cơ hội của mình.
+                        </p>
+                    </div>
+                </div>
+
             </div>
         </div>
     );
