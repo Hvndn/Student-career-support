@@ -106,15 +106,6 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="dau-stat-card">
-              <div className="dau-stat-icon dau-icon-green">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
-              </div>
-              <div className="dau-stat-info">
-                <h3>1</h3>
-                <p>Thử thách dự án</p>
-              </div>
-            </div>
-            <div className="dau-stat-card">
               <div className="dau-stat-icon dau-icon-orange">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
               </div>

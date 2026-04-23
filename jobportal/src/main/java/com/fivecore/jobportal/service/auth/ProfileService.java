@@ -1,9 +1,7 @@
 package com.fivecore.jobportal.service.auth;
 
-import com.fivecore.jobportal.entity.Certificate;
 import com.fivecore.jobportal.entity.Student;
 import com.fivecore.jobportal.entity.Education;
-import com.fivecore.jobportal.repository.CertificateRepository;
 import com.fivecore.jobportal.repository.EducationRepository;
 import com.fivecore.jobportal.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +21,6 @@ import java.util.List;
 public class ProfileService {
 
     private final StudentRepository studentRepository;
-    private final CertificateRepository certificateRepository;
     private final EducationRepository educationRepository;
 
     /**
