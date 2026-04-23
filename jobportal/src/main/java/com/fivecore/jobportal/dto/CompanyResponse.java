@@ -21,4 +21,9 @@ public class CompanyResponse {
     private String industry;
     private String companySize;
     private Integer foundingYear;
+    private String taxId;
+    private String representative;
+    private String province;
+    private String city;
+    private java.util.List<String> activityImages;
 }

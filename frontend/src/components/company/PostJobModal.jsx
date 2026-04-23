@@ -264,9 +264,9 @@ const PostJobModal = ({ isOpen, onClose, jobToEdit, onSuccess }) => {
                         </div>
                         <div className="pjm-row">
                             <div className="pjm-field">
-                                <label>Ngành nghề *</label>
+                                <label>Lĩnh vực *</label>
                                 <select className="pjm-select" value={form.industry} onChange={e => handleChange('industry', e.target.value)}>
-                                    <option value="">Chọn ngành...</option>
+                                    <option value="">Chọn lĩnh vực...</option>
                                     {INDUSTRIES.map(i => <option key={i} value={i}>{i}</option>)}
                                 </select>
                             </div>

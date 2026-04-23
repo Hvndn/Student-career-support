@@ -63,6 +63,16 @@ public class Company {
     @Column(length = 255)
     private String representative;
 
+    @Column(length = 100)
+    private String province;
+
+    @Column(length = 100)
+    private String city;
+
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private java.util.List<CompanyImage> activityImages = new java.util.ArrayList<>();
+
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<Job> jobs;
 

@@ -203,6 +203,13 @@ public class CompanyRestController {
                 .industry(company.getIndustry())
                 .companySize(company.getCompanySize())
                 .foundingYear(company.getFoundingYear())
+                .taxId(company.getTaxId())
+                .representative(company.getRepresentative())
+                .province(company.getProvince())
+                .city(company.getCity())
+                .activityImages(company.getActivityImages() != null ? 
+                    company.getActivityImages().stream().map(com.fivecore.jobportal.entity.CompanyImage::getImageUrl).collect(Collectors.toList()) : 
+                    new java.util.ArrayList<>())
                 .build();
 
         return ResponseEntity.ok(ApiResponse.success("Lấy hồ sơ công ty thành công", response));
@@ -214,10 +221,11 @@ public class CompanyRestController {
     @PutMapping("/profile")
     public ResponseEntity<ApiResponse<Object>> updateProfile(@ModelAttribute Company company,
             @RequestParam(value = "logoFile", required = false) MultipartFile logoFile,
+            @RequestParam(value = "activityFiles", required = false) List<MultipartFile> activityFiles,
             Authentication authentication) {
         try {
             Integer companyId = getCurrentCompanyId(authentication);
-            companyService.updateCompanyInfo(companyId, company, logoFile);
+            companyService.updateCompanyInfo(companyId, company, logoFile, activityFiles);
             return ResponseEntity.ok(ApiResponse.success("Cập nhật thông tin thành công", null));
         } catch (RuntimeException e) {
             log.warn("Lỗi khi cập nhật profile doanh nghiệp: {}", e.getMessage());

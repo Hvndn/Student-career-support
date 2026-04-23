@@ -34,10 +34,13 @@ const CompanyProfile = () => {
         email: '',
         companySize: '',
         province: '',
+        city: '',
         address: '',
         description: '',
-        logo: ''
+        logo: '',
+        activityImages: []
     });
+    const [selectedActivityFiles, setSelectedActivityFiles] = useState([]);
     const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
     const showToast = (message, type = 'success') => {
@@ -55,17 +58,19 @@ const CompanyProfile = () => {
                 setProfile(data);
                 setFormData({
                     name: data.name || '',
-                    taxCode: data.taxCode || '',
+                    taxCode: data.taxId || '',
                     industry: data.industry || '',
                     website: data.website || '',
                     phone: data.phone || '',
-                    representativeName: data.representativeName || data.fullName || '',
+                    representativeName: data.representative || '',
                     email: data.email || '',
                     companySize: data.companySize || '',
                     province: data.province || '',
+                    city: data.city || '',
                     address: data.address || '',
                     description: data.description || '',
-                    logo: data.logoUrl || ''
+                    logo: data.logoUrl || '',
+                    activityImages: data.activityImages || []
                 });
             }
         } catch (err) {
@@ -97,21 +102,57 @@ const CompanyProfile = () => {
         }
     };
 
+    const handleActivityFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length > 0) {
+            setSelectedActivityFiles(prev => [...prev, ...files]);
+            
+            // Preview
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setFormData(prev => ({
+                        ...prev,
+                        activityImages: [...prev.activityImages, reader.result]
+                    }));
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
         try {
             const dataToSubmit = new FormData();
+            
+            // Map frontend fields to backend entity fields
+            const fieldMapping = {
+                taxCode: 'taxId',
+                representativeName: 'representative'
+            };
+
             Object.keys(formData).forEach(key => {
-                if (key !== 'logo' && formData[key] !== null && formData[key] !== undefined) {
-                    dataToSubmit.append(key, formData[key]);
+                if (key !== 'logo' && key !== 'activityImages' && formData[key] !== null && formData[key] !== undefined) {
+                    const backendKey = fieldMapping[key] || key;
+                    dataToSubmit.append(backendKey, formData[key]);
                 }
             });
+
             if (selectedFile) dataToSubmit.append('logoFile', selectedFile);
+            
+            if (selectedActivityFiles.length > 0) {
+                selectedActivityFiles.forEach(file => {
+                    dataToSubmit.append('activityFiles', file);
+                });
+            }
 
             await companyApi.updateProfile(dataToSubmit);
-            setProfile(prev => ({ ...prev, ...formData }));
+            
+            await fetchProfile(); // Refresh data
             setSelectedFile(null);
+            setSelectedActivityFiles([]);
             window.dispatchEvent(new CustomEvent('companyProfileUpdated'));
             showToast('Cập nhật hồ sơ công ty thành công!', 'success');
         } catch (err) {
@@ -245,104 +286,128 @@ const CompanyProfile = () => {
                                         </svg>
                                     </button>
                                 </div>
-                                <div className="cp-activity-grid">
-                                    {[1,2,3,4].map(i => (
-                                        <div key={i} className="cp-activity-photo">
-                                            <div className="cp-photo-placeholder">
-                                                <svg viewBox="0 0 24 24" width="20" height="20" stroke="#cbd5e1" strokeWidth="1.5" fill="none">
-                                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                                                    <circle cx="8.5" cy="8.5" r="1.5"/>
-                                                    <polyline points="21 15 16 10 5 21"/>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* ===== RIGHT COLUMN: Edit Form ===== */}
-                        <div className="cp-right-col">
-                            <form id="cp-form" onSubmit={handleSubmit}>
-                                <div className="cp-form-card">
-                                    <h3 className="cp-form-title">Cập nhật hồ sơ doanh nghiệp</h3>
-
-                                    <div className="cp-fields-grid">
-                                        {/* Tên công ty */}
-                                        <div className="cp-field-group">
-                                            <label>Tên công ty <span className="cp-required">*</span></label>
-                                            <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Nhập tên công ty..." required />
-                                        </div>
-
-                                        {/* Mã số thuế */}
-                                        <div className="cp-field-group">
-                                            <label>Mã số thuế <span className="cp-required">*</span></label>
-                                            <input type="text" name="taxCode" value={formData.taxCode} onChange={handleChange} placeholder="0000000000" />
-                                        </div>
-
-                                        {/* Ngành nghề */}
-                                        <div className="cp-field-group">
-                                            <label>Ngành nghề <span className="cp-required">*</span></label>
-                                            <input type="text" name="industry" value={formData.industry} onChange={handleChange} placeholder="Kiến trúc, Xây dựng..." />
-                                        </div>
-
-                                        {/* Website */}
-                                        <div className="cp-field-group">
-                                            <label>Website</label>
-                                            <input type="text" name="website" value={formData.website} onChange={handleChange} placeholder="https://company.com" />
-                                        </div>
-
-                                        {/* Hotline / SĐT */}
-                                        <div className="cp-field-group">
-                                            <label>Hotline / SĐT</label>
-                                            <input type="text" name="phone" value={formData.phone} onChange={handleChange} placeholder="0xxxxxxxxx" />
-                                        </div>
-
-                                        {/* Người đại diện */}
-                                        <div className="cp-field-group">
-                                            <label>Người đại diện <span className="cp-required">*</span></label>
-                                            <input type="text" name="representativeName" value={formData.representativeName} onChange={handleChange} placeholder="Họ và tên người đại diện" />
-                                        </div>
-
-                                        {/* Email liên hệ */}
-                                        <div className="cp-field-group">
-                                            <label>Email liên hệ <span className="cp-required">*</span></label>
-                                            <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="contact@company.com" />
-                                        </div>
-
-                                        {/* Quy mô nhân sự */}
-                                        <div className="cp-field-group">
-                                            <label>Quy mô nhân sự</label>
-                                            <select name="companySize" value={formData.companySize} onChange={handleChange}>
-                                                <option value="">Chọn quy mô</option>
-                                                <option value="1-50">1-50 Nhân viên</option>
-                                                <option value="51-150">51-150 Nhân viên</option>
-                                                <option value="100-999">100-999 Nhân viên</option>
-                                                <option value="151-500">151-500 Nhân viên</option>
-                                                <option value="501-1000">501-1000 Nhân viên</option>
-                                                <option value="1000+">Trên 1000 Nhân viên</option>
-                                            </select>
-                                        </div>
-
-                                        {/* Địa chỉ tỉnh */}
-                                        <div className="cp-field-group">
-                                            <label>Địa chỉ tỉnh</label>
-                                            <select name="province" value={formData.province} onChange={handleChange}>
-                                                <option value="">Chọn Tỉnh</option>
-                                                <option value="Hà Nội">Hà Nội</option>
-                                                <option value="Hồ Chí Minh">Hồ Chí Minh</option>
-                                                <option value="Đà Nẵng">Đà Nẵng</option>
-                                                <option value="Hải Phòng">Hải Phòng</option>
-                                                <option value="Cần Thơ">Cần Thơ</option>
-                                                <option value="Khác">Tỉnh/Thành khác</option>
-                                            </select>
-                                        </div>
-
-                                        {/* Địa chỉ cụ thể */}
-                                        <div className="cp-field-group">
-                                            <label>Xã/Phường/Quận <span className="cp-required">*</span></label>
-                                            <input type="text" name="address" value={formData.address} onChange={handleChange} placeholder="Nhập địa chỉ chi tiết..." />
-                                        </div>
+                                 <div className="cp-activity-grid">
+                                     {formData.activityImages && formData.activityImages.length > 0 ? (
+                                         formData.activityImages.map((img, idx) => (
+                                             <div key={idx} className="cp-activity-photo">
+                                                 <img src={getImageUrl(img)} alt={`Hoạt động ${idx + 1}`} className="cp-activity-img-obj" />
+                                             </div>
+                                         ))
+                                     ) : (
+                                         [1,2,3,4].map(i => (
+                                             <div key={i} className="cp-activity-photo">
+                                                 <div className="cp-photo-placeholder">
+                                                     <svg viewBox="0 0 24 24" width="20" height="20" stroke="#cbd5e1" strokeWidth="1.5" fill="none">
+                                                         <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                                         <circle cx="8.5" cy="8.5" r="1.5"/>
+                                                         <polyline points="21 15 16 10 5 21"/>
+                                                     </svg>
+                                                 </div>
+                                             </div>
+                                         ))
+                                     )}
+                                     <label className="cp-activity-add-card" title="Thêm ảnh hoạt động">
+                                         <input type="file" multiple accept="image/*" hidden onChange={handleActivityFileChange} />
+                                         <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none">
+                                             <line x1="12" y1="5" x2="12" y2="19"></line>
+                                             <line x1="5" y1="12" x2="19" y2="12"></line>
+                                         </svg>
+                                         <span>Thêm ảnh</span>
+                                     </label>
+                                 </div>
+                             </div>
+                         </div>
+ 
+                         {/* ===== RIGHT COLUMN: Edit Form ===== */}
+                         <div className="cp-right-col">
+                             <form id="cp-form" onSubmit={handleSubmit}>
+                                 <div className="cp-form-card">
+                                     <h3 className="cp-form-title">Cập nhật hồ sơ doanh nghiệp</h3>
+ 
+                                     <div className="cp-fields-grid">
+                                         {/* Tên công ty */}
+                                         <div className="cp-field-group">
+                                             <label>Tên công ty <span className="cp-required">*</span></label>
+                                             <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Nhập tên công ty..." required />
+                                         </div>
+ 
+                                         {/* Mã số thuế */}
+                                         <div className="cp-field-group">
+                                             <label>Mã số thuế <span className="cp-required">*</span></label>
+                                             <input type="text" name="taxCode" value={formData.taxCode} onChange={handleChange} placeholder="0000000000" />
+                                         </div>
+ 
+                                         {/* Ngành nghề */}
+                                         <div className="cp-field-group">
+                                             <label>Lĩnh vực <span className="cp-required">*</span></label>
+                                             <input type="text" name="industry" value={formData.industry} onChange={handleChange} placeholder="Kiến trúc, Xây dựng..." />
+                                         </div>
+ 
+                                         {/* Website */}
+                                         <div className="cp-field-group">
+                                             <label>Website</label>
+                                             <input type="text" name="website" value={formData.website} onChange={handleChange} placeholder="https://company.com" />
+                                         </div>
+ 
+                                         {/* Hotline / SĐT */}
+                                         <div className="cp-field-group">
+                                             <label>Hotline / SĐT</label>
+                                             <input type="text" name="phone" value={formData.phone} onChange={handleChange} placeholder="0xxxxxxxxx" />
+                                         </div>
+ 
+                                         {/* Người đại diện */}
+                                         <div className="cp-field-group">
+                                             <label>Người đại diện <span className="cp-required">*</span></label>
+                                             <input type="text" name="representativeName" value={formData.representativeName} onChange={handleChange} placeholder="Họ và tên người đại diện" />
+                                         </div>
+ 
+                                         {/* Email liên hệ */}
+                                         <div className="cp-field-group">
+                                             <label>Email liên hệ <span className="cp-required">*</span></label>
+                                             <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="contact@company.com" />
+                                         </div>
+ 
+                                         {/* Quy mô nhân sự */}
+                                         <div className="cp-field-group">
+                                             <label>Quy mô nhân sự</label>
+                                             <select name="companySize" value={formData.companySize} onChange={handleChange}>
+                                                 <option value="">Chọn quy mô</option>
+                                                 <option value="1-50">1-50 Nhân viên</option>
+                                                 <option value="51-150">51-150 Nhân viên</option>
+                                                 <option value="100-999">100-999 Nhân viên</option>
+                                                 <option value="151-500">151-500 Nhân viên</option>
+                                                 <option value="501-1000">501-1000 Nhân viên</option>
+                                                 <option value="1000+">Trên 1000 Nhân viên</option>
+                                             </select>
+                                         </div>
+ 
+                                         {/* Địa chỉ tỉnh */}
+                                         <div className="cp-field-group">
+                                             <label>Địa chỉ tỉnh</label>
+                                             <select name="province" value={formData.province} onChange={handleChange}>
+                                                 <option value="">Chọn Tỉnh</option>
+                                                 <option value="Hà Nội">Hà Nội</option>
+                                                 <option value="Hồ Chí Minh">Hồ Chí Minh</option>
+                                                 <option value="Đà Nẵng">Đà Nẵng</option>
+                                                 <option value="Hải Phòng">Hải Phòng</option>
+                                                 <option value="Cần Thơ">Cần Thơ</option>
+                                                 <option value="Quảng Nam">Quảng Nam</option>
+                                                 <option value="Huế">Huế</option>
+                                                 <option value="Khác">Tỉnh/Thành khác</option>
+                                             </select>
+                                         </div>
+ 
+                                         {/* Quận Huyện */}
+                                         <div className="cp-field-group">
+                                             <label>Quận / Huyện <span className="cp-required">*</span></label>
+                                             <input type="text" name="city" value={formData.city} onChange={handleChange} placeholder="Hải Châu, Cẩm Lệ..." />
+                                         </div>
+ 
+                                         {/* Địa chỉ cụ thể */}
+                                         <div className="cp-field-group">
+                                             <label>Xã/Phường/Số nhà <span className="cp-required">*</span></label>
+                                             <input type="text" name="address" value={formData.address} onChange={handleChange} placeholder="Nhập địa chỉ chi tiết..." />
+                                         </div>
                                     </div>
 
                                     {/* Giới thiệu - full width */}

@@ -47,7 +47,7 @@ public class CompanyService {
      * Cập nhật thông tin doanh nghiệp (US-013).
      */
     @Transactional
-    public void updateCompanyInfo(Integer companyId, Company updatedData, MultipartFile logoFile) {
+    public void updateCompanyInfo(Integer companyId, Company updatedData, MultipartFile logoFile, List<MultipartFile> activityFiles) {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy doanh nghiệp"));
 
@@ -60,9 +60,28 @@ public class CompanyService {
         company.setIndustry(updatedData.getIndustry());
         company.setCompanySize(updatedData.getCompanySize());
         company.setFoundingYear(updatedData.getFoundingYear());
+        company.setTaxId(updatedData.getTaxId());
+        company.setRepresentative(updatedData.getRepresentative());
+        company.setProvince(updatedData.getProvince());
+        company.setCity(updatedData.getCity());
+
         if (logoFile != null && !logoFile.isEmpty()) {
             String logoUrl = storageService.saveFile(logoFile, "logos");
             company.setLogoUrl(logoUrl);
+        }
+
+        // Xử lý ảnh hoạt động mới
+        if (activityFiles != null && !activityFiles.isEmpty()) {
+            for (MultipartFile file : activityFiles) {
+                if (!file.isEmpty()) {
+                    String imageUrl = storageService.saveFile(file, "activities");
+                    com.fivecore.jobportal.entity.CompanyImage companyImage = com.fivecore.jobportal.entity.CompanyImage.builder()
+                            .imageUrl(imageUrl)
+                            .company(company)
+                            .build();
+                    company.getActivityImages().add(companyImage);
+                }
+            }
         }
 
         companyRepository.save(company);

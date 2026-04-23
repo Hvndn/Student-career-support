@@ -126,7 +126,7 @@ const JobDetail = () => {
                                 <div className="jd-info-item">
                                     <span className="material-symbols-outlined jd-item-icon">work</span>
                                     <div className="jd-item-content">
-                                        <label>Ngành nghề</label>
+                                        <label>Lĩnh vực</label>
                                         <span>{job.industry || 'Chưa cập nhật'}</span>
                                     </div>
                                 </div>
