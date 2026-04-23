@@ -287,6 +287,16 @@
     color: #374151;
 }
 
+.cp-field-group.cp-full-width {
+    grid-column: span 2;
+}
+
+@media (max-width: 600px) {
+    .cp-field-group.cp-full-width {
+        grid-column: span 1;
+    }
+}
+
 .cp-required {
     color: #ef4444;
     margin-left: 2px;

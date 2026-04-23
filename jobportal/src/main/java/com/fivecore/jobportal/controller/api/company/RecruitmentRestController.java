@@ -5,6 +5,7 @@ import com.fivecore.jobportal.dto.InterviewResponse;
 import com.fivecore.jobportal.entity.Application;
 import com.fivecore.jobportal.entity.Interview;
 import com.fivecore.jobportal.service.auth.ApplicationService;
+import com.fivecore.jobportal.service.company.CandidateMatchingService;
 import com.fivecore.jobportal.service.company.CandidateSearchService;
 import com.fivecore.jobportal.service.company.InterviewService;
 import com.fivecore.jobportal.repository.InterviewRepository;
@@ -27,9 +28,22 @@ public class RecruitmentRestController {
 
     private final ApplicationService applicationService;
     private final CandidateSearchService candidateSearchService;
+    private final CandidateMatchingService candidateMatchingService;
     private final InterviewService interviewService;
     private final InterviewRepository interviewRepository;
     private final UserRepository userRepository;
+
+    /**
+     * API Gợi ý ứng viên phù hợp cho một công việc.
+     */
+    @GetMapping("/jobs/{jobId}/recommendations")
+    public ResponseEntity<ApiResponse<Object>> getRecommendedCandidates(@PathVariable Integer jobId, Authentication authentication) {
+        Integer companyId = getCurrentCompanyId(authentication);
+        if (companyId == null) return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+        
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách ứng viên gợi ý thành công", 
+                candidateMatchingService.getRecommendedCandidates(jobId)));
+    }
 
     private Integer getCurrentCompanyId(Authentication authentication) {
         return userRepository.findByEmail(authentication.getName())

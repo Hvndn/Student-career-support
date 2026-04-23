@@ -87,31 +87,46 @@
 
 .select-wrapper, .input-wrapper {
     position: relative;
-    display: flex;
-    align-items: center;
+    width: 100%;
 }
 
 .select-wrapper .icon, .input-wrapper .icon {
     position: absolute;
-    left: 12px;
-    color: #64748b;
-    font-size: 20px;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 22px;
+    pointer-events: none;
+    z-index: 10;
+    transition: color 0.2s ease;
+}
+
+.input-wrapper:focus-within .icon,
+.select-wrapper:focus-within .icon {
+    color: #6366f1;
 }
 
 .form-group select, 
-.form-group input, 
-.form-group textarea {
-    width: 100%;
-    padding: 12px 12px 12px 42px;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 12px;
-    font-size: 1rem;
-    transition: all 0.2s;
-    background: white;
+.form-group input {
+    width: 100% !important;
+    padding: 14px 16px 14px 54px !important;
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 14px !important;
+    font-size: 0.95rem !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    background: #ffffff !important;
+    color: #1e293b !important;
+    display: block !important;
 }
 
 .form-group textarea {
-    padding-left: 15px;
+    width: 100% !important;
+    padding: 14px 16px !important;
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 14px !important;
+    font-size: 0.95rem !important;
+    color: #1e293b !important;
 }
 
 .form-group select:focus, 

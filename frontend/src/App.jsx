@@ -51,6 +51,8 @@ import CompanyCandidateNotifications from './pages/company/CompanyCandidateNotif
 import EmployerPricing from './pages/company/EmployerPricing'
 import CompanyBooking from './pages/company/CompanyBooking'
 
+import SuggestedCandidates from './pages/company/SuggestedCandidates'
+
 // admin pages
 import AdminDashboard from './pages/admin/AdminDashboard'
 import SkillManagement from './pages/admin/SkillManagement'
@@ -205,6 +207,7 @@ const AppContent = () => {
               <Route path="candidates/search" element={<CompanySearchCandidates />} />
               <Route path="candidates/tags" element={<CompanyCandidateTags />} />
               <Route path="candidates/notifications" element={<CompanyCandidateNotifications />} />
+              <Route path="candidates/suggested" element={<SuggestedCandidates />} />
               <Route path="booking" element={<CompanyBooking />} />
               <Route path="chat" element={<Chat />} />
               <Route path="profile" element={<CompanyProfile />} />
