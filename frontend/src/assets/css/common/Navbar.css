@@ -1,7 +1,8 @@
 /* Navbar.css */
 .navbar-light {
-    background: #fff;
-    border-bottom: 1px solid #e5e7eb;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     padding: 0 2rem;
     position: sticky;
     top: 0;
@@ -12,77 +13,73 @@
 }
 
 .navbar-container {
-    max-width: 1100px;
+    max-width: 1800px;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 64px;
+    height: 70px;
 }
 
 .brand-logo {
     font-weight: 800;
-    font-size: 1.1rem;
-    color: #111827;
+    font-size: 1.6rem;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     text-decoration: none;
+    letter-spacing: -0.03em;
+    font-family: 'Outfit', sans-serif;
 }
 
 .nav-links-container {
     display: flex;
-    gap: 2rem;
+    gap: 2.5rem;
     align-items: center;
 }
 
-.nav-link-item {
+/* Scroll Buttons Style */
+.nav-link-btn {
+    background: transparent;
+    border: none;
     font-size: 0.95rem;
-    text-decoration: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    padding: 0.5rem 0;
-}
-
-.nav-link-primary {
-    color: #111827;
-    font-weight: 700;
-}
-
-.nav-link-secondary {
-    color: #4b5563;
     font-weight: 600;
+    color: #4b5563;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif; /* Changed to Inter */
+    padding: 0.5rem 0;
+    transition: all 0.3s;
+    position: relative;
 }
 
-.nav-link-item:hover {
-    color: #2563eb !important;
+.nav-link-btn:hover {
+    color: #4f46e5;
     transform: translateY(-1px);
 }
 
-.nav-link-item::after {
+.nav-link-btn::after {
     content: '';
     position: absolute;
     bottom: -2px;
     left: 0;
     width: 100%;
-    height: 2px;
-    background: #2563eb;
+    height: 3px;
+    background: linear-gradient(90deg, #4f46e5, #7c3aed);
+    border-radius: 999px;
     transform: scaleX(0);
     transform-origin: right;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.nav-link-item:hover::after,
-.nav-link-item.active::after {
+.nav-link-btn:hover::after {
     transform: scaleX(1);
     transform-origin: left;
-}
-
-.nav-link-item.active {
-    color: #2563eb !important;
 }
 
 .nav-actions {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
 .user-name {
@@ -116,18 +113,21 @@
 }
 
 .register-btn-primary {
-    background: #2563eb;
+    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
     color: white;
-    padding: 0.5rem 1.2rem;
-    border-radius: 8px;
+    padding: 0.6rem 1.4rem;
+    border-radius: 12px;
     font-weight: 700;
     font-size: 0.9rem;
     text-decoration: none;
-    transition: background 0.2s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
 }
 
 .register-btn-primary:hover {
-    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 16px rgba(79, 70, 229, 0.3);
+    background: linear-gradient(135deg, #4338ca 0%, #3730a3 100%);
 }
 
 .employer-btn-dark {
