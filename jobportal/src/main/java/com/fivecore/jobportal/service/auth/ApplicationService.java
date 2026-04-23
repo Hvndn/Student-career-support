@@ -122,11 +122,17 @@ public class ApplicationService {
 
     /**
      * Doanh nghiệp phê duyệt/từ chối ứng viên (US-009).
+     * Có kiểm tra quyền sở hữu của doanh nghiệp.
      */
     @Transactional
-    public void updateApplicationStatus(Integer applicationId, Application.ApplicationStatus status) {
+    public void updateApplicationStatus(Integer applicationId, Application.ApplicationStatus status, Integer companyId) {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn ứng tuyển"));
+
+        // Kiểm tra quyền: Đơn ứng tuyển phải thuộc về công việc của doanh nghiệp đang đăng nhập
+        if (!application.getJob().getCompany().getId().equals(companyId)) {
+            throw new RuntimeException("Bạn không có quyền cập nhật trạng thái cho hồ sơ này");
+        }
 
         application.setStatus(status);
         applicationRepository.save(application);

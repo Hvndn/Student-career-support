@@ -95,7 +95,7 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                 <p className="spm-card-title">Thông tin chung</p>
                                 <div className="spm-bio-box">
                                     {candidate.bio
-                                        ? <p>{candidate.bio}</p>
+                                        ? <div dangerouslySetInnerHTML={{ __html: candidate.bio }} />
                                         : <p className="spm-empty">Sinh viên chưa cập nhật thông tin chung.</p>
                                     }
                                 </div>
@@ -137,7 +137,7 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                                         {exp.startDate} – {exp.endDate || 'Hiện tại'}
                                                     </p>
                                                     {exp.description && (
-                                                        <p className="spm-tl-desc">{exp.description}</p>
+                                                        <div className="spm-tl-desc" dangerouslySetInnerHTML={{ __html: exp.description }} />
                                                     )}
                                                 </div>
                                             </div>
@@ -236,7 +236,7 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                                     </div>
                                                 </div>
                                                 {pj.description && (
-                                                    <p className="spm-project-desc">{pj.description}</p>
+                                                    <div className="spm-project-desc" dangerouslySetInnerHTML={{ __html: pj.description }} />
                                                 )}
                                             </div>
                                         ))}

@@ -23,7 +23,7 @@
     background: #fff;
     border-radius: 14px;
     width: 100%;
-    max-width: 760px;
+    max-width: 1200px;
     max-height: 92vh;
     display: flex;
     flex-direction: column;
@@ -269,7 +269,12 @@
     font-size: 0.875rem;
     color: #475569;
     line-height: 1.65;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
 }
+.spm-bio-box > div > *:first-child { margin-top: 0; }
+.spm-bio-box > div > *:last-child { margin-bottom: 0; }
 
 .spm-empty {
     color: #94a3b8;
@@ -326,7 +331,11 @@
     font-size: 0.8rem;
     color: #475569;
     margin-top: 4px;
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
+.spm-tl-desc > *:first-child { margin-top: 0; }
+.spm-tl-desc > *:last-child { margin-bottom: 0; }
 
 /* Contact list */
 .spm-contact-list {
@@ -451,7 +460,11 @@
     color: #64748b;
     margin: 6px 0 0;
     line-height: 1.5;
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
+.spm-project-desc > *:first-child { margin-top: 0; }
+.spm-project-desc > *:last-child { margin-bottom: 0; }
 
 /* ── RESPONSIVE ── */
 @media (max-width: 620px) {

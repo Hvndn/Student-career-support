@@ -22,10 +22,10 @@
 
 /* Container */
 .cdm-container {
-    background: #fff;
+    width: 95%;
+    max-width: 1100px;
+    background: white;
     border-radius: 16px;
-    width: 100%;
-    max-width: 780px;
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
@@ -416,6 +416,16 @@
 
 .cdm-btn-close:hover {
     background: #5e1717;
+}
+
+/* Status Update Logic Styles */
+.status-option input:disabled + label {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.status-option input:disabled {
+    cursor: not-allowed;
 }
 
 /* ── RESPONSIVE ── */

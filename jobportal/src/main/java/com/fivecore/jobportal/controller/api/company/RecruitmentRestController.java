@@ -57,13 +57,22 @@ public class RecruitmentRestController {
      */
     @PatchMapping("/applications/{appId}/status")
     public ResponseEntity<ApiResponse<Object>> updateStatus(@PathVariable Integer appId,
-            @RequestParam("status") String status) {
+            @RequestParam("status") String status,
+            Authentication authentication) {
         try {
+            Integer companyId = getCurrentCompanyId(authentication);
+            if (companyId == null) {
+                return ResponseEntity.status(403).body(ApiResponse.error("Bạn không có quyền thực hiện hành động này!", "FORBIDDEN"));
+            }
+
             applicationService.updateApplicationStatus(appId,
-                    Enum.valueOf(Application.ApplicationStatus.class, status.toLowerCase()));
+                    Enum.valueOf(Application.ApplicationStatus.class, status.trim().toLowerCase()),
+                    companyId);
             return ResponseEntity.ok(ApiResponse.success("Cập nhật trạng thái thành công", null));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(ApiResponse.error("Trạng thái không hợp lệ", "INVALID_STATUS"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(403).body(ApiResponse.error(e.getMessage(), "FORBIDDEN"));
         }
     }
 

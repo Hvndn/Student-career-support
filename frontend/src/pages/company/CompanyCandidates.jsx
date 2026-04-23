@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import CompanySidebar from '../../components/company/CompanySidebar';
 import CompanyNavbar from '../../components/company/CompanyNavbar';
@@ -16,10 +16,13 @@ const CompanyCandidates = () => {
     const [selectedJobId, setSelectedJobId] = useState('all');
     const [activeTab, setActiveTab] = useState('all');
     const [selectedTagId, setSelectedTagId] = useState('all');
+    const [dateFilter, setDateFilter] = useState('all');
+    const [startDate, setStartDate] = useState('');
     
     // State for Tagging
     const [allTags, setAllTags] = useState([]);
     const [tagMappings, setTagMappings] = useState({});
+    const customDateRef = useRef(null);
     
     // State for Modal
     const [selectedApp, setSelectedApp] = useState(null);
@@ -95,13 +98,62 @@ const CompanyCandidates = () => {
     // Filter logic
     const filteredApps = applications.filter(app => {
         const matchesSearch = app.studentName.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                             app.jobTitle.toLowerCase().includes(searchTerm.toLowerCase());
+                             app.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                             (app.studentSkills || '').toLowerCase().includes(searchTerm.toLowerCase());
         const matchesJob = selectedJobId === 'all' || app.jobId.toString() === selectedJobId;
         const matchesTab = activeTab === 'all' || app.status.toLowerCase() === activeTab.toLowerCase();
         const matchesTag = selectedTagId === 'all' || (tagMappings[app.studentId] || []).includes(Number(selectedTagId));
         
-        return matchesSearch && matchesJob && matchesTab && matchesTag;
+        const matchesDate = (() => {
+            if (dateFilter === 'all') return true;
+            
+            const appDate = new Date(app.appliedAt);
+            const now = new Date();
+
+            if (dateFilter === '15m') {
+                return appDate >= new Date(now.getTime() - 15 * 60 * 1000);
+            }
+            if (dateFilter === '1d') {
+                return appDate >= new Date(now.getTime() - 24 * 60 * 60 * 1000);
+            }
+            if (dateFilter === '7d') {
+                return appDate >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            }
+            if (dateFilter === '30d') {
+                return appDate >= new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            }
+            
+            if (dateFilter === 'custom') {
+                if (!startDate) return true;
+                const d = new Date(app.appliedAt);
+                const appDateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                return appDateStr === startDate;
+            }
+
+            return true;
+        })();
+
+        return matchesSearch && matchesJob && matchesTab && matchesDate;
     });
+
+    // Auto-open calendar when "Custom" is selected with a small delay for stable positioning
+    useEffect(() => {
+        if (dateFilter === 'custom') {
+            const timer = setTimeout(() => {
+                if (customDateRef.current) {
+                    customDateRef.current.focus();
+                    if (customDateRef.current.showPicker) {
+                        try {
+                            customDateRef.current.showPicker();
+                        } catch (e) {
+                            console.log('Picker interaction deferred');
+                        }
+                    }
+                }
+            }, 250); // Increased delay to ensure DOM stability
+            return () => clearTimeout(timer);
+        }
+    }, [dateFilter]);
 
     const getStatusLabel = (status) => {
         const labels = {
@@ -143,10 +195,6 @@ const CompanyCandidates = () => {
                     <div className="section-header intro-y">
                         <h3><span className="icon">👥</span> Quản lý ứng viên</h3>
                         <div className="header-actions">
-                            <Link to="/company/candidate-tags" className="btn-respond" style={{ width: 'auto', padding: '0.6rem 1.2rem', textDecoration: 'none', background: '#eef2ff', color: '#6366f1', marginRight: '10px' }}>
-                                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" style={{marginRight: '8px'}}><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
-                                Quản lý thẻ
-                            </Link>
                             <button className="btn-respond" style={{ width: 'auto', padding: '0.6rem 1.2rem' }}>
                                 <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" style={{marginRight: '8px'}}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                                 Xuất báo cáo
@@ -159,13 +207,13 @@ const CompanyCandidates = () => {
                             
                             {/* DAU Connect Standard Filter Bar */}
                             <div className="dau-filter-bar intro-y" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px', alignItems: 'center' }}>
-                                <div className="filter-left" style={{ display: 'flex', gap: '16px' }}>
+                                <div className="filter-left" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
                                     {/* Lọc Trạng Thái */}
                                     <select 
                                         className="dau-select filter-control"
                                         value={activeTab}
                                         onChange={(e) => setActiveTab(e.target.value)}
-                                        style={{ minWidth: '180px', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 16px', color: '#64748b', fontSize: '14px' }}
+                                        style={{ width: '160px', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 16px', color: '#64748b', fontSize: '14px' }}
                                     >
                                         <option value="all">Tất cả trạng thái</option>
                                         <option value="pending">Chờ duyệt</option>
@@ -181,10 +229,66 @@ const CompanyCandidates = () => {
                                         className="dau-select filter-control"
                                         value={selectedJobId}
                                         onChange={(e) => setSelectedJobId(e.target.value)}
-                                        style={{ minWidth: '220px', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 16px', color: '#64748b', fontSize: '14px' }}
+                                        style={{ width: '180px', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 16px', color: '#64748b', fontSize: '14px' }}
                                     >
-                                        <option value="all">Chọn ngày...</option>
+                                        <option value="all">Tất cả vị trí</option>
+                                        {jobs.map(job => (
+                                            <option key={job.id} value={job.id.toString()}>
+                                                {job.title}
+                                            </option>
+                                        ))}
                                     </select>
+
+                                    {/* Lọc Theo Thời Gian */}
+                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                        <select 
+                                            className="dau-select filter-control"
+                                            value={dateFilter}
+                                            onChange={(e) => setDateFilter(e.target.value)}
+                                            style={{ width: '130px', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 16px', color: '#64748b', fontSize: '14px' }}
+                                        >
+                                            <option value="all">Mọi thời gian</option>
+                                            <option value="15m">15 phút qua</option>
+                                            <option value="1d">1 ngày qua</option>
+                                            <option value="7d">7 ngày qua</option>
+                                            <option value="30d">30 ngày qua</option>
+                                            <option value="custom">Tùy chọn...</option>
+                                        </select>
+
+                                        {dateFilter === 'custom' && (
+                                            <div className="date-picker-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '12px', zIndex: 10 }}>
+                                                <span style={{ fontSize: '14px', fontWeight: '500', color: '#475569', whiteSpace: 'nowrap' }}>Ngày nộp:</span>
+                                                <input 
+                                                    ref={customDateRef}
+                                                    type="date" 
+                                                    className="dau-input filter-control"
+                                                    value={startDate}
+                                                    onChange={(e) => setStartDate(e.target.value)}
+                                                    style={{ 
+                                                        width: '180px', 
+                                                        borderRadius: '10px', 
+                                                        border: '2px solid #6366f1', 
+                                                        padding: '10px 14px', 
+                                                        fontSize: '14px', 
+                                                        fontWeight: '600',
+                                                        color: '#0f172a', 
+                                                        background: '#ffffff',
+                                                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                                                    }}
+                                                />
+                                                {startDate && (
+                                                    <button 
+                                                        onClick={() => { setStartDate(''); }}
+                                                        style={{ background: '#fee2e2', border: 'none', borderRadius: '50%', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444' }}
+                                                        type="button"
+                                                        title="Xóa ngày"
+                                                    >
+                                                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2.5" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                                    </button>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                                 
                                 <div className="filter-right">
@@ -195,9 +299,9 @@ const CompanyCandidates = () => {
                                             className="filter-control dau-search-pill"
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
-                                            style={{ minWidth: '280px', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '10px 36px 10px 16px', fontSize: '14px' }}
+                                            style={{ width: '280px', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '10px 16px 10px 42px', fontSize: '14px' }}
                                         />
-                                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="#94a3b8" strokeWidth="2" fill="none" style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)' }}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="#94a3b8" strokeWidth="2" fill="none" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                                     </div>
                                 </div>
                             </div>
