@@ -32,8 +32,8 @@ const SECTIONS = [
 ];
 
 const COLORS = [
-  '#dc2626','#1d4ed8','#16a34a','#d97706','#7c3aed','#db2777',
-  '#0891b2','#334155','#8b1538','#065f46',
+  '#0f409f','#1d4ed8','#16a34a','#f59e0b','#7c3aed','#db2777',
+  '#0891b2','#334155','#052668','#065f46',
 ];
 
 const CATS = [
@@ -330,7 +330,7 @@ const CVBuilder = () => {
             awards: [],
             skills:[], experiences:[], projects:[], activities:[],
             layoutKey: layoutParam||'MODERN_1',
-            themeColor:'#8b1538',
+            themeColor:'#0f409f',
           });
         }
       })
@@ -497,7 +497,7 @@ const CVBuilder = () => {
                 profile={cv} cvData={cv}
                 isEditMode={true}
                 onUpdate={(d)=>setCV(d)}
-                themeColor={cv.themeColor||'#8b1538'}
+                themeColor={cv.themeColor||'#0f409f'}
                 onSectionClick={setActiveSection}
                 onAvatarClick={() => avatarInputRef.current?.click()}
               />

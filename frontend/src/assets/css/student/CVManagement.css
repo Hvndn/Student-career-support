@@ -32,7 +32,7 @@
 }
 
 .dau-tag-career {
-    color: #8b1538;
+    color: #0f409f;
     font-weight: 600;
     font-size: 0.9rem;
     text-transform: uppercase;
@@ -40,7 +40,7 @@
 }
 
 .dau-btn-create-cv {
-    background: #8b1538;
+    background: #0f409f;
     color: white;
     border: none;
     padding: 12px 24px;
@@ -93,7 +93,7 @@
 }
 
 .dau-search-wrapper input:focus {
-    border-color: #8b1538;
+    border-color: #0f409f;
     box-shadow: 0 0 0 4px rgba(139, 21, 56, 0.1);
     outline: none;
 }
@@ -132,7 +132,7 @@
 
 /* Specific templates colors for mock preview */
 .template-blue { border-top: 5px solid #1e293b; }
-.template-red { border-top: 5px solid #8b1538; }
+.template-red { border-top: 5px solid #0f409f; }
 .template-dark { border-top: 5px solid #3f1011; }
 .template-gray { border-top: 5px solid #6b7280; }
 .template-light { border-top: 5px solid #10b981; }
@@ -171,7 +171,7 @@
 }
 
 .dau-btn-overlay-edit {
-    background: #8b1538;
+    background: #0f409f;
     color: white;
 }
 
@@ -275,8 +275,8 @@
 
 .dau-action-icon:hover {
     background: #f8fafc;
-    color: #8b1538;
-    border-color: #8b1538;
+    color: #0f409f;
+    border-color: #0f409f;
 }
 
 .dau-action-icon.active {
@@ -364,9 +364,9 @@
 }
 
 .filter-chip.active {
-    background: #8b1538;
+    background: #0f409f;
     color: white;
-    border-color: #8b1538;
+    border-color: #0f409f;
 }
 
 .dau-template-list {
@@ -428,7 +428,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #8b1538;
+    color: #0f409f;
     cursor: pointer;
 }
 
@@ -458,16 +458,16 @@
     width: 100%;
     padding: 10px;
     border-radius: 8px;
-    border: 1px solid #8b1538;
+    border: 1px solid #0f409f;
     background: transparent;
-    color: #8b1538;
+    color: #0f409f;
     font-weight: 600;
     cursor: pointer;
     transition: 0.2s;
 }
 
 .dau-btn-select-template:hover {
-    background: #8b1538;
+    background: #0f409f;
     color: white;
 }
 
@@ -489,7 +489,7 @@
     width: 40px;
     height: 40px;
     border: 4px solid #f1f5f9;
-    border-top: 4px solid #8b1538;
+    border-top: 4px solid #0f409f;
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
