@@ -21,7 +21,7 @@
 }
 
 .cl-breadcrumb-prev {
-  color: #8b1538;
+  color: #0f409f;
   text-decoration: none;
   font-weight: 500;
 }
@@ -89,7 +89,7 @@
 
 .cl-search-box input:focus {
   background: white;
-  border-color: #8b1538;
+  border-color: #0f409f;
   box-shadow: 0 0 0 4px rgba(139, 21, 56, 0.05);
 }
 
@@ -134,7 +134,7 @@
 
 .cl-toggle-btn.active {
   background: white;
-  color: #8b1538;
+  color: #0f409f;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
@@ -159,7 +159,7 @@
 .cl-company-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
-  border-color: #8b1538;
+  border-color: #0f409f;
 }
 
 .cl-card-header {
@@ -234,7 +234,7 @@
 .cl-logo-placeholder {
     font-size: 2rem;
     font-weight: 800;
-    color: #8b1538;
+    color: #0f409f;
 }
 
 .cl-company-name {
@@ -297,7 +297,7 @@
 
 .cl-contact-btn .material-symbols-outlined {
   font-size: 16px;
-  color: #8b1538;
+  color: #0f409f;
 }
 
 .cl-card-overlay-link {
