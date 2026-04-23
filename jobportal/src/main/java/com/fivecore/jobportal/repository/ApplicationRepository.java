@@ -15,6 +15,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     List<Application> findByStudentIdOrderByAppliedAtDesc(Integer studentId);
     List<Application> findByJobIdOrderByAppliedAtDesc(Integer jobId);
     List<Application> findByJobCompanyIdOrderByAppliedAtDesc(Integer companyId);
+    List<Application> findByJobCompanyIdAndAppliedAtAfterOrderByAppliedAtDesc(Integer companyId, java.time.LocalDateTime appliedAt);
     
     List<Application> findByStudentId(Integer studentId);
     List<Application> findByJobId(Integer jobId);

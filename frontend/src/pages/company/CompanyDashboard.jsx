@@ -223,7 +223,29 @@ const CompanyDashboard = () => {
                                     <Link to="/company/management/candidates" className="link-view-all">Tất cả →</Link>
                                 </div>
                                 <div className="widget-body">
-                                    <p className="empty-text">Chưa có ứng viên mới nào gần đây.</p>
+                                    {data?.recentCandidates?.length > 0 ? (
+                                        <div className="compact-list">
+                                            {data.recentCandidates.map((cand) => (
+                                                <div key={cand.id} className="compact-item">
+                                                    <div className="item-avatar">
+                                                        {cand.studentAvatar ? (
+                                                            <img src={cand.studentAvatar} alt={cand.studentName} />
+                                                        ) : (
+                                                            <div className="avatar-placeholder">
+                                                                {cand.studentName?.charAt(0) || 'U'}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <div className="item-info">
+                                                        <p className="item-name">{cand.studentName}</p>
+                                                        <p className="item-meta">Ứng tuyển: {cand.jobTitle}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="empty-text">Chưa có ứng viên mới nào hôm nay.</p>
+                                    )}
                                 </div>
                             </section>
                         </div>
