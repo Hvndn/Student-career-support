@@ -63,19 +63,11 @@ public class Job {
     @Column(length = 100)
     private String qualification;
     
-    @Column(name = "salary_type", length = 50)
-    private String salaryType;
-
-
     @Column(name = "min_salary")
     private BigDecimal minSalary;
 
     @Column(name = "max_salary")
     private BigDecimal maxSalary;
-
-
-    @Column(length = 100)
-    private String region;
 
     @Column(length = 255)
     private String location;
