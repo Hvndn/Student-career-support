@@ -4,8 +4,8 @@ import CompanySidebar from '../../components/company/CompanySidebar';
 import CompanyNavbar from '../../components/company/CompanyNavbar';
 import { companyApi } from '../../api';
 import '../../assets/css/company/CompanyDashboard.css';
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, LabelList 
+import {
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, LabelList
 } from 'recharts';
 
 const CompanyDashboard = () => {
@@ -27,11 +27,11 @@ const CompanyDashboard = () => {
             }
         };
         fetchDashboard();
-        
+
         const timer = setInterval(() => {
             setCurrentTime(new Date());
         }, 60000);
-        
+
         return () => clearInterval(timer);
     }, []);
 
@@ -130,34 +130,34 @@ const CompanyDashboard = () => {
                                 </div>
                                 <div className="widget-body">
                                     <ResponsiveContainer width="100%" height={260}>
-                                        <BarChart 
-                                            layout="vertical" 
-                                            data={chartData} 
+                                        <BarChart
+                                            layout="vertical"
+                                            data={chartData}
                                             margin={{ top: 5, right: 40, left: 100, bottom: 5 }}
                                         >
                                             <XAxis type="number" hide />
-                                            <YAxis 
-                                                type="category" 
-                                                dataKey="name" 
-                                                axisLine={false} 
-                                                tickLine={false} 
+                                            <YAxis
+                                                type="category"
+                                                dataKey="name"
+                                                axisLine={false}
+                                                tickLine={false}
                                                 width={90}
                                                 tick={{ fill: '#64748b', fontSize: 13, fontWeight: 500 }}
                                             />
                                             <Tooltip cursor={{ fill: 'transparent' }} />
-                                            <Bar 
-                                                dataKey="value" 
-                                                radius={[0, 6, 6, 0]} 
+                                            <Bar
+                                                dataKey="value"
+                                                radius={[0, 6, 6, 0]}
                                                 barSize={18}
                                                 minPointSize={2}
                                             >
                                                 {chartData.map((entry, index) => (
                                                     <Cell key={`cell-${index}`} fill={entry.color} />
                                                 ))}
-                                                <LabelList 
-                                                    dataKey="value" 
-                                                    position="right" 
-                                                    style={{ fontSize: 12, fontWeight: 700, fill: '#64748b' }} 
+                                                <LabelList
+                                                    dataKey="value"
+                                                    position="right"
+                                                    style={{ fontSize: 12, fontWeight: 700, fill: '#64748b' }}
                                                     offset={12}
                                                 />
                                             </Bar>

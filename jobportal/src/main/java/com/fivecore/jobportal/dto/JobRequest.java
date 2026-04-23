@@ -30,10 +30,8 @@ public class JobRequest {
     private String gender;
     private String experience;
     private String qualification;
-    private String salaryType;
     private BigDecimal minSalary;
     private BigDecimal maxSalary;
-    private String region;
     private String location;
     private LocalDate deadline;
     private String contactName;

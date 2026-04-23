@@ -150,10 +150,8 @@ public class CompanyService {
         job.setGender(request.getGender());
         job.setExperience(request.getExperience());
         job.setQualification(request.getQualification());
-        job.setSalaryType(request.getSalaryType());
         job.setMinSalary(request.getMinSalary());
         job.setMaxSalary(request.getMaxSalary());
-        job.setRegion(request.getRegion());
         job.setLocation(request.getLocation());
         job.setDeadline(request.getDeadline());
         job.setContactName(request.getContactName());
@@ -222,10 +220,8 @@ public class CompanyService {
                 .gender(job.getGender())
                 .experience(job.getExperience())
                 .qualification(job.getQualification())
-                .salaryType(job.getSalaryType())
                 .minSalary(job.getMinSalary())
                 .maxSalary(job.getMaxSalary())
-                .region(job.getRegion())
                 .location(job.getLocation())
                 .deadline(job.getDeadline())
                 .contactName(job.getContactName())
@@ -280,8 +276,6 @@ public class CompanyService {
                 .requirements(job.getRequirements())
                 .benefits(job.getBenefits())
                 .location(job.getLocation())
-                .region(job.getRegion())
-                .salaryType(job.getSalaryType())
                 .minSalary(job.getMinSalary())
                 .maxSalary(job.getMaxSalary())
                 .salary(job.getMaxSalary() != null

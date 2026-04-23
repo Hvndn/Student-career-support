@@ -6,12 +6,12 @@ import StudentProfileModal from './StudentProfileModal';
 import '../../assets/css/company/CandidateDetailModal.css';
 
 const STATUS_CONFIG = {
-    pending:   { label: 'Chờ duyệt',   className: 'status-pending' },
-    review:    { label: 'Đang xem xét', className: 'status-review' },
-    suitable:  { label: 'Đã duyệt',     className: 'status-suitable' },
-    interview: { label: 'Phỏng vấn',   className: 'status-interview' },
-    accepted:  { label: 'Đã nhận',      className: 'status-accepted' },
-    rejected:  { label: 'Từ chối',     className: 'status-rejected' },
+    pending: { label: 'Chờ duyệt', className: 'status-pending' },
+    review: { label: 'Đang xem xét', className: 'status-review' },
+    suitable: { label: 'Đã duyệt', className: 'status-suitable' },
+    interview: { label: 'Phỏng vấn', className: 'status-interview' },
+    accepted: { label: 'Đã nhận', className: 'status-accepted' },
+    rejected: { label: 'Từ chối', className: 'status-rejected' },
 };
 
 const CandidateDetailModal = ({
@@ -273,8 +273,8 @@ const CandidateDetailModal = ({
                                         <div className="cdm-status-radios">
                                             {[
                                                 { key: 'interview', label: 'Hẹn phỏng vấn' },
-                                                { key: 'accepted',  label: 'Chấp nhận' },
-                                                { key: 'rejected',  label: 'Từ chối' },
+                                                { key: 'accepted', label: 'Chấp nhận' },
+                                                { key: 'rejected', label: 'Từ chối' },
                                             ].map(opt => (
                                                 <label key={opt.key} className={`cdm-radio-label ${opt.key}`}>
                                                     <input
