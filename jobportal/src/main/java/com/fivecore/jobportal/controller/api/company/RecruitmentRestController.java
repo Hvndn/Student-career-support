@@ -87,19 +87,22 @@ public class RecruitmentRestController {
                 candidateSearchService.searchStudents(query, skill)));
     }
 
-    /**
-     * API Đặt lịch phỏng vấn.
-     */
-    @PostMapping("/applications/{appId}/schedule")
-    public ResponseEntity<ApiResponse<Object>> scheduleInterview(@PathVariable Integer appId,
-            @RequestParam("time") String timeStr,
-            @RequestParam("location") String location) {
-        // Giả định logic đặt lịch (trong thực tế cần parse timeStr)
-        Application appEntity = applicationService.getApplicationEntity(appId);
+    @PostMapping("/applications/schedule")
+    public ResponseEntity<ApiResponse<Object>> scheduleInterview(@RequestBody com.fivecore.jobportal.dto.InterviewRequest request,
+            Authentication authentication) {
+        Integer companyId = getCurrentCompanyId(authentication);
+        if (companyId == null) return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+
+        Application appEntity = applicationService.getApplicationEntity(request.getApplicationId());
         if (appEntity == null)
             return ResponseEntity.status(404).body(ApiResponse.error("Không tìm thấy hồ sơ ứng tuyển", "NOT_FOUND"));
 
-        interviewService.scheduleInterview(appEntity, LocalDateTime.now().plusDays(1), location);
+        // Kiểm tra quyền sở hữu: Job của đơn ứng tuyển phải thuộc về công ty
+        if (!appEntity.getJob().getCompany().getId().equals(companyId)) {
+            return ResponseEntity.status(403).body(ApiResponse.error("Bạn không có quyền đặt lịch cho ứng viên này!", "FORBIDDEN"));
+        }
+
+        interviewService.scheduleInterview(appEntity, request.getInterviewDate(), request.getLocation());
         return ResponseEntity.ok(ApiResponse.success("Đặt lịch phỏng vấn thành công", null));
     }
 

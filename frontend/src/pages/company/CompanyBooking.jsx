@@ -3,6 +3,7 @@ import CompanySidebar from '../../components/company/CompanySidebar';
 import CompanyNavbar from '../../components/company/CompanyNavbar';
 import { recruitmentApi } from '../../api';
 import toast from 'react-hot-toast';
+import CreateBookingModal from '../../components/company/CreateBookingModal';
 import '../../assets/css/company/CompanyBooking.css';
 
 const CompanyBooking = () => {
@@ -10,22 +11,24 @@ const CompanyBooking = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const fetchInterviews = async () => {
+        setLoading(true);
+        try {
+            const response = await recruitmentApi.getInterviews();
+            if (response.data.status === 'success') {
+                setInterviews(response.data.data || []);
+            }
+        } catch (error) {
+            console.error('Error fetching interviews:', error);
+            toast.error('Không thể tải danh sách lịch hẹn');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchInterviews = async () => {
-            try {
-                const response = await recruitmentApi.getInterviews();
-                if (response.data.status === 'success') {
-                    setInterviews(response.data.data || []);
-                }
-            } catch (error) {
-                console.error('Error fetching interviews:', error);
-                toast.error('Không thể tải danh sách lịch hẹn');
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchInterviews();
     }, []);
 
@@ -74,7 +77,10 @@ const CompanyBooking = () => {
                             <p className="subtitle">Quản lý và theo dõi các buổi hẹn phỏng vấn với ứng viên.</p>
                         </div>
                         <div className="header-actions">
-                            <button className="btn-respond primary">
+                            <button 
+                                className="btn-respond primary"
+                                onClick={() => setIsModalOpen(true)}
+                            >
                                 <span className="material-symbols-outlined">add</span>
                                 Tạo lịch mới
                             </button>
@@ -189,6 +195,12 @@ const CompanyBooking = () => {
                     </div>
                 </div>
             </div>
+
+            <CreateBookingModal 
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSuccess={fetchInterviews}
+            />
         </div>
     );
 };
