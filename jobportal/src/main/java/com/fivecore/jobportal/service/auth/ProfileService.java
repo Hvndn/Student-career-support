@@ -49,11 +49,7 @@ public class ProfileService {
         if (request.getMajor() != null) student.setMajor(request.getMajor());
         if (request.getGraduationYear() != null) student.setGraduationYear(request.getGraduationYear());
         if (request.getGpa() != null) student.setGpa(request.getGpa());
-        if (request.getTotalCredits() != null) student.setTotalCredits(request.getTotalCredits());
-        if (request.getEarnedCredits() != null) student.setEarnedCredits(request.getEarnedCredits());
-        if (request.getClassRank() != null) student.setClassRank(request.getClassRank());
         if (request.getAcademicYear() != null) student.setAcademicYear(request.getAcademicYear());
-        if (request.getCurrentTerm() != null) student.setCurrentTerm(request.getCurrentTerm());
         if (request.getBio() != null) student.setBio(request.getBio());
         if (request.getPhone() != null) student.setPhone(request.getPhone());
         if (request.getAddress() != null) student.setAddress(request.getAddress());

@@ -17,11 +17,7 @@ public class StudentProfileRequest {
     private String major;
     private Integer graduationYear;
     private Double gpa;
-    private Integer totalCredits;
-    private Integer earnedCredits;
-    private String classRank;
     private String academicYear;
-    private String currentTerm;
     private String address;
     private String coverImageUrl;
     private String videoUrl;
