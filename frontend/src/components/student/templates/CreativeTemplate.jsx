@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CreativeTemplate = ({ cvData, onSectionClick }) => {
+const CreativeTemplate = ({ cvData, onSectionClick, themeColor = '#ff6b35' }) => {
   const cv = cvData;
   if (!cv) return <div style={{ padding: '20px', textAlign: 'center' }}>Đang tải...</div>;
 
@@ -28,7 +28,7 @@ const CreativeTemplate = ({ cvData, onSectionClick }) => {
         }
         .creative-sidebar {
             width: 35%;
-            background: #ff6b35;
+            background: ${themeColor};
             color: white;
             padding: 40px 25px;
         }
@@ -42,7 +42,7 @@ const CreativeTemplate = ({ cvData, onSectionClick }) => {
             font-weight: 800;
             margin-bottom: 20px;
             text-transform: uppercase;
-            border-bottom: 4px solid #ff6b35;
+            border-bottom: 4px solid ${themeColor};
             display: inline-block;
         }
         .sidebar-title {
@@ -51,14 +51,19 @@ const CreativeTemplate = ({ cvData, onSectionClick }) => {
             margin-bottom: 15px;
             border-bottom: 1px solid rgba(255,255,255,0.3);
             padding-bottom: 5px;
+            color: white !important;
         }
-        .creative-item { margin-bottom: 25px; cursor: pointer; }
+        .creative-item { margin-bottom: 25px; cursor: pointer; padding: 5px; border-radius: 8px; transition: 0.2s; }
         .creative-item:hover { background: #fdfdfd; }
-        .item-year { color: #ff6b35; font-weight: bold; font-size: 14px; }
-        .item-title { font-size: 17px; font-weight: bold; margin: 3px 0; }
+        .item-year { color: ${themeColor}; font-weight: bold; font-size: 14px; }
+        .item-title { font-size: 17px; font-weight: bold; margin: 3px 0; color: #1e293b; }
         .skill-bar-wrap { margin-bottom: 12px; }
         .skill-bar-bg { background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; }
         .skill-bar-fill { background: #fff; height: 100%; border-radius: 4px; }
+        
+        .creative-sidebar h1 { color: white !important; }
+        .creative-sidebar p { color: rgba(255,255,255,0.95) !important; }
+        .creative-sidebar .skill-name { color: white !important; font-size: 13px; margin-bottom: 4px; }
       `}</style>
 
       <div className="creative-sidebar">
@@ -67,7 +72,7 @@ const CreativeTemplate = ({ cvData, onSectionClick }) => {
             <p style={{ fontWeight: 600, opacity: 0.9 }}>{major}</p>
         </div>
         
-        <div style={{ marginTop: '40px' }}>
+        <div style={{ marginTop: '40px' }} onClick={() => onSectionClick && onSectionClick('contact')}>
             <div className="sidebar-title">Liên hệ</div>
             <div style={{ fontSize: '13px', lineHeight: 2 }}>
                 <p>📞 {phone}</p>
@@ -80,9 +85,9 @@ const CreativeTemplate = ({ cvData, onSectionClick }) => {
             <div className="sidebar-title">Kỹ năng</div>
             {skills.map((s, i) => (
                 <div key={i} className="skill-bar-wrap">
-                    <div style={{ fontSize: '13px', marginBottom: '4px' }}>{s.name}</div>
+                    <div className="skill-name">{s.name}</div>
                     <div className="skill-bar-bg">
-                        <div className="skill-bar-fill" style={{ width: '85%' }}></div>
+                        <div className="skill-bar-fill" style={{ width: `${s.level || 80}%` }}></div>
                     </div>
                 </div>
             ))}
@@ -92,7 +97,7 @@ const CreativeTemplate = ({ cvData, onSectionClick }) => {
       <div className="creative-main">
         <div className="creative-item" onClick={() => onSectionClick && onSectionClick('bio')}>
             <div className="creative-section-title">Giới thiệu</div>
-            <p style={{ lineHeight: 1.6, fontSize: '14px' }}>{bio}</p>
+            <p style={{ lineHeight: 1.6, fontSize: '14px', color: '#334155' }}>{bio}</p>
         </div>
 
         <div className="creative-item" onClick={() => onSectionClick && onSectionClick('experiences')}>
@@ -101,8 +106,19 @@ const CreativeTemplate = ({ cvData, onSectionClick }) => {
                 <div key={i} style={{ marginBottom: '20px' }}>
                     <span className="item-year">{exp.startDate} - {exp.endDate}</span>
                     <div className="item-title">{exp.jobTitle}</div>
-                    <div style={{ fontWeight: 600, color: '#666' }}>{exp.companyName}</div>
-                    <p style={{ fontSize: '14px', marginTop: '5px' }}>{exp.description}</p>
+                    <div style={{ fontWeight: 600, color: '#475569' }}>{exp.companyName}</div>
+                    <p style={{ fontSize: '14px', marginTop: '5px', color: '#334155', lineHeight: 1.5 }}>{exp.description}</p>
+                </div>
+            ))}
+        </div>
+
+        <div className="creative-item" onClick={() => onSectionClick && onSectionClick('educations')}>
+            <div className="creative-section-title">Học vấn</div>
+            {educations.map((edu, i) => (
+                <div key={i} style={{ marginBottom: '15px' }}>
+                    <span className="item-year">{edu.startDate} - {edu.endDate}</span>
+                    <div className="item-title">{edu.major}</div>
+                    <div style={{ fontWeight: 600, color: '#475569' }}>{edu.schoolName}</div>
                 </div>
             ))}
         </div>

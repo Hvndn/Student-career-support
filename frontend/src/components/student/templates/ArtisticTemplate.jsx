@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ArtisticTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick }) => {
+const ArtisticTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick, themeColor = '#2c73b3' }) => {
   const cv = cvData;
   if (!cv) return <div style={{ padding: '20px', textAlign: 'center' }}>Đang tải dữ liệu CV...</div>;
 
@@ -52,7 +52,7 @@ const ArtisticTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick }) =
         /* Sidebar Style */
         .art-sidebar {
           width: 33%;
-          background: #2c73b3;
+          background: ${themeColor};
           color: white;
           padding: 30px 20px;
           display: flex;
@@ -93,6 +93,7 @@ const ArtisticTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick }) =
           letter-spacing: 0.5px;
           margin-bottom: 2px;
           line-height: 1.2;
+          color: white !important;
         }
 
         .art-major {
@@ -100,6 +101,7 @@ const ArtisticTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick }) =
           font-style: italic;
           opacity: 0.95;
           font-weight: 500;
+          color: rgba(255,255,255,0.9) !important;
         }
 
         .art-sidebar-section {
@@ -121,6 +123,7 @@ const ArtisticTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick }) =
           padding-bottom: 6px;
           margin-bottom: 15px;
           letter-spacing: 0.5px;
+          color: white !important;
         }
 
         .art-contact-list {
@@ -135,11 +138,13 @@ const ArtisticTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick }) =
           gap: 8px;
           font-size: 0.82rem;
           font-weight: 500;
+          color: rgba(255,255,255,0.95) !important;
         }
 
         .art-contact-item span {
           font-size: 18px;
           opacity: 0.9;
+          color: white !important;
         }
 
         .art-skill-list {
@@ -157,6 +162,7 @@ const ArtisticTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick }) =
           margin-bottom: 6px;
           display: block;
           font-weight: 500;
+          color: white !important;
         }
 
         .art-skill-bar-bg {
@@ -177,6 +183,7 @@ const ArtisticTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick }) =
           line-height: 1.5;
           text-align: justify;
           white-space: pre-wrap;
+          color: rgba(255,255,255,0.95) !important;
         }
 
         .art-bullet-list {
@@ -191,6 +198,7 @@ const ArtisticTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick }) =
           position: relative;
           padding-left: 18px;
           font-size: 0.85rem;
+          color: rgba(255,255,255,0.95) !important;
         }
 
         .art-bullet-item::before {
@@ -198,6 +206,7 @@ const ArtisticTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick }) =
           position: absolute;
           left: 0;
           font-weight: bold;
+          color: white !important;
         }
 
         /* Main Content Style */
@@ -226,14 +235,14 @@ const ArtisticTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick }) =
           align-items: center;
           gap: 12px;
           margin-bottom: 12px;
-          border-bottom: 2px solid #2c73b3;
+          border-bottom: 2px solid ${themeColor};
           padding-bottom: 6px;
         }
 
         .art-icon-circle {
           width: 32px;
           height: 32px;
-          background: #2c73b3;
+          background: ${themeColor};
           border-radius: 50%;
           display: flex;
           align-items: center;

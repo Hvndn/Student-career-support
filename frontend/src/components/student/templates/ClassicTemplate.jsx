@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ClassicTemplate = ({ cvData, onSectionClick }) => {
+const ClassicTemplate = ({ cvData, onSectionClick, themeColor = '#000000' }) => {
   const cv = cvData;
   if (!cv) return <div style={{ padding: '20px', textAlign: 'center' }}>Đang tải dữ liệu...</div>;
 
@@ -34,7 +34,7 @@ const ClassicTemplate = ({ cvData, onSectionClick }) => {
         }
         .classic-header {
             text-align: center;
-            border-bottom: 2px solid #000;
+            border-bottom: 2px solid ${themeColor};
             padding-bottom: 20px;
             margin-bottom: 30px;
         }
@@ -43,6 +43,7 @@ const ClassicTemplate = ({ cvData, onSectionClick }) => {
             font-weight: bold;
             text-transform: uppercase;
             margin-bottom: 5px;
+            color: #000;
         }
         .classic-contact {
             font-size: 14px;
@@ -50,34 +51,38 @@ const ClassicTemplate = ({ cvData, onSectionClick }) => {
             justify-content: center;
             gap: 15px;
             margin-top: 5px;
+            color: #444;
         }
         .classic-section {
             margin-bottom: 25px;
             cursor: pointer;
-            padding: 5px;
+            padding: 8px;
             border-radius: 4px;
+            transition: 0.2s;
         }
-        .classic-section:hover { background: #f9f9f9; }
+        .classic-section:hover { background: #fcfcfc; }
         .classic-section-title {
             font-size: 18px;
             font-weight: bold;
-            border-bottom: 1px solid #ccc;
+            border-bottom: 1px solid #ddd;
             margin-bottom: 12px;
             padding-bottom: 3px;
             text-transform: uppercase;
+            color: ${themeColor};
         }
         .classic-item { margin-bottom: 15px; }
         .classic-item-header {
             display: flex; justify-content: space-between;
             font-weight: bold;
+            color: #000;
         }
-        .classic-text { font-size: 14px; text-align: justify; white-space: pre-wrap; }
+        .classic-text { font-size: 14px; text-align: justify; white-space: pre-wrap; color: #333; }
         .classic-bullet { list-style: disc; padding-left: 20px; margin-top: 5px; }
       `}</style>
 
       <div className="classic-header" onClick={() => onSectionClick && onSectionClick('personal')}>
         <div className="classic-name">{fullName}</div>
-        <div style={{ fontWeight: 'bold' }}>{major}</div>
+        <div style={{ fontWeight: 'bold', color: themeColor }}>{major}</div>
         <div className="classic-contact">
             <span>{phone}</span> | <span>{email}</span> | <span>{address}</span>
         </div>
@@ -94,10 +99,10 @@ const ClassicTemplate = ({ cvData, onSectionClick }) => {
             <div key={i} className="classic-item">
                 <div className="classic-item-header">
                     <span>{exp.companyName}</span>
-                    <span>{exp.startDate} - {exp.endDate}</span>
+                    <span style={{ color: themeColor }}>{exp.startDate} - {exp.endDate}</span>
                 </div>
-                <i>{exp.jobTitle}</i>
-                <div className="classic-text">{exp.description}</div>
+                <i style={{ color: '#555' }}>{exp.jobTitle}</i>
+                <div className="classic-text" style={{ marginTop: '5px' }}>{exp.description}</div>
             </div>
         )) : <div className="classic-text">Lưu trữ và quản lý hồ sơ nhân sự, thực hiện các thủ tục BHXH...</div>}
       </div>
@@ -108,7 +113,7 @@ const ClassicTemplate = ({ cvData, onSectionClick }) => {
             <div key={i} className="classic-item">
                 <div className="classic-item-header">
                     <span>{edu.schoolName}</span>
-                    <span>{edu.startDate} - {edu.endDate}</span>
+                    <span style={{ color: themeColor }}>{edu.startDate} - {edu.endDate}</span>
                 </div>
                 <span>{edu.major}</span>
             </div>
@@ -118,7 +123,14 @@ const ClassicTemplate = ({ cvData, onSectionClick }) => {
       <div className="classic-section" onClick={() => onSectionClick && onSectionClick('skills')}>
         <div className="classic-section-title">Kỹ năng</div>
         <div className="classic-text">
-            {skills.map(s => s.name).join(', ')}
+            {skills.map(s => s.name || s.skillName).join(', ')}
+        </div>
+      </div>
+
+      <div className="classic-section" onClick={() => onSectionClick && onSectionClick('interests')}>
+        <div className="classic-section-title">Sở thích</div>
+        <div className="classic-text">
+            {interests.join(', ')}
         </div>
       </div>
     </div>

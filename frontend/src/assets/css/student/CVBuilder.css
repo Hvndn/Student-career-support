@@ -249,18 +249,23 @@
 .cvb-av-label { font-size: .72rem; color: #94a3b8; font-weight: 600; }
 
 /* Field */
-.cvb-f { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
-.cvb-fl { font-size: .67rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: .2px; }
+.cvb-f { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.cvb-fl { font-size: 0.72rem; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; }
 .cvb-fi {
-  padding: 8px 11px;
-  border: 1.5px solid #e2e8f0; border-radius: 7px;
-  font-size: .83rem; color: #1e293b; background: #f8fafc;
-  outline: none; transition: all .15s;
-  font-family: inherit; width: 100%; box-sizing: border-box;
+  padding: 10px 14px;
+  border: 1.5px solid #e2e8f0; border-radius: 8px;
+  font-size: 0.9rem; color: #1e293b; background: #f8fafc;
+  outline: none; transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif; width: 100%; box-sizing: border-box;
   resize: vertical;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
 }
-.cvb-fi:focus { border-color: #0f409f; background: #fff; box-shadow: 0 0 0 3px rgba(15,64,159,.07); }
-.cvb-fi::placeholder { color: #c4cbd4; }
+.cvb-fi:focus { 
+  border-color: #0f409f; 
+  background: #fff; 
+  box-shadow: 0 0 0 4px rgba(15, 64, 159, 0.1);
+}
+.cvb-fi::placeholder { color: #94a3b8; font-weight: 400; }
 
 .cvb-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
