@@ -186,10 +186,45 @@
 }
 
 .widget-subtitle {
-  font-size: 0.875rem;
-  color: #64748b;
+  font-size: 0.85rem;
+  color: #94a3b8;
   margin-top: 0.25rem;
-  width: 100%;
+}
+
+/* Range Pill Selector */
+.range-pill-selector {
+  display: flex;
+  background: #f1f5f9;
+  padding: 0.2rem;
+  border-radius: 10px;
+  gap: 0.15rem;
+}
+
+.range-pill-selector button {
+  border: none;
+  background: transparent;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.range-pill-selector button:hover {
+  color: #1e293b;
+}
+
+.range-pill-selector button.active {
+  background: #ffffff;
+  color: #3b82f6;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.header-left h4 {
+  margin: 0;
+  font-size: 1.1rem;
 }
 
 .btn-refresh {

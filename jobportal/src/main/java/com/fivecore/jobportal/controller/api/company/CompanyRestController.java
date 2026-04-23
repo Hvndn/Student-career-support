@@ -51,7 +51,7 @@ public class CompanyRestController {
      * API Dashboard doanh nghiệp.
      */
     @GetMapping("/dashboard")
-    public ResponseEntity<ApiResponse<CompanyDashboardResponse>> getDashboard(Authentication authentication) {
+    public ResponseEntity<ApiResponse<CompanyDashboardResponse>> getDashboard(@RequestParam(defaultValue = "7") Integer days, Authentication authentication) {
         User user = userRepository.findByEmail(authentication.getName()).orElse(null);
         if (user == null || user.getCompany() == null) {
             return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền truy cập", "FORBIDDEN"));
@@ -70,8 +70,11 @@ public class CompanyRestController {
                 .interviewCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(), com.fivecore.jobportal.entity.Application.ApplicationStatus.interview))
                 .acceptedCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(), com.fivecore.jobportal.entity.Application.ApplicationStatus.accepted))
                 .rejectedCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(), com.fivecore.jobportal.entity.Application.ApplicationStatus.rejected))
-                .pendingInterviewsCount(0) // Mock
-                .profileViewsCount(0) // Mock
+                .pendingInterviewsCount(0) 
+                .profileViewsCount(0) 
+                .totalViews(jobRepository.findByCompanyId(company.getId()).stream()
+                        .mapToLong(j -> j.getViews() != null ? j.getViews() : 0).sum())
+                .applicationTrends(fetchApplicationTrends(company.getId(), days))
                 .newCandidatesTodayCount(applicationRepository.countByJobCompanyIdAndAppliedAtAfter(company.getId(), java.time.LocalDateTime.now().with(java.time.LocalTime.MIN)))
                 .recentCandidates(applicationService.getRecentApplicationsByCompany(company.getId()))
                 .build();
@@ -212,6 +215,29 @@ public class CompanyRestController {
         } catch (Exception e) {
             log.error("Lỗi hệ thống khi cập nhật profile doanh nghiệp: {}", e.getMessage(), e);
             return ResponseEntity.status(500).body(ApiResponse.error("Lỗi hệ thống", "SERVER_ERROR"));
+        }
+    }
+
+    private List<Map<String, Object>> fetchApplicationTrends(Integer companyId, Integer days) {
+        List<Object[]> trendData;
+        if (days == 1) {
+            trendData = applicationRepository.countApplicationsByHour(companyId, 
+                    java.time.LocalDateTime.now().with(java.time.LocalTime.MIN));
+            return trendData.stream().map(obj -> {
+                Map<String, Object> m = new java.util.HashMap<>();
+                m.put("date", obj[0].toString() + ":00");
+                m.put("count", obj[1]);
+                return m;
+            }).collect(java.util.stream.Collectors.toList());
+        } else {
+            trendData = applicationRepository.countApplicationsByDay(companyId, 
+                    java.time.LocalDateTime.now().minusDays(days).with(java.time.LocalTime.MIN));
+            return trendData.stream().map(obj -> {
+                Map<String, Object> m = new java.util.HashMap<>();
+                m.put("date", obj[0].toString());
+                m.put("count", obj[1]);
+                return m;
+            }).collect(java.util.stream.Collectors.toList());
         }
     }
 }

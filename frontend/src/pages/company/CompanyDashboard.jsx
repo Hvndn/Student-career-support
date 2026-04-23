@@ -11,23 +11,26 @@ import {
 const CompanyDashboard = () => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [timeRange, setTimeRange] = useState(7); // 1: Ngày, 7: Tuần, 30: Tháng
     const [currentTime, setCurrentTime] = useState(new Date());
 
     useEffect(() => {
-        const fetchDashboard = async () => {
-            try {
-                const res = await companyApi.getDashboard();
-                if (res.data.status === 'success') {
-                    setData(res.data.data);
-                }
-            } catch (error) {
-                console.error('Lỗi khi lấy dữ liệu dashboard:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchDashboard();
+        fetchDashboardData(timeRange);
+    }, [timeRange]);
 
+    const fetchDashboardData = async (days) => {
+        setLoading(true);
+        try {
+            const response = await companyApi.getDashboard(days);
+            setData(response.data.data);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching dashboard data:', error);
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         const timer = setInterval(() => {
             setCurrentTime(new Date());
         }, 60000);
@@ -35,12 +38,19 @@ const CompanyDashboard = () => {
         return () => clearInterval(timer);
     }, []);
 
-    const chartData = data ? [
-        { name: 'Hồ sơ ứng tuyển', value: data.totalCandidatesCount || 0, color: '#3b82f6' },
-        { name: 'Phù hợp', value: data.suitableCount || 0, color: '#10b981' },
-        { name: 'Phỏng vấn', value: data.interviewCount || 0, color: '#f59e0b' },
-        { name: 'Từ chối', value: data.rejectedCount || 0, color: '#ef4444' },
-    ] : [];
+    const trendData = (data?.applicationTrends || []).map(item => {
+        if (timeRange === 1) {
+            return {
+                date: item.date,
+                count: item.count
+            };
+        }
+        const d = new Date(item.date);
+        return {
+            date: `${d.getDate()}/${d.getMonth() + 1}`,
+            count: item.count
+        };
+    });
 
     if (loading) return (
         <div className="cd-layout">
@@ -110,59 +120,66 @@ const CompanyDashboard = () => {
                                 <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
                             </div>
                             <div className="stat-info">
-                                <h3>{data?.totalViews || 59}</h3>
+                                <h3>{data?.totalViews || 0}</h3>
                                 <p>Tổng lượt xem</p>
                             </div>
                         </div>
                     </div>
 
                     <div className="db-main-grid">
-                        {/* Area 1: Efficiency Chart */}
                         <div className="db-left-col">
-                            <section className="db-widget efficiency-widget">
+                            <section className="db-widget trend-widget">
                                 <div className="widget-header">
-                                    <h4>Hiệu suất tuyển dụng</h4>
-                                    <p className="widget-subtitle">Ứng viên & Trạng thái hồ sơ</p>
-                                    <button className="btn-refresh" onClick={() => window.location.reload()}>
-                                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-                                        Làm mới
-                                    </button>
+                                    <div className="header-left">
+                                        <h4>Xu hướng Ứng tuyển</h4>
+                                        <p className="widget-subtitle">Số lượng hồ sơ theo thời gian</p>
+                                    </div>
+                                    <div className="range-pill-selector">
+                                        <button 
+                                            className={timeRange === 1 ? 'active' : ''} 
+                                            onClick={() => setTimeRange(1)}
+                                        >Ngày</button>
+                                        <button 
+                                            className={timeRange === 7 ? 'active' : ''} 
+                                            onClick={() => setTimeRange(7)}
+                                        >Tuần</button>
+                                        <button 
+                                            className={timeRange === 30 ? 'active' : ''} 
+                                            onClick={() => setTimeRange(30)}
+                                        >Tháng</button>
+                                    </div>
                                 </div>
                                 <div className="widget-body">
-                                    <ResponsiveContainer width="100%" height={260}>
-                                        <BarChart
-                                            layout="vertical"
-                                            data={chartData}
-                                            margin={{ top: 5, right: 40, left: 100, bottom: 5 }}
-                                        >
-                                            <XAxis type="number" hide />
-                                            <YAxis
-                                                type="category"
-                                                dataKey="name"
-                                                axisLine={false}
-                                                tickLine={false}
-                                                width={90}
-                                                tick={{ fill: '#64748b', fontSize: 13, fontWeight: 500 }}
-                                            />
-                                            <Tooltip cursor={{ fill: 'transparent' }} />
-                                            <Bar
-                                                dataKey="value"
-                                                radius={[0, 6, 6, 0]}
-                                                barSize={18}
-                                                minPointSize={2}
-                                            >
-                                                {chartData.map((entry, index) => (
-                                                    <Cell key={`cell-${index}`} fill={entry.color} />
-                                                ))}
-                                                <LabelList
-                                                    dataKey="value"
-                                                    position="right"
-                                                    style={{ fontSize: 12, fontWeight: 700, fill: '#64748b' }}
-                                                    offset={12}
+                                    {trendData.length > 0 ? (
+                                        <ResponsiveContainer width="100%" height={260}>
+                                            <BarChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                                <XAxis 
+                                                    dataKey="date" 
+                                                    axisLine={false} 
+                                                    tickLine={false} 
+                                                    tick={{ fill: '#94a3b8', fontSize: 11 }} 
                                                 />
-                                            </Bar>
-                                        </BarChart>
-                                    </ResponsiveContainer>
+                                                <YAxis 
+                                                    axisLine={false} 
+                                                    tickLine={false} 
+                                                    tick={{ fill: '#94a3b8', fontSize: 11 }} 
+                                                />
+                                                <Tooltip 
+                                                    cursor={{ fill: '#f8fafc' }}
+                                                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                                />
+                                                <Bar 
+                                                    dataKey="count" 
+                                                    fill="#3b82f6" 
+                                                    radius={[4, 4, 0, 0]} 
+                                                    barSize={30}
+                                                />
+                                            </BarChart>
+                                        </ResponsiveContainer>
+                                    ) : (
+                                        <div className="empty-trend">Chưa có đủ dữ liệu để vẽ biểu đồ.</div>
+                                    )}
                                 </div>
                             </section>
 
