@@ -10,7 +10,7 @@
 
 .cd-main {
   flex: 1;
-  padding: 2rem;
+  padding: 70px 2rem 2rem; /* Account for fixed topbar height */
   overflow-x: hidden;
 }
 
@@ -59,8 +59,31 @@
 .stat-icon-box.green { background: #f0fdf4; color: #22c55e; }
 .stat-icon-box.purple { background: #faf5ff; color: #a855f7; }
 
-.stat-info h3 { font-size: 1.4rem; font-weight: 800; color: #1e293b; margin: 0; line-height: 1.2; }
-.stat-info p { font-size: 0.85rem; color: #64748b; margin: 0; font-weight: 500; }
+.stat-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.stat-info h3 { 
+  font-size: 1.4rem; 
+  font-weight: 800; 
+  color: #1e293b; 
+  margin: 0; 
+  line-height: 1.2; 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stat-info p { 
+  font-size: 0.85rem; 
+  color: #64748b; 
+  margin: 0; 
+  font-weight: 500; 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 /* Grid */
 .db-main-grid {
@@ -77,6 +100,7 @@
   border: 1px solid #f1f5f9;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   margin-bottom: 1.5rem;
+  overflow: hidden; /* Prevent content leaking */
 }
 
 .widget-header {
@@ -84,13 +108,23 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.25rem;
+  gap: 10px;
 }
 
-.widget-header h4 { font-size: 1.1rem; font-weight: 700; color: #1e293b; margin: 0; }
-.view-all-link { font-size: 0.85rem; font-weight: 600; color: #2563eb; text-decoration: none; }
+.widget-header h4 { 
+  font-size: 1.1rem; 
+  font-weight: 700; 
+  color: #1e293b; 
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.view-all-link { font-size: 0.85rem; font-weight: 600; color: #2563eb; text-decoration: none; flex-shrink: 0; }
 
 /* Range Selector */
-.range-pill-selector { display: flex; background: #f1f5f9; padding: 2px; border-radius: 10px; gap: 2px; }
+.range-pill-selector { display: flex; background: #f1f5f9; padding: 2px; border-radius: 10px; gap: 2px; flex-shrink: 0; }
 .range-pill-selector button {
   border: none; background: transparent; padding: 4px 12px; border-radius: 8px;
   font-size: 0.7rem; font-weight: 700; color: #64748b; cursor: pointer;
@@ -116,6 +150,7 @@
   text-decoration: none !important;
   color: inherit !important;
   transition: all 0.2s;
+  min-width: 0 !important;
 }
 
 .db-job-card:hover {
@@ -127,13 +162,24 @@
   display: flex !important;
   flex-direction: column !important;
   gap: 2px !important;
+  min-width: 0 !important;
+  flex: 1 !important;
 }
 
-.db-job-info h5 { font-size: 0.95rem !important; font-weight: 700 !important; color: #1e293b !important; margin: 0 !important; }
+.db-job-info h5 { 
+  font-size: 0.95rem !important; 
+  font-weight: 700 !important; 
+  color: #1e293b !important; 
+  margin: 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
 .db-job-info span { font-size: 0.8rem !important; color: #64748b !important; }
 
 .db-status-pill {
-  position: static !important; /* Force flow-based positioning */
+  position: static !important;
   display: inline-flex !important;
   align-items: center !important;
   padding: 4px 12px !important;
@@ -142,6 +188,7 @@
   font-weight: 700 !important;
   white-space: nowrap !important;
   margin-left: 1rem !important;
+  flex-shrink: 0 !important;
 }
 
 .db-status-pill.open { background: #dcfce7 !important; color: #166534 !important; }
@@ -254,15 +301,18 @@
   color: #1e293b !important;
   margin: 0 !important;
   line-height: 1.2 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 .db-candidate-info p {
   font-size: 0.75rem !important;
   color: #64748b !important;
   margin: 0 !important;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 /* Animations */

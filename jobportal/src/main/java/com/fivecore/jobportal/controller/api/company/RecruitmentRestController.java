@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/api/company/management")
 @RequiredArgsConstructor
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
 public class RecruitmentRestController {
 
     private final ApplicationService applicationService;

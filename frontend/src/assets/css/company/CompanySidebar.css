@@ -133,6 +133,7 @@
   margin-left: 260px;
   padding-top: 70px; /* Offset for fixed topbar height */
   padding-left: 1rem;
+  padding-right: 1rem; /* Ensure right buttons are not hidden */
 }
 
 body.sidebar-pinned .cd-main {

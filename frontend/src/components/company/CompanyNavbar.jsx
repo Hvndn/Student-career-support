@@ -50,7 +50,7 @@ const CompanyTopbar = () => {
   // Breadcrumb mapping
   const getBreadcrumbs = () => {
     const path = location.pathname;
-    const crumbs = [{ label: 'DAU Connect', to: '/company/dashboard' }];
+    const crumbs = [{ label: 'Five Core', to: '/company/dashboard' }];
     
     if (path.includes('/dashboard')) crumbs.push({ label: 'Tổng quan' });
     else if (path.includes('/management/candidates')) crumbs.push({ label: 'Quản lý ứng viên' });

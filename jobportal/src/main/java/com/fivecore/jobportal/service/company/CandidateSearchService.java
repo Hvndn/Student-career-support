@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@org.springframework.transaction.annotation.Transactional(readOnly = true)
 public class CandidateSearchService {
 
     private final StudentRepository studentRepository;
@@ -66,14 +67,50 @@ public class CandidateSearchService {
                 .major(student.getMajor())
                 .graduationYear(student.getGraduationYear())
                 .bio(student.getBio())
+                .phone(student.getPhone())
+                .address(student.getAddress())
                 .avatarUrl(student.getAvatarUrl())
+                .coverImageUrl(student.getCoverImageUrl())
+                .githubUrl(student.getGithubUrl())
+                .linkedinUrl(student.getLinkedinUrl())
                 .educations(student.getEducations().stream().map(ed ->
                     StudentProfileResponse.EducationDto.builder()
+                        .id(ed.getId())
                         .schoolName(ed.getSchoolName())
                         .major(ed.getMajor())
                         .degree(ed.getDegree())
                         .startDate(ed.getStartDate())
                         .endDate(ed.getEndDate())
+                        .description(ed.getDescription())
+                        .build()
+                ).collect(Collectors.toList()))
+                .experiences(student.getExperiences().stream().map(ex ->
+                    StudentProfileResponse.ExperienceDto.builder()
+                        .id(ex.getId())
+                        .jobTitle(ex.getJobTitle())
+                        .companyName(ex.getCompanyName())
+                        .startDate(ex.getStartDate())
+                        .endDate(ex.getEndDate())
+                        .description(ex.getDescription())
+                        .build()
+                ).collect(Collectors.toList()))
+                .projects(student.getProjects().stream().map(p ->
+                    StudentProfileResponse.ProjectDto.builder()
+                        .id(p.getId())
+                        .name(p.getName())
+                        .description(p.getDescription())
+                        .repositoryUrl(p.getRepositoryUrl())
+                        .demoUrl(p.getDemoUrl())
+                        .build()
+                ).collect(Collectors.toList()))
+                .certifications(student.getCertifications().stream().map(c ->
+                    StudentProfileResponse.CertificationDto.builder()
+                        .id(c.getId())
+                        .name(c.getName())
+                        .issuer(c.getIssuer())
+                        .issueDate(c.getIssueDate() != null ? c.getIssueDate().toString() : null)
+                        .expirationDate(c.getExpirationDate() != null ? c.getExpirationDate().toString() : null)
+                        .certificateUrl(c.getCertificateUrl())
                         .build()
                 ).collect(Collectors.toList()))
                 .build();

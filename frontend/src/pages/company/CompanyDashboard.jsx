@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import CompanySidebar from '../../components/company/CompanySidebar';
+import CompanyNavbar from '../../components/company/CompanyNavbar';
 import { companyApi } from '../../api';
 import '../../assets/css/company/CompanyDashboard.css';
 import {
@@ -50,6 +51,7 @@ const CompanyDashboard = () => {
         <div className="cd-layout">
             <CompanySidebar active="dashboard" />
             <div className="cd-main">
+                <CompanyNavbar activeTab="Tổng quan" />
                 <div className="dashboard-v2">
                     {/* Welcome Header */}
                     <header className="db-welcome-header">

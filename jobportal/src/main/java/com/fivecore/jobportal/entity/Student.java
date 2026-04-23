@@ -77,6 +77,14 @@ public class Student {
     @Builder.Default
     private java.util.List<Education> educations = new java.util.ArrayList<>();
 
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @Builder.Default
+    private java.util.List<Experience> experiences = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @Builder.Default
+    private java.util.List<Project> projects = new java.util.ArrayList<>();
+
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<Application> applications;
 
