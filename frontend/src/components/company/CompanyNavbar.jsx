@@ -53,7 +53,9 @@ const CompanyTopbar = () => {
     const crumbs = [{ label: 'Five Core', to: '/company/dashboard' }];
     
     if (path.includes('/dashboard')) crumbs.push({ label: 'Tổng quan' });
-    else if (path.includes('/management/candidates')) crumbs.push({ label: 'Quản lý ứng viên' });
+    else if (path.includes('/candidates/suggested')) crumbs.push({ label: 'Gợi ý ứng viên phù hợp' });
+    else if (path.includes('/candidates/search')) crumbs.push({ label: 'Tìm ứng viên' });
+    else if (path.includes('/management/candidates')) crumbs.push({ label: 'Ứng viên đã ứng tuyển' });
     else if (path.includes('/management')) crumbs.push({ label: 'Tin tuyển dụng' });
     else if (path.includes('/profile')) crumbs.push({ label: 'Hồ sơ công ty' });
     else if (path.includes('/employer/pricing')) crumbs.push({ label: 'Dịch vụ' });

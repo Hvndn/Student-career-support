@@ -106,34 +106,78 @@
   border-radius: 6px;
 }
 
-.cs-sub-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #94a3b8;
-  transition: color 0.2s;
+.cs-nav-item.parent {
+  cursor: pointer;
+  user-select: none;
 }
 
-.cs-sub-item:hover, .cs-sub-item.active {
-  background: #f8fafc;
-  color: #2563eb;
+.cs-arrow {
+  margin-left: auto;
+  transition: transform 0.3s ease;
+  opacity: 0.5;
+}
+
+.cs-arrow.open {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+/* Submenu Styling */
+.cs-sub-menu {
+  margin-left: 1rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  padding-left: 0.5rem;
+  animation: slideDown 0.3s ease forwards;
+}
+
+.cs-sub-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-size: 0.875rem;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.cs-sub-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
 }
 
 .cs-sub-item.active {
-  font-weight: 700;
+  color: #fbbf24;
+  font-weight: 600;
+  background: rgba(251, 191, 36, 0.1);
 }
 
-.cs-sub-item:hover .cs-sub-icon, .cs-sub-item.active .cs-sub-icon {
-  color: #2563eb;
+.sub-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Global Content Shifts */
 .cd-main {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   margin-left: 260px;
-  padding-top: 70px; /* Offset for fixed topbar height */
-  padding-left: 1rem;
-  padding-right: 1rem; /* Ensure right buttons are not hidden */
+  padding-top: 70px;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
 }
 
 body.sidebar-pinned .cd-main {

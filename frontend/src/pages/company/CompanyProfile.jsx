@@ -178,7 +178,7 @@ const CompanyProfile = () => {
         <div className="cd-layout">
             <CompanySidebar />
             <div className="cd-main">
-                <CompanyNavbar activeTab="Profile" />
+                <CompanyNavbar />
 
                 <div className="cp-page">
                     {/* Breadcrumb */}

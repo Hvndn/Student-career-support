@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import CompanySidebar from '../../components/company/CompanySidebar';
 import CompanyNavbar from '../../components/company/CompanyNavbar';
 import { recruitmentApi, companyApi } from '../../api';
+import { getImageUrl } from '../../utils/urlUtils';
 import '../../assets/css/company/CompanySearchCandidates.css';
 
 const CompanySearchCandidates = () => {
@@ -20,6 +21,11 @@ const CompanySearchCandidates = () => {
         location: 'Toàn quốc',
         skill: ''
     });
+
+    const [jobs, setJobs] = useState([]);
+    const [selectedJobId, setSelectedJobId] = useState('');
+    const [aiCandidates, setAiCandidates] = useState([]);
+    const [loadingAI, setLoadingAI] = useState(false);
 
     const fetchCandidates = async (params = {}) => {
         setLoading(true);
@@ -49,21 +55,189 @@ const CompanySearchCandidates = () => {
         }
     };
 
+    const fetchJobs = async () => {
+        try {
+            const { data } = await companyApi.getJobs();
+            if (data.status === 'success') {
+                const openJobs = data.data.filter(job => job.status === 'open');
+                setJobs(openJobs);
+                if (openJobs.length > 0) {
+                    setSelectedJobId(openJobs[0].id);
+                    fetchAIRecommendations(openJobs[0].id);
+                }
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy danh sách công việc:", error);
+        }
+    };
+
+    const fetchAIRecommendations = async (jobId) => {
+        if (!jobId) return;
+        setLoadingAI(true);
+        try {
+            const { data } = await recruitmentApi.getRecommendations(jobId);
+            if (data.status === 'success') {
+                const list = data.data || [];
+                setAiCandidates(list);
+                if (list.length > 0 && activeTab === 'ai') {
+                    setSelectedCandidate(list[0]);
+                    fetchCandidateDetail(list[0].id);
+                }
+            }
+        } catch (error) {
+            console.error("Lỗi khi gợi ý AI:", error);
+        } finally {
+            setLoadingAI(false);
+        }
+    };
+
     useEffect(() => {
-        // Kiểm tra quyền đăng nhập doanh nghiệp (Thần quân sư gia cố thêm tại đây)
         if (!user || user.role !== 'ROLE_COMPANY') {
             navigate('/login');
             return;
         }
         fetchCandidates();
         fetchSavedCandidates();
+        fetchJobs();
     }, [user, navigate]);
+
+    useEffect(() => {
+        if (activeTab === 'ai' && aiCandidates.length > 0) {
+            setSelectedCandidate(aiCandidates[0]);
+            fetchCandidateDetail(aiCandidates[0].id);
+        } else if (activeTab === 'search' && candidates.length > 0) {
+            setSelectedCandidate(candidates[0]);
+            fetchCandidateDetail(candidates[0].id);
+        }
+    }, [activeTab]);
+
+    const fetchCandidateDetail = async (studentId) => {
+        setLoading(true);
+        try {
+            const { data } = await companyApi.getCandidateDetail(studentId);
+            if (data.status === 'success') {
+                setSelectedCandidate(data.data);
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy chi tiết:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSelectCandidate = (candidate) => {
+        setSelectedCandidate(candidate);
+        fetchCandidateDetail(candidate.id);
+    };
+
+    const renderCandidateDetail = () => {
+        if (!selectedCandidate) {
+            return (
+                <div className="no-selection intro-x">
+                    <div className="empty-state">
+                        <p>Chọn một ứng viên để xem chi tiết hồ sơ</p>
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <div className="preview-content intro-x">
+                <div className="preview-header">
+                    <div className="user-main">
+                        <div className="avatar-wrapper">
+                            <img 
+                                src={getImageUrl(selectedCandidate.avatarUrl) || `https://ui-avatars.com/api/?name=${selectedCandidate.fullName}&background=random`} 
+                                alt="" 
+                                className="large-avatar" 
+                                onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${selectedCandidate.fullName}&background=random` }}
+                            />
+                        </div>
+                        <div className="user-text">
+                            <h3>{selectedCandidate.fullName}</h3>
+                            <p className="large-pos">{selectedCandidate.major} {selectedCandidate.location && `• ${selectedCandidate.location}`}</p>
+                        </div>
+                    </div>
+                    <button 
+                        className={`btn-contact-info ${savedCandidateIds.has(selectedCandidate.id) ? 'saved' : ''}`} 
+                        onClick={handleSaveCandidate}
+                        disabled={saving}
+                    >
+                        {saving ? '...' : (savedCandidateIds.has(selectedCandidate.id) ? 'Đã lưu' : 'Lưu liên hệ')}
+                    </button>
+                </div>
+                
+                <hr className="divider" />
+
+                <div className="preview-body thin-scrollbar">
+                    <div className="info-section">
+                        <h5 className="section-title">Chỉ số năng lực & Liên hệ</h5>
+                        <div className="candidate-stats-grid">
+                            <div className="stat-card">
+                                <span className="stat-label">GPA</span>
+                                <span className="stat-value highlight">{selectedCandidate.gpa ? parseFloat(selectedCandidate.gpa).toFixed(2) : 'N/A'}</span>
+                            </div>
+                            <div className="stat-card">
+                                <span className="stat-label">MSSV</span>
+                                <span className="stat-value">{selectedCandidate.studentIdStr || selectedCandidate.studentCode || 'N/A'}</span>
+                            </div>
+                            <div className="stat-card">
+                                <span className="stat-label">Khóa</span>
+                                <span className="stat-value">{selectedCandidate.academicYear || 'N/A'}</span>
+                            </div>
+                            <div className="stat-card">
+                                <span className="stat-label">Địa chỉ</span>
+                                <span className="stat-value small">{selectedCandidate.address || selectedCandidate.location || 'N/A'}</span>
+                            </div>
+                        </div>
+
+                        <div className="contact-details-box">
+                            <div className="contact-row">
+                                <span className="contact-icon">✉</span>
+                                <span className="contact-info-text">{selectedCandidate.email || 'Chưa công khai'}</span>
+                            </div>
+                            <div className="contact-row">
+                                <span className="contact-icon">📞</span>
+                                <span className="contact-info-text">{selectedCandidate.phone || 'Chưa công khai'}</span>
+                            </div>
+                        </div>
+
+                        <div className="media-resources-grid">
+                            <div className="cv-download-panel">
+                                <button className="btn-view-cv" onClick={() => (selectedCandidate.cvData || selectedCandidate.cvUrl) ? window.open(getImageUrl(selectedCandidate.cvData || selectedCandidate.cvUrl), '_blank') : toast.error("Chưa có CV")}>Xem CV</button>
+                            </div>
+                            {selectedCandidate.videoUrl && (
+                                <div className="video-intro-panel">
+                                    <button className="btn-play-video" onClick={() => window.open(getImageUrl(selectedCandidate.videoUrl), '_blank')}>Xem Video</button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="info-section">
+                        <h5 className="section-title">Giới thiệu bản thân</h5>
+                        <div className="section-text bio-content" dangerouslySetInnerHTML={{ __html: selectedCandidate.bio || 'Chưa cập nhật.' }} />
+                    </div>
+
+                    <div className="info-section">
+                        <h5 className="section-title">Kỹ năng</h5>
+                        <div className="tag-cloud">
+                            {selectedCandidate.skills?.map((sk, i) => (
+                                <span key={i} className="info-tag">
+                                    {typeof sk === 'string' ? sk : sk.name}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
 
     const handleSearch = () => {
         const params = {};
         if (searchParams.query) params.query = searchParams.query;
         if (searchParams.location !== 'Toàn quốc') params.location = searchParams.location;
-        if (searchParams.skill) params.skill = searchParams.skill;
         fetchCandidates(params);
     };
 
@@ -71,7 +245,6 @@ const CompanySearchCandidates = () => {
         if (!selectedCandidate || saving) return;
         const studentId = selectedCandidate.id;
         const isSaved = savedCandidateIds.has(studentId);
-        
         setSaving(true);
         try {
             if (isSaved) {
@@ -79,207 +252,119 @@ const CompanySearchCandidates = () => {
                 const newIds = new Set(savedCandidateIds);
                 newIds.delete(studentId);
                 setSavedCandidateIds(newIds);
-                toast.success(
-                    <div className="toast-content">
-                        <span className="toast-title">Đã bỏ lưu</span>
-                        <span className="toast-desc">Hồ sơ ứng viên đã được xóa khỏi danh sách.</span>
-                    </div>
-                );
+                toast.success("Đã bỏ lưu");
             } else {
                 await companyApi.saveCandidate(studentId);
                 const newIds = new Set(savedCandidateIds);
                 newIds.add(studentId);
                 setSavedCandidateIds(newIds);
-                toast.success(
-                    <div className="toast-content">
-                        <span className="toast-title">Lưu thành công</span>
-                        <span className="toast-desc">Hồ sơ ứng viên đã được lưu vào hệ thống.</span>
-                    </div>
-                );
+                toast.success("Lưu thành công");
             }
         } catch (error) {
-            console.error("Lỗi khi xử lý lưu ứng viên:", error);
-            toast.error("Có lỗi xảy ra. Vui lòng thử lại.");
+            toast.error("Có lỗi xảy ra");
         } finally {
             setSaving(false);
         }
     };
 
-    const getLatestExperience = (candidate) => {
-        if (!candidate.experiences || candidate.experiences.length === 0) return 'Sinh viên mới tốt nghiệp';
-        const latest = candidate.experiences[0];
-        return `${latest.jobTitle} tại ${latest.companyName}`;
-    };
-
     return (
-        <div className="company-dashboard-container">
+        <div className="cd-layout">
             <CompanySidebar />
-            <div className="company-main-content">
-                <CompanyNavbar title="Ứng viên" />
-                <main className="cd-main">
-                    <div className="search-candidates-page">
-                        {/* Search Tabs */}
-                        <div className="search-nav-tabs">
-                            <div className={`nav-tab ${activeTab === 'search' ? 'active' : ''}`} onClick={() => setActiveTab('search')}>
-                                Tìm ứng viên mới
-                            </div>
-                            <div className={`nav-tab ${activeTab === 'ai' ? 'active' : ''}`} onClick={() => setActiveTab('ai')}>
-                                Gợi ý ứng viên bởi AI <span className="beta-tag">Beta</span>
-                            </div>
+            <div className="cd-main">
+                <CompanyNavbar />
+                <div className="search-candidates-page">
+                    <div className="search-nav-tabs">
+                        <div className={`nav-tab ${activeTab === 'search' ? 'active' : ''}`} onClick={() => setActiveTab('search')}>
+                            Tìm ứng viên mới
                         </div>
-
-                        {/* Search Bar Panel */}
-                        <div className="advanced-search-panel">
-                            <div className="search-grid">
-                                <div className="search-field main">
-                                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="#94a3b8" strokeWidth="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                                    <input 
-                                        type="text" 
-                                        placeholder="Vị trí cần tuyển: ví dụ Designer, Frontend..." 
-                                        value={searchParams.query}
-                                        onChange={(e) => setSearchParams({...searchParams, query: e.target.value})}
-                                        onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                                    />
-                                </div>
-                                <div className="search-field loc">
-                                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="#94a3b8" strokeWidth="2" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                    <select 
-                                        value={searchParams.location}
-                                        onChange={(e) => setSearchParams({...searchParams, location: e.target.value})}
-                                    >
-                                        <option>Toàn quốc</option>
-                                        <option>Hà Nội</option>
-                                        <option>Hồ Chí Minh</option>
-                                        <option>Đà Nẵng</option>
-                                    </select>
-                                </div>
-                                <button className="btn-search-trigger" onClick={handleSearch} disabled={loading}>
-                                    {loading ? 'Đang tìm...' : 'Tìm kiếm'}
-                                </button>
-                                <button className="btn-filter-settings"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg></button>
-                            </div>
-                        </div>
-
-                        {/* Split View Content */}
-                        <div className="candidates-split-view">
-                            {/* List Panel */}
-                            <div className="candidates-list-sidebar">
-                                {loading && <div className="loading-list">Đang triệu hồi hiền tài...</div>}
-                                {!loading && candidates.length === 0 && <div className="empty-list">Không tìm thấy ứng viên phù hợp</div>}
-                                {candidates.map(candidate => (
-                                    <div 
-                                        key={candidate.id} 
-                                        className={`candidate-card-sm ${selectedCandidate?.id === candidate.id ? 'active' : ''}`}
-                                        onClick={() => setSelectedCandidate(candidate)}
-                                    >
-                                        <img src={candidate.avatarUrl || `https://ui-avatars.com/api/?name=${candidate.fullName}&background=random`} alt={candidate.fullName} className="card-avatar" />
-                                        <div className="card-details">
-                                            <h4 className="card-name">{candidate.fullName}</h4>
-                                            <p className="card-pos">{candidate.major}</p>
-                                            <div className="card-meta">
-                                                <span>{candidate.university}</span>
-                                                {candidate.location && <span className="dot-sep">•</span>}
-                                                <span>{candidate.location}</span>
-                                            </div>
-                                            <span className="card-time">{getLatestExperience(candidate)}</span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-
-                            {/* Detail Panel */}
-                            <div className="candidate-detail-preview">
-                                {selectedCandidate ? (
-                                    <div className="preview-content">
-                                        <div className="preview-header">
-                                            <div className="user-main">
-                                                <img src={selectedCandidate.avatarUrl || `https://ui-avatars.com/api/?name=${selectedCandidate.fullName}&background=random`} alt={selectedCandidate.fullName} className="large-avatar" />
-                                                <div>
-                                                    <h3>{selectedCandidate.fullName}</h3>
-                                                    <p className="large-pos">{selectedCandidate.major} {selectedCandidate.location && `• ${selectedCandidate.location}`}</p>
-                                                </div>
-                                            </div>
-                                            <button 
-                                                className={`btn-contact-info ${savedCandidateIds.has(selectedCandidate.id) ? 'saved' : ''}`} 
-                                                onClick={handleSaveCandidate}
-                                                disabled={saving}
-                                            >
-                                                {saving ? 'Đang xử lý...' : (savedCandidateIds.has(selectedCandidate.id) ? 'Đã lưu hồ sơ' : 'Lưu thông tin liên hệ')}
-                                            </button>
-                                        </div>
-                                        <hr className="divider" />
-                                        <div className="preview-body">
-                                            <div className="info-section">
-                                                <h5 className="section-title">Thông tin học vấn</h5>
-                                                <p className="section-text">{selectedCandidate.university} - Chuyên ngành {selectedCandidate.major}</p>
-                                                {selectedCandidate.educations && selectedCandidate.educations.map(ed => (
-                                                    <p key={ed.id} className="detail-item small-text">
-                                                        • {ed.schoolName}: {ed.degree} ({ed.startDate} - {ed.endDate || 'Hiện tại'})
-                                                    </p>
-                                                ))}
-                                            </div>
-                                            <div className="info-section">
-                                                <h5 className="section-title">Kinh nghiệm làm việc</h5>
-                                                {selectedCandidate.experiences && selectedCandidate.experiences.length > 0 ? (
-                                                    selectedCandidate.experiences.map(ex => (
-                                                        <div key={ex.id} className="exp-item">
-                                                            <p className="section-text strong">{ex.jobTitle} tại {ex.companyName}</p>
-                                                            <p className="small-text">{ex.startDate} - {ex.endDate || 'Hiện tại'}</p>
-                                                            <p className="section-text">{ex.description}</p>
-                                                        </div>
-                                                    ))
-                                                ) : (
-                                                    <p className="section-text">Chưa có kinh nghiệm làm việc chính thức.</p>
-                                                )}
-                                            </div>
-                                            {selectedCandidate.projects && selectedCandidate.projects.length > 0 && (
-                                                <div className="info-section">
-                                                    <h5 className="section-title">Dự án tiêu biểu</h5>
-                                                    <div className="project-grid-preview">
-                                                        {selectedCandidate.projects.map(pj => (
-                                                            <div key={pj.id} className="project-item-preview">
-                                                                <p className="section-text strong">{pj.name}</p>
-                                                                <p className="section-text small-text">{pj.description}</p>
-                                                                <div className="project-links">
-                                                                    {pj.repositoryUrl && <a href={pj.repositoryUrl} target="_blank" rel="noreferrer" className="pj-link">GitHub</a>}
-                                                                    {pj.demoUrl && <a href={pj.demoUrl} target="_blank" rel="noreferrer" className="pj-link">Demo</a>}
-                                                                </div>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            )}
-                                            <div className="info-section">
-                                                <h5 className="section-title">Kỹ năng</h5>
-                                                <div className="tag-cloud">
-                                                    {selectedCandidate.skills && selectedCandidate.skills.map(sk => (
-                                                        <span key={sk.name} className="info-tag">{sk.name} - {sk.level}</span>
-                                                    ))}
-                                                    {(!selectedCandidate.skills || selectedCandidate.skills.length === 0) && (
-                                                        <span className="small-text">Chưa cập nhật kỹ năng.</span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            {selectedCandidate.bio && (
-                                                <div className="info-section">
-                                                    <h5 className="section-title">Giới thiệu bản thân</h5>
-                                                    <p className="section-text">{selectedCandidate.bio}</p>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="no-selection">
-                                        <div className="empty-state">
-                                            <svg viewBox="0 0 24 24" width="60" height="60" stroke="#cbd5e1" strokeWidth="1.5" fill="none"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>
-                                            <p>Vui lòng chọn một ứng viên trong danh sách để xem chi tiết hồ sơ</p>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
+                        <div className={`nav-tab ${activeTab === 'ai' ? 'active' : ''}`} onClick={() => setActiveTab('ai')}>
+                            Gợi ý ứng viên phù hợp
                         </div>
                     </div>
-                </main>
+
+                    <div className="tab-render-area">
+                        {activeTab === 'search' ? (
+                            <div className="search-mode-container intro-y">
+                                <div className="advanced-search-panel">
+                                    <div className="search-grid">
+                                        <div className="search-field main">
+                                            <input 
+                                                type="text" 
+                                                placeholder="Vị trí, kỹ năng..." 
+                                                value={searchParams.query}
+                                                onChange={(e) => setSearchParams({...searchParams, query: e.target.value})}
+                                                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                                            />
+                                        </div>
+                                        <button className="btn-search-trigger" onClick={handleSearch} disabled={loading}>
+                                            Tìm kiếm
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="candidates-split-view">
+                                    <div className="candidates-list-sidebar thin-scrollbar">
+                                        {candidates.map(candidate => (
+                                            <div 
+                                                key={candidate.id} 
+                                                className={`candidate-card-sm ${selectedCandidate?.id === candidate.id ? 'active' : ''}`}
+                                                onClick={() => handleSelectCandidate(candidate)}
+                                            >
+                                                <img src={getImageUrl(candidate.avatarUrl) || `https://ui-avatars.com/api/?name=${candidate.fullName}&background=random`} alt="" className="card-avatar" />
+                                                <div className="card-details">
+                                                    <h4 className="card-name">{candidate.fullName}</h4>
+                                                    <p className="card-pos">{candidate.major}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="candidate-preview-main thin-scrollbar">
+                                        {renderCandidateDetail()}
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="ai-mode-container intro-y">
+                                <div className="ai-controls-panel">
+                                    <select 
+                                        value={selectedJobId} 
+                                        onChange={(e) => {
+                                            setSelectedJobId(e.target.value);
+                                            fetchAIRecommendations(e.target.value);
+                                        }}
+                                        className="ai-job-select"
+                                    >
+                                        <option value="">-- Chọn tin tuyển dụng --</option>
+                                        {jobs.map(job => (
+                                            <option key={job.id} value={job.id}>{job.title}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="candidates-split-view">
+                                    <div className="candidates-list-sidebar thin-scrollbar ai-list">
+                                        {aiCandidates.map(candidate => (
+                                            <div 
+                                                key={candidate.id} 
+                                                className={`candidate-card-sm ai-card ${selectedCandidate?.id === candidate.id ? 'active' : ''}`}
+                                                onClick={() => handleSelectCandidate(candidate)}
+                                            >
+                                                <div className="match-score-pill">
+                                                    {Math.round(candidate.matchScore)}% Match
+                                                </div>
+                                                <img src={getImageUrl(candidate.avatarUrl) || `https://ui-avatars.com/api/?name=${candidate.fullName}&background=random`} alt="" className="card-avatar" />
+                                                <div className="card-details">
+                                                    <h4 className="card-name">{candidate.fullName}</h4>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="candidate-preview-main thin-scrollbar">
+                                        {renderCandidateDetail()}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     );

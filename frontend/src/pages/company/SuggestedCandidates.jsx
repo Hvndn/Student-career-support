@@ -82,7 +82,7 @@ const SuggestedCandidates = () => {
         <div className="cd-layout">
             <CompanySidebar />
             <div className="cd-main">
-                <CompanyNavbar activeTab="Gợi ý ứng viên" />
+                <CompanyNavbar />
                 
                 <div className="suggested-candidates-container intro-y">
                     <div className="page-header">

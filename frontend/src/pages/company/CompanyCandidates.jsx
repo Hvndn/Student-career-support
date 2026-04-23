@@ -189,7 +189,7 @@ const CompanyCandidates = () => {
         <div className="cd-layout">
             <CompanySidebar />
             <div className="cd-main">
-                <CompanyNavbar activeTab="Ứng viên" />
+                <CompanyNavbar />
 
                 <div className="candidates-page">
                     <div className="section-header intro-y">

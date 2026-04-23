@@ -17,11 +17,12 @@ const NAV_ITEMS = [
   },
   { 
     icon: <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>, 
-    label: 'Quản lý ứng viên', to: '/company/management/candidates' 
-  },
-  { 
-    icon: <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>, 
-    label: 'Gợi ý ứng viên', to: '/company/candidates/suggested' 
+    label: 'Quản lý ứng viên',
+    children: [
+      { label: 'Ứng viên đã ứng tuyển', to: '/company/management/candidates' },
+      { label: 'Ứng viên đã lưu', to: '/company/candidates/saved' },
+      { label: 'Tìm ứng viên', to: '/company/candidates/search' },
+    ]
   },
   { 
     icon: <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>, 
@@ -41,18 +42,46 @@ const CompanySidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('');
+  const [expandedMenus, setExpandedMenus] = useState(['Quản lý ứng viên']); // Mặc định mở menu ứng viên
 
   React.useEffect(() => {
-    let currentItem = NAV_ITEMS.find(item => location.pathname === item.to);
+    let currentItem = null;
+    
+    NAV_ITEMS.forEach(item => {
+      if (item.to === location.pathname) currentItem = item;
+      if (item.children) {
+        const child = item.children.find(c => c.to === location.pathname);
+        if (child) {
+          currentItem = child;
+          if (!expandedMenus.includes(item.label)) {
+            setExpandedMenus(prev => [...prev, item.label]);
+          }
+        }
+      }
+    });
     
     if (!currentItem) {
-      currentItem = [...NAV_ITEMS]
-        .filter(item => item.to !== '/company/dashboard' && item.to !== '#' && location.pathname.startsWith(item.to))
-        .sort((a, b) => b.to.length - a.to.length)[0];
+      // Logic fallback cho route lồng nhau
+      NAV_ITEMS.forEach(item => {
+        if (item.to && item.to !== '/company/dashboard' && item.to !== '#' && location.pathname.startsWith(item.to)) {
+          currentItem = item;
+        }
+        if (item.children) {
+          item.children.forEach(child => {
+            if (location.pathname.startsWith(child.to)) currentItem = child;
+          });
+        }
+      });
     }
     
     setActiveCategory(currentItem?.label || '');
   }, [location.pathname]);
+
+  const toggleMenu = (label) => {
+    setExpandedMenus(prev => 
+      prev.includes(label) ? prev.filter(l => l !== label) : [...prev, label]
+    );
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -72,8 +101,43 @@ const CompanySidebar = () => {
 
       <div className="cs-nav">
         {NAV_ITEMS.map((item, idx) => {
-          const isActive = activeCategory === item.label;
+          const isParentActive = item.children?.some(c => c.label === activeCategory);
+          const isActive = activeCategory === item.label || isParentActive;
+          const isExpanded = expandedMenus.includes(item.label);
           
+          if (item.children) {
+            return (
+              <div key={idx} className={`cs-nav-group ${isExpanded ? 'expanded' : ''}`}>
+                <div 
+                  className={`cs-nav-item parent ${isActive ? 'active' : ''} intro-x`}
+                  onClick={() => toggleMenu(item.label)}
+                  style={{ animationDelay: `${idx * 0.05}s` }}
+                >
+                  <span className="cs-icon">{item.icon}</span>
+                  <span className="cs-nav-label">{item.label}</span>
+                  <span className={`cs-arrow ${isExpanded ? 'open' : ''}`}>
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                  </span>
+                </div>
+                
+                {isExpanded && (
+                  <div className="cs-sub-menu">
+                    {item.children.map((child, cIdx) => (
+                      <NavLink
+                        key={cIdx}
+                        to={child.to}
+                        className={({ isActive }) => `cs-sub-item ${isActive ? 'active' : ''}`}
+                      >
+                        <span className="sub-dot"></span>
+                        {child.label}
+                      </NavLink>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          }
+
           return (
             <div key={idx} className="cs-nav-group">
               <Link
