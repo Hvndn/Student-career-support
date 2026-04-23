@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { jobApi } from '../../api';
 import '../../assets/css/student/Home.css';
 
 const Home = () => {
@@ -11,8 +11,8 @@ const Home = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const res = await axios.get('http://localhost:8080/api/public/jobs/latest');
-        setFeaturedJobs(res.data.slice(0, 6));
+        const res = await jobApi.getJobs({ limit: 6 });
+        setFeaturedJobs(res.data.data || []);
       } catch (err) {
         console.error('Error fetching jobs:', err);
       } finally {

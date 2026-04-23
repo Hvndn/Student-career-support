@@ -33,7 +33,7 @@ const LoginSuccess = () => {
                         } else if (userRole === 'COMPANY' || userRole === 'ROLE_COMPANY') {
                             navigate('/company/dashboard', loginSuccessMsg);
                         } else {
-                            navigate('/', loginSuccessMsg);
+                            navigate('/student/dashboard', loginSuccessMsg);
                         }
                     } else {
                         setError('Không thể lấy thông tin người dùng.');
