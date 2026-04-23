@@ -314,8 +314,13 @@ const CVBuilder = () => {
     studentApi.getProfile()
       .then(res => {
         const d = res.data?.data || {};
+        const dbCv = d.cvData ? JSON.parse(d.cvData) : null;
         const cached = localStorage.getItem(`dau_cv_${id}`);
-        if (cached) {
+        
+        if (dbCv) {
+          setCV(dbCv);
+          if (dbCv._name) setCvName(dbCv._name);
+        } else if (cached) {
           const parsed = JSON.parse(cached);
           setCV(parsed);
           if (parsed._name) setCvName(parsed._name);
@@ -373,6 +378,14 @@ const CVBuilder = () => {
     }
 
     const saveData = { ...cv, thumbnail, _name: cvName, _updatedAt: new Date().toISOString() };
+    
+    // Save to Database
+    try {
+      await studentApi.updateProfile({ cvData: JSON.stringify(saveData) });
+    } catch (dbErr) {
+      console.error("Failed to save CV to database:", dbErr);
+    }
+
     localStorage.setItem(`dau_cv_${id}`, JSON.stringify(saveData));
     setCV(saveData);
     toast.success('Đã lưu CV thành công!', { id: toastId });

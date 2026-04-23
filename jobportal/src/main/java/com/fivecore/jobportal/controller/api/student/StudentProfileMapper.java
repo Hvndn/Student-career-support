@@ -35,6 +35,7 @@ public class StudentProfileMapper {
                 .linkedinUrl(student.getLinkedinUrl())
                 .educations(mapEducations(student.getEducations()))
                 .certifications(mapCertifications(student.getCertifications()))
+                .cvData(student.getCvData())
                 .build();
     }
 

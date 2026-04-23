@@ -27,5 +27,6 @@ public class StudentProfileRequest {
     private String videoUrl;
     private String githubUrl;
     private String linkedinUrl;
+    private String cvData;
 
 }
