@@ -208,8 +208,8 @@ const Dashboard = () => {
             <div className="dau-grid-col-3">
               <div className="dau-white-card dau-jobs-list-card">
                  <div className="dau-card-header">
-                    <h4>Cơ hội vừa được đăng</h4>
-                    <p>Cập nhật những việc làm mới nhất</p>
+                    <h4>Việc làm gợi ý cho bạn</h4>
+                    <p>Dựa trên kỹ năng và chuyên ngành trong CV của bạn</p>
                  </div>
                  <div className="dau-job-items">
                    {recommendations.slice(0, 5).map((job, idx) => (

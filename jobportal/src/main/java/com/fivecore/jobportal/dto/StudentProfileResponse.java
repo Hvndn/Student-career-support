@@ -32,7 +32,17 @@ public class StudentProfileResponse {
     private String linkedinUrl;
     private List<EducationDto> educations;
     private List<CertificationDto> certifications;
+    private List<SkillDto> skills;
     private String cvData;
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SkillDto {
+        private String name;
+        private String level;
+    }
 
     @Data
     @Builder
