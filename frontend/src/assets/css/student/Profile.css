@@ -243,6 +243,7 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  min-width: 0;
 }
 
 /* --- Card Styles --- */
@@ -298,6 +299,14 @@
   color: var(--dau-text-main);
   overflow-wrap: break-word;
   word-wrap: break-word;
+  word-break: break-word;
+}
+
+.pf-bio-box * {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: pre-wrap;
 }
 
 /* --- Video Section --- */
