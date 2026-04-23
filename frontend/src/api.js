@@ -106,7 +106,7 @@ export const studentApi = {
 
 // ── Company ───────────────────────────────────────────────────────────────
 export const companyApi = {
-    getDashboard: (days) => api.get('/company/dashboard', { params: { days } }),
+    getDashboard: (days) => api.get(`/company/dashboard?days=${days || 7}`),
     getProfile: () => api.get('/company/profile'),
     updateProfile: (data, onUploadProgress) => {
         if (data instanceof FormData) {

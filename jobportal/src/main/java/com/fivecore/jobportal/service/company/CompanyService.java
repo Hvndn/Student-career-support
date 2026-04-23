@@ -300,6 +300,7 @@ public class CompanyService {
                                 .map(js -> js.getSkill().getName())
                                 .collect(Collectors.toList())
                         : new java.util.ArrayList<>())
+                .applicantsCount(job.getApplications() != null ? job.getApplications().size() : 0)
                 .build();
     }
 }

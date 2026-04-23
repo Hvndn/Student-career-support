@@ -64,18 +64,25 @@ public class CompanyRestController {
                 .jobs(companyService.getJobsByCompany(company.getId()))
                 .activeJobsCount(jobRepository.countByCompanyId(company.getId()))
                 .totalCandidatesCount(applicationRepository.countByJobCompanyId(company.getId()))
-                .pendingCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(), com.fivecore.jobportal.entity.Application.ApplicationStatus.pending))
-                .reviewCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(), com.fivecore.jobportal.entity.Application.ApplicationStatus.review))
-                .suitableCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(), com.fivecore.jobportal.entity.Application.ApplicationStatus.suitable))
-                .interviewCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(), com.fivecore.jobportal.entity.Application.ApplicationStatus.interview))
-                .acceptedCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(), com.fivecore.jobportal.entity.Application.ApplicationStatus.accepted))
-                .rejectedCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(), com.fivecore.jobportal.entity.Application.ApplicationStatus.rejected))
-                .pendingInterviewsCount(0) 
-                .profileViewsCount(0) 
+                .pendingCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(),
+                        com.fivecore.jobportal.entity.Application.ApplicationStatus.pending))
+                .reviewCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(),
+                        com.fivecore.jobportal.entity.Application.ApplicationStatus.review))
+                .suitableCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(),
+                        com.fivecore.jobportal.entity.Application.ApplicationStatus.suitable))
+                .interviewCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(),
+                        com.fivecore.jobportal.entity.Application.ApplicationStatus.interview))
+                .acceptedCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(),
+                        com.fivecore.jobportal.entity.Application.ApplicationStatus.accepted))
+                .rejectedCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(),
+                        com.fivecore.jobportal.entity.Application.ApplicationStatus.rejected))
+                .pendingInterviewsCount(0) // Mock
+                .profileViewsCount(0) // Mock
                 .totalViews(jobRepository.findByCompanyId(company.getId()).stream()
                         .mapToLong(j -> j.getViews() != null ? j.getViews() : 0).sum())
                 .applicationTrends(fetchApplicationTrends(company.getId(), days))
-                .newCandidatesTodayCount(applicationRepository.countByJobCompanyIdAndAppliedAtAfter(company.getId(), java.time.LocalDateTime.now().with(java.time.LocalTime.MIN)))
+                .newCandidatesTodayCount(applicationRepository.countByJobCompanyIdAndAppliedAtAfter(company.getId(),
+                        java.time.LocalDateTime.now().with(java.time.LocalTime.MIN)))
                 .recentCandidates(applicationService.getRecentApplicationsByCompany(company.getId()))
                 .build();
 
@@ -134,7 +141,8 @@ public class CompanyRestController {
      * API Xóa tin tuyển dụng.
      */
     @DeleteMapping("/jobs/{id}")
-    public ResponseEntity<ApiResponse<Object>> deleteJob(@PathVariable("id") Integer id, Authentication authentication) {
+    public ResponseEntity<ApiResponse<Object>> deleteJob(@PathVariable("id") Integer id,
+            Authentication authentication) {
         Integer companyId = getCurrentCompanyId(authentication);
         companyService.deleteJob(companyId, id);
         return ResponseEntity.ok(ApiResponse.success("Xóa tin tuyển dụng thành công", null));
@@ -144,10 +152,11 @@ public class CompanyRestController {
      * API Sao chép tin tuyển dụng.
      */
     @PostMapping("/jobs/{id}/duplicate")
-    public ResponseEntity<ApiResponse<Object>> duplicateJob(@PathVariable("id") Integer id, Authentication authentication) {
+    public ResponseEntity<ApiResponse<Object>> duplicateJob(@PathVariable("id") Integer id,
+            Authentication authentication) {
         Integer companyId = getCurrentCompanyId(authentication);
-        return ResponseEntity.ok(ApiResponse.success("Sao chép tin tuyển dụng thành công", 
-                                 companyService.duplicateJob(companyId, id)));
+        return ResponseEntity.ok(ApiResponse.success("Sao chép tin tuyển dụng thành công",
+                companyService.duplicateJob(companyId, id)));
     }
 
     /**
@@ -173,12 +182,13 @@ public class CompanyRestController {
     public ResponseEntity<ApiResponse<CompanyResponse>> getProfile(Authentication authentication) {
         User user = userRepository.findByEmail(authentication.getName()).orElse(null);
         if (user == null || user.getRole() != User.Role.company) {
-             return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+            return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
         }
-        
+
         Company company = user.getCompany();
         if (company == null) {
-            return ResponseEntity.status(404).body(ApiResponse.error("Tài khoản chưa có thông tin doanh nghiệp", "NOT_FOUND"));
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.error("Tài khoản chưa có thông tin doanh nghiệp", "NOT_FOUND"));
         }
 
         CompanyResponse response = CompanyResponse.builder()
@@ -241,4 +251,3 @@ public class CompanyRestController {
         }
     }
 }
-

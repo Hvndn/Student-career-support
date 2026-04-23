@@ -27,6 +27,6 @@ public class CompanyDashboardResponse {
     private long profileViewsCount;
     private long newCandidatesTodayCount;
     private long totalViews;
-    private List<java.util.Map<String, Object>> applicationTrends;
+    private java.util.List<java.util.Map<String, Object>> applicationTrends;
     private List<ApplicationDto> recentCandidates;
 }
