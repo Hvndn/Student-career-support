@@ -4,6 +4,7 @@ import CompanyNavbar from '../../components/company/CompanyNavbar';
 import { recruitmentApi } from '../../api';
 import toast from 'react-hot-toast';
 import CreateBookingModal from '../../components/company/CreateBookingModal';
+import StudentProfileModal from '../../components/company/StudentProfileModal';
 import '../../assets/css/company/CompanyBooking.css';
 
 const CompanyBooking = () => {
@@ -12,6 +13,8 @@ const CompanyBooking = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [showProfile, setShowProfile] = useState(false);
+    const [selectedCandidate, setSelectedCandidate] = useState(null);
 
     const fetchInterviews = async () => {
         setLoading(true);
@@ -31,6 +34,33 @@ const CompanyBooking = () => {
     useEffect(() => {
         fetchInterviews();
     }, []);
+
+    const handleCancelInterview = async (id) => {
+        if (!window.confirm('Bạn có chắc chắn muốn hủy lịch phỏng vấn này?')) return;
+
+        try {
+            await recruitmentApi.cancelInterview(id);
+            toast.success('Đã hủy lịch phỏng vấn');
+            fetchInterviews();
+        } catch (error) {
+            console.error('Lỗi khi hủy lịch:', error);
+        }
+    };
+
+    const handleViewProfile = async (studentId) => {
+        if (!studentId) {
+            toast.error('Ứng viên này chưa có tài khoản sinh viên trên hệ thống');
+            return;
+        }
+        
+        try {
+            const response = await recruitmentApi.getCandidateDetail(studentId);
+            setSelectedCandidate(response.data.data);
+            setShowProfile(true);
+        } catch (error) {
+            console.error('Lỗi khi tải hồ sơ:', error);
+        }
+    };
 
     const formatDate = (dateString) => {
         if (!dateString) return { day: '--', month: '--', year: '----', time: '--:--' };
@@ -171,10 +201,18 @@ const CompanyBooking = () => {
                                                      interview.status === 'cancelled' ? 'Đã hủy' : interview.status}
                                                 </span>
                                                 <div className="card-actions">
-                                                    <button className="icon-btn" title="Xem chi tiết">
+                                                    <button 
+                                                        className="icon-btn" 
+                                                        title="Xem chi tiết"
+                                                        onClick={() => handleViewProfile(interview.studentId)}
+                                                    >
                                                         <span className="material-symbols-outlined">visibility</span>
                                                     </button>
-                                                    <button className="icon-btn delete" title="Hủy lịch">
+                                                    <button 
+                                                        className="icon-btn delete" 
+                                                        title="Hủy lịch"
+                                                        onClick={() => handleCancelInterview(interview.id)}
+                                                    >
                                                         <span className="material-symbols-outlined">close</span>
                                                     </button>
                                                 </div>
@@ -198,6 +236,12 @@ const CompanyBooking = () => {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onSuccess={fetchInterviews}
+            />
+
+            <StudentProfileModal 
+                show={showProfile}
+                candidate={selectedCandidate}
+                onClose={() => setShowProfile(false)}
             />
         </div>
     );

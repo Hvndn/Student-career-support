@@ -18,6 +18,7 @@ public class InterviewResponse {
     private String status;
     private String result;
     private Integer applicationId;
+    private Integer studentId;
     private String studentName;
     private String studentEmail;
     private String studentAvatar;

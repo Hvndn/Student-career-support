@@ -144,6 +144,8 @@ export const recruitmentApi = {
     searchCandidates: (params) => api.get('/company/management/candidates/search', { params }),
     scheduleInterview: (data) => api.post('/company/management/applications/schedule', data),
     getInterviews: () => api.get('/company/management/interviews'),
+    cancelInterview: (id) => api.delete(`/company/management/interviews/${id}`),
+    getCandidateDetail: (id) => api.get(`/company/management/candidates/${id}`),
 };
 
 // ── Admin ─────────────────────────────────────────────────────────────────

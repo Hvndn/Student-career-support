@@ -126,6 +126,7 @@ public class RecruitmentRestController {
                 .status(i.getStatus())
                 .result(i.getResult())
                 .applicationId(app.getId())
+                .studentId(app.getStudent() != null ? app.getStudent().getId() : null)
                 .studentName(app.getStudent() != null && app.getStudent().getUser() != null ? app.getStudent().getUser().getFullName() : app.getFullName())
                 .studentEmail(app.getStudent() != null && app.getStudent().getUser() != null ? app.getStudent().getUser().getEmail() : app.getEmail())
                 .studentAvatar(app.getStudent() != null ? app.getStudent().getAvatarUrl() : null)
@@ -134,5 +135,41 @@ public class RecruitmentRestController {
         }).collect(java.util.stream.Collectors.toList());
 
         return ResponseEntity.ok(ApiResponse.success("Lấy danh sách lịch phỏng vấn thành công", response));
+    }
+
+    /**
+     * API Hủy lịch phỏng vấn.
+     */
+    @DeleteMapping("/interviews/{id}")
+    public ResponseEntity<ApiResponse<Object>> cancelInterview(@PathVariable Integer id, Authentication authentication) {
+        Integer companyId = getCurrentCompanyId(authentication);
+        if (companyId == null)
+            return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+
+        // Kiểm tra quyền sở hữu
+        Interview interview = interviewRepository.findById(id).orElse(null);
+        if (interview == null || !interview.getApplication().getJob().getCompany().getId().equals(companyId)) {
+            return ResponseEntity.status(404).body(ApiResponse.error("Không tìm thấy lịch phỏng vấn hoặc không có quyền", "NOT_FOUND"));
+        }
+
+        interviewService.cancelInterview(id);
+        return ResponseEntity.ok(ApiResponse.success("Đã hủy lịch phỏng vấn thành công", null));
+    }
+
+    /**
+     * API Lấy chi tiết hồ sơ sinh viên.
+     */
+    @GetMapping("/candidates/{id}")
+    public ResponseEntity<ApiResponse<Object>> getCandidateDetail(@PathVariable Integer id, Authentication authentication) {
+        Integer companyId = getCurrentCompanyId(authentication);
+        if (companyId == null)
+            return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+
+        com.fivecore.jobportal.dto.StudentProfileResponse profile = candidateSearchService.getStudentById(id);
+        if (profile == null) {
+            return ResponseEntity.status(404).body(ApiResponse.error("Không tìm thấy sinh viên", "NOT_FOUND"));
+        }
+
+        return ResponseEntity.ok(ApiResponse.success("Lấy hồ sơ sinh viên thành công", profile));
     }
 }
