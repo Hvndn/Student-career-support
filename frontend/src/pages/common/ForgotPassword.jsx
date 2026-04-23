@@ -1,101 +1,91 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { authApi } from '../../api';
 import toast from 'react-hot-toast';
-import '../../assets/css/common/Auth.css';
+import '../Auth.css';
 
 const ForgotPassword = () => {
-    const [currentImage, setCurrentImage] = useState(0);
-    const images = [
-        '/premium_auth_3d_visual_1776959386504.png',
-        '/premium_auth_3d_visual_2_1776959540655.png'
-    ];
-
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentImage((prev) => (prev + 1) % images.length);
-        }, 6000);
-        return () => clearInterval(timer);
-    }, []);
-
-    useEffect(() => {
-        document.body.style.paddingTop = '0';
-        return () => { document.body.style.paddingTop = ''; };
-    }, []);
-
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
     const [isSent, setIsSent] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!email) {
+            toast.error("Vui lòng nhập email");
+            return;
+        }
+
         setLoading(true);
         try {
             await authApi.forgotPassword(email);
             setIsSent(true);
-            toast.success("Đã gửi email khôi phục!");
+            toast.success("Link khôi phục mật khẩu đã được gửi!");
         } catch (error) {
-            toast.error("Gửi yêu cầu thất bại.");
+            console.error(error);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="mr-auth-page">
-            <div className="mr-auth-crystal-card">
-                
-                {/* Crystal Form Side (LEFT) */}
-                <div className="mr-auth-form-side">
-                    <div className="mr-form-header">
+        <div className="auth-container">
+            <div className="auth-left">
+                <div className="brand-title">Fivecore</div>
+                <div className="brand-desc">
+                    Hỗ trợ sinh viên kiến tạo sự nghiệp tương lai với công nghệ kết nối thông minh.
+                </div>
+                <div className="feature-list">
+                    <div className="feature-item">
+                        <div className="feature-icon">🔑</div>
+                        <div className="feature-text">
+                            <h4>Bảo mật hồ sơ</h4>
+                            <p>Đảm bảo an toàn thông tin cá nhân và tài khoản của bạn.</p>
+                        </div>
+                    </div>
+                </div>
+                <div className="copyright">© 2024 Fivecore. All rights reserved.</div>
+            </div>
+
+            <div className="auth-right">
+                <div className="auth-form-box">
+                    <div className="form-header">
                         <h2>{isSent ? "Kiểm tra Email" : "Quên mật khẩu?"}</h2>
-                        <p>{isSent ? "Yêu cầu đã được gửi. Vui lòng kiểm tra hộp thư." : "Nhập email để nhận liên kết khôi phục mật khẩu."}</p>
+                        <p>
+                            {isSent 
+                                ? `Yêu cầu của bạn đã được gửi tới Quản trị viên. Vui lòng kiểm tra email ${email} sau khi yêu cầu được phê duyệt.` 
+                                : "Nhập địa chỉ email đã đăng ký để gửi yêu cầu cấp lại mật khẩu tới Quản trị viên."}
+                        </p>
                     </div>
 
                     {!isSent ? (
-                        <form onSubmit={handleSubmit} className="mr-login-form">
-                            <div className="mr-input-group">
-                                <label>ĐỊA CHỈ EMAIL</label>
-                                <div className="mr-input-wrapper">
-                                    <input type="email" placeholder="name@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                                </div>
+                        <form onSubmit={handleSubmit}>
+                            <div className="form-group">
+                                <label>Địa chỉ Email</label>
+                                <input
+                                    type="email"
+                                    className="form-input"
+                                    placeholder="yourname@example.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                />
                             </div>
-                            <button type="submit" className="mr-btn-submit" disabled={loading}>
-                                {loading ? "Đang xử lý..." : "Gửi yêu cầu ngay →"}
+
+                            <button type="submit" className="btn-submit" disabled={loading}>
+                                {loading ? "Đang gửi..." : "Gửi yêu cầu khôi phục"}
                             </button>
                         </form>
                     ) : (
-                        <button className="mr-btn-submit" onClick={() => setIsSent(false)}>Gửi lại email</button>
+                        <div className="auth-prompt">
+                            Không nhận được email? <span className="auth-link" onClick={() => setIsSent(false)} style={{cursor: 'pointer'}}>Thử lại</span>
+                        </div>
                     )}
 
-                    <p className="mr-auth-footer">
-                        Quay lại trang <Link to="/login">Đăng nhập</Link>
-                    </p>
-                </div>
-
-                {/* Visual Experience Side (RIGHT) */}
-                <div className="mr-auth-side-art">
-                    <div className="mr-art-overlay"></div>
-                    {images.map((img, idx) => (
-                        <div 
-                            key={idx}
-                            className={`mr-art-3d-visual ${idx === currentImage ? 'active' : ''}`}
-                            style={{ backgroundImage: `url('${img}')` }}
-                        ></div>
-                    ))}
-                    
-                    <div className="mr-art-logo">Fivecore</div>
-                    <div className="mr-art-content" style={{ position: 'relative', zIndex: 10 }}>
-                        <h1 style={{ fontSize: '3.5rem', fontWeight: 900, color: 'white', lineHeight: 1 }}>
-                            Bảo mật <span style={{ color: '#818cf8' }}>Tối ưu</span> <br /> 
-                            An tâm <span style={{ color: '#c084fc' }}>Sự nghiệp</span>
-                        </h1>
-                        <p style={{ color: 'rgba(255,255,255,0.5)', marginTop: '2rem', maxWidth: '400px' }}>
-                            Hệ thống bảo vệ tài khoản giúp bạn luôn làm chủ cơ hội của mình.
-                        </p>
+                    <div className="auth-prompt">
+                        Quay lại trang <Link to="/login" className="auth-link">Đăng nhập</Link>
                     </div>
                 </div>
-
             </div>
         </div>
     );
