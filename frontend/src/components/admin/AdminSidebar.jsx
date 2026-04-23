@@ -6,10 +6,10 @@ const AdminSidebar = () => {
     const location = useLocation();
     
     const [openMenus, setOpenMenus] = useState({
-        doanhNghiep: true,
+        doanhNghiep: false,
         thuThach: false,
         coVan: false,
-        website: true
+        website: false
     });
 
     const toggleMenu = (menu) => {

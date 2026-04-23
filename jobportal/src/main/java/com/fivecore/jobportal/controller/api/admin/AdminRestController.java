@@ -3,6 +3,7 @@ package com.fivecore.jobportal.controller.api.admin;
 import com.fivecore.jobportal.dto.ApiResponse;
 import com.fivecore.jobportal.dto.admin.AdminCompanyUpdateRequest;
 import com.fivecore.jobportal.dto.admin.AdminCreateRequest;
+import com.fivecore.jobportal.dto.admin.AdminCompanyCreateRequest;
 import com.fivecore.jobportal.dto.admin.AdminStudentCreateRequest;
 import com.fivecore.jobportal.dto.admin.AdminInterviewResponse;
 import com.fivecore.jobportal.dto.admin.AdminStudentUpdateRequest;
@@ -85,6 +86,19 @@ public class AdminRestController {
             return ResponseEntity.ok(ApiResponse.success("Thêm tài khoản quản trị mới thành công", null));
         } catch (Exception e) {
             return ResponseEntity.status(400).body(ApiResponse.error("Lỗi khi thêm tài khoản: " + e.getMessage(), "CREATE_ERROR"));
+        }
+    }
+
+    /**
+     * API Tạo mới doanh nghiệp dành cho Admin.
+     */
+    @PostMapping("/create-company")
+    public ResponseEntity<ApiResponse<Object>> createCompanyFromAdmin(@RequestBody AdminCompanyCreateRequest request) {
+        try {
+            adminService.createCompanyFromAdmin(request);
+            return ResponseEntity.ok(ApiResponse.success("Thêm doanh nghiệp mới thành công", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(ApiResponse.error("Lỗi khi thêm doanh nghiệp: " + e.getMessage(), "CREATE_ERROR"));
         }
     }
 
@@ -314,5 +328,4 @@ public class AdminRestController {
         categoryRepository.deleteById(id);
         return ResponseEntity.ok(ApiResponse.success("Xóa danh mục thành công", null));
     }
-}
 }

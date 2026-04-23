@@ -9,8 +9,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AdminCreateRequest {
+public class AdminCompanyCreateRequest {
     private String email;
     private String password;
     private String fullName;
+    private String name;
+    private String industry;
+    private String website;
+    private String phone;
+    private String address;
+    private String description;
+    private String companySize;
+    private Integer foundingYear;
 }

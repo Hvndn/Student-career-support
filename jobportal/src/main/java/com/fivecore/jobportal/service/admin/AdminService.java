@@ -345,6 +345,9 @@ public class AdminService {
                     .logoUrl(company.getLogoUrl())
                     .email(company.getEmail())
                     .phone(company.getPhone())
+                    .industry(company.getIndustry())
+                    .companySize(company.getCompanySize())
+                    .foundingYear(company.getFoundingYear())
                     .build());
         }
 
@@ -481,5 +484,41 @@ public class AdminService {
 
         userRepository.save(user);
         log.info("Admin đã tạo QUẢN TRỊ VIÊN mới: {}", user.getEmail());
+    }
+
+    /**
+     * Tạo mới Doanh nghiệp từ tài khoản quản trị.
+     */
+    @Transactional
+    public void createCompanyFromAdmin(AdminCompanyCreateRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Email đã tồn tại trên hệ thống");
+        }
+
+        User user = User.builder()
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .fullName(request.getFullName())
+                .role(User.Role.company)
+                .isActive(true)
+                .build();
+
+        User savedUser = userRepository.save(user);
+
+        Company company = Company.builder()
+                .user(savedUser)
+                .name(request.getName())
+                .email(request.getEmail())
+                .industry(request.getIndustry())
+                .website(request.getWebsite())
+                .phone(request.getPhone())
+                .address(request.getAddress())
+                .description(request.getDescription())
+                .companySize(request.getCompanySize())
+                .foundingYear(request.getFoundingYear())
+                .build();
+
+        companyRepository.save(company);
+        log.info("Admin đã tạo DOANH NGHIỆP mới: {} (Tên: {})", user.getEmail(), company.getName());
     }
 }
