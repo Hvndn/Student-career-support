@@ -216,7 +216,7 @@ const Dashboard = () => {
                       <div key={idx} className="dau-job-row">
                         <div className="dau-job-left">
                           <div className="dau-company-logo">
-                            <img src={job.companyLogo || "https://ui-avatars.com/api/?name=" + job.companyName} alt="Logo" />
+                            <img src={job.imageUrl || "https://ui-avatars.com/api/?name=" + job.companyName} alt="Logo" />
                           </div>
                           <div className="dau-job-main">
                             <h6>{job.title}</h6>
