@@ -59,8 +59,8 @@ const AdminPasswordRequests = () => {
         try {
             setShowConfirmModal(false);
             setProcessingId(id);
-            await adminApi.approvePasswordRequest(id);
-            toast.success("Đã cấp lại mật khẩu và gửi email thành công!");
+            const response = await adminApi.approvePasswordRequest(id);
+            toast.success(response.data.message || "Đã cấp lại mật khẩu thành công!");
             fetchData(); 
         } catch (error) {
             console.error("Lỗi khi phê duyệt:", error);
@@ -79,71 +79,73 @@ const AdminPasswordRequests = () => {
                 <AdminNavbar title="Cấp lại mật khẩu" />
                 
                 <main className="admin-body">
-                    <div className="admin-header-section fade-in" style={{ marginBottom: '3rem' }}>
-                        <div className="header-text">
-                            <h1 style={{ fontSize: '2.5rem', fontWeight: 900, background: 'linear-gradient(135deg, #1e3a8a, #2563eb)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                                Cấp lại Mật khẩu
-                            </h1>
-                            <p style={{ fontSize: '1.1rem', marginTop: '8px' }}>Trung tâm xử lý yêu cầu khôi phục tài khoản hệ thống.</p>
+                    <section className="dau-header-section fade-in">
+                        <div className="dau-header-left">
+                            <div className="status-badge-dau">
+                                <span className="status-dot"></span>
+                                PASSWORD RECOVERY
+                            </div>
+                            <h1>Cấp lại <span className="text-red">Mật khẩu</span> 🔑</h1>
+                            <p>Trung tâm xử lý yêu cầu khôi phục tài khoản hệ thống</p>
                         </div>
-                        <div className="header-actions">
-                            <button className="btn-secondary ultra-glass" onClick={fetchData} style={{ borderRadius: '14px', padding: '12px 24px' }}>
+                        <div className="dau-header-right">
+                            <button className="btn-refresh" onClick={fetchData}>
                                 <span className="material-symbols-outlined">refresh</span>
                                 Làm mới dữ liệu
                             </button>
                         </div>
-                    </div>
+                    </section>
 
-                    <div className="metrics-grid fade-in">
-                        <div className="metric-card ultra-glass" style={{ borderLeft: '6px solid #f59e0b' }}>
-                            <div className="metric-header">
-                                <div className="metric-icon" style={{ background: '#fffbeb', color: '#f59e0b' }}>
-                                    <span className="material-symbols-outlined">pending_actions</span>
-                                </div>
-                                <div className="metric-trend stability">Đang chờ</div>
+                    <section className="dau-metrics-grid fade-in" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', maxWidth: '800px' }}>
+                        <div className="dau-metric-card">
+                            <div className="dau-metric-icon" style={{ backgroundColor: '#fffbeb', color: '#f59e0b' }}>
+                                <span className="material-symbols-outlined">pending_actions</span>
                             </div>
-                            <div className="metric-info">
-                                <div className="metric-label">Số yêu cầu chưa xử lý</div>
-                                <div className="metric-value">{stats.pendingCount}</div>
+                            <div className="dau-metric-content">
+                                <h2 className="dau-metric-value">{stats.pendingCount}</h2>
+                                <span className="dau-metric-label">Số yêu cầu chưa xử lý</span>
                             </div>
                         </div>
 
-                        <div className="metric-card ultra-glass" style={{ borderLeft: '6px solid #10b981' }}>
-                            <div className="metric-header">
-                                <div className="metric-icon" style={{ background: '#ecfdf5', color: '#10b981' }}>
-                                    <span className="material-symbols-outlined">task_alt</span>
-                                </div>
-                                <div className="metric-trend up">Thành công</div>
+                        <div className="dau-metric-card">
+                            <div className="dau-metric-icon" style={{ backgroundColor: '#ecfdf5', color: '#10b981' }}>
+                                <span className="material-symbols-outlined">task_alt</span>
                             </div>
-                            <div className="metric-info">
-                                <div className="metric-label">Đã cấp lại mật khẩu</div>
-                                <div className="metric-value">{stats.completedCount}</div>
+                            <div className="dau-metric-content">
+                                <h2 className="dau-metric-value">{stats.completedCount}</h2>
+                                <span className="dau-metric-label">Đã cấp lại mật khẩu</span>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
-                    <div className="data-panel ultra-glass fade-in" style={{ marginTop: '2rem' }}>
+                    <div className="data-panel fade-in" style={{ marginTop: '2rem' }}>
                         <div className="table-header-bar">
                             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                                 <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563eb' }}>
                                     <span className="material-symbols-outlined">list_alt</span>
                                 </div>
                                 <div>
-                                    <h3 style={{ margin: 0, fontSize: '1.25rem' }}>Danh sách yêu cầu</h3>
+                                    <h3 style={{ margin: 0 }}>Danh sách yêu cầu</h3>
                                     <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>Cập nhật tự động theo thời gian thực</p>
                                 </div>
                             </div>
-                            <div className="badge count-badge ultra-glass" style={{ background: 'white', fontWeight: 800 }}>
+                            <div className="status-badge-dau" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
                                 {requests.length} ĐƠN CHỜ DUYỆT
                             </div>
                         </div>
+                        
                         {loading ? (
-                            <div className="loading-spinner">Đang tải dữ liệu...</div>
+                            <div className="dau-empty-state">
+                                <div className="loader-small" style={{ borderTopColor: '#2563eb' }}></div>
+                                <p style={{ marginTop: '10px' }}>Đang tải dữ liệu...</p>
+                            </div>
                         ) : requests.length === 0 ? (
-                            <div className="empty-state" style={{ padding: '3rem', textAlign: 'center' }}>
-                                <span className="material-symbols-outlined" style={{ fontSize: '4rem', color: '#94a3b8', marginBottom: '1rem' }}>lock_open</span>
-                                <h3 style={{ color: '#1e293b' }}>Không có yêu cầu nào</h3>
-                                <p style={{ color: '#64748b' }}>Hiện không có yêu cầu cấp lại mật khẩu nào đang chờ xử lý.</p>
+                            <div className="dau-empty-state">
+                                <div className="empty-icon-wrapper">
+                                    <span className="material-symbols-outlined success-icon">lock_open</span>
+                                </div>
+                                <h4>Không có yêu cầu nào</h4>
+                                <p>Hiện không có yêu cầu cấp lại mật khẩu nào đang chờ xử lý.</p>
                             </div>
                         ) : (
                             <table className="premium-table">
@@ -173,17 +175,13 @@ const AdminPasswordRequests = () => {
                                                 </div>
                                             </td>
                                             <td>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontWeight: '500' }}>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b' }}>
                                                     <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>mail</span>
                                                     {request.user.email}
                                                 </div>
                                             </td>
                                             <td>
-                                                <span className={`badge role-${request.user.role.toLowerCase()}`} style={{
-                                                    textTransform: 'capitalize',
-                                                    padding: '6px 14px',
-                                                    fontWeight: '700'
-                                                }}>
+                                                <span className={`badge role-${request.user.role.toLowerCase()}`}>
                                                     {request.user.role === 'student' ? 'Sinh viên' : 
                                                      request.user.role === 'company' ? 'Doanh nghiệp' : 'Admin'}
                                                 </span>
@@ -196,22 +194,21 @@ const AdminPasswordRequests = () => {
                                             </td>
                                             <td style={{ textAlign: 'center' }}>
                                                 <button 
-                                                    className="btn-primary btn-hero pulse-primary ultra-glass"
+                                                    className="btn-primary"
                                                     onClick={() => handleApproveClick(request)}
                                                     disabled={processingId === request.id}
                                                     style={{ 
-                                                        margin: '0 auto', 
-                                                        padding: '12px 28px', 
-                                                        borderRadius: '16px',
-                                                        transition: 'all 0.3s'
+                                                        padding: '8px 20px', 
+                                                        borderRadius: '10px',
+                                                        fontSize: '0.85rem'
                                                     }}
                                                 >
                                                     {processingId === request.id ? (
                                                         <span className="loader-small"></span>
                                                     ) : (
                                                         <>
-                                                            <span className="material-symbols-outlined" style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>verified_user</span>
-                                                            PHÊ DUYỆT NGAY
+                                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>verified_user</span>
+                                                            PHÊ DUYỆT
                                                         </>
                                                     )}
                                                 </button>

@@ -254,11 +254,15 @@ public class AdminRestController {
      */
     @PostMapping("/password-requests/{id}/approve")
     public ResponseEntity<ApiResponse<Object>> approvePasswordRequest(@PathVariable Integer id) {
-        boolean success = passwordResetService.approveRequest(id);
-        if (success) {
-            return ResponseEntity.ok(ApiResponse.success("Đã cấp lại mật khẩu và gửi email thành công", null));
-        } else {
-            return ResponseEntity.badRequest().body(ApiResponse.error("Phê duyệt thất bại hoặc yêu cầu không tồn tại", "APPROVE_FAILED"));
+        try {
+            String newPassword = passwordResetService.approveRequest(id);
+            if (newPassword != null) {
+                return ResponseEntity.ok(ApiResponse.success("Đã cấp lại mật khẩu thành công. Mật khẩu mới là: " + newPassword, null));
+            } else {
+                return ResponseEntity.badRequest().body(ApiResponse.error("Yêu cầu không tồn tại hoặc đã được xử lý", "APPROVE_FAILED"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi hệ thống: " + e.getMessage(), "SYSTEM_ERROR"));
         }
     }
 

@@ -109,6 +109,11 @@ const AdminSidebar = () => {
                     <span className="item-label">Trò chuyện</span>
                 </Link>
 
+                <Link to="/admin/password-requests" className={`admin-nav-item ${location.pathname === '/admin/password-requests' ? 'active' : ''}`}>
+                    <span className="material-symbols-outlined">lock_reset</span>
+                    <span className="item-label">Cấp lại mật khẩu</span>
+                </Link>
+
                 <div className={`nav-group ${openMenus.website ? 'open' : ''}`}>
                     <div className="admin-nav-item parent-item" onClick={() => toggleMenu('website')}>
                         <span className="material-symbols-outlined">home</span>

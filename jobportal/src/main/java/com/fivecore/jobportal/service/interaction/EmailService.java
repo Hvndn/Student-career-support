@@ -17,6 +17,9 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
+    @org.springframework.beans.factory.annotation.Value("${spring.mail.username}")
+    private String fromEmail;
+
     /**
      * Gửi một email văn bản đơn giản.
      * @param to Địa chỉ người nhận
@@ -24,17 +27,12 @@ public class EmailService {
      * @param content Nội dung email
      */
     public void sendSimpleEmail(String to, String subject, String content) {
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("Tung_2251220254@dau.edu.vn");
-            message.setTo(to);
-            message.setSubject(subject);
-            message.setText(content);
-            mailSender.send(message);
-            log.info("Đã gửi email thành công tới: {}", to);
-        } catch (Exception e) {
-            log.error("Lỗi khi gửi email tới {}: {}", to, e.getMessage());
-            // Trong môi trường development, ta chỉ log lỗi thay vì throw exception để không dừng luồng chính
-        }
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(content);
+        mailSender.send(message);
+        log.info("Đã gửi email thành công tới: {}", to);
     }
 }
