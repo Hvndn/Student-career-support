@@ -58,7 +58,7 @@ public class AdminRestControllerTest {
         mockMvc.perform(get("/api/admin/statistics")
                         .principal(new UsernamePasswordAuthenticationToken("admin@test.com", null, AuthorityUtils.createAuthorityList("ROLE_ADMIN"))))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value(true));
+                .andExpect(jsonPath("$.status").value("success"));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class AdminRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new AdminStudentCreateRequest())))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.status").value("error"))
                 .andExpect(jsonPath("$.errorCode").value("CREATE_ERROR"));
     }
 

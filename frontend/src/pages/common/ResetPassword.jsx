@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { authApi } from '../../api';
 import toast from 'react-hot-toast';
-import '../Auth.css';
+import '../../assets/css/common/Auth.css';
 
 const ResetPassword = () => {
     const [password, setPassword] = useState('');
@@ -14,94 +14,60 @@ const ResetPassword = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!token) {
-            toast.error("Token không hợp lệ hoặc đã hết hạn!");
-            navigate('/login');
-        }
+        if (!token) navigate('/login');
     }, [token, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        if (password.length < 6) {
-            toast.error("Mật khẩu phải từ 6 ký tự trở lên");
-            return;
-        }
-
-        if (password !== confirmPassword) {
-            toast.error("Mật khẩu xác nhận không khớp");
-            return;
-        }
-
+        if (password !== confirmPassword) { toast.error("Mật khẩu không khớp!"); return; }
         setLoading(true);
         try {
             await authApi.resetPassword(token, password);
             setIsSuccess(true);
-            toast.success("Mật khẩu đã được thay đổi!");
-            setTimeout(() => {
-                navigate('/login');
-            }, 3000);
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
+            toast.success("Đổi mật khẩu thành công!");
+            setTimeout(() => navigate('/login'), 2500);
+        } catch (error) { toast.error("Lỗi xác thực!"); }
+        finally { setLoading(false); }
     };
 
     return (
-        <div className="auth-container">
-            <div className="auth-left">
-                <div className="brand-title">Fivecore</div>
-                <div className="brand-desc">
-                    Hỗ trợ sinh viên kiến tạo sự nghiệp tương lai với công nghệ kết nối thông minh.
+        <div className="mr-auth-page">
+            <div className="mr-auth-crystal-card">
+                <div className="mr-auth-side-art">
+                    <div className="mr-art-logo">Fivecore</div>
+                    <div className="mr-art-content">
+                        <h1>Thiết lập <span>Mật khẩu</span> <br /> Sẵn sàng <span>Trở lại</span></h1>
+                        <p className="mr-art-desc">Hoàn tất bước cuối cùng để quay lại với những cơ hội nghề nghiệp tuyệt vời nhất.</p>
+                    </div>
+                    <div className="mr-art-3d-visual" style={{ backgroundImage: `url('/premium_auth_3d_visual_1776959386504.png')` }}></div>
                 </div>
-                <div className="copyright">© 2024 Fivecore. All rights reserved.</div>
-            </div>
 
-            <div className="auth-right">
-                <div className="auth-form-box">
-                    <div className="form-header">
-                        <h2>{isSuccess ? "Thành công!" : "Thiết lập mật khẩu"}</h2>
-                        <p>
-                            {isSuccess 
-                                ? "Mật khẩu của bạn đã được cập nhật. Bạn sẽ được chuyển hướng về trang đăng nhập trong giây lát." 
-                                : "Nhập mật khẩu mới cho tài khoản của bạn."}
-                        </p>
+                <div className="mr-auth-form-side">
+                    <div className="mr-form-header">
+                        <h2>{isSuccess ? "Thành công" : "Mật khẩu mới"}</h2>
+                        <p>{isSuccess ? "Mật khẩu đã được cập nhật thành công." : "Nhập mật khẩu mới an toàn hơn cho tài khoản."}</p>
                     </div>
 
                     {!isSuccess ? (
-                        <form onSubmit={handleSubmit}>
-                            <div className="form-group">
-                                <label>Mật khẩu mới</label>
-                                <input
-                                    type="password"
-                                    className="form-input"
-                                    placeholder="••••••••"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    required
-                                />
+                        <form onSubmit={handleSubmit} className="mr-login-form">
+                            <div className="mr-input-group">
+                                <label>MẬT KHẨU MỚI</label>
+                                <div className="mr-input-wrapper">
+                                    <input type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                                </div>
                             </div>
-                            <div className="form-group">
-                                <label>Xác nhận mật khẩu mới</label>
-                                <input
-                                    type="password"
-                                    className="form-input"
-                                    placeholder="••••••••"
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                    required
-                                />
+                            <div className="mr-input-group">
+                                <label>XÁC NHẬN MẬT KHẨU</label>
+                                <div className="mr-input-wrapper">
+                                    <input type="password" placeholder="••••••••" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+                                </div>
                             </div>
-
-                            <button type="submit" className="btn-submit" disabled={loading}>
-                                {loading ? "Đang cập nhật..." : "Cập nhật mật khẩu"}
+                            <button type="submit" className="mr-btn-submit" disabled={loading}>
+                                {loading ? "Đang xử lý..." : "Cập nhật mật khẩu →"}
                             </button>
                         </form>
                     ) : (
-                        <Link to="/login" className="btn-submit">
-                            Quay lại đăng nhập
-                        </Link>
+                        <Link to="/login" className="mr-btn-submit">Đăng nhập ngay</Link>
                     )}
                 </div>
             </div>
