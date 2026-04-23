@@ -25,6 +25,7 @@ const CandidateDetailModal = ({
     appliedAt,
     coverLetter,
     cvFileName,
+    cvUrl,
     onClose,
     onStatusUpdate
 }) => {
@@ -88,19 +89,28 @@ const CandidateDetailModal = ({
     };
 
     const handleDownloadCV = async () => {
+        // Nếu có CV sinh viên tự upload, tải file đó về
+        if (cvUrl) {
+            const fullUrl = cvUrl.startsWith('http') ? cvUrl : `http://localhost:8080${cvUrl}`;
+            window.open(fullUrl, '_blank');
+            toast.success('Đang mở CV của ứng viên...');
+            return;
+        }
+
+        // Nếu không có file upload, mới dùng API export profile
         setDownloading(true);
         try {
             const response = await companyApi.downloadCv(studentId);
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', `CV_${candidate?.fullName || 'Candidate'}.pdf`);
+            link.setAttribute('download', `CV_System_${candidate?.fullName || 'Candidate'}.pdf`);
             document.body.appendChild(link);
             link.click();
             link.remove();
-            toast.success('Tải CV thành công!');
+            toast.success('Tải hồ sơ ứng viên thành công!');
         } catch (error) {
-            toast.error('Không thể tải CV. Vui lòng thử lại.');
+            toast.error('Không thể tải hồ sơ. Vui lòng thử lại.');
         } finally {
             setDownloading(false);
         }

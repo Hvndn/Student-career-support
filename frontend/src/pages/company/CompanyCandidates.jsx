@@ -406,6 +406,7 @@ const CompanyCandidates = () => {
                 appliedAt={selectedApp?.appliedAt}
                 coverLetter={selectedApp?.coverLetter}
                 cvFileName={selectedApp?.cvFileName}
+                cvUrl={selectedApp?.cvUrl}
                 onClose={handleCloseModal}
                 onStatusUpdate={(newStatus) => {
                     setApplications(prev => prev.map(app => 
