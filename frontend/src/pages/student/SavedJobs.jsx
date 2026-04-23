@@ -39,7 +39,7 @@ const SavedJobs = () => {
 
     if (loading) return (
         <div className="job-list-container-inner" style={{ paddingTop: '100px', textAlign: 'center' }}>
-             <span className="material-symbols-outlined spinner" style={{fontSize: '3rem', color: '#8b1538', animation: 'spin 1s linear infinite'}}>refresh</span>
+             <span className="material-symbols-outlined spinner" style={{fontSize: '3rem', color: '#0f409f', animation: 'spin 1s linear infinite'}}>refresh</span>
              <p style={{ marginTop: '1rem', color: '#64748b' }}>Đang tải danh sách việc làm đã lưu...</p>
         </div>
     );
@@ -124,7 +124,7 @@ const SavedJobs = () => {
                                         <div className="posted-time">
                                             <span className="material-symbols-outlined">schedule</span> {job.postedAt ? new Date(job.postedAt).toLocaleDateString('vi-VN') : '14/3/2026'}
                                         </div>
-                                        <div className="apply-btn-premium" style={{ background: '#8b1538', padding: '8px 20px' }}>
+                                        <div className="apply-btn-premium" style={{ background: '#0f409f', padding: '8px 20px' }}>
                                             Ứng tuyển <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>chevron_right</span>
                                         </div>
                                     </div>

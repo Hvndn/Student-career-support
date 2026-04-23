@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import '../../assets/css/CompanyJobManagement.css';
 import CompanySidebar from '../../components/company/CompanySidebar';
 import CompanyNavbar from '../../components/company/CompanyNavbar';
@@ -13,7 +14,6 @@ const CompanyJobManagement = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const [publishingId, setPublishingId] = useState(null);
-  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [currentPage, setCurrentPage] = useState(1);
   const [showPostModal, setShowPostModal] = useState(false);
   const [editingJob, setEditingJob] = useState(null);
@@ -35,8 +35,8 @@ const CompanyJobManagement = () => {
   ];
 
   const showToast = (message, type = 'success') => {
-    setToast({ show: true, message, type });
-    setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 3000);
+    if (type === 'error') toast.error(message);
+    else toast.success(message);
   };
 
   const toggleDropdown = (e, jobId) => {
@@ -557,16 +557,6 @@ const CompanyJobManagement = () => {
       </div>
     </div>
 
-      {/* Toast Notification */}
-      {toast.show && (
-        <div className={`cjm-toast ${toast.type} animate-slide-down`}>
-          <span className="cjm-toast-icon">
-            {toast.type === 'success' ? '✅' : '⚠️'}
-          </span>
-          <span className="cjm-toast-message">{toast.message}</span>
-        </div>
-      )}
-
       {/* Post Job Modal */}
       <PostJobModal 
         isOpen={showPostModal} 
@@ -574,6 +564,7 @@ const CompanyJobManagement = () => {
         jobToEdit={editingJob}
         onSuccess={() => {
             setShowPostModal(false);
+            setEditingJob(null);
             fetchJobs();
         }}
       />

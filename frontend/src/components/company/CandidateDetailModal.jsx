@@ -1,11 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { companyApi } from '../../api';
+import { companyApi, recruitmentApi } from '../../api';
 import toast from 'react-hot-toast';
 import { tagService } from '../../utils/tagService';
-import { recruitmentApi } from '../../api';
+import StudentProfileModal from './StudentProfileModal';
 import '../../assets/css/company/CandidateDetailModal.css';
 
-const CandidateDetailModal = ({ show, studentId, applicationId, initialStatus, onClose, onStatusUpdate }) => {
+const STATUS_CONFIG = {
+    pending: { label: 'Chờ duyệt', className: 'status-pending' },
+    review: { label: 'Đang xem xét', className: 'status-review' },
+    suitable: { label: 'Đã duyệt', className: 'status-suitable' },
+    interview: { label: 'Phỏng vấn', className: 'status-interview' },
+    accepted: { label: 'Đã nhận', className: 'status-accepted' },
+    rejected: { label: 'Từ chối', className: 'status-rejected' },
+};
+
+const CandidateDetailModal = ({
+    show,
+    studentId,
+    applicationId,
+    initialStatus,
+    jobTitle,
+    jobType,
+    jobLocation,
+    appliedAt,
+    coverLetter,
+    cvFileName,
+    cvUrl,
+    onClose,
+    onStatusUpdate
+}) => {
     const [candidate, setCandidate] = useState(null);
     const [status, setStatus] = useState(initialStatus);
     const [loading, setLoading] = useState(false);
@@ -13,11 +36,15 @@ const CandidateDetailModal = ({ show, studentId, applicationId, initialStatus, o
     const [downloading, setDownloading] = useState(false);
     const [allTags, setAllTags] = useState([]);
     const [candidateTagIds, setCandidateTagIds] = useState([]);
+    const [showProfile, setShowProfile] = useState(false);
 
     useEffect(() => {
         if (show && studentId) {
             fetchDetail();
-            loadTags();
+            const tags = tagService.getTags();
+            setAllTags(tags);
+            const mappings = tagService.getAllMappings();
+            setCandidateTagIds(mappings[studentId] || []);
             setStatus(initialStatus);
         } else {
             setCandidate(null);
@@ -30,250 +57,268 @@ const CandidateDetailModal = ({ show, studentId, applicationId, initialStatus, o
             const { data } = await companyApi.getCandidateDetail(studentId);
             setCandidate(data.data);
         } catch (error) {
-            console.error("Lỗi khi lấy chi tiết ứng viên:", error);
+            console.error('Lỗi khi lấy chi tiết ứng viên:', error);
             onClose();
         } finally {
             setLoading(false);
         }
     };
 
-    const loadTags = () => {
-        const tags = tagService.getTags();
-        setAllTags(tags);
-        const mappings = tagService.getAllMappings();
-        setCandidateTagIds(mappings[studentId] || []);
-    };
-
     const handleToggleTag = (tagId) => {
         tagService.toggleTag(studentId, tagId);
-        // Cập nhật state local để UI phản hồi ngay lập tức
-        setCandidateTagIds(prev => {
-            if (prev.includes(tagId)) {
-                return prev.filter(id => id !== tagId);
-            } else {
-                return [...prev, tagId];
-            }
-        });
+        setCandidateTagIds(prev =>
+            prev.includes(tagId) ? prev.filter(id => id !== tagId) : [...prev, tagId]
+        );
     };
 
     const handleUpdateStatus = async (newStatus) => {
-        if (!applicationId || updatingStatus) return;
+        if (!applicationId || updatingStatus || status === newStatus) return;
         setUpdatingStatus(true);
         try {
             const res = await recruitmentApi.updateStatus(applicationId, newStatus);
             if (res.data.status === 'success') {
                 setStatus(newStatus);
-                if (newStatus === 'suitable') {
-                    toast.success("Đã duyệt ứng viên");
-                } else if (newStatus === 'pending') {
-                    toast.success("Đã hoàn tác trạng thái ứng viên");
-                } else {
-                    toast.success(`Đã chuyển ứng viên sang trạng thái ${getStatusLabel(newStatus)}`);
-                }
+                toast.success(`Đã cập nhật trạng thái: ${STATUS_CONFIG[newStatus]?.label}`);
                 if (onStatusUpdate) onStatusUpdate(newStatus);
             }
         } catch (error) {
-            console.error("Lỗi khi cập nhật trạng thái:", error);
-            toast.error("Không thể cập nhật trạng thái. Vui lòng thử lại.");
+            toast.error('Không thể cập nhật trạng thái. Vui lòng thử lại.');
         } finally {
             setUpdatingStatus(false);
         }
     };
 
     const handleDownloadCV = async () => {
+        // Nếu có CV sinh viên tự upload, tải file đó về
+        if (cvUrl) {
+            const fullUrl = cvUrl.startsWith('http') ? cvUrl : `http://localhost:8080${cvUrl}`;
+            window.open(fullUrl, '_blank');
+            toast.success('Đang mở CV của ứng viên...');
+            return;
+        }
+
+        // Nếu không có file upload, mới dùng API export profile
         setDownloading(true);
         try {
             const response = await companyApi.downloadCv(studentId);
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', `CV_${candidate?.fullName || 'Candidate'}.pdf`);
+            link.setAttribute('download', `CV_System_${candidate?.fullName || 'Candidate'}.pdf`);
             document.body.appendChild(link);
             link.click();
             link.remove();
+            toast.success('Tải hồ sơ ứng viên thành công!');
         } catch (error) {
-            console.error("Lỗi khi tải CV:", error);
-            toast.error("Không thể tải CV. Vui lòng thử lại.");
+            toast.error('Không thể tải hồ sơ. Vui lòng thử lại.');
         } finally {
             setDownloading(false);
         }
     };
 
-    const getStatusLabel = (s) => {
-        const labels = {
-            'pending': 'Chờ đánh giá',
-            'review': 'Đang xem xét',
-            'suitable': 'Đã duyệt',
-            'interview': 'Phỏng vấn',
-            'accepted': 'Đã nhận',
-            'rejected': 'Từ chối'
-        };
-        return labels[s?.toLowerCase()] || s;
+    const formatDate = (dateStr) => {
+        if (!dateStr) return 'Không rõ';
+        try {
+            const d = new Date(dateStr);
+            return `Nộp lúc ${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+        } catch { return dateStr; }
     };
+
+    const currentStatusConfig = STATUS_CONFIG[status?.toLowerCase()] || STATUS_CONFIG.pending;
 
     if (!show) return null;
 
     return (
-        <div className="detail-modal-overlay" onClick={onClose}>
-            <div className="detail-modal-container" onClick={(e) => e.stopPropagation()}>
-                <button className="close-btn" onClick={onClose}>
-                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none">
-                        <path d="M18 6L6 18M6 6l12 12" />
-                    </svg>
-                </button>
+        <>
+            <div className="cdm-overlay" onClick={onClose}>
+                <div className="cdm-container" onClick={e => e.stopPropagation()}>
 
-                {loading ? (
-                    <div className="detail-loading">
-                        <div className="spinner"></div>
-                        <p>Đang triệu hồi hồ sơ...</p>
-                    </div>
-                ) : candidate ? (
-                    <div className="detail-content">
-                        <div className="detail-header">
-                            <div className="header-info">
-                                <div className="detail-avatar-wrapper">
-                                    <img src={candidate.avatarUrl || `https://ui-avatars.com/api/?name=${candidate.fullName}&background=random`} alt={candidate.fullName} className="detail-avatar" />
-                                </div>
-                                <div className="header-text">
-                                    <p className="detail-major">{candidate.major}</p>
-                                    <h2>{candidate.fullName}</h2>
-                                    <div className="detail-meta">
-                                        <span><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="12" r="3" /></svg> {candidate.location || 'Toàn quốc'}</span>
-                                        <span><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z" /></svg> {candidate.university}</span>
+                    {/* ── HEADER ── */}
+                    <div className="cdm-header">
+                        <div className="cdm-header-left">
+                            <div className="cdm-avatar-wrap">
+                                {loading ? (
+                                    <div className="cdm-avatar-placeholder">...</div>
+                                ) : candidate?.avatarUrl ? (
+                                    <img src={candidate.avatarUrl} alt={candidate?.fullName} className="cdm-avatar" />
+                                ) : (
+                                    <div className="cdm-avatar-placeholder">
+                                        {String(candidate?.fullName || '?').charAt(0).toUpperCase()}
                                     </div>
+                                )}
+                            </div>
+                            <div className="cdm-header-info">
+                                <h2 className="cdm-name">{candidate?.fullName || '...'}</h2>
+                                <div className="cdm-meta-row">
+                                    <span className={`cdm-status-badge ${currentStatusConfig.className}`}>
+                                        {currentStatusConfig.label}
+                                    </span>
+                                    <span className="cdm-applied-date">{formatDate(appliedAt)}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="cdm-header-right">
+                            <button
+                                className="cdm-btn-view-profile"
+                                onClick={() => setShowProfile(true)}
+                            >
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
+                                Xem hồ sơ sinh viên
+                            </button>
+                        </div>
+                    </div>
 
-                                    {/* Tag Selector Section */}
-                                    <div className="candidate-tag-selector">
-                                        <label>Phân loại ứng viên</label>
-                                        <div className="tag-pills">
+                    {/* ── BODY ── */}
+                    {loading ? (
+                        <div className="cdm-loading">
+                            <div className="cdm-spinner" />
+                            <p>Đang tải thông tin...</p>
+                        </div>
+                    ) : candidate ? (
+                        <div className="cdm-body">
+
+                            {/* ── CỘT TRÁI ── */}
+                            <div className="cdm-col-left">
+
+                                {/* Thông tin sinh viên */}
+                                <div className="cdm-section">
+                                    <p className="cdm-section-title">Thông tin sinh viên</p>
+                                    <ul className="cdm-info-list">
+                                        <li>
+                                            <span className="cdm-info-icon cdm-icon-email">✉</span>
+                                            <span>{candidate.email || 'Chưa cập nhật'}</span>
+                                        </li>
+                                        <li>
+                                            <span className="cdm-info-icon cdm-icon-phone">📞</span>
+                                            <span>{candidate.phone || 'Chưa cập nhật'}</span>
+                                        </li>
+                                        <li>
+                                            <span className="cdm-info-icon cdm-icon-major">🎓</span>
+                                            <span>{candidate.major || 'Chưa cập nhật'}</span>
+                                        </li>
+                                        <li>
+                                            <span className="cdm-info-icon cdm-icon-id">🪪</span>
+                                            <span>{candidate.studentCode || 'Chưa cập nhật'}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                {/* Phân loại ứng viên */}
+                                {allTags.length > 0 && (
+                                    <div className="cdm-section">
+                                        <p className="cdm-section-title">Phân loại ứng viên</p>
+                                        <div className="cdm-tag-pills">
                                             {allTags.map(tag => {
                                                 const isActive = candidateTagIds.includes(tag.id);
                                                 return (
-                                                    <div 
+                                                    <button
                                                         key={tag.id}
-                                                        className={`tag-pill ${isActive ? 'active' : 'inactive'}`}
-                                                        style={isActive ? { backgroundColor: `${tag.color}15`, color: tag.color, borderColor: `${tag.color}40` } : {}}
+                                                        className={`cdm-tag-pill ${isActive ? 'active' : ''}`}
+                                                        style={isActive ? { background: `${tag.color}18`, color: tag.color, borderColor: `${tag.color}50` } : {}}
                                                         onClick={() => handleToggleTag(tag.id)}
                                                     >
-                                                        {isActive && (
-                                                            <svg className="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                                                                <polyline points="20 6 9 17 4 12" />
-                                                            </svg>
-                                                        )}
                                                         {tag.name}
-                                                    </div>
+                                                    </button>
                                                 );
                                             })}
-                                            {allTags.length === 0 && <span className="empty-text">Chưa có thẻ nào.</span>}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Tệp đính kèm */}
+                                <div className="cdm-section">
+                                    <p className="cdm-section-title">Tệp đính kèm</p>
+                                    <div className="cdm-attachment" onClick={handleDownloadCV}>
+                                        <span className="cdm-attachment-icon">📄</span>
+                                        <div className="cdm-attachment-info">
+                                            <span className="cdm-attachment-name">
+                                                {cvFileName || `CV_${candidate.fullName}.pdf`}
+                                            </span>
+                                            <span className="cdm-attachment-action">
+                                                {downloading ? 'Đang tải...' : '↓ Tải xuống'}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="header-right-actions">
+                            {/* ── CỘT PHẢI ── */}
+                            <div className="cdm-col-right">
+
+                                {/* Thư giới thiệu */}
+                                <div className="cdm-section">
+                                    <p className="cdm-section-title">Thư giới thiệu</p>
+                                    <div className="cdm-cover-letter">
+                                        {coverLetter
+                                            ? <p>{coverLetter}</p>
+                                            : <p className="cdm-placeholder">Ứng viên không để lại thư giới thiệu.</p>
+                                        }
+                                    </div>
+                                </div>
+
+                                {/* Vị trí ứng tuyển */}
+                                <div className="cdm-section">
+                                    <p className="cdm-section-title">Vị trí ứng tuyển</p>
+                                    <p className="cdm-job-title">{jobTitle || 'Không xác định'}</p>
+                                    <div className="cdm-job-tags">
+                                        {jobType && <span className="cdm-job-tag">{jobType}</span>}
+                                        {(jobLocation || candidate.location) && (
+                                            <span className="cdm-job-tag">📍 {jobLocation || candidate.location}</span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Cập nhật trạng thái */}
                                 {applicationId && (
-                                    <div className="status-updater">
-                                        <label>Trạng thái hồ sơ</label>
-                                        <div className="status-options">
-                                            {['pending', 'suitable', 'interview', 'accepted', 'rejected'].map(s => (
-                                                <button 
-                                                    key={s}
-                                                    className={`status-opt ${status?.toLowerCase() === s ? 'active' : ''} ${s}`}
-                                                    onClick={() => handleUpdateStatus(s)}
-                                                    disabled={updatingStatus}
-                                                >
-                                                    {getStatusLabel(s)}
-                                                </button>
+                                    <div className="cdm-section">
+                                        <div className="cdm-status-update-header">
+                                            <p className="cdm-section-title">Cập nhật trạng thái</p>
+                                            <span className={`cdm-current-badge ${currentStatusConfig.className}`}>
+                                                Hiện tại: {currentStatusConfig.label}
+                                            </span>
+                                        </div>
+                                        <div className="cdm-status-radios">
+                                            {[
+                                                { key: 'interview', label: 'Hẹn phỏng vấn' },
+                                                { key: 'accepted', label: 'Chấp nhận' },
+                                                { key: 'rejected', label: 'Từ chối' },
+                                            ].map(opt => (
+                                                <label key={opt.key} className={`cdm-radio-label ${opt.key}`}>
+                                                    <input
+                                                        type="radio"
+                                                        name="appStatus"
+                                                        value={opt.key}
+                                                        checked={status?.toLowerCase() === opt.key}
+                                                        onChange={() => handleUpdateStatus(opt.key)}
+                                                        disabled={updatingStatus}
+                                                    />
+                                                    {opt.label}
+                                                </label>
                                             ))}
                                         </div>
                                     </div>
                                 )}
-                                <button className="btn-download-cv" onClick={handleDownloadCV} disabled={downloading}>
-                                    {downloading ? 'Đang chuẩn bị...' : (
-                                        <>
-                                            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v4a2 2 0 012-2h14a2 2 0 012 2zM7 10l5 5 5-5M12 15V3" /></svg>
-                                            Tải CV (PDF)
-                                        </>
-                                    )}
-                                </button>
                             </div>
                         </div>
+                    ) : null}
 
-                        <div className="detail-body">
-                            <section className="detail-section">
-                                <h3>Giới thiệu</h3>
-                                <p>{candidate.bio || 'Chưa có thông tin giới thiệu.'}</p>
-                            </section>
-
-                            <section className="detail-section">
-                                <h3>Học vấn</h3>
-                                {candidate.educations?.length > 0 ? (
-                                    <div className="timeline">
-                                        {candidate.educations.map((edu, idx) => (
-                                            <div key={idx} className="timeline-item">
-                                                <div className="timeline-point"></div>
-                                                <div className="timeline-content">
-                                                    <h4>{edu.schoolName}</h4>
-                                                    <p className="timeline-sub">{edu.degree} - {edu.major}</p>
-                                                    <p className="timeline-date">{edu.startDate} - {edu.endDate || 'Hiện tại'}</p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                ) : <p className="empty-text">Chưa cập nhật học vấn.</p>}
-                            </section>
-
-                            <section className="detail-section">
-                                <h3>Kinh nghiệm</h3>
-                                {candidate.experiences?.length > 0 ? (
-                                    <div className="timeline">
-                                        {candidate.experiences.map((exp, idx) => (
-                                            <div key={idx} className="timeline-item">
-                                                <div className="timeline-point"></div>
-                                                <div className="timeline-content">
-                                                    <h4>{exp.jobTitle}</h4>
-                                                    <p className="timeline-sub">{exp.companyName}</p>
-                                                    <p className="timeline-date">{exp.startDate} - {exp.endDate || 'Hiện tại'}</p>
-                                                    <p className="timeline-desc">{exp.description}</p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                ) : <p className="empty-text">Chưa cập nhật kinh nghiệm.</p>}
-                            </section>
-
-                            <section className="detail-section">
-                                <h3>Kỹ năng</h3>
-                                <div className="detail-tags">
-                                    {candidate.skills?.map((skill, idx) => (
-                                        <span key={idx} className="detail-tag">{skill.name} • {skill.level}</span>
-                                    ))}
-                                    {(!candidate.skills || candidate.skills.length === 0) && <p className="empty-text">Chưa cập nhật kỹ năng.</p>}
-                                </div>
-                            </section>
-
-                            {candidate.projects?.length > 0 && (
-                                <section className="detail-section">
-                                    <h3>Dự án tiêu biểu</h3>
-                                    <div className="project-grid-modal">
-                                        {candidate.projects.map((pj, idx) => (
-                                            <div key={idx} className="project-card-modal">
-                                                <h4>{pj.name}</h4>
-                                                <p>{pj.description}</p>
-                                                <div className="project-links">
-                                                    {pj.repositoryUrl && <a href={pj.repositoryUrl} target="_blank" rel="noreferrer">Repo</a>}
-                                                    {pj.demoUrl && <a href={pj.demoUrl} target="_blank" rel="noreferrer">Demo</a>}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </section>
-                            )}
-                        </div>
+                    {/* ── FOOTER ── */}
+                    <div className="cdm-footer">
+                        <button className="cdm-btn-close" onClick={onClose}>Đóng</button>
                     </div>
-                ) : null}
+                </div>
             </div>
-        </div>
+
+            {/* Student Full Profile Modal */}
+            <StudentProfileModal
+                show={showProfile}
+                candidate={candidate}
+                onClose={() => setShowProfile(false)}
+            />
+        </>
     );
 };
 

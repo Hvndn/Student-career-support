@@ -45,17 +45,20 @@ const DonutChart = ({ value, total }) => {
 const Dashboard = () => {
   const [profile, setProfile] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
+  const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const [profileRes, recRes] = await Promise.all([
+        const [profileRes, recRes, appRes] = await Promise.all([
           studentApi.getProfile(),
-          studentApi.getRecommendations()
+          studentApi.getRecommendations(),
+          studentApi.getMyApplications()
         ]);
         setProfile(profileRes.data.data);
         setRecommendations(recRes.data.data || []);
+        setApplications(appRes.data.data || []);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
@@ -106,15 +109,6 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="dau-stat-card">
-              <div className="dau-stat-icon dau-icon-green">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>
-              </div>
-              <div className="dau-stat-info">
-                <h3>1</h3>
-                <p>Thử thách dự án</p>
-              </div>
-            </div>
-            <div className="dau-stat-card">
               <div className="dau-stat-icon dau-icon-orange">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
               </div>
@@ -134,8 +128,8 @@ const Dashboard = () => {
                    <p>Phân bổ hồ sơ đã gửi</p>
                 </div>
                 <div className="dau-donut-container">
-                  <DonutChart value={0} total={10} />
-                  <p className="dau-empty-text">Chưa có dữ liệu ứng tuyển</p>
+                  <DonutChart value={applications.length} total={Math.max(applications.length + 5, 10)} />
+                  {applications.length === 0 && <p className="dau-empty-text">Chưa có dữ liệu ứng tuyển</p>}
                 </div>
               </div>
             </div>
@@ -187,7 +181,7 @@ const Dashboard = () => {
                   </div>
                 </Link>
                 <Link to="/student/cv-template" className="dau-feature-box">
-                  <div className="dau-f-icon-box red"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg></div>
+                  <div className="dau-f-icon-box blue"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><line x1="10" y1="9" x2="8" y2="9"></line></svg></div>
                   <div className="dau-f-text">
                     <h5>CV của tôi</h5>
                     <p>Tạo & quản lý CV</p>
@@ -214,15 +208,15 @@ const Dashboard = () => {
             <div className="dau-grid-col-3">
               <div className="dau-white-card dau-jobs-list-card">
                  <div className="dau-card-header">
-                    <h4>Cơ hội vừa được đăng</h4>
-                    <p>Cập nhật những việc làm mới nhất</p>
+                    <h4>Việc làm gợi ý cho bạn</h4>
+                    <p>Dựa trên kỹ năng và chuyên ngành trong CV của bạn</p>
                  </div>
                  <div className="dau-job-items">
                    {recommendations.slice(0, 5).map((job, idx) => (
                       <div key={idx} className="dau-job-row">
                         <div className="dau-job-left">
                           <div className="dau-company-logo">
-                            <img src={job.companyLogo || "https://ui-avatars.com/api/?name=" + job.companyName} alt="Logo" />
+                            <img src={job.imageUrl || "https://ui-avatars.com/api/?name=" + job.companyName} alt="Logo" />
                           </div>
                           <div className="dau-job-main">
                             <h6>{job.title}</h6>
@@ -243,16 +237,42 @@ const Dashboard = () => {
               <div className="dau-white-card">
                  <div className="dau-card-header-between">
                     <div className="dau-header-left">
-                       <h4><span className="dau-icon-inline red">✓</span> Đơn ứng tuyển của tôi</h4>
+                       <h4><span className="dau-icon-inline blue">✓</span> Đơn ứng tuyển của tôi</h4>
                        <p>Theo dõi trạng thái hồ sơ</p>
                     </div>
                     <Link to="/student/applications" className="dau-link-all">Xem tất cả &rsaquo;</Link>
                  </div>
-                 <div className="dau-empty-apps">
-                    <div className="dau-empty-icon">📄</div>
-                    <p>Bạn chưa ứng tuyển công việc nào</p>
-                    <p className="dau-sub">Hãy khám phá các cơ hội làm mới! 🎯</p>
-                    <Link to="/jobs" className="dau-action-btn-red">Tìm việc ngay</Link>
+                 <div className="dau-recent-apps">
+                    {applications.length > 0 ? (
+                      <div className="dau-app-list-mini">
+                        {applications.slice(0, 3).map((app, idx) => (
+                          <div key={idx} className="dau-app-item-mini">
+                            <div className="dau-app-info-mini">
+                              <span className="dau-app-job-title">{app.jobTitle}</span>
+                              <span className="dau-app-comp-name">{app.companyName}</span>
+                            </div>
+                            <div className={`dau-status-tag-mini status-${app.status?.toLowerCase()}`}>
+                              {app.status === 'PENDING' ? 'Đang chờ' : 
+                               app.status === 'REVIEWING' ? 'Đang duyệt' :
+                               app.status === 'APPROVED' ? 'Chấp nhận' : 
+                               app.status === 'REJECTED' ? 'Từ chối' : app.status}
+                            </div>
+                          </div>
+                        ))}
+                        {applications.length > 3 && (
+                          <Link to="/student/applications" className="dau-more-count">
+                            Và {applications.length - 3} đơn khác...
+                          </Link>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="dau-empty-apps">
+                        <div className="dau-empty-icon">📄</div>
+                        <p>Bạn chưa ứng tuyển công việc nào</p>
+                        <p className="dau-sub">Hãy khám phá các cơ hội làm mới! 🎯</p>
+                        <Link to="/jobs" className="dau-action-btn-red">Tìm việc ngay</Link>
+                      </div>
+                    )}
                  </div>
               </div>
             </div>

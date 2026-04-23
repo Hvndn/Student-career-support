@@ -1,6 +1,7 @@
 package com.fivecore.jobportal.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,6 +15,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +23,7 @@ public class Student {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnore
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "student", "company"})
     private User user;
 
     @Column(name = "student_code", length = 20, unique = true)
@@ -62,20 +64,8 @@ public class Student {
     @Column(name = "gpa")
     private Double gpa;
 
-    @Column(name = "total_credits")
-    private Integer totalCredits;
-
-    @Column(name = "earned_credits")
-    private Integer earnedCredits;
-
-    @Column(name = "class_rank")
-    private String classRank;
-
     @Column(name = "academic_year", length = 20)
     private String academicYear;
-
-    @Column(name = "current_term", length = 20)
-    private String currentTerm;
 
     @Column(length = 255)
     private String address;
@@ -86,6 +76,14 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     @Builder.Default
     private java.util.List<Education> educations = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @Builder.Default
+    private java.util.List<Experience> experiences = new java.util.ArrayList<>();
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @Builder.Default
+    private java.util.List<Project> projects = new java.util.ArrayList<>();
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<Application> applications;

@@ -84,7 +84,7 @@ const JobDetail = () => {
 
     if (loading) return (
         <div className="job-detail-page flex items-center justify-center" style={{paddingTop: '100px'}}>
-             <span className="material-symbols-outlined spinner" style={{fontSize: '3rem', color: '#8b1538', animation: 'spin 1s linear infinite'}}>refresh</span>
+             <span className="material-symbols-outlined spinner" style={{fontSize: '3rem', color: '#0f409f', animation: 'spin 1s linear infinite'}}>refresh</span>
         </div>
     );
 
@@ -126,15 +126,15 @@ const JobDetail = () => {
                                 <div className="jd-info-item">
                                     <span className="material-symbols-outlined jd-item-icon">work</span>
                                     <div className="jd-item-content">
-                                        <label>Ngành nghề</label>
-                                        <span>Kiến trúc / Nội thất</span>
+                                        <label>Lĩnh vực</label>
+                                        <span>{job.industry || 'Chưa cập nhật'}</span>
                                     </div>
                                 </div>
                                 <div className="jd-info-item">
                                     <span className="material-symbols-outlined jd-item-icon">schedule</span>
                                     <div className="jd-item-content">
                                         <label>Hạn nộp hồ sơ</label>
-                                        <span>31/3/2026</span>
+                                        <span>{job.deadline || 'Đang cập nhật'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -153,48 +153,56 @@ const JobDetail = () => {
                             </div>
                         </section>
 
-                        {/* Requirements */}
+                         {/* Requirements */}
                         <section className="jd-section">
                             <div className="jd-sec-header">
                                 <span className="material-symbols-outlined">verified</span>
                                 <h3>Yêu cầu ứng viên</h3>
                             </div>
                             <div className="jd-sec-content">
-                                <ul>
-                                    <li>Sinh viên năm 3, 4 ngành Kiến trúc.</li>
-                                    <li>Thành thạo AutoCAD, SketchUp cơ bản.</li>
-                                    <li>Có kiến thức về Photoshop để render.</li>
-                                    <li>Có tinh thần trách nhiệm và ham học hỏi.</li>
-                                </ul>
+                                {job.requirements ? (
+                                    <div style={{ whiteSpace: 'pre-line' }}>{job.requirements}</div>
+                                ) : (
+                                    <ul>
+                                        <li>Sinh viên năm 3, 4 chuyên ngành liên quan.</li>
+                                        <li>Có tinh thần trách nhiệm và ham học hỏi.</li>
+                                    </ul>
+                                )}
                             </div>
                         </section>
 
-                        {/* Benefits */}
+                         {/* Benefits */}
                         <section className="jd-section">
                             <div className="jd-sec-header">
                                 <span className="material-symbols-outlined">card_giftcard</span>
                                 <h3>Quyền lợi được hưởng</h3>
                             </div>
                             <div className="jd-sec-content">
-                                <ul>
-                                    <li>Lương: 3-5 triệu/tháng.</li>
-                                    <li>Được đào tạo bài bản từ các kiến trúc sư senior.</li>
-                                    <li>Cơ hội chính thức hóa sau thực tập.</li>
-                                    <li>Môi trường chuyên nghiệp, năng động.</li>
-                                </ul>
+                                {job.benefits ? (
+                                    <div style={{ whiteSpace: 'pre-line' }}>{job.benefits}</div>
+                                ) : (
+                                    <ul>
+                                        <li>Có hỗ trợ lương/phụ cấp thực tập.</li>
+                                        <li>Môi trường chuyên nghiệp, năng động.</li>
+                                    </ul>
+                                )}
                             </div>
                         </section>
 
-                        {/* Skills */}
+                         {/* Skills */}
                         <section className="jd-section">
                             <div className="jd-sec-header">
                                 <span className="material-symbols-outlined">psychology</span>
                                 <h3>Kỹ năng & Yêu cầu</h3>
                             </div>
                             <div className="jd-skill-tags">
-                                <span className="jd-skill-tag">AutoCAD</span>
-                                <span className="jd-skill-tag">SketchUp</span>
-                                <span className="jd-skill-tag">Photoshop</span>
+                                {job.skills && job.skills.length > 0 ? (
+                                    job.skills.map((skill, idx) => (
+                                        <span key={idx} className="jd-skill-tag">{skill}</span>
+                                    ))
+                                ) : (
+                                    <span className="jd-skill-tag">Chưa có yêu cầu cụ thể</span>
+                                )}
                             </div>
                         </section>
                     </div>
@@ -228,18 +236,14 @@ const JobDetail = () => {
                         </div>
                     </div>
 
-                    {/* Contact Person */}
-                    <div className="jd-widget-card">
-                        <div className="jd-widget-title">Người phụ trách</div>
+                     {/* Contact Person */}
+                    <div className="jd-widget-card" style={{ display: job.contactEmail ? 'block' : 'none' }}>
+                        <div className="jd-widget-title">Thông tin liên hệ</div>
                         <div className="jd-contact-box">
-                            <div className="jd-contact-avatar">LĐ</div>
+                            <div className="jd-contact-avatar">{job.contactName ? job.contactName.charAt(0) : 'HR'}</div>
                             <div className="jd-contact-info">
-                                <div className="jd-contact-name">Lê Quý Đôn</div>
-                                <div className="jd-contact-role">Tuyển dụng</div>
-                            </div>
-                            <div className="jd-contact-actions">
-                                <button className="jd-contact-btn"><span className="material-symbols-outlined">chat_bubble</span></button>
-                                <button className="jd-contact-btn"><span className="material-symbols-outlined">bookmark</span></button>
+                                <div className="jd-contact-name">{job.contactName || 'Người phụ trách tuyển dụng'}</div>
+                                <div className="jd-contact-role">{job.contactEmail}</div>
                             </div>
                         </div>
                     </div>

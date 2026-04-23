@@ -1,33 +1,37 @@
 package com.fivecore.jobportal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDate;
 
 /**
- * Thực thể Chứng chỉ - Các văn bằng, chứng chỉ năng lực của sinh viên.
+ * Thực thể Dự án - Lưu trữ các dự án sinh viên đã thực hiện.
  */
 @Entity
-@Table(name = "certificates")
+@Table(name = "projects")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Certificate {
+public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", nullable = false)
+    @JsonIgnore
     private Student student;
 
     @Column(nullable = false, length = 255)
     private String name;
 
-    @Column(length = 255)
-    private String organization;
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
-    @Column(name = "issue_date")
-    private LocalDate issueDate;
+    @Column(name = "repository_url", length = 255)
+    private String repositoryUrl;
+
+    @Column(name = "demo_url", length = 255)
+    private String demoUrl;
 }

@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class CompanyService {
 
     private final CompanyRepository companyRepository;
@@ -46,7 +47,7 @@ public class CompanyService {
      * Cập nhật thông tin doanh nghiệp (US-013).
      */
     @Transactional
-    public void updateCompanyInfo(Integer companyId, Company updatedData, MultipartFile logoFile) {
+    public void updateCompanyInfo(Integer companyId, Company updatedData, MultipartFile logoFile, List<MultipartFile> activityFiles) {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy doanh nghiệp"));
 
@@ -59,9 +60,28 @@ public class CompanyService {
         company.setIndustry(updatedData.getIndustry());
         company.setCompanySize(updatedData.getCompanySize());
         company.setFoundingYear(updatedData.getFoundingYear());
+        company.setTaxId(updatedData.getTaxId());
+        company.setRepresentative(updatedData.getRepresentative());
+        company.setProvince(updatedData.getProvince());
+        company.setCity(updatedData.getCity());
+
         if (logoFile != null && !logoFile.isEmpty()) {
             String logoUrl = storageService.saveFile(logoFile, "logos");
             company.setLogoUrl(logoUrl);
+        }
+
+        // Xử lý ảnh hoạt động mới
+        if (activityFiles != null && !activityFiles.isEmpty()) {
+            for (MultipartFile file : activityFiles) {
+                if (!file.isEmpty()) {
+                    String imageUrl = storageService.saveFile(file, "activities");
+                    com.fivecore.jobportal.entity.CompanyImage companyImage = com.fivecore.jobportal.entity.CompanyImage.builder()
+                            .imageUrl(imageUrl)
+                            .company(company)
+                            .build();
+                    company.getActivityImages().add(companyImage);
+                }
+            }
         }
 
         companyRepository.save(company);
@@ -150,10 +170,8 @@ public class CompanyService {
         job.setGender(request.getGender());
         job.setExperience(request.getExperience());
         job.setQualification(request.getQualification());
-        job.setSalaryType(request.getSalaryType());
         job.setMinSalary(request.getMinSalary());
         job.setMaxSalary(request.getMaxSalary());
-        job.setRegion(request.getRegion());
         job.setLocation(request.getLocation());
         job.setDeadline(request.getDeadline());
         job.setContactName(request.getContactName());
@@ -222,10 +240,8 @@ public class CompanyService {
                 .gender(job.getGender())
                 .experience(job.getExperience())
                 .qualification(job.getQualification())
-                .salaryType(job.getSalaryType())
                 .minSalary(job.getMinSalary())
                 .maxSalary(job.getMaxSalary())
-                .region(job.getRegion())
                 .location(job.getLocation())
                 .deadline(job.getDeadline())
                 .contactName(job.getContactName())
@@ -274,22 +290,37 @@ public class CompanyService {
                 .id(job.getId())
                 .title(job.getTitle())
                 .companyName(job.getCompany().getName())
+                .industry(job.getIndustry())
+                .level(job.getLevel())
+                .description(job.getDescription())
+                .requirements(job.getRequirements())
+                .benefits(job.getBenefits())
                 .location(job.getLocation())
-                .salary(job.getMaxSalary() != null ? job.getMinSalary() + " - " + job.getMaxSalary() : (job.getMinSalary() != null ? job.getMinSalary().toString() : "Thỏa thuận"))
+                .minSalary(job.getMinSalary())
+                .maxSalary(job.getMaxSalary())
+                .salary(job.getMaxSalary() != null
+                        ? job.getMinSalary() + " - " + job.getMaxSalary()
+                        : (job.getMinSalary() != null ? job.getMinSalary().toString() : "Thỏa thuận"))
                 .jobType(job.getJobType().name())
                 .status(job.getStatus().name())
                 .deadline(job.getDeadline())
-                .postedAt(job.getPostedAt()) // Trả về đầy đủ LocalDateTime
+                .postedAt(job.getPostedAt())
                 .quantity(job.getQuantity())
                 .gender(job.getGender())
+                .experience(job.getExperience())
+                .qualification(job.getQualification())
                 .viewsCount(job.getViews() != null ? job.getViews() : 0)
                 .contactName(job.getContactName())
                 .contactEmail(job.getContactEmail())
                 .contactPhone(job.getContactPhone())
                 .bannerUrl(job.getBannerUrl())
-                .skills(job.getSkills().stream()
-                        .map(js -> js.getSkill().getName())
-                        .collect(Collectors.toList()))
+                .imageUrl(job.getCompany().getLogoUrl())
+                .skills(job.getSkills() != null
+                        ? job.getSkills().stream()
+                                .map(js -> js.getSkill().getName())
+                                .collect(Collectors.toList())
+                        : new java.util.ArrayList<>())
+                .applicantsCount(job.getApplications() != null ? job.getApplications().size() : 0)
                 .build();
     }
 }

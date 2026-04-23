@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class InterviewService {
 
     private final InterviewRepository interviewRepository;
@@ -71,5 +72,29 @@ public class InterviewService {
      */
     public java.util.List<Interview> getInterviewsByCompany(Integer companyId) {
         return interviewRepository.findByApplication_Job_Company_Id(companyId);
+    }
+
+    /**
+     * Hủy lịch phỏng vấn.
+     */
+    @Transactional
+    public void cancelInterview(Integer interviewId) {
+        Interview interview = interviewRepository.findById(interviewId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch phỏng vấn"));
+        
+        interview.setStatus("cancelled");
+        interviewRepository.save(interview);
+
+        // Gửi thông báo cho sinh viên
+        Application app = interview.getApplication();
+        String content = "Chào " + app.getStudent().getUser().getFullName() + ",\n\n" +
+                "Lịch phỏng vấn cho vị trí: " + app.getJob().getTitle() + " vào lúc " + 
+                interview.getInterviewDate().toString() + " đã bị hủy.\n\n" +
+                "Trân trọng!";
+        
+        notificationService.sendNotification(app.getStudent().getUser(), 
+            "Thông báo hủy lịch phỏng vấn", content);
+        
+        log.info("Đã hủy lịch phỏng vấn ID: {}", interviewId);
     }
 }

@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.ArrayList;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Thực thể Công việc - Thông tin đăng tuyển từ doanh nghiệp.
@@ -18,14 +19,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Job {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "jobs", "user", "savedCandidates"})
     private Company company;
 
     @Column(nullable = false, length = 255)
@@ -60,18 +62,12 @@ public class Job {
 
     @Column(length = 100)
     private String qualification;
-
-    @Column(name = "salary_type", length = 50)
-    private String salaryType;
-
+    
     @Column(name = "min_salary")
     private BigDecimal minSalary;
 
     @Column(name = "max_salary")
     private BigDecimal maxSalary;
-
-    @Column(length = 100)
-    private String region;
 
     @Column(length = 255)
     private String location;

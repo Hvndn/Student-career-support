@@ -2,7 +2,7 @@
 .student-sidebar {
   width: 260px;
   height: 100vh;
-  background-color: #8b1538; /* DAU Red */
+  background: linear-gradient(135deg, #0f409f 0%, #052668 100%);
   color: white;
   position: fixed;
   left: 0;
@@ -200,6 +200,6 @@
 }
 
 .ss-logout-btn:hover {
-    background-color: rgba(239, 68, 68, 0.2);
-    color: #fca5a5;
+    background-color: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
 }

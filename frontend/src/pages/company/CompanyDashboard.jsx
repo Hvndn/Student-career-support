@@ -4,70 +4,55 @@ import CompanySidebar from '../../components/company/CompanySidebar';
 import CompanyNavbar from '../../components/company/CompanyNavbar';
 import { companyApi } from '../../api';
 import '../../assets/css/company/CompanyDashboard.css';
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, LabelList 
+import {
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
 } from 'recharts';
+import { FiUsers, FiCalendar, FiBriefcase } from 'react-icons/fi';
 
 const CompanyDashboard = () => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [currentTime, setCurrentTime] = useState(new Date());
+    const [timeRange, setTimeRange] = useState(7);
 
     useEffect(() => {
-        const fetchDashboard = async () => {
+        const fetchDashboardData = async () => {
             try {
-                const res = await companyApi.getDashboard();
-                if (res.data.status === 'success') {
-                    setData(res.data.data);
+                const response = await companyApi.getDashboard(timeRange);
+                if (response.data.success || response.data.status === 'success') {
+                    setData(response.data.data);
                 }
             } catch (error) {
-                console.error('Lỗi khi lấy dữ liệu dashboard:', error);
+                console.error("Error fetching dashboard data:", error);
             } finally {
                 setLoading(false);
             }
         };
-        fetchDashboard();
-        
-        const timer = setInterval(() => {
-            setCurrentTime(new Date());
-        }, 60000);
-        
-        return () => clearInterval(timer);
-    }, []);
 
-    const chartData = data ? [
-        { name: 'Hồ sơ ứng tuyển', value: data.totalCandidatesCount || 0, color: '#3b82f6' },
-        { name: 'Phù hợp', value: data.suitableCount || 0, color: '#10b981' },
-        { name: 'Phỏng vấn', value: data.interviewCount || 0, color: '#f59e0b' },
-        { name: 'Từ chối', value: data.rejectedCount || 0, color: '#ef4444' },
-    ] : [];
+        fetchDashboardData();
+    }, [timeRange]);
+
+    // Format trend data for display
+    const trendData = data?.applicationTrends || [];
 
     if (loading) return (
         <div className="cd-layout">
             <CompanySidebar />
             <div className="cd-main">
                 <div className="loading-container">
-                    <div className="loader"></div>
                     <p>Đang tải dữ liệu...</p>
                 </div>
             </div>
         </div>
     );
 
-    const companyName = data?.companyName || 'Công ty';
+    const companyName = data?.companyName || "Doanh nghiệp";
 
     return (
         <div className="cd-layout">
-            <CompanySidebar />
+            <CompanySidebar active="dashboard" />
             <div className="cd-main">
-                <CompanyNavbar />
-
-                <div className="cd-content dau-style">
-                    {/* Recruitment Hub Tag */}
-                    <div className="db-tag-container">
-                        <span className="db-tag">● RECRUITMENT HUB</span>
-                    </div>
-
+                <CompanyNavbar activeTab="Tổng quan" />
+                <div className="dashboard-v2">
                     {/* Welcome Header */}
                     <header className="db-welcome-header">
                         <h2>
@@ -110,127 +95,154 @@ const CompanyDashboard = () => {
                                 <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
                             </div>
                             <div className="stat-info">
-                                <h3>{data?.totalViews || 59}</h3>
+                                <h3>{data?.totalViews || 0}</h3>
                                 <p>Tổng lượt xem</p>
                             </div>
                         </div>
                     </div>
 
                     <div className="db-main-grid">
-                        {/* Area 1: Efficiency Chart */}
                         <div className="db-left-col">
-                            <section className="db-widget efficiency-widget">
+                            {/* Trend Chart Area */}
+                            <section className="db-widget trend-widget intro-y delay-2">
                                 <div className="widget-header">
-                                    <h4>Hiệu suất tuyển dụng</h4>
-                                    <p className="widget-subtitle">Ứng viên & Trạng thái hồ sơ</p>
-                                    <button className="btn-refresh" onClick={() => window.location.reload()}>
-                                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-                                        Làm mới
-                                    </button>
+                                    <div className="header-left">
+                                        <h4>Xu hướng ứng tuyển</h4>
+                                        <p className="widget-subtitle">Thống kê số lượng hồ sơ mới</p>
+                                    </div>
+                                    <div className="range-pill-selector">
+                                        <button 
+                                            className={timeRange === 1 ? 'active' : ''} 
+                                            onClick={() => setTimeRange(1)}
+                                        >Ngày</button>
+                                        <button 
+                                            className={timeRange === 7 ? 'active' : ''} 
+                                            onClick={() => setTimeRange(7)}
+                                        >Tuần</button>
+                                        <button 
+                                            className={timeRange === 30 ? 'active' : ''} 
+                                            onClick={() => setTimeRange(30)}
+                                        >Tháng</button>
+                                    </div>
                                 </div>
                                 <div className="widget-body">
-                                    <ResponsiveContainer width="100%" height={260}>
-                                        <BarChart 
-                                            layout="vertical" 
-                                            data={chartData} 
-                                            margin={{ top: 5, right: 40, left: 100, bottom: 5 }}
-                                        >
-                                            <XAxis type="number" hide />
-                                            <YAxis 
-                                                type="category" 
-                                                dataKey="name" 
+                                    <ResponsiveContainer width="100%" height={320}>
+                                        <BarChart data={trendData}>
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                            <XAxis 
+                                                dataKey="date" 
                                                 axisLine={false} 
                                                 tickLine={false} 
-                                                width={90}
-                                                tick={{ fill: '#64748b', fontSize: 13, fontWeight: 500 }}
+                                                tick={{fill: '#94a3b8', fontSize: 12}}
+                                                dy={10}
+                                                tickFormatter={(val) => {
+                                                    if (timeRange === 1) return val;
+                                                    // Only show month/day if it looks like a date
+                                                    if (val.includes('-')) return val.split('-').slice(1).join('/');
+                                                    return val;
+                                                }}
                                             />
-                                            <Tooltip cursor={{ fill: 'transparent' }} />
+                                            <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
+                                            <Tooltip 
+                                                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
+                                                cursor={{fill: '#f8fafc'}}
+                                            />
                                             <Bar 
-                                                dataKey="value" 
-                                                radius={[0, 6, 6, 0]} 
-                                                barSize={18}
-                                                minPointSize={2}
-                                            >
-                                                {chartData.map((entry, index) => (
-                                                    <Cell key={`cell-${index}`} fill={entry.color} />
-                                                ))}
-                                                <LabelList 
-                                                    dataKey="value" 
-                                                    position="right" 
-                                                    style={{ fontSize: 12, fontWeight: 700, fill: '#64748b' }} 
-                                                    offset={12}
-                                                />
-                                            </Bar>
+                                                dataKey="count" 
+                                                fill="#3b82f6" 
+                                                radius={[6, 6, 0, 0]} 
+                                                barSize={timeRange === 30 ? 15 : 35}
+                                            />
                                         </BarChart>
                                     </ResponsiveContainer>
                                 </div>
                             </section>
 
-                            <section className="db-widget bottom-list">
+                            {/* Job Post Status */}
+                            <section className="db-widget intro-y delay-3">
                                 <div className="widget-header">
                                     <h4>Trạng thái tin tuyển dụng</h4>
-                                    <Link to="/company/management" className="link-view-all">Quản lý →</Link>
+                                    <Link to="/company/management" className="view-all-link">Quản lý →</Link>
                                 </div>
                                 <div className="widget-body compact-table">
-                                    {data?.jobs?.slice(0, 3).map((job) => (
-                                        <div key={job.id} className="compact-job-row">
-                                            <div className="job-icon-small">📁</div>
-                                            <div className="job-desc">
-                                                <p className="job-title">{job.title}</p>
-                                                <p className="job-meta">Tất cả tin đã đăng</p>
-                                            </div>
-                                        </div>
-                                    ))}
+                                    <div className="db-job-status-grid">
+                                        {data?.jobs?.slice(0, 4).map(job => (
+                                            <Link key={job.id} to={`/company/management/jobs/${job.id}/applicants`} className="db-job-card">
+                                                <div className="db-job-info">
+                                                    <h5>{job.title}</h5>
+                                                    <span>{job.applicantsCount || 0} hồ sơ</span>
+                                                </div>
+                                                <div className={`db-status-pill ${job.status}`}>
+                                                    {job.status === 'open' ? 'Đang mở' : 'Đã đóng'}
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
                                 </div>
                             </section>
                         </div>
 
-                        {/* Area 2: Side widgets */}
                         <div className="db-right-col">
-                            <section className="db-widget actions-widget">
+                            {/* Quick Actions */}
+                            <section className="db-widget action-widget intro-y delay-2">
                                 <div className="widget-header">
                                     <h4>Thao tác nhanh</h4>
-                                    <p className="widget-subtitle">Truy cập nhanh các tính năng</p>
                                 </div>
-                                <div className="action-list">
-                                    <Link to="/company/jobs/post" className="action-item">
-                                        <div className="action-icon blue">＋</div>
-                                        <div className="action-text">
-                                            <p className="a-title">Đăng tin mới</p>
-                                            <p className="a-desc">Tạo tin tuyển dụng</p>
-                                        </div>
-                                    </Link>
-                                    <Link to="/company/management/candidates" className="action-item">
-                                        <div className="action-icon orange">👥</div>
-                                        <div className="action-text">
-                                            <p className="a-title">Xem ứng viên</p>
-                                            <p className="a-desc">Quản lý hồ sơ ứng viên</p>
-                                        </div>
-                                    </Link>
-                                    <Link to="#" className="action-item">
-                                        <div className="action-icon green">📅</div>
-                                        <div className="action-text">
-                                            <p className="a-title">Lịch hẹn</p>
-                                            <p className="a-desc">Đặt lịch phỏng vấn</p>
-                                        </div>
-                                    </Link>
-                                    <Link to="/company/profile" className="action-item">
-                                        <div className="action-icon purple">🏢</div>
-                                        <div className="action-text">
-                                            <p className="a-title">Hồ sơ công ty</p>
-                                            <p className="a-desc">Cập nhật thông tin</p>
-                                        </div>
-                                    </Link>
+                                <div className="widget-body">
+                                    <div className="db-action-list">
+                                        <Link to="/company/management/candidates" className="db-action-card">
+                                            <div className="db-action-icon orange"><FiUsers size={20} /></div>
+                                            <div className="db-action-info">
+                                                <h6>Xem ứng viên</h6>
+                                                <p>Quản lý hồ sơ ứng viên</p>
+                                            </div>
+                                        </Link>
+                                        <Link to="#" className="db-action-card">
+                                            <div className="db-action-icon green"><FiCalendar size={20} /></div>
+                                            <div className="db-action-info">
+                                                <h6>Lịch hẹn</h6>
+                                                <p>Đặt lịch phỏng vấn</p>
+                                            </div>
+                                        </Link>
+                                        <Link to="/company/profile" className="db-action-card">
+                                            <div className="db-action-icon purple"><FiBriefcase size={20} /></div>
+                                            <div className="db-action-info">
+                                                <h6>Hồ sơ công ty</h6>
+                                                <p>Cập nhật thông tin</p>
+                                            </div>
+                                        </Link>
+                                    </div>
                                 </div>
                             </section>
 
-                            <section className="db-widget recent-cand-widget">
+                            {/* Recent Candidates */}
+                            <section className="db-widget recent-widget intro-y delay-3">
                                 <div className="widget-header">
-                                    <h4>Ứng viên gần đây</h4>
-                                    <Link to="/company/management/candidates" className="link-view-all">Tất cả →</Link>
+                                    <h4>Ứng viên mới hôm nay</h4>
+                                    <Link to="/company/management/candidates" className="view-all-link">Tất cả →</Link>
                                 </div>
                                 <div className="widget-body">
-                                    <p className="empty-text">Chưa có ứng viên mới nào gần đây.</p>
+                                    <div className="db-recent-candidates">
+                                        {data?.recentCandidates?.length > 0 ? (
+                                            data.recentCandidates.slice(0, 3).map(app => (
+                                                <div key={app.id} className="db-candidate-item">
+                                                    <div className="db-candidate-avatar">
+                                                        {app.studentAvatar ? (
+                                                            <img src={app.studentAvatar} alt={app.studentName} />
+                                                        ) : (
+                                                            app.studentName?.charAt(0) || 'U'
+                                                        )}
+                                                    </div>
+                                                    <div className="db-candidate-info">
+                                                        <h6>{app.studentName}</h6>
+                                                        <p>{app.jobTitle}</p>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="empty-state">Chưa có ứng viên mới nào hôm nay.</div>
+                                        )}
+                                    </div>
                                 </div>
                             </section>
                         </div>

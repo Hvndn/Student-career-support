@@ -1,14 +1,21 @@
 package com.fivecore.jobportal.controller.api.student;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fivecore.jobportal.dto.StudentProfileResponse;
 import com.fivecore.jobportal.entity.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class StudentProfileMapper {
+
+    private final ObjectMapper objectMapper;
 
     public StudentProfileResponse toResponse(User user, Student student) {
         return StudentProfileResponse.builder()
@@ -20,11 +27,7 @@ public class StudentProfileMapper {
                 .major(student.getMajor())
                 .graduationYear(student.getGraduationYear())
                 .gpa(student.getGpa())
-                .totalCredits(student.getTotalCredits())
-                .earnedCredits(student.getEarnedCredits())
-                .classRank(student.getClassRank())
                 .academicYear(student.getAcademicYear())
-                .currentTerm(student.getCurrentTerm())
                 .bio(student.getBio())
                 .phone(student.getPhone())
                 .address(student.getAddress())
@@ -35,7 +38,29 @@ public class StudentProfileMapper {
                 .linkedinUrl(student.getLinkedinUrl())
                 .educations(mapEducations(student.getEducations()))
                 .certifications(mapCertifications(student.getCertifications()))
+                .skills(mapSkillsFromJson(student.getCvData()))
+                .cvData(student.getCvData())
                 .build();
+    }
+
+    private List<StudentProfileResponse.SkillDto> mapSkillsFromJson(String json) {
+        List<StudentProfileResponse.SkillDto> skills = new ArrayList<>();
+        if (json == null || json.isBlank()) return skills;
+        try {
+            JsonNode root = objectMapper.readTree(json);
+            JsonNode skillsNode = root.get("skills");
+            if (skillsNode != null && skillsNode.isArray()) {
+                for (JsonNode node : skillsNode) {
+                    skills.add(new StudentProfileResponse.SkillDto(
+                            node.has("name") ? node.get("name").asText() : node.get("skillName").asText(),
+                            node.has("level") ? node.get("level").asText() : "Intermediate"
+                    ));
+                }
+            }
+        } catch (Exception e) {
+            // Log error or ignore
+        }
+        return skills;
     }
 
     private List<StudentProfileResponse.EducationDto> mapEducations(List<Education> edus) {
@@ -62,4 +87,4 @@ public class StudentProfileMapper {
                 .certificateUrl(c.getCertificateUrl())
                 .build()).collect(Collectors.toList());
     }
-}
+}

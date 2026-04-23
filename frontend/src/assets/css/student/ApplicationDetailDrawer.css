@@ -96,7 +96,7 @@
 
 .btn-chat {
     background: #fff5f5;
-    color: #8b1538;
+    color: #0f409f;
     border: 1px solid #fee2e2;
 }
 
@@ -154,7 +154,7 @@
 }
 
 .step-item.active:not(:last-child)::after {
-    background: #8b1538;
+    background: #0f409f;
 }
 
 .step-icon-box {
@@ -171,14 +171,14 @@
 }
 
 .step-item.active .step-icon-box {
-    border-color: #8b1538;
+    border-color: #0f409f;
     background: #fdf2f2;
-    color: #8b1538;
+    color: #0f409f;
 }
 
 .step-item.completed .step-icon-box {
-    border-color: #8b1538;
-    background: #8b1538;
+    border-color: #0f409f;
+    background: #0f409f;
     color: white;
 }
 

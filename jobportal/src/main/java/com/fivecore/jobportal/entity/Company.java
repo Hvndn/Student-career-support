@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Thực thể Công ty/Nhà tuyển dụng - Chứa thông tin chi tiết của người dùng có
  * vai trò là công ty.
@@ -14,6 +16,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,6 +62,16 @@ public class Company {
 
     @Column(length = 255)
     private String representative;
+
+    @Column(length = 100)
+    private String province;
+
+    @Column(length = 100)
+    private String city;
+
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private java.util.List<CompanyImage> activityImages = new java.util.ArrayList<>();
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<Job> jobs;

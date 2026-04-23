@@ -39,11 +39,13 @@ const CompanySidebar = () => {
   const [activeCategory, setActiveCategory] = useState('');
 
   React.useEffect(() => {
-    const currentItem = NAV_ITEMS.find(item => {
-      if (location.pathname === item.to) return true;
-      if (item.to !== '/company/dashboard' && item.to !== '#' && location.pathname.startsWith(item.to)) return true;
-      return false;
-    });
+    let currentItem = NAV_ITEMS.find(item => location.pathname === item.to);
+    
+    if (!currentItem) {
+      currentItem = [...NAV_ITEMS]
+        .filter(item => item.to !== '/company/dashboard' && item.to !== '#' && location.pathname.startsWith(item.to))
+        .sort((a, b) => b.to.length - a.to.length)[0];
+    }
     
     setActiveCategory(currentItem?.label || '');
   }, [location.pathname]);
@@ -61,7 +63,7 @@ const CompanySidebar = () => {
             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </div>
-        <span className="brand-name">DAU Connect</span>
+        <span className="brand-name">Five Core</span>
       </div>
 
       <div className="cs-nav">

@@ -46,7 +46,7 @@ const Applications = () => {
 
     if (loading) return (
         <div className="job-list-container-inner" style={{ paddingTop: '100px', textAlign: 'center' }}>
-             <span className="material-symbols-outlined spinner" style={{fontSize: '3rem', color: '#8b1538', animation: 'spin 1s linear infinite'}}>refresh</span>
+             <span className="material-symbols-outlined spinner" style={{fontSize: '3rem', color: '#0f409f', animation: 'spin 1s linear infinite'}}>refresh</span>
              <p style={{ marginTop: '1rem', color: '#64748b' }}>Đang tải danh sách đơn ứng tuyển...</p>
         </div>
     );

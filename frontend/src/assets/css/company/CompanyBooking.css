@@ -1,6 +1,8 @@
 .booking-page {
-    padding: 1.5rem 2rem;
+    padding: 1.5rem 2rem 1.5rem 1.5rem;
     animation: fadeIn 0.5s ease-out;
+    min-height: calc(100vh - 70px);
+    background: #f8fafc;
 }
 
 .section-header {
@@ -8,6 +10,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap; /* Tránh đè nút khi màn hình nhỏ */
 }
 
 .header-title-group h3 {
@@ -242,7 +246,8 @@
     flex-direction: column;
     align-items: flex-end;
     justify-content: space-between;
-    min-width: 180px;
+    min-width: 200px; /* Tăng từ 180px */
+    border-left: 1px solid #f1f5f9;
 }
 
 .status-pill {
@@ -334,18 +339,34 @@
 }
 
 .btn-respond.primary {
-    background: #1e3a8a;
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
     color: white;
     border: none;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    padding: 12px 24px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.btn-respond.primary span {
+    font-size: 20px;
+    font-weight: 700;
 }
 
 .btn-respond.primary:hover {
-    background: #1e40af;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(30, 58, 138, 0.2);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 20px -5px rgba(37, 99, 235, 0.4);
+    filter: brightness(1.1);
+}
+
+.btn-respond.primary:active {
+    transform: translateY(-1px);
 }
 
 @media (max-width: 1024px) {

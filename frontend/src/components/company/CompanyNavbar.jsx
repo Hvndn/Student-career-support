@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { companyApi } from '../../api';
 import { getImageUrl } from '../../utils/urlUtils';
@@ -9,6 +9,8 @@ const CompanyTopbar = () => {
   const navigate = useNavigate();
   const rawUser = localStorage.getItem('user');
   const user = rawUser && rawUser !== 'undefined' ? JSON.parse(rawUser) : {};
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
   
   const [companyData, setCompanyData] = useState({
     name: user?.fullName || 'Doanh nghiệp',
@@ -34,10 +36,21 @@ const CompanyTopbar = () => {
     };
   }, []);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   // Breadcrumb mapping
   const getBreadcrumbs = () => {
     const path = location.pathname;
-    const crumbs = [{ label: 'DAU Connect', to: '/company/dashboard' }];
+    const crumbs = [{ label: 'Five Core', to: '/company/dashboard' }];
     
     if (path.includes('/dashboard')) crumbs.push({ label: 'Tổng quan' });
     else if (path.includes('/management/candidates')) crumbs.push({ label: 'Quản lý ứng viên' });
@@ -78,8 +91,17 @@ const CompanyTopbar = () => {
 
         <div className="divider"></div>
         
-        <div className="cd-user-container">
-          <div className="cd-user-profile">
+        <div
+          className={`cd-user-container ${isDropdownOpen ? 'dropdown-open' : ''}`}
+          ref={dropdownRef}
+        >
+          <div
+            className="cd-user-profile"
+            onClick={() => setIsDropdownOpen(prev => !prev)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === 'Enter' && setIsDropdownOpen(prev => !prev)}
+          >
             <div className="user-avatar-box">
               {companyData.logoUrl ? (
                 <img src={getImageUrl(companyData.logoUrl)} alt="Logo" className="tb-avatar" />
@@ -93,7 +115,7 @@ const CompanyTopbar = () => {
               <span className="user-name">{companyName}</span>
               <span className="user-role">Quản trị viên</span>
             </div>
-            <span className="cd-dropdown-arrow">▼</span>
+            <span className={`cd-dropdown-arrow ${isDropdownOpen ? 'open' : ''}`}>▼</span>
           </div>
 
           <div className="cd-profile-dropdown shadow-lg">

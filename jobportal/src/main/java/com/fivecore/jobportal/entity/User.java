@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import com.fivecore.jobportal.entity.PasswordResetRequest;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Thực thể Người dùng - Ánh xạ tới bảng 'users' trong cơ sở dữ liệu.
  */
@@ -23,6 +25,7 @@ import com.fivecore.jobportal.entity.PasswordResetRequest;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

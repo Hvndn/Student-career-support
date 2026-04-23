@@ -17,7 +17,7 @@
 }
 .cvb-spin {
   width: 32px; height: 32px;
-  border: 3px solid #e2e8f0; border-top-color: #8b1538;
+  border: 3px solid #e2e8f0; border-top-color: #0f409f;
   border-radius: 50%; animation: spin .8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -51,11 +51,11 @@
 .cvb-title:hover { background: #f8fafc; }
 .cvb-title-inp {
   font-size: .92rem; font-weight: 800; color: #1e293b;
-  border: 1.5px solid #8b1538; border-radius: 5px;
+  border: 1.5px solid #0f409f; border-radius: 5px;
   padding: 1px 8px; outline: none; background: #fff;
 }
 .cvb-brand {
-  font-size: .62rem; font-weight: 700; color: #8b1538;
+  font-size: .62rem; font-weight: 700; color: #0f409f;
   letter-spacing: .4px; text-transform: uppercase;
 }
 
@@ -71,8 +71,8 @@
 .cvb-hbtn-ghost:hover { background: #f8fafc; }
 .cvb-hbtn-dark  { background: #1e293b; color: #fff; }
 .cvb-hbtn-dark:hover  { background: #0f172a; }
-.cvb-hbtn-red   { background: #8b1538; color: #fff; }
-.cvb-hbtn-red:hover   { background: #6f1230; }
+.cvb-hbtn-red   { background: #0f409f; color: #fff; }
+.cvb-hbtn-red:hover   { background: #0d3585; }
 
 /* ── Body ─────────────────────────────────────────────────────────────────── */
 .cvb-body {
@@ -108,8 +108,8 @@
   cursor: pointer; transition: all .15s; text-align: left; width: 100%;
 }
 .cvb-nav-item:hover { background: #f8fafc; color: #1e293b; }
-.cvb-nav-item.active { background: #fef2f2; color: #8b1538; }
-.cvb-nav-item.active .cvb-nav-arr { color: #8b1538; }
+.cvb-nav-item.active { background: rgba(15,64,159, 0.1); color: #0f409f; }
+.cvb-nav-item.active .cvb-nav-arr { color: #0f409f; }
 
 .cvb-nav-text { flex: 1; }
 .cvb-nav-dot {
@@ -149,7 +149,7 @@
   cursor: pointer; transition: all .15s;
 }
 .cvb-cat:hover { border-color: #c4cbd4; background: #f8fafc; }
-.cvb-cat.on  { background: #fef2f2; border-color: #fca5a5; color: #8b1538; }
+.cvb-cat.on  { background: rgba(15,64,159, 0.1); border-color: #fca5a5; color: #0f409f; }
 
 /* ── CENTER CANVAS ────────────────────────────────────────────────────────── */
 .cvb-canvas {
@@ -207,7 +207,7 @@
 
 /* ── RIGHT SIDEBAR ────────────────────────────────────────────────────────── */
 .cvb-right {
-  width: 300px; min-width: 300px;
+  width: 300px; min-width: 300px; max-width: 300px;
   background: #fff; border-left: 1px solid #e8edf3;
   display: flex; flex-direction: column;
   overflow: hidden; z-index: 100;
@@ -259,7 +259,7 @@
   font-family: inherit; width: 100%; box-sizing: border-box;
   resize: vertical;
 }
-.cvb-fi:focus { border-color: #8b1538; background: #fff; box-shadow: 0 0 0 3px rgba(139,21,56,.07); }
+.cvb-fi:focus { border-color: #0f409f; background: #fff; box-shadow: 0 0 0 3px rgba(15,64,159,.07); }
 .cvb-fi::placeholder { color: #c4cbd4; }
 
 .cvb-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -276,8 +276,8 @@
   margin-bottom: 10px;
 }
 .cvb-card-num {
-  font-size: .65rem; font-weight: 800; color: #8b1538;
-  background: #fef2f2; padding: 2px 8px; border-radius: 20px;
+  font-size: .65rem; font-weight: 800; color: #0f409f;
+  background: rgba(15,64,159, 0.1); padding: 2px 8px; border-radius: 20px;
 }
 
 /* Delete button */
@@ -286,7 +286,7 @@
   color: #94a3b8; padding: 4px; border-radius: 5px;
   display: flex; align-items: center; transition: all .15s;
 }
-.cvb-del:hover { color: #dc2626; background: #fef2f2; }
+.cvb-del:hover { color: #dc2626; background: rgba(15,64,159, 0.1); }
 
 /* Skills */
 .cvb-skills-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
@@ -303,4 +303,4 @@
   font-size: .8rem; font-weight: 700; cursor: pointer;
   transition: all .15s; margin-top: 2px;
 }
-.cvb-add:hover { border-color: #8b1538; color: #8b1538; background: #fef2f2; }
+.cvb-add:hover { border-color: #0f409f; color: #0f409f; background: rgba(15,64,159, 0.1); }

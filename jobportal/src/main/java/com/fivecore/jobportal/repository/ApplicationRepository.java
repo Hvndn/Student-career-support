@@ -15,6 +15,7 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     List<Application> findByStudentIdOrderByAppliedAtDesc(Integer studentId);
     List<Application> findByJobIdOrderByAppliedAtDesc(Integer jobId);
     List<Application> findByJobCompanyIdOrderByAppliedAtDesc(Integer companyId);
+    List<Application> findByJobCompanyIdAndAppliedAtAfterOrderByAppliedAtDesc(Integer companyId, java.time.LocalDateTime appliedAt);
     
     List<Application> findByStudentId(Integer studentId);
     List<Application> findByJobId(Integer jobId);
@@ -34,4 +35,15 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
     long countByJobIdAndAppliedAtAfter(Integer jobId, java.time.LocalDateTime appliedAt);
     long countByJobIdAndStatus(Integer jobId, com.fivecore.jobportal.entity.Application.ApplicationStatus status);
     boolean existsByJobCompanyIdAndStudentId(Integer companyId, Integer studentId);
+    @Query("SELECT FUNCTION('DATE', a.appliedAt) as day, COUNT(a) as count FROM Application a " +
+           "WHERE a.job.company.id = :companyId AND a.appliedAt >= :startDate " +
+           "GROUP BY FUNCTION('DATE', a.appliedAt) " +
+           "ORDER BY FUNCTION('DATE', a.appliedAt) ASC")
+    List<Object[]> countApplicationsByDay(@Param("companyId") Integer companyId, @Param("startDate") java.time.LocalDateTime startDate);
+
+    @Query("SELECT FUNCTION('HOUR', a.appliedAt) as h, COUNT(a) as count FROM Application a " +
+           "WHERE a.job.company.id = :companyId AND a.appliedAt >= :startDate " +
+           "GROUP BY FUNCTION('HOUR', a.appliedAt) " +
+           "ORDER BY FUNCTION('HOUR', a.appliedAt) ASC")
+    List<Object[]> countApplicationsByHour(@Param("companyId") Integer companyId, @Param("startDate") java.time.LocalDateTime startDate);
 }

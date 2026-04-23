@@ -106,7 +106,7 @@ export const studentApi = {
 
 // ── Company ───────────────────────────────────────────────────────────────
 export const companyApi = {
-    getDashboard: () => api.get('/company/dashboard'),
+    getDashboard: (days) => api.get(`/company/dashboard?days=${days || 7}`),
     getProfile: () => api.get('/company/profile'),
     updateProfile: (data, onUploadProgress) => {
         if (data instanceof FormData) {
@@ -122,6 +122,13 @@ export const companyApi = {
     getJobs: () => api.get('/company/jobs'),
     deleteJob: (id) => api.delete(`/company/jobs/${id}`),
     duplicateJob: (id) => api.post(`/company/jobs/${id}/duplicate`),
+    uploadBanner: (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        return api.post('/company/jobs/upload-banner', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
+    },
     saveCandidate: (studentId) => api.post(`/company/saved-candidates/${studentId}`),
     unsaveCandidate: (studentId) => api.delete(`/company/saved-candidates/${studentId}`),
     getSavedCandidates: () => api.get('/company/saved-candidates'),
@@ -135,8 +142,10 @@ export const recruitmentApi = {
     getApplicants: (jobId) => api.get(`/company/management/jobs/${jobId}/applicants`),
     updateStatus: (appId, status) => api.patch(`/company/management/applications/${appId}/status?status=${status}`),
     searchCandidates: (params) => api.get('/company/management/candidates/search', { params }),
-    scheduleInterview: (appId, data) => api.post(`/company/management/applications/${appId}/schedule`, null, { params: data }),
+    scheduleInterview: (data) => api.post('/company/management/applications/schedule', data),
     getInterviews: () => api.get('/company/management/interviews'),
+    cancelInterview: (id) => api.delete(`/company/management/interviews/${id}`),
+    getCandidateDetail: (id) => api.get(`/company/management/candidates/${id}`),
 };
 
 // ── Admin ─────────────────────────────────────────────────────────────────

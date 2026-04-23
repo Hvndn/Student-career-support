@@ -73,7 +73,7 @@ const Applicants = () => {
                     <div className="container" style={{ marginTop: '3rem' }}>
                         <h1 style={{ marginBottom: '1rem' }}>Quản lý <span className="gradient-text">Ứng viên</span></h1>
                         <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
-                            Tổng: {applicants.length} ứng viên — 
+                            Tổng: {applicants.length} ứng viên —
                             <span style={{ color: '#6366f1' }}> {pendingCount} chờ duyệt</span>,
                             <span style={{ color: '#10b981' }}> {acceptedCount} đã duyệt</span>,
                             <span style={{ color: '#ef4444' }}> {rejectedCount} từ chối</span>

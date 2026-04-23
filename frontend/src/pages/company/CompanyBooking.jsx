@@ -3,6 +3,8 @@ import CompanySidebar from '../../components/company/CompanySidebar';
 import CompanyNavbar from '../../components/company/CompanyNavbar';
 import { recruitmentApi } from '../../api';
 import toast from 'react-hot-toast';
+import CreateBookingModal from '../../components/company/CreateBookingModal';
+import StudentProfileModal from '../../components/company/StudentProfileModal';
 import '../../assets/css/company/CompanyBooking.css';
 
 const CompanyBooking = () => {
@@ -10,24 +12,55 @@ const CompanyBooking = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [showProfile, setShowProfile] = useState(false);
+    const [selectedCandidate, setSelectedCandidate] = useState(null);
+
+    const fetchInterviews = async () => {
+        setLoading(true);
+        try {
+            const response = await recruitmentApi.getInterviews();
+            if (response.data.status === 'success') {
+                setInterviews(response.data.data || []);
+            }
+        } catch (error) {
+            console.error('Error fetching interviews:', error);
+            toast.error('Không thể tải danh sách lịch hẹn');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchInterviews = async () => {
-            try {
-                const response = await recruitmentApi.getInterviews();
-                if (response.data.status === 'success') {
-                    setInterviews(response.data.data || []);
-                }
-            } catch (error) {
-                console.error('Error fetching interviews:', error);
-                toast.error('Không thể tải danh sách lịch hẹn');
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchInterviews();
     }, []);
+
+    const handleCancelInterview = async (id) => {
+        if (!window.confirm('Bạn có chắc chắn muốn hủy lịch phỏng vấn này?')) return;
+
+        try {
+            await recruitmentApi.cancelInterview(id);
+            toast.success('Đã hủy lịch phỏng vấn');
+            fetchInterviews();
+        } catch (error) {
+            console.error('Lỗi khi hủy lịch:', error);
+        }
+    };
+
+    const handleViewProfile = async (studentId) => {
+        if (!studentId) {
+            toast.error('Ứng viên này chưa có tài khoản sinh viên trên hệ thống');
+            return;
+        }
+        
+        try {
+            const response = await recruitmentApi.getCandidateDetail(studentId);
+            setSelectedCandidate(response.data.data);
+            setShowProfile(true);
+        } catch (error) {
+            console.error('Lỗi khi tải hồ sơ:', error);
+        }
+    };
 
     const formatDate = (dateString) => {
         if (!dateString) return { day: '--', month: '--', year: '----', time: '--:--' };
@@ -43,8 +76,8 @@ const CompanyBooking = () => {
 
     const filteredInterviews = interviews.filter(item => {
         const matchesSearch = 
-            item.application?.student?.user?.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.application?.job?.title?.toLowerCase().includes(searchTerm.toLowerCase());
+            item.studentName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.jobTitle?.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
         return matchesSearch && matchesStatus;
     });
@@ -74,7 +107,10 @@ const CompanyBooking = () => {
                             <p className="subtitle">Quản lý và theo dõi các buổi hẹn phỏng vấn với ứng viên.</p>
                         </div>
                         <div className="header-actions">
-                            <button className="btn-respond primary">
+                            <button 
+                                className="btn-respond primary"
+                                onClick={() => setIsModalOpen(true)}
+                            >
                                 <span className="material-symbols-outlined">add</span>
                                 Tạo lịch mới
                             </button>
@@ -114,8 +150,6 @@ const CompanyBooking = () => {
                             {filteredInterviews.length > 0 ? (
                                 filteredInterviews.map((interview, idx) => {
                                     const dateInfo = formatDate(interview.interviewDate);
-                                    const student = interview.application?.student;
-                                    const job = interview.application?.job;
 
                                     return (
                                         <div 
@@ -138,13 +172,13 @@ const CompanyBooking = () => {
                                             <div className="booking-main-content">
                                                 <div className="candidate-info">
                                                     <img 
-                                                        src={student?.user?.avatarUrl || `https://ui-avatars.com/api/?name=${student?.user?.fullName}&background=random`} 
-                                                        alt={student?.user?.fullName} 
+                                                        src={interview.studentAvatar || `https://ui-avatars.com/api/?name=${interview.studentName}&background=random`} 
+                                                        alt={interview.studentName} 
                                                         className="c-avatar"
                                                     />
                                                     <div className="c-text">
-                                                        <h4>{student?.user?.fullName}</h4>
-                                                        <p className="c-job">Ứng tuyển: <strong>{job?.title}</strong></p>
+                                                        <h4>{interview.studentName}</h4>
+                                                        <p className="c-job">Ứng tuyển: <strong>{interview.jobTitle}</strong></p>
                                                     </div>
                                                 </div>
 
@@ -155,7 +189,7 @@ const CompanyBooking = () => {
                                                     </div>
                                                     <div className="detail-item">
                                                         <span className="material-symbols-outlined">mail</span>
-                                                        <span className="text">{student?.user?.email}</span>
+                                                        <span className="text">{interview.studentEmail}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -167,10 +201,18 @@ const CompanyBooking = () => {
                                                      interview.status === 'cancelled' ? 'Đã hủy' : interview.status}
                                                 </span>
                                                 <div className="card-actions">
-                                                    <button className="icon-btn" title="Xem chi tiết">
+                                                    <button 
+                                                        className="icon-btn" 
+                                                        title="Xem chi tiết"
+                                                        onClick={() => handleViewProfile(interview.studentId)}
+                                                    >
                                                         <span className="material-symbols-outlined">visibility</span>
                                                     </button>
-                                                    <button className="icon-btn delete" title="Hủy lịch">
+                                                    <button 
+                                                        className="icon-btn delete" 
+                                                        title="Hủy lịch"
+                                                        onClick={() => handleCancelInterview(interview.id)}
+                                                    >
                                                         <span className="material-symbols-outlined">close</span>
                                                     </button>
                                                 </div>
@@ -189,6 +231,18 @@ const CompanyBooking = () => {
                     </div>
                 </div>
             </div>
+
+            <CreateBookingModal 
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onSuccess={fetchInterviews}
+            />
+
+            <StudentProfileModal 
+                show={showProfile}
+                candidate={selectedCandidate}
+                onClose={() => setShowProfile(false)}
+            />
         </div>
     );
 };

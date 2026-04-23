@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import toast from 'react-hot-toast';
 import RichTextEditor from '../common/RichTextEditor';
 import { companyApi } from '../../api';
 import { vietnamLocations } from '../../utils/vietnamLocations';
@@ -157,12 +158,8 @@ const PostJobModal = ({ isOpen, onClose, jobToEdit, onSuccess }) => {
     };
 
     const uploadBanner = async (file) => {
-        const formData = new FormData();
-        formData.append('file', file);
         try {
-            const res = await companyApi.post('/jobs/upload-banner', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
+            const res = await companyApi.uploadBanner(file);
             if (res.data.status === 'success') {
                 return res.data.data; // trả về url
             }
@@ -175,7 +172,7 @@ const PostJobModal = ({ isOpen, onClose, jobToEdit, onSuccess }) => {
 
     const handleSubmit = async (isDraft = false) => {
         if (!form.title || !form.industry || !form.region || !form.description) {
-            alert('Vui lòng điền các trường bắt buộc (*)');
+            toast.error('Vui lòng điền đầy đủ các trường bắt buộc (*)');
             return;
         }
 
@@ -189,7 +186,7 @@ const PostJobModal = ({ isOpen, onClose, jobToEdit, onSuccess }) => {
                 if (uploadedUrl) {
                     finalBannerUrl = uploadedUrl;
                 } else {
-                    alert('Lỗi khi tải ảnh bìa lên. Sẽ sử dụng dữ liệu không có ảnh.');
+                    toast.error('Không thể tải ảnh bìa lên, tin sẽ được lưu không có ảnh.');
                 }
             }
 
@@ -200,7 +197,7 @@ const PostJobModal = ({ isOpen, onClose, jobToEdit, onSuccess }) => {
                 maxSalary: form.salaryType === 'agreement' ? null : (form.maxSalary ? parseFloat(form.maxSalary) : null),
                 skills: selectedSkills,
                 bannerUrl: finalBannerUrl,
-                status: isDraft ? 'draft' : 'open'
+                status: isDraft ? 'draft' : (jobToEdit ? jobToEdit.status : 'open')
             };
 
             const response = jobToEdit 
@@ -208,11 +205,11 @@ const PostJobModal = ({ isOpen, onClose, jobToEdit, onSuccess }) => {
                 : await companyApi.postJob(payload);
 
             if (response.data.status === 'success') {
-                alert(jobToEdit ? 'Cập nhật tin thành công!' : 'Đã đăng tin thành công!');
-                onSuccess();
+                toast.success(jobToEdit ? 'Cập nhật tin tuyển dụng thành công!' : 'Đăng tin tuyển dụng thành công!');
+                setTimeout(() => onSuccess(), 300);
             }
         } catch (err) {
-            alert(err.response?.data?.message || 'Đã có lỗi xảy ra!');
+            toast.error(err.response?.data?.message || 'Đã có lỗi xảy ra, vui lòng thử lại!');
         } finally {
             setSubmitting(false);
         }
@@ -267,9 +264,9 @@ const PostJobModal = ({ isOpen, onClose, jobToEdit, onSuccess }) => {
                         </div>
                         <div className="pjm-row">
                             <div className="pjm-field">
-                                <label>Ngành nghề *</label>
+                                <label>Lĩnh vực *</label>
                                 <select className="pjm-select" value={form.industry} onChange={e => handleChange('industry', e.target.value)}>
-                                    <option value="">Chọn ngành...</option>
+                                    <option value="">Chọn lĩnh vực...</option>
                                     {INDUSTRIES.map(i => <option key={i} value={i}>{i}</option>)}
                                 </select>
                             </div>
