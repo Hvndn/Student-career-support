@@ -193,13 +193,6 @@ const CompanyDashboard = () => {
                                     <p className="widget-subtitle">Truy cập nhanh các tính năng</p>
                                 </div>
                                 <div className="action-list">
-                                    <Link to="/company/jobs/post" className="action-item">
-                                        <div className="action-icon blue">＋</div>
-                                        <div className="action-text">
-                                            <p className="a-title">Đăng tin mới</p>
-                                            <p className="a-desc">Tạo tin tuyển dụng</p>
-                                        </div>
-                                    </Link>
                                     <Link to="/company/management/candidates" className="action-item">
                                         <div className="action-icon orange">👥</div>
                                         <div className="action-text">

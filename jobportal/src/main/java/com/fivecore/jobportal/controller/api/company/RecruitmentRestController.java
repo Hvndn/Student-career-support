@@ -7,6 +7,7 @@ import com.fivecore.jobportal.entity.Interview;
 import com.fivecore.jobportal.service.auth.ApplicationService;
 import com.fivecore.jobportal.service.company.CandidateSearchService;
 import com.fivecore.jobportal.service.company.InterviewService;
+import com.fivecore.jobportal.repository.InterviewRepository;
 import com.fivecore.jobportal.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ public class RecruitmentRestController {
     private final ApplicationService applicationService;
     private final CandidateSearchService candidateSearchService;
     private final InterviewService interviewService;
+    private final InterviewRepository interviewRepository;
     private final UserRepository userRepository;
 
     private Integer getCurrentCompanyId(Authentication authentication) {

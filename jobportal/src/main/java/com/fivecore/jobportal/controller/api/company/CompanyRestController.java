@@ -168,9 +168,14 @@ public class CompanyRestController {
      */
     @GetMapping("/profile")
     public ResponseEntity<ApiResponse<CompanyResponse>> getProfile(Authentication authentication) {
-        Company company = companyService.getCompanyByUserEmail(authentication.getName());
+        User user = userRepository.findByEmail(authentication.getName()).orElse(null);
+        if (user == null || user.getRole() != User.Role.company) {
+             return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+        }
+        
+        Company company = user.getCompany();
         if (company == null) {
-            return ResponseEntity.status(404).body(ApiResponse.error("Không tìm thấy thông tin công ty", "NOT_FOUND"));
+            return ResponseEntity.status(404).body(ApiResponse.error("Tài khoản chưa có thông tin doanh nghiệp", "NOT_FOUND"));
         }
 
         CompanyResponse response = CompanyResponse.builder()
