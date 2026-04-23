@@ -473,6 +473,65 @@
 
 .dau-link-all { text-decoration: none; color: var(--dau-primary); font-weight: 700; font-size: 0.9rem; }
 
+/* Recent Applications Mini List */
+.dau-recent-apps {
+  margin-top: 15px;
+}
+.dau-app-list-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dau-app-item-mini {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
+  transition: transform 0.2s;
+}
+.dau-app-item-mini:hover {
+  transform: translateX(5px);
+  border-color: var(--dau-primary-light);
+}
+.dau-app-info-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.dau-app-job-title {
+  font-weight: 700;
+  color: var(--dau-text-main);
+  font-size: 0.95rem;
+}
+.dau-app-comp-name {
+  font-size: 0.8rem;
+  color: var(--dau-text-muted);
+}
+.dau-status-tag-mini {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.status-pending   { background: #fef3c7; color: #92400e; }
+.status-reviewing { background: #e0f2fe; color: #075985; }
+.status-approved  { background: #dcfce7; color: #166534; }
+.status-rejected  { background: #fee2e2; color: #991b1b; }
+
+.dau-more-count {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--dau-primary);
+  text-decoration: none;
+}
+
 .dau-loading {
   display: flex;
   height: 100vh;
