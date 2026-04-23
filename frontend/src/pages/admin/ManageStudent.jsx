@@ -322,10 +322,9 @@ const ManageStudent = () => {
                                             <div className="detail-value">{selectedStudent?.studentProfile?.academicYear || 'N/A'}</div>
                                         </div>
                                         <div className="detail-item">
-                                            <div className="detail-label">GPA / Tín chỉ</div>
+                                            <div className="detail-label">GPA</div>
                                             <div className="detail-value">
-                                                {selectedStudent?.studentProfile?.gpa || '---'} / 
-                                                {selectedStudent?.studentProfile?.earnedCredits || '---'} ({selectedStudent?.studentProfile?.totalCredits || '---'})
+                                                {selectedStudent?.studentProfile?.gpa || '---'}
                                             </div>
                                         </div>
                                         <div className="detail-item">
@@ -388,84 +387,7 @@ const ManageStudent = () => {
                                         </div>
                                     )}
 
-                                    {/* Experience section */}
-                                    {selectedStudent?.studentProfile?.experiences?.length > 0 && (
-                                        <div className="modal-detail-section">
-                                            <div className="section-title">
-                                                <span className="material-symbols-outlined">work</span>
-                                                Kinh nghiệm làm việc
-                                            </div>
-                                            <div className="detail-list">
-                                                {selectedStudent.studentProfile.experiences.map(exp => (
-                                                    <div key={exp.id} className="detail-card">
-                                                        <h5>{exp.jobTitle} - {exp.companyName}</h5>
-                                                        <div className="sub-info">
-                                                            <span className="timeline-date">{formatDate(exp.startDate)} - {exp.endDate ? formatDate(exp.endDate) : 'Hiện tại'}</span>
-                                                        </div>
-                                                        {exp.description && <p className="description">{exp.description}</p>}
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
 
-                                    {/* Projects section */}
-                                    {selectedStudent?.studentProfile?.projects?.length > 0 && (
-                                        <div className="modal-detail-section">
-                                            <div className="section-title">
-                                                <span className="material-symbols-outlined">assignment</span>
-                                                Dự án thực hiện
-                                            </div>
-                                            <div className="detail-list">
-                                                {selectedStudent.studentProfile.projects.map(p => (
-                                                    <div key={p.id} className="detail-card">
-                                                        <h5>{p.name}</h5>
-                                                        <div className="sub-info">
-                                                            <span>Vai trò: {p.role}</span>
-                                                            {p.techStack && <span>Công nghệ: {p.techStack}</span>}
-                                                        </div>
-                                                        <p className="description">{p.description}</p>
-                                                        <div className="social-links-row">
-                                                            {p.repositoryUrl && <a href={p.repositoryUrl} className="social-btn github">Repo</a>}
-                                                            {p.demoUrl && <a href={p.demoUrl} className="social-btn linkedin">Demo</a>}
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Languages, Certs, Awards as minor sections */}
-                                    <div className="form-grid" style={{ marginTop: '2rem' }}>
-                                        {selectedStudent?.studentProfile?.languages?.length > 0 && (
-                                            <div className="modal-detail-section" style={{ gridColumn: 'span 1' }}>
-                                                <div className="section-title">
-                                                    <span className="material-symbols-outlined">language</span>
-                                                    Ngoại ngữ
-                                                </div>
-                                                <div className="tags-container">
-                                                    {selectedStudent.studentProfile.languages.map(l => (
-                                                        <span key={l.id} className="pill-tag">
-                                                            {l.languageName} <span className="level">({l.proficiency})</span>
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-                                        {selectedStudent?.studentProfile?.interests?.length > 0 && (
-                                            <div className="modal-detail-section" style={{ gridColumn: 'span 1' }}>
-                                                <div className="section-title">
-                                                    <span className="material-symbols-outlined">favorite</span>
-                                                    Sở thích
-                                                </div>
-                                                <div className="tags-container">
-                                                    {selectedStudent.studentProfile.interests.map(i => (
-                                                        <span key={i.id} className="pill-tag">{i.name}</span>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
                                     
                                     {selectedStudent?.studentProfile?.certifications?.length > 0 && (
                                         <div className="modal-detail-section">

@@ -20,11 +20,7 @@ public class StudentProfileMapper {
                 .major(student.getMajor())
                 .graduationYear(student.getGraduationYear())
                 .gpa(student.getGpa())
-                .totalCredits(student.getTotalCredits())
-                .earnedCredits(student.getEarnedCredits())
-                .classRank(student.getClassRank())
                 .academicYear(student.getAcademicYear())
-                .currentTerm(student.getCurrentTerm())
                 .bio(student.getBio())
                 .phone(student.getPhone())
                 .address(student.getAddress())
@@ -35,6 +31,7 @@ public class StudentProfileMapper {
                 .linkedinUrl(student.getLinkedinUrl())
                 .educations(mapEducations(student.getEducations()))
                 .certifications(mapCertifications(student.getCertifications()))
+                .cvData(student.getCvData())
                 .build();
     }
 

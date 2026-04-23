@@ -2,39 +2,41 @@
 @import "../company/animations.css";
 
 :root {
-  /* Core */
-  --primary: #111827;
-  --primary-glow: rgba(17, 24, 39, 0.08);
+  /* Core - Premium Blue & Gold Theme */
+  --primary: #0f409f;
+  --primary-hover: #0d3585;
+  --primary-glow: rgba(15, 64, 159, 0.12);
 
-  --accent: #6b705c;
-  --accent-hover: #5a5f4c;
-  --accent-glow: rgba(107, 112, 92, 0.25);
+  --accent: #f59e0b; /* Amber/Gold for high-impact CTA */
+  --accent-hover: #d97706;
+  --accent-glow: rgba(245, 158, 11, 0.25);
 
-  --secondary: #f43f5e;
-  --secondary-glow: rgba(244, 63, 94, 0.25);
+  --secondary: #64748b; /* Slate for secondary actions */
+  --secondary-hover: #475569;
 
-  /* Background */
+  /* Background & Surfaces */
   --bg: #f8fafc;
   --surface: #ffffff;
   --surface-hover: #f1f5f9;
 
   /* Text */
-  --text: #111827;
-  --text-muted: #6b7280;
+  --text: #0f172a;
+  --text-muted: #64748b;
 
-  /* UI */
-  --border: rgba(0, 0, 0, 0.08);
-  --success: #22c55e;
-  --error: #f43f5e;
+  /* UI Feedback */
+  --border: rgba(15, 23, 42, 0.08);
+  --success: #10b981;
+  --error: #ef4444;
+  --warning: #f59e0b;
 
-  /* Glass */
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(0, 0, 0, 0.08);
+  /* Premium Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(255, 255, 255, 0.4);
 
-  /* Shadow */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.12);
+  /* Elevation */
+  --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -4px rgba(15, 23, 42, 0.1);
+  --shadow-lg: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
 }
 
 /* Reset */
@@ -66,8 +68,8 @@ body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg);
   background-image:
-    radial-gradient(circle at 20% 20%, rgba(107, 112, 92, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(244, 63, 94, 0.05) 0%, transparent 50%);
+    radial-gradient(circle at 0% 0%, rgba(15, 64, 159, 0.03) 0%, transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(245, 158, 11, 0.03) 0%, transparent 40%);
   color: var(--text);
   line-height: 1.6;
   min-height: 100vh;
@@ -148,15 +150,28 @@ button {
 
 /* Primary Button */
 .btn-primary {
-  background: var(--accent);
+  background: var(--primary);
   color: #ffffff;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 14px 0 rgba(15, 64, 159, 0.25);
 }
 
 .btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(15, 64, 159, 0.23);
+}
+
+/* Accent/Special Button */
+.btn-accent {
+  background: var(--accent);
+  color: #ffffff;
+  box-shadow: 0 4px 14px 0 rgba(245, 158, 11, 0.25);
+}
+
+.btn-accent:hover {
   background: var(--accent-hover);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.23);
 }
 
 /* Outline Button */

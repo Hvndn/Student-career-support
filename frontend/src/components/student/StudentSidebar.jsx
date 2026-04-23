@@ -16,8 +16,6 @@ const NAV_ITEMS = [
       { label: 'Việc làm yêu thích', to: '/student/saved' }
     ]
   },
-  { icon: 'award', label: 'Thử thách dự án', to: '/student/challenges' },
-  { icon: 'users', label: 'Cố vấn', to: '/student/mentors' },
   { icon: 'building', label: 'Danh sách công ty', to: '/companies' },
   { icon: 'message-square', label: 'Trò chuyện', to: '/student/chat' },
   { icon: 'file-text', label: 'Tạo CV / Resume', to: '/student/cv-template' },

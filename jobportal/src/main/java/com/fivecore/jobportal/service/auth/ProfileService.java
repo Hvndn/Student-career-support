@@ -1,9 +1,7 @@
 package com.fivecore.jobportal.service.auth;
 
-import com.fivecore.jobportal.entity.Certificate;
 import com.fivecore.jobportal.entity.Student;
 import com.fivecore.jobportal.entity.Education;
-import com.fivecore.jobportal.repository.CertificateRepository;
 import com.fivecore.jobportal.repository.EducationRepository;
 import com.fivecore.jobportal.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +21,6 @@ import java.util.List;
 public class ProfileService {
 
     private final StudentRepository studentRepository;
-    private final CertificateRepository certificateRepository;
     private final EducationRepository educationRepository;
 
     /**
@@ -52,11 +49,7 @@ public class ProfileService {
         if (request.getMajor() != null) student.setMajor(request.getMajor());
         if (request.getGraduationYear() != null) student.setGraduationYear(request.getGraduationYear());
         if (request.getGpa() != null) student.setGpa(request.getGpa());
-        if (request.getTotalCredits() != null) student.setTotalCredits(request.getTotalCredits());
-        if (request.getEarnedCredits() != null) student.setEarnedCredits(request.getEarnedCredits());
-        if (request.getClassRank() != null) student.setClassRank(request.getClassRank());
         if (request.getAcademicYear() != null) student.setAcademicYear(request.getAcademicYear());
-        if (request.getCurrentTerm() != null) student.setCurrentTerm(request.getCurrentTerm());
         if (request.getBio() != null) student.setBio(request.getBio());
         if (request.getPhone() != null) student.setPhone(request.getPhone());
         if (request.getAddress() != null) student.setAddress(request.getAddress());
@@ -64,6 +57,7 @@ public class ProfileService {
         if (request.getVideoUrl() != null) student.setVideoUrl(request.getVideoUrl());
         if (request.getGithubUrl() != null) student.setGithubUrl(request.getGithubUrl());
         if (request.getLinkedinUrl() != null) student.setLinkedinUrl(request.getLinkedinUrl());
+        if (request.getCvData() != null) student.setCvData(request.getCvData());
 
         studentRepository.save(student);
         log.info("Đã cập nhật thông tin hồ sơ cho sinh viên ID: {}", studentId);

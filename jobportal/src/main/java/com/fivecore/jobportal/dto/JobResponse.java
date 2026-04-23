@@ -22,9 +22,7 @@ public class JobResponse {
     private String requirements;
     private String benefits;
     private String location;
-    private String region;
     private String salary;
-    private String salaryType;
     private BigDecimal minSalary;
     private BigDecimal maxSalary;
     private String jobType;

@@ -64,20 +64,8 @@ public class Student {
     @Column(name = "gpa")
     private Double gpa;
 
-    @Column(name = "total_credits")
-    private Integer totalCredits;
-
-    @Column(name = "earned_credits")
-    private Integer earnedCredits;
-
-    @Column(name = "class_rank")
-    private String classRank;
-
     @Column(name = "academic_year", length = 20)
     private String academicYear;
-
-    @Column(name = "current_term", length = 20)
-    private String currentTerm;
 
     @Column(length = 255)
     private String address;

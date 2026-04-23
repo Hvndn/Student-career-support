@@ -32,8 +32,8 @@ const SECTIONS = [
 ];
 
 const COLORS = [
-  '#dc2626','#1d4ed8','#16a34a','#d97706','#7c3aed','#db2777',
-  '#0891b2','#334155','#8b1538','#065f46',
+  '#0f409f','#1d4ed8','#16a34a','#f59e0b','#7c3aed','#db2777',
+  '#0891b2','#334155','#052668','#065f46',
 ];
 
 const CATS = [
@@ -314,8 +314,13 @@ const CVBuilder = () => {
     studentApi.getProfile()
       .then(res => {
         const d = res.data?.data || {};
+        const dbCv = d.cvData ? JSON.parse(d.cvData) : null;
         const cached = localStorage.getItem(`dau_cv_${id}`);
-        if (cached) {
+        
+        if (dbCv) {
+          setCV(dbCv);
+          if (dbCv._name) setCvName(dbCv._name);
+        } else if (cached) {
           const parsed = JSON.parse(cached);
           setCV(parsed);
           if (parsed._name) setCvName(parsed._name);
@@ -330,7 +335,7 @@ const CVBuilder = () => {
             awards: [],
             skills:[], experiences:[], projects:[], activities:[],
             layoutKey: layoutParam||'MODERN_1',
-            themeColor:'#8b1538',
+            themeColor:'#0f409f',
           });
         }
       })
@@ -373,6 +378,14 @@ const CVBuilder = () => {
     }
 
     const saveData = { ...cv, thumbnail, _name: cvName, _updatedAt: new Date().toISOString() };
+    
+    // Save to Database
+    try {
+      await studentApi.updateProfile({ cvData: JSON.stringify(saveData) });
+    } catch (dbErr) {
+      console.error("Failed to save CV to database:", dbErr);
+    }
+
     localStorage.setItem(`dau_cv_${id}`, JSON.stringify(saveData));
     setCV(saveData);
     toast.success('Đã lưu CV thành công!', { id: toastId });
@@ -497,7 +510,7 @@ const CVBuilder = () => {
                 profile={cv} cvData={cv}
                 isEditMode={true}
                 onUpdate={(d)=>setCV(d)}
-                themeColor={cv.themeColor||'#8b1538'}
+                themeColor={cv.themeColor||'#0f409f'}
                 onSectionClick={setActiveSection}
                 onAvatarClick={() => avatarInputRef.current?.click()}
               />

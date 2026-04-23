@@ -18,7 +18,7 @@
 }
 
 .sh-blue {
-  color: #2563eb;
+  color: #0f409f;
 }
 
 /* ── Shared ── */
@@ -47,7 +47,7 @@
   display: block;
   font-size: 0.78rem;
   font-weight: 700;
-  color: #2563eb;
+  color: #0f409f;
   letter-spacing: 0.07em;
   margin-bottom: 0.4rem;
 }
@@ -66,7 +66,7 @@
 }
 
 .sh-viewall {
-  color: #2563eb;
+  color: #0f409f;
   font-weight: 600;
   font-size: 0.95rem;
   white-space: nowrap;
@@ -157,7 +157,7 @@
 }
 
 .sh-search-btn {
-  background: #2563eb;
+  background: #0f409f;
   color: white;
   padding: 0 1.8rem;
   height: 56px;
@@ -203,7 +203,7 @@
 .sh-tag:hover {
   background: #eff6ff;
   border-color: #bfdbfe;
-  color: #2563eb;
+  color: #0f409f;
 }
 
 /* Hero Illustration */
@@ -380,7 +380,7 @@
 }
 
 .sh-job-title a:hover {
-  color: #2563eb;
+  color: #0f409f;
 }
 
 .sh-job-company {
@@ -404,7 +404,7 @@
 
 .sh-tag-blue {
   background: #eff6ff;
-  color: #2563eb;
+  color: #0f409f;
 }
 
 .sh-tag-green {
@@ -431,7 +431,7 @@
 
 .sh-job-apply {
   background: #eff6ff;
-  color: #2563eb;
+  color: #0f409f;
   font-weight: 700;
   font-size: 0.85rem;
   padding: 0.4rem 0.9rem;
@@ -455,8 +455,8 @@
 }
 
 .sh-load-more:hover {
-  border-color: #2563eb;
-  color: #2563eb;
+  border-color: #0f409f;
+  color: #0f409f;
 }
 
 /* ── HOW IT WORKS ── */
@@ -516,7 +516,7 @@
   width: 28px;
   height: 28px;
   border-radius: 8px;
-  background: #2563eb;
+  background: #0f409f;
   color: white;
   font-size: 0.8rem;
   font-weight: 800;
@@ -556,7 +556,7 @@
 }
 
 .sh-how-btn-blue {
-  background: #2563eb;
+  background: #0f409f;
   color: white;
 }
 
@@ -577,7 +577,7 @@
 
 /* ── CTA ── */
 .sh-cta {
-  background: linear-gradient(135deg, #1e40af 0%, #2563eb 60%, #3b82f6 100%);
+  background: linear-gradient(135deg, #1e40af 0%, #0f409f 60%, #3b82f6 100%);
   padding: 5rem 2rem;
 }
 
@@ -609,7 +609,7 @@
 
 .sh-cta-btn-white {
   background: white;
-  color: #2563eb;
+  color: #0f409f;
   padding: 0.8rem 1.8rem;
   border-radius: 10px;
   font-weight: 700;
@@ -618,7 +618,7 @@
 
 .sh-cta-btn-white:hover {
   background: #f1f5f9;
-  color: #2563eb;
+  color: #0f409f;
 }
 
 .sh-cta-btn-outline {
@@ -686,7 +686,7 @@
 }
 
 .sh-social-icon:hover {
-  background: #2563eb;
+  background: #0f409f;
   color: white;
 }
 
@@ -709,7 +709,7 @@
 }
 
 .sh-footer-col ul li a:hover {
-  color: #2563eb;
+  color: #0f409f;
 }
 
 .sh-footer-bottom {
@@ -820,7 +820,7 @@
 .sd-logo-box {
   width: 2rem;
   height: 2rem;
-  background: #2563eb;
+  background: #0f409f;
   border-radius: 0.5rem;
   display: flex;
   align-items: center;
@@ -861,7 +861,7 @@
 
 .sd-nav-item.active {
   background: rgba(37, 99, 235, 0.1);
-  color: #2563eb;
+  color: #0f409f;
 }
 
 .sd-sidebar-bottom {
@@ -906,7 +906,7 @@
 
 .sd-upgrade-btn {
   width: 100%;
-  background: #2563eb;
+  background: #0f409f;
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
@@ -1022,7 +1022,7 @@
 .sd-progress-percent {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #2563eb;
+  color: #0f409f;
 }
 
 .sd-progress-bar-bg {
@@ -1036,7 +1036,7 @@
 
 .sd-progress-bar-fill {
   height: 100%;
-  background: #2563eb;
+  background: #0f409f;
   border-radius: 9999px;
   transition: width 0.5s ease-out;
 }
@@ -1099,7 +1099,7 @@
 
 .sd-stat-icon.blue {
   background: #eff6ff;
-  color: #2563eb;
+  color: #0f409f;
 }
 
 .sd-stat-icon.purple {
@@ -1134,7 +1134,7 @@
 }
 
 .sd-stat-trend.blue {
-  color: #2563eb;
+  color: #0f409f;
 }
 
 .sd-stat-trend.purple {
@@ -1160,7 +1160,7 @@
 .sd-view-link {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #2563eb;
+  color: #0f409f;
 }
 
 .sd-view-link:hover {
@@ -1221,7 +1221,7 @@
 }
 
 .sd-job-title:hover {
-  color: #2563eb;
+  color: #0f409f;
 }
 
 .sd-job-company {
@@ -1258,7 +1258,7 @@
 
 .sd-job-match {
   background: rgba(37, 99, 235, 0.1);
-  color: #2563eb;
+  color: #0f409f;
   font-weight: 700;
 }
 
@@ -1337,7 +1337,7 @@
 }
 
 .sd-event-card {
-  background: #2563eb;
+  background: #0f409f;
   color: white;
   position: relative;
   overflow: hidden;
@@ -1519,7 +1519,7 @@
 
 .sbd-profile-tag {
     background: #eff6ff;
-    color: #2563eb;
+    color: #0f409f;
     padding: 0.4rem 1rem;
     border-radius: 12px;
     font-size: 0.85rem;

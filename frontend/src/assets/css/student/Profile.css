@@ -1,9 +1,9 @@
 /* ── DAU CONNECT: STUDENT PROFILE DASHBOARD ── */
 :root {
   --dau-bg: #f5f7f9;
-  --dau-primary: #8b1538;
-  --dau-primary-dark: #6a102b;
-  --dau-primary-light: #fef2f2;
+  --dau-primary: #0f409f;
+  --dau-primary-dark: #0d3585;
+  --dau-primary-light: rgba(15, 64, 159, 0.05);
   --dau-text-main: #1e293b;
   --dau-text-muted: #64748b;
   --dau-border: #e2e8f0;
@@ -60,7 +60,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(139, 21, 56, 0.8) 0%, rgba(63, 16, 17, 0.4) 100%);
+  background: linear-gradient(135deg, rgba(15, 64, 159, 0.8) 0%, rgba(5, 38, 104, 0.4) 100%);
   z-index: 1;
 }
 
