@@ -1,21 +1,22 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
 @import "../company/animations.css";
 
 :root {
-  /* Core - Premium Blue & Gold Theme */
-  --primary: #0f409f;
-  --primary-hover: #0d3585;
-  --primary-glow: rgba(15, 64, 159, 0.12);
+  /* Core - Premium Modern Theme */
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-glow: rgba(79, 70, 229, 0.2);
 
-  --accent: #f59e0b; /* Amber/Gold for high-impact CTA */
+  --accent: #f59e0b;
   --accent-hover: #d97706;
-  --accent-glow: rgba(245, 158, 11, 0.25);
+  --accent-glow: rgba(245, 158, 11, 0.3);
 
-  --secondary: #64748b; /* Slate for secondary actions */
-  --secondary-hover: #475569;
+  --secondary: #7c3aed; /* Violet */
+  --secondary-hover: #6d28d9;
 
   /* Background & Surfaces */
-  --bg: #f8fafc;
+  --bg: #0f172a; /* Dark theme by default for VIP look? Or keep light but very clean. Let's go with a very clean light theme with deep accents. */
+  --bg-light: #f8fafc;
   --surface: #ffffff;
   --surface-hover: #f1f5f9;
 
@@ -24,19 +25,21 @@
   --text-muted: #64748b;
 
   /* UI Feedback */
-  --border: rgba(15, 23, 42, 0.08);
+  --border: rgba(15, 23, 42, 0.06);
   --success: #10b981;
   --error: #ef4444;
   --warning: #f59e0b;
 
   /* Premium Glassmorphism */
-  --glass-bg: rgba(255, 255, 255, 0.75);
-  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --glass-blur: blur(12px);
 
   /* Elevation */
   --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 10px 15px -3px rgba(15, 23, 42, 0.1), 0 4px 6px -4px rgba(15, 23, 42, 0.1);
+  --shadow-md: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.08);
   --shadow-lg: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
+  --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
 }
 
 /* Reset */
@@ -66,14 +69,21 @@ input:focus, textarea:focus, select:focus {
 /* Body */
 body {
   font-family: 'Inter', sans-serif;
-  background-color: var(--bg);
-  background-image:
-    radial-gradient(circle at 0% 0%, rgba(15, 64, 159, 0.03) 0%, transparent 40%),
-    radial-gradient(circle at 100% 100%, rgba(245, 158, 11, 0.03) 0%, transparent 40%);
+  background-color: var(--bg-light);
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(124, 58, 237, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.05) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(79, 70, 229, 0.05) 0px, transparent 50%);
   color: var(--text);
   line-height: 1.6;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.02em;
 }
 
 /* Links */
