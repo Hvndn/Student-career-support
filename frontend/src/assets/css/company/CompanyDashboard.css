@@ -12,7 +12,8 @@
   display: flex;
   flex-direction: column;
   transition: margin-left 0.3s ease;
-  padding-left: 1.5rem; /* Thêm padding để không bị đè */
+  padding-left: 1.5rem;
+  /* Thêm padding để không bị đè */
 }
 
 .dashboard-v2 {
@@ -22,8 +23,15 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Glassmorphism Effect */
@@ -110,10 +118,25 @@
   justify-content: center;
 }
 
-.stat-icon-box.blue { background: #eff6ff; color: #2563eb; }
-.stat-icon-box.orange { background: #fff7ed; color: #f97316; }
-.stat-icon-box.green { background: #f0fdf4; color: #22c55e; }
-.stat-icon-box.purple { background: #faf5ff; color: #a855f7; }
+.stat-icon-box.blue {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.stat-icon-box.orange {
+  background: #fff7ed;
+  color: #f97316;
+}
+
+.stat-icon-box.green {
+  background: #f0fdf4;
+  color: #22c55e;
+}
+
+.stat-icon-box.purple {
+  background: #faf5ff;
+  color: #a855f7;
+}
 
 .stat-info h3 {
   font-size: 1.5rem;
@@ -228,10 +251,25 @@
   font-size: 1.1rem;
 }
 
-.action-icon.blue { background: #dbeafe; color: #1e40af; }
-.action-icon.orange { background: #ffedd5; color: #9a3412; }
-.action-icon.green { background: #dcfce7; color: #166534; }
-.action-icon.purple { background: #f3e8ff; color: #6b21a8; }
+.action-icon.blue {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.action-icon.orange {
+  background: #ffedd5;
+  color: #9a3412;
+}
+
+.action-icon.green {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.action-icon.purple {
+  background: #f3e8ff;
+  color: #6b21a8;
+}
 
 .a-title {
   font-size: 0.95rem;
@@ -530,8 +568,13 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .no-jobs-placeholder {
@@ -556,10 +599,21 @@
 
 /* Responsive */
 @media (max-width: 1200px) {
-  .db-grid-v2 { grid-template-columns: 1fr; }
-  .cd-layout { flex-direction: column; }
-  .cd-main { margin-left: 0; }
-  .dashboard-v2 { padding: 1.5rem; }
+  .db-grid-v2 {
+    grid-template-columns: 1fr;
+  }
+
+  .cd-layout {
+    flex-direction: column;
+  }
+
+  .cd-main {
+    margin-left: 0;
+  }
+
+  .dashboard-v2 {
+    padding: 1.5rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -568,4 +622,3 @@
     gap: 1.5rem;
   }
 }
-
