@@ -45,17 +45,20 @@ const DonutChart = ({ value, total }) => {
 const Dashboard = () => {
   const [profile, setProfile] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
+  const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const [profileRes, recRes] = await Promise.all([
+        const [profileRes, recRes, appRes] = await Promise.all([
           studentApi.getProfile(),
-          studentApi.getRecommendations()
+          studentApi.getRecommendations(),
+          studentApi.getMyApplications()
         ]);
         setProfile(profileRes.data.data);
         setRecommendations(recRes.data.data || []);
+        setApplications(appRes.data.data || []);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
@@ -125,8 +128,8 @@ const Dashboard = () => {
                    <p>Phân bổ hồ sơ đã gửi</p>
                 </div>
                 <div className="dau-donut-container">
-                  <DonutChart value={0} total={10} />
-                  <p className="dau-empty-text">Chưa có dữ liệu ứng tuyển</p>
+                  <DonutChart value={applications.length} total={Math.max(applications.length + 5, 10)} />
+                  {applications.length === 0 && <p className="dau-empty-text">Chưa có dữ liệu ứng tuyển</p>}
                 </div>
               </div>
             </div>
@@ -239,11 +242,37 @@ const Dashboard = () => {
                     </div>
                     <Link to="/student/applications" className="dau-link-all">Xem tất cả &rsaquo;</Link>
                  </div>
-                 <div className="dau-empty-apps">
-                    <div className="dau-empty-icon">📄</div>
-                    <p>Bạn chưa ứng tuyển công việc nào</p>
-                    <p className="dau-sub">Hãy khám phá các cơ hội làm mới! 🎯</p>
-                    <Link to="/jobs" className="dau-action-btn-red">Tìm việc ngay</Link>
+                 <div className="dau-recent-apps">
+                    {applications.length > 0 ? (
+                      <div className="dau-app-list-mini">
+                        {applications.slice(0, 3).map((app, idx) => (
+                          <div key={idx} className="dau-app-item-mini">
+                            <div className="dau-app-info-mini">
+                              <span className="dau-app-job-title">{app.jobTitle}</span>
+                              <span className="dau-app-comp-name">{app.companyName}</span>
+                            </div>
+                            <div className={`dau-status-tag-mini status-${app.status?.toLowerCase()}`}>
+                              {app.status === 'PENDING' ? 'Đang chờ' : 
+                               app.status === 'REVIEWING' ? 'Đang duyệt' :
+                               app.status === 'APPROVED' ? 'Chấp nhận' : 
+                               app.status === 'REJECTED' ? 'Từ chối' : app.status}
+                            </div>
+                          </div>
+                        ))}
+                        {applications.length > 3 && (
+                          <Link to="/student/applications" className="dau-more-count">
+                            Và {applications.length - 3} đơn khác...
+                          </Link>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="dau-empty-apps">
+                        <div className="dau-empty-icon">📄</div>
+                        <p>Bạn chưa ứng tuyển công việc nào</p>
+                        <p className="dau-sub">Hãy khám phá các cơ hội làm mới! 🎯</p>
+                        <Link to="/jobs" className="dau-action-btn-red">Tìm việc ngay</Link>
+                      </div>
+                    )}
                  </div>
               </div>
             </div>
