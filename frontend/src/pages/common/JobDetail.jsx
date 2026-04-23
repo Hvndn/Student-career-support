@@ -84,7 +84,7 @@ const JobDetail = () => {
 
     if (loading) return (
         <div className="job-detail-page flex items-center justify-center" style={{paddingTop: '100px'}}>
-             <span className="material-symbols-outlined spinner" style={{fontSize: '3rem', color: '#8b1538', animation: 'spin 1s linear infinite'}}>refresh</span>
+             <span className="material-symbols-outlined spinner" style={{fontSize: '3rem', color: '#0f409f', animation: 'spin 1s linear infinite'}}>refresh</span>
         </div>
     );
 

@@ -274,7 +274,7 @@ const JobList = () => {
                                     <div className="posted-time">
                                         <span className="material-symbols-outlined">schedule</span> 5/1/2026
                                     </div>
-                                    <Link to={`/jobs/${job.id}`} className="apply-btn-premium" style={{ background: '#8b1538', padding: '8px 20px' }}>
+                                    <Link to={`/jobs/${job.id}`} className="apply-btn-premium" style={{ background: '#0f409f', padding: '8px 20px' }}>
                                         Ứng tuyển <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>chevron_right</span>
                                     </Link>
                                 </div>
