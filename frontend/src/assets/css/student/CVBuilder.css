@@ -207,7 +207,7 @@
 
 /* ── RIGHT SIDEBAR ────────────────────────────────────────────────────────── */
 .cvb-right {
-  width: 300px; min-width: 300px;
+  width: 300px; min-width: 300px; max-width: 300px;
   background: #fff; border-left: 1px solid #e8edf3;
   display: flex; flex-direction: column;
   overflow: hidden; z-index: 100;
