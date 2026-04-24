@@ -152,7 +152,7 @@ const AppContent = () => {
 
       <Routes>
         {/* Công khai */}
-        <Route path="/" element={<StudentLayoutWrapper><Home /></StudentLayoutWrapper>} />
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/login-success" element={<LoginSuccess />} />
         <Route path="/register" element={<Register />} />
@@ -174,7 +174,7 @@ const AppContent = () => {
                 <Route path="saved" element={<SavedJobs />} />
                 <Route path="notifications" element={<Notifications />} />
                 <Route path="interviews" element={<Interviews />} />
-                <Route path="cv-template" element={<CVManagement />} />
+                <Route path="cv-management" element={<CVManagement />} />
                 <Route path="cv-builder/:id" element={<CVBuilder />} />
                 <Route path="chat" element={<Chat />} />
               </Routes>
