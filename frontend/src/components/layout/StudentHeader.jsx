@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { studentApi } from '../../api';
+import { getImageUrl } from '../../utils/urlUtils';
 import ChangePasswordModal from '../../components/student/ChangePasswordModal';
 import '../../assets/css/student/StudentHeader.css';
 
@@ -81,15 +82,20 @@ const StudentHeader = () => {
                             className={`dau-user-avatar ${showUserMenu ? 'active' : ''}`}
                             onClick={() => setShowUserMenu(!showUserMenu)}
                         >
-                            <img src={profile?.avatar || "https://ui-avatars.com/api/?name=" + displayName} alt="User" />
+                            <img src={profile?.avatarUrl ? getImageUrl(profile.avatarUrl) : "https://ui-avatars.com/api/?name=" + displayName} alt="User" />
                         </div>
 
                         {showUserMenu && (
                             <div className="dau-user-dropdown-premium fade-in-down">
                                 <div className="dau-dropdown-header-premium">
-                                    <div className="dau-dropdown-user-info">
-                                        <span className="dau-dropdown-name">{displayName}</span>
-                                        <span className="dau-dropdown-role">Sinh viên</span>
+                                    <div className="dau-dropdown-user-wrapper">
+                                        <div className="dau-dropdown-avatar">
+                                            <img src={profile?.avatarUrl ? getImageUrl(profile.avatarUrl) : "https://ui-avatars.com/api/?name=" + displayName} alt="User" />
+                                        </div>
+                                        <div className="dau-dropdown-user-info">
+                                            <span className="dau-dropdown-name">{displayName}</span>
+                                            <span className="dau-dropdown-role">Sinh viên</span>
+                                        </div>
                                     </div>
                                 </div>
                                 
