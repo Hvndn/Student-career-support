@@ -6,6 +6,7 @@ import CandidateDetailModal from '../../components/company/CandidateDetailModal'
 import { recruitmentApi, companyApi } from '../../api';
 import { tagService } from '../../utils/tagService';
 import toast from 'react-hot-toast';
+import { FiArrowUp, FiArrowDown } from 'react-icons/fi';
 import '../../assets/css/company/CompanyCandidates.css';
 
 const CompanyCandidates = () => {
@@ -40,7 +41,47 @@ const CompanyCandidates = () => {
                 ]);
                 
                 if (appsRes.data.status === 'success') {
-                    setApplications(appsRes.data.data);
+                    const apps = appsRes.data.data;
+                    setApplications(apps);
+                    
+                    // Tăng cường dữ liệu: Lấy thông tin chi tiết từ profile gốc để đảm bảo chuyên ngành và kỹ năng là mới nhất
+                    const uniqueStudentIds = [...new Set(apps.map(a => a.studentId))];
+                    if (uniqueStudentIds.length > 0) {
+                        const detailsRes = await Promise.all(
+                            uniqueStudentIds.map(id => companyApi.getCandidateDetail(id).catch(() => null))
+                        );
+                        
+                        const detailsMap = {};
+                        detailsRes.forEach(res => {
+                            if (res?.data?.status === 'success') {
+                                const d = res.data.data;
+                                // API này trả về đối tượng có id là studentId
+                                const sId = d.id || d.studentId;
+                                if (sId) detailsMap[sId] = d;
+                            }
+                        });
+                        
+                        setApplications(prev => prev.map(a => {
+                            const detail = detailsMap[a.studentId];
+                            if (detail) {
+                                return {
+                                    ...a,
+                                    // Ghi đè bằng dữ liệu tươi mới nhất từ profile sinh viên gốc
+                                    studentMajor: detail.major || a.studentMajor,
+                                    studentSkills: (detail.skills && Array.isArray(detail.skills)) 
+                                        ? detail.skills.map(s => typeof s === 'string' ? s : (s.name || '')).join(', ') 
+                                        : (detail.skills || a.studentSkills),
+                                    studentExperience: detail.experience || a.studentExperience,
+                                    studentLocation: detail.location || a.studentLocation,
+                                    expectedSalary: detail.expectedSalary || a.expectedSalary,
+                                    githubUrl: detail.githubUrl || a.githubUrl,
+                                    cvUrl: detail.cvUrl || a.cvUrl,
+                                    gpa: detail.gpa || a.gpa
+                                };
+                            }
+                            return a;
+                        }));
+                    }
                 }
                 if (jobsRes.data.status === 'success') {
                     setJobs(jobsRes.data.data);
@@ -95,46 +136,173 @@ const CompanyCandidates = () => {
         }
     };
 
-    // Filter logic
-    const filteredApps = applications.filter(app => {
-        const matchesSearch = app.studentName.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                             app.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                             (app.studentSkills || '').toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesJob = selectedJobId === 'all' || app.jobId.toString() === selectedJobId;
-        const matchesTab = activeTab === 'all' || app.status.toLowerCase() === activeTab.toLowerCase();
-        const matchesTag = selectedTagId === 'all' || (tagMappings[app.studentId] || []).includes(Number(selectedTagId));
-        
-        const matchesDate = (() => {
-            if (dateFilter === 'all') return true;
-            
-            const appDate = new Date(app.appliedAt);
-            const now = new Date();
+    // State for Sorting
+    const [sortConfig, setSortConfig] = useState({ key: 'appliedAt', direction: 'desc' });
 
-            if (dateFilter === '15m') {
-                return appDate >= new Date(now.getTime() - 15 * 60 * 1000);
-            }
-            if (dateFilter === '1d') {
-                return appDate >= new Date(now.getTime() - 24 * 60 * 60 * 1000);
-            }
-            if (dateFilter === '7d') {
-                return appDate >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-            }
-            if (dateFilter === '30d') {
-                return appDate >= new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    // Filter and Sort logic
+    const filteredApps = applications
+        .map(app => {
+            // TÌM THÔNG TIN CÔNG VIỆC ĐỂ SO SÁNH
+            const job = jobs.find(j => j.id === app.jobId);
+            if (!job) return { ...app, enhancedMatch: app.matchPercentage || 0 };
+
+            let score = 0;
+            
+            // 1. KỸ NĂNG (40%) - TRỌNG YẾU
+            const requiredSkills = job.skills || [];
+            const rawSkillsData = app.studentSkills || app.skills || app.student?.skills || app.student?.studentSkills || '';
+            let studentSkills = [];
+            if (typeof rawSkillsData === 'string') {
+                studentSkills = rawSkillsData.toLowerCase().split(',').map(s => s.trim());
+            } else if (Array.isArray(rawSkillsData)) {
+                studentSkills = rawSkillsData.map(s => (typeof s === 'string' ? s : (s.name || '')).toLowerCase());
             }
             
-            if (dateFilter === 'custom') {
-                if (!startDate) return true;
-                const d = new Date(app.appliedAt);
-                const appDateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-                return appDateStr === startDate;
+            if (requiredSkills.length > 0) {
+                if (studentSkills.length > 0) {
+                    const matchedSkills = requiredSkills.filter(sk => 
+                        studentSkills.some(ss => ss.includes(sk.toLowerCase()) || sk.toLowerCase().includes(ss))
+                    );
+                    score += (matchedSkills.length / requiredSkills.length) * 40;
+                }
+            } else {
+                // Job không yêu cầu skill cụ thể, cho điểm cơ bản dựa trên title
+                const jobTitleLower = (job.title || '').toLowerCase();
+                const hasRelatedSkill = studentSkills.some(ss => jobTitleLower.includes(ss) || ss.includes(jobTitleLower));
+                score += hasRelatedSkill ? 30 : 15;
             }
 
-            return true;
-        })();
+            // 2. KINH NGHIỆM (20%)
+            const jobExp = (job.experience || 'Chưa có kinh nghiệm').toLowerCase();
+            const stuExp = (app.studentExperience || 'Chưa có kinh nghiệm').toLowerCase();
+            if (stuExp.includes(jobExp) || jobExp === 'chưa có kinh nghiệm') {
+                score += 20;
+            } else if (stuExp !== 'chưa có kinh nghiệm') {
+                score += 10; // Có kinh nghiệm nhưng không khớp hoàn toàn
+            }
 
-        return matchesSearch && matchesJob && matchesTab && matchesDate;
-    });
+            // 3. HỌC VẤN & CHUYÊN NGÀNH (10%)
+            const rawMajor = app.studentMajor || app.major || app.majorName || app.student?.major || app.student?.majorName || app.major?.name || app.studentMajor?.name || app.major_name || '';
+            const studentMajor = (typeof rawMajor === 'string' ? rawMajor : (rawMajor?.name || '')).toLowerCase();
+            const jobIndustry = (job.industry || '').toLowerCase();
+            
+            let majorScore = 0;
+            if (studentMajor && jobIndustry && (studentMajor.includes(jobIndustry) || jobIndustry.includes(studentMajor))) {
+                majorScore = 10;
+            } else if (studentMajor && !studentMajor.includes('chưa cập nhật') && studentMajor.length > 2) {
+                majorScore = 5;
+            } else {
+                majorScore = -15; // Phạt nặng nếu chưa cập nhật
+            }
+            score += majorScore;
+
+            // 4. MỨC LƯƠNG KỲ VỌNG (10%)
+            const expected = parseFloat(app.expectedSalary || 0);
+            const min = parseFloat(job.minSalary || 0);
+            const max = parseFloat(job.maxSalary || 1000000000);
+            let salScore = 0;
+            if (expected === 0 || (expected >= min && expected <= max)) {
+                salScore = 10;
+            } else {
+                salScore = 4;
+            }
+            score += salScore;
+
+            // 5. ĐỊA ĐIỂM & HÌNH THỨC (10%)
+            const stuLoc = (app.studentLocation || app.location || '').toLowerCase();
+            const jobLoc = (job.region || '').toLowerCase();
+            let locScore = 0;
+            if (stuLoc && jobLoc && (stuLoc.includes(jobLoc) || jobLoc.includes(stuLoc))) {
+                locScore = 10;
+            } else {
+                locScore = 2;
+            }
+            score += locScore;
+
+            // 6. BONUS (Dự án, Portfolio, GitHub) (10%)
+            if (app.githubUrl || app.cvUrl) score += 5;
+            if (app.studentSkills && app.studentSkills.length > 50) score += 5; // Có nhiều kỹ năng chi tiết
+
+            const finalScore = Math.min(100, Math.max(0, Math.round(score)));
+            
+            return { 
+                ...app, 
+                enhancedMatch: finalScore,
+                matchBreakdown: {
+                    skills: Math.round(studentSkills.length > 0 ? 40 : 0),
+                    major: majorScore,
+                    location: locScore,
+                    salary: salScore
+                }
+            };
+        })
+        .filter(app => {
+            const matchesSearch = app.studentName.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                 app.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                 (app.studentSkills || '').toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesJob = selectedJobId === 'all' || app.jobId.toString() === selectedJobId;
+            const matchesTab = activeTab === 'all' || app.status.toLowerCase() === activeTab.toLowerCase();
+            
+            const matchesDate = (() => {
+                if (dateFilter === 'all') return true;
+                
+                const appDate = new Date(app.appliedAt);
+                const now = new Date();
+
+                if (dateFilter === '15m') return appDate >= new Date(now.getTime() - 15 * 60 * 1000);
+                if (dateFilter === '1d') return appDate >= new Date(now.getTime() - 24 * 60 * 60 * 1000);
+                if (dateFilter === '7d') return appDate >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                if (dateFilter === '30d') return appDate >= new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+                
+                if (dateFilter === 'custom') {
+                    if (!startDate) return true;
+                    const d = new Date(app.appliedAt);
+                    const appDateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                    return appDateStr === startDate;
+                }
+
+                return true;
+            })();
+
+            return matchesSearch && matchesJob && matchesTab && matchesDate;
+        })
+        .sort((a, b) => {
+            if (!sortConfig.key) return 0;
+            
+            let valA = a[sortConfig.key];
+            let valB = b[sortConfig.key];
+
+            // Handle date comparison
+            if (sortConfig.key === 'appliedAt') {
+                valA = new Date(valA);
+                valB = new Date(valB);
+            }
+            
+            // Đảm bảo matchPercentage/enhancedMatch là số
+            if (sortConfig.key === 'matchPercentage') {
+                valA = parseFloat(a.enhancedMatch || 0);
+                valB = parseFloat(b.enhancedMatch || 0);
+            }
+            
+            if (valA < valB) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (valA > valB) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+
+    const requestSort = (key) => {
+        let direction = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const getSortIcon = (key) => {
+        if (sortConfig.key !== key) return <FiArrowDown size={12} style={{ opacity: 0.3, marginLeft: '4px' }} />;
+        return sortConfig.direction === 'asc' 
+            ? <FiArrowUp size={12} style={{ color: '#2563eb', marginLeft: '4px' }} /> 
+            : <FiArrowDown size={12} style={{ color: '#2563eb', marginLeft: '4px' }} />;
+    };
 
     // Auto-open calendar when "Custom" is selected with a small delay for stable positioning
     useEffect(() => {
@@ -206,14 +374,14 @@ const CompanyCandidates = () => {
                         <div className="candidates-main-content full-width">
                             
                             {/* DAU Connect Standard Filter Bar */}
-                            <div className="dau-filter-bar intro-y" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px', alignItems: 'center' }}>
-                                <div className="filter-left" style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                            <div className="dau-filter-bar intro-y" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+                                <div className="filter-left" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                                     {/* Lọc Trạng Thái */}
                                     <select 
                                         className="dau-select filter-control"
                                         value={activeTab}
                                         onChange={(e) => setActiveTab(e.target.value)}
-                                        style={{ width: '160px', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 16px', color: '#64748b', fontSize: '14px' }}
+                                        style={{ width: '150px', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 14px', color: '#64748b', fontSize: '14px' }}
                                     >
                                         <option value="all">Tất cả trạng thái</option>
                                         <option value="pending">Chờ duyệt</option>
@@ -229,7 +397,7 @@ const CompanyCandidates = () => {
                                         className="dau-select filter-control"
                                         value={selectedJobId}
                                         onChange={(e) => setSelectedJobId(e.target.value)}
-                                        style={{ width: '180px', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 16px', color: '#64748b', fontSize: '14px' }}
+                                        style={{ width: '160px', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 14px', color: '#64748b', fontSize: '14px' }}
                                     >
                                         <option value="all">Tất cả vị trí</option>
                                         {jobs.map(job => (
@@ -240,66 +408,66 @@ const CompanyCandidates = () => {
                                     </select>
 
                                     {/* Lọc Theo Thời Gian */}
-                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                    <select 
+                                        className="dau-select filter-control"
+                                        value={dateFilter}
+                                        onChange={(e) => setDateFilter(e.target.value)}
+                                        style={{ width: '130px', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 14px', color: '#64748b', fontSize: '14px' }}
+                                    >
+                                        <option value="all">Mọi thời gian</option>
+                                        <option value="15m">15 phút qua</option>
+                                        <option value="1d">1 ngày qua</option>
+                                        <option value="7d">7 ngày qua</option>
+                                        <option value="30d">30 ngày qua</option>
+                                        <option value="custom">Tùy chọn...</option>
+                                    </select>
+
+                                    {/* MỤC SẮP XẾP RIÊNG BIỆT - Nổi bật hơn */}
+                                    <div className="sort-section" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '4px 12px', background: '#eff6ff', borderRadius: '10px', border: '1px solid #dbeafe' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#1e3a8a' }}>
+                                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><path d="M3 6h18M6 12h12m-9 6h6"></path></svg>
+                                            <span style={{ fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Sắp xếp</span>
+                                        </div>
                                         <select 
                                             className="dau-select filter-control"
-                                            value={dateFilter}
-                                            onChange={(e) => setDateFilter(e.target.value)}
-                                            style={{ width: '130px', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 16px', color: '#64748b', fontSize: '14px' }}
+                                            value={`${sortConfig.key}-${sortConfig.direction}`}
+                                            onChange={(e) => {
+                                                const [key, direction] = e.target.value.split('-');
+                                                setSortConfig({ key, direction });
+                                            }}
+                                            style={{ minWidth: '140px', border: 'none', background: 'transparent', color: '#1e3a8a', fontSize: '14px', fontWeight: '700', cursor: 'pointer', outline: 'none' }}
                                         >
-                                            <option value="all">Mọi thời gian</option>
-                                            <option value="15m">15 phút qua</option>
-                                            <option value="1d">1 ngày qua</option>
-                                            <option value="7d">7 ngày qua</option>
-                                            <option value="30d">30 ngày qua</option>
-                                            <option value="custom">Tùy chọn...</option>
+                                            <option value="matchPercentage-desc">Phù hợp nhất ↑</option>
+                                            <option value="appliedAt-desc">Mới nhất ↑</option>
+                                            <option value="appliedAt-asc">Cũ nhất ↓</option>
+                                            <option value="studentName-asc">Tên (A-Z)</option>
+                                            <option value="studentName-desc">Tên (Z-A)</option>
+                                            <option value="jobTitle-asc">Vị trí (A-Z)</option>
                                         </select>
-
-                                        {dateFilter === 'custom' && (
-                                            <div className="date-picker-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: '12px', zIndex: 10 }}>
-                                                <span style={{ fontSize: '14px', fontWeight: '500', color: '#475569', whiteSpace: 'nowrap' }}>Ngày nộp:</span>
-                                                <input 
-                                                    ref={customDateRef}
-                                                    type="date" 
-                                                    className="dau-input filter-control"
-                                                    value={startDate}
-                                                    onChange={(e) => setStartDate(e.target.value)}
-                                                    style={{ 
-                                                        width: '180px', 
-                                                        borderRadius: '10px', 
-                                                        border: '2px solid #6366f1', 
-                                                        padding: '10px 14px', 
-                                                        fontSize: '14px', 
-                                                        fontWeight: '600',
-                                                        color: '#0f172a', 
-                                                        background: '#ffffff',
-                                                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                                                    }}
-                                                />
-                                                {startDate && (
-                                                    <button 
-                                                        onClick={() => { setStartDate(''); }}
-                                                        style={{ background: '#fee2e2', border: 'none', borderRadius: '50%', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444' }}
-                                                        type="button"
-                                                        title="Xóa ngày"
-                                                    >
-                                                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2.5" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                                    </button>
-                                                )}
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
                                 
-                                <div className="filter-right">
+                                <div className="filter-right" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                    {dateFilter === 'custom' && (
+                                        <div className="date-picker-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <input 
+                                                ref={customDateRef}
+                                                type="date" 
+                                                className="dau-input filter-control"
+                                                value={startDate}
+                                                onChange={(e) => setStartDate(e.target.value)}
+                                                style={{ width: '150px', borderRadius: '8px', border: '2px solid #6366f1', padding: '8px 12px', fontSize: '13px' }}
+                                            />
+                                        </div>
+                                    )}
                                     <div className="search-input-wrapper" style={{ position: 'relative' }}>
                                         <input 
                                             type="text" 
-                                            placeholder="Tìm ứng viên hoặc vị trí..." 
+                                            placeholder="Tìm ứng viên..." 
                                             className="filter-control dau-search-pill"
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
-                                            style={{ width: '280px', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '10px 16px 10px 42px', fontSize: '14px' }}
+                                            style={{ width: '220px', borderRadius: '24px', border: '1px solid #e2e8f0', padding: '10px 16px 10px 42px', fontSize: '14px', background: '#fff' }}
                                         />
                                         <svg viewBox="0 0 24 24" width="16" height="16" stroke="#94a3b8" strokeWidth="2" fill="none" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                                     </div>
@@ -312,9 +480,24 @@ const CompanyCandidates = () => {
                                     <table className="candidates-table dau-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                                         <thead style={{ background: '#f8fafc', borderBottom: '1px solid #f1f5f9' }}>
                                             <tr>
-                                                <th style={{ padding: '16px 20px', color: '#64748b', fontSize: '13px', fontWeight: 'bold', textAlign: 'left', textTransform: 'uppercase' }}>ỨNG VIÊN</th>
-                                                <th style={{ padding: '16px 20px', color: '#64748b', fontSize: '13px', fontWeight: 'bold', textAlign: 'left', textTransform: 'uppercase' }}>VỊ TRÍ ỨNG TUYỂN</th>
-                                                <th style={{ padding: '16px 20px', color: '#64748b', fontSize: '13px', fontWeight: 'bold', textAlign: 'left', textTransform: 'uppercase' }}>NGÀY NỘP</th>
+                                                <th 
+                                                    style={{ padding: '16px 20px', color: '#64748b', fontSize: '13px', fontWeight: 'bold', textAlign: 'left', textTransform: 'uppercase', cursor: 'pointer' }}
+                                                    onClick={() => requestSort('studentName')}
+                                                >
+                                                    ỨNG VIÊN {getSortIcon('studentName')}
+                                                </th>
+                                                <th 
+                                                    style={{ padding: '16px 20px', color: '#64748b', fontSize: '13px', fontWeight: 'bold', textAlign: 'left', textTransform: 'uppercase', cursor: 'pointer' }}
+                                                    onClick={() => requestSort('jobTitle')}
+                                                >
+                                                    VỊ TRÍ ỨNG TUYỂN {getSortIcon('jobTitle')}
+                                                </th>
+                                                <th 
+                                                    style={{ padding: '16px 20px', color: '#64748b', fontSize: '13px', fontWeight: 'bold', textAlign: 'left', textTransform: 'uppercase', cursor: 'pointer' }}
+                                                    onClick={() => requestSort('appliedAt')}
+                                                >
+                                                    NGÀY NỘP {getSortIcon('appliedAt')}
+                                                </th>
                                                 <th style={{ padding: '16px 20px', color: '#64748b', fontSize: '13px', fontWeight: 'bold', textAlign: 'center', textTransform: 'uppercase' }}>TRẠNG THÁI</th>
                                                 <th style={{ padding: '16px 20px', color: '#64748b', fontSize: '13px', fontWeight: 'bold', textAlign: 'right', textTransform: 'uppercase' }}>HÀNH ĐỘNG</th>
                                             </tr>
@@ -328,7 +511,39 @@ const CompanyCandidates = () => {
                                                         <img src={app.studentAvatar || `https://ui-avatars.com/api/?name=${app.studentName}&background=random`} alt={app.studentName} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
                                                         <div>
                                                             <div style={{ fontWeight: '600', color: '#0f172a', fontSize: '14.5px' }}>{app.studentName}</div>
-                                                            <div style={{ fontSize: '13px', color: '#94a3b8', marginTop: '2px' }}>{app.studentSkills?.split(',')[0] || 'Kiến trúc'}</div>
+                                                            <div style={{ fontSize: '13px', color: '#64748b', marginTop: '2px', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                                {(() => {
+                                                                    const m = app.studentMajor || app.major || app.majorName || app.student?.major || app.student?.majorName || app.major?.name || app.studentMajor?.name || app.major_name;
+                                                                    if (m) return typeof m === 'string' ? m : (m.name || 'Chuyên ngành');
+                                                                    return 'Chuyên ngành chưa cập nhật';
+                                                                })()}
+                                                                {app.enhancedMatch && (
+                                                                    <span 
+                                                                        title={`Chi tiết: Kỹ năng: +${app.matchBreakdown?.skills || 0}, Chuyên ngành: ${app.matchBreakdown?.major || 0}, Địa điểm: +${app.matchBreakdown?.location || 0}`}
+                                                                        style={{ 
+                                                                            background: app.enhancedMatch >= 80 ? '#f0fdf4' : app.enhancedMatch >= 60 ? '#fffbeb' : '#fef2f2', 
+                                                                            color: app.enhancedMatch >= 80 ? '#16a34a' : app.enhancedMatch >= 60 ? '#d97706' : '#dc2626',
+                                                                            padding: '2px 8px',
+                                                                            borderRadius: '12px',
+                                                                            fontSize: '11px',
+                                                                            fontWeight: '700',
+                                                                            border: `1px solid ${app.enhancedMatch >= 80 ? '#dcfce7' : app.enhancedMatch >= 60 ? '#fef3c7' : '#fee2e2'}`,
+                                                                            display: 'flex',
+                                                                            alignItems: 'center',
+                                                                            gap: '4px',
+                                                                            cursor: 'help'
+                                                                        }}
+                                                                    >
+                                                                        <span style={{ 
+                                                                            width: '6px', 
+                                                                            height: '6px', 
+                                                                            borderRadius: '50%', 
+                                                                            backgroundColor: 'currentColor' 
+                                                                        }}></span>
+                                                                        {app.enhancedMatch}% {app.enhancedMatch >= 80 ? 'RẤT PHÙ HỢP' : app.enhancedMatch >= 60 ? 'PHÙ HỢP' : 'ÍT PHÙ HỢP'}
+                                                                    </span>
+                                                                )}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </td>
