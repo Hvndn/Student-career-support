@@ -19,7 +19,7 @@ const Profile = () => {
 
     const [showSkillForm, setShowSkillForm] = useState(false);
     const [showProjectForm, setShowProjectForm] = useState(false);
-    const [projectForm, setProjectForm] = useState({ name: '', description: '', repositoryUrl: '', demoUrl: '' });
+    const [projectForm, setProjectForm] = useState({ name: '', role: '', technologies: '', startDate: '', endDate: '', description: '', responsibilities: '', repositoryUrl: '', demoUrl: '' });
     const [skillId, setSkillId] = useState('');
     const [skillLevel, setSkillLevel] = useState('intermediate');
     const [allSkills, setAllSkills] = useState([]);
@@ -138,7 +138,7 @@ const Profile = () => {
             await studentApi.addProject(projectForm);
             await reload();
             setShowProjectForm(false);
-            setProjectForm({ name: '', description: '', repositoryUrl: '', demoUrl: '' });
+            setProjectForm({ name: '', role: '', technologies: '', startDate: '', endDate: '', description: '', responsibilities: '', repositoryUrl: '', demoUrl: '' });
             flash('✅ Đã thêm dự án!');
         } catch { flash('❌ Lỗi khi thêm.'); }
         setSaving(false);
@@ -280,8 +280,24 @@ const Profile = () => {
                                     <div key={idx} className="pf-project-item">
                                         <div className="pf-project-info">
                                             <h4>{proj.name}</h4>
-                                            <p>{proj.description}</p>
-                                            <div className="pf-project-links">
+                                            {(proj.role || proj.startDate) && (
+                                                <div className="pf-project-meta" style={{fontSize: '0.8125rem', color: 'var(--dau-primary)', fontWeight: 600, marginBottom: '0.5rem', display: 'flex', gap: '1rem'}}>
+                                                    {proj.role && <span><span className="material-symbols-outlined" style={{fontSize: '14px', verticalAlign: 'text-bottom'}}>person</span> {proj.role}</span>}
+                                                    {(proj.startDate || proj.endDate) && <span><span className="material-symbols-outlined" style={{fontSize: '14px', verticalAlign: 'text-bottom'}}>calendar_month</span> {proj.startDate ? new Date(proj.startDate).toLocaleDateString('vi-VN') : ''} - {proj.endDate ? new Date(proj.endDate).toLocaleDateString('vi-VN') : 'Hiện tại'}</span>}
+                                                </div>
+                                            )}
+                                            {proj.technologies && (
+                                                <div className="pf-project-tech" style={{fontSize: '0.75rem', color: 'var(--dau-text-muted)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '4px'}}>
+                                                    <span className="material-symbols-outlined" style={{fontSize: '14px'}}>code</span> {proj.technologies}
+                                                </div>
+                                            )}
+                                            {proj.description && <p>{proj.description}</p>}
+                                            {proj.responsibilities && (
+                                                <div className="pf-project-resp" style={{fontSize: '0.8125rem', color: 'var(--dau-text-main)', marginTop: '0.5rem', whiteSpace: 'pre-line', lineHeight: '1.6'}}>
+                                                    {proj.responsibilities}
+                                                </div>
+                                            )}
+                                            <div className="pf-project-links" style={{marginTop: '1rem'}}>
                                                 {proj.repositoryUrl && <a href={proj.repositoryUrl} target="_blank" rel="noreferrer">GitHub</a>}
                                                 {proj.demoUrl && <a href={proj.demoUrl} target="_blank" rel="noreferrer">Demo</a>}
                                             </div>
@@ -500,9 +516,33 @@ const Profile = () => {
                                     <label>Tên dự án</label>
                                     <input type="text" value={projectForm.name} onChange={e => setProjectForm({...projectForm, name: e.target.value})} placeholder="E-commerce App" />
                                 </div>
+                                <div className="pf-modal-grid">
+                                    <div className="pf-modal-field">
+                                        <label>Vai trò / Vị trí</label>
+                                        <input type="text" value={projectForm.role} onChange={e => setProjectForm({...projectForm, role: e.target.value})} placeholder="Frontend Developer, Fullstack..." />
+                                    </div>
+                                    <div className="pf-modal-field">
+                                        <label>Công nghệ sử dụng</label>
+                                        <input type="text" value={projectForm.technologies} onChange={e => setProjectForm({...projectForm, technologies: e.target.value})} placeholder="React, Node.js, MongoDB..." />
+                                    </div>
+                                </div>
+                                <div className="pf-modal-grid">
+                                    <div className="pf-modal-field">
+                                        <label>Ngày bắt đầu</label>
+                                        <input type="date" value={projectForm.startDate} onChange={e => setProjectForm({...projectForm, startDate: e.target.value})} />
+                                    </div>
+                                    <div className="pf-modal-field">
+                                        <label>Ngày kết thúc (Để trống nếu đang làm)</label>
+                                        <input type="date" value={projectForm.endDate} onChange={e => setProjectForm({...projectForm, endDate: e.target.value})} />
+                                    </div>
+                                </div>
                                 <div className="pf-modal-field">
                                     <label>Mô tả ngắn</label>
-                                    <textarea rows="3" value={projectForm.description} onChange={e => setProjectForm({...projectForm, description: e.target.value})} placeholder="Ứng dụng mua sắm trực tuyến..."></textarea>
+                                    <textarea rows="2" value={projectForm.description} onChange={e => setProjectForm({...projectForm, description: e.target.value})} placeholder="Ứng dụng mua sắm trực tuyến..."></textarea>
+                                </div>
+                                <div className="pf-modal-field" style={{marginBottom: '1.5rem'}}>
+                                    <label>Chi tiết công việc / Thành tựu</label>
+                                    <textarea rows="4" value={projectForm.responsibilities} onChange={e => setProjectForm({...projectForm, responsibilities: e.target.value})} placeholder="- Phát triển tính năng giỏ hàng&#10;- Tối ưu hóa hiệu suất hiển thị..."></textarea>
                                 </div>
                                 <div className="pf-modal-grid">
                                     <div className="pf-modal-field">
