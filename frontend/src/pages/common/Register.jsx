@@ -227,7 +227,7 @@ const Register = () => {
                                 onChange={(e) => setAgreed(e.target.checked)}
                             />
                             <label htmlFor="terms" className="terms-text">
-                                Tôi đồng ý với <Link to="/terms">Điều khoản dịch vụ</Link> và <Link to="/privacy">Chính sách bảo mật</Link> của ScholarBridge.
+                                Tôi đồng ý với <Link to="/terms">Điều khoản dịch vụ</Link> và <Link to="/privacy">Chính sách bảo mật</Link> của Fivecore.
                             </label>
                         </div>
 

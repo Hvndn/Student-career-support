@@ -89,10 +89,10 @@ public class PasswordResetService {
      * @return true nếu thành công
      */
     @Transactional
-    public boolean approveRequest(Integer requestId) {
+    public String approveRequest(Integer requestId) {
         Optional<PasswordResetRequest> requestOpt = requestRepository.findById(requestId);
         if (requestOpt.isEmpty() || requestOpt.get().getStatus() == PasswordResetRequest.RequestStatus.COMPLETED) {
-            return false;
+            return null;
         }
 
         PasswordResetRequest request = requestOpt.get();
@@ -106,19 +106,24 @@ public class PasswordResetService {
         userRepository.save(user);
 
         // 3. Gửi email thông báo mật khẩu mới
-        String emailContent = "Chào " + user.getFullName() + ",\n\n" +
-                "Yêu cầu cấp lại mật khẩu của bạn đã được Quản trị viên phê duyệt.\n" +
-                "Mật khẩu mới của bạn là: " + newPassword + "\n\n" +
-                "Vui lòng đăng nhập và đổi mật khẩu ngay để đảm bảo an toàn.\n" +
-                "Trân trọng,\nFivecore Team";
+        try {
+            String emailContent = "Chào " + user.getFullName() + ",\n\n" +
+                    "Yêu cầu cấp lại mật khẩu của bạn đã được Quản trị viên phê duyệt.\n" +
+                    "Mật khẩu mới của bạn là: " + newPassword + "\n\n" +
+                    "Vui lòng đăng nhập và đổi mật khẩu ngay để đảm bảo an toàn.\n" +
+                    "Trân trọng,\nFivecore Team";
 
-        emailService.sendSimpleEmail(user.getEmail(), "[Student Career] Mật khẩu mới của bạn", emailContent);
+            emailService.sendSimpleEmail(user.getEmail(), "[Student Career] Mật khẩu mới của bạn", emailContent);
+        } catch (Exception e) {
+            log.error("Lỗi gửi email nhưng vẫn tiếp tục cập nhật mật khẩu: {}", e.getMessage());
+            // Không throw exception để không rollback transaction, giúp Admin vẫn thấy mật khẩu mới
+        }
 
         // 4. Cập nhật trạng thái yêu cầu
         request.setStatus(PasswordResetRequest.RequestStatus.COMPLETED);
         requestRepository.save(request);
 
         log.info("Admin đã cấp lại mật khẩu thành công cho người dùng: {}", user.getEmail());
-        return true;
+        return newPassword;
     }
 }

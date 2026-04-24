@@ -81,7 +81,7 @@ public class StudentProfileRestControllerTest {
         mockMvc.perform(get("/api/student/profile")
                         .principal(new UsernamePasswordAuthenticationToken("student@test.com", null, AuthorityUtils.createAuthorityList("ROLE_STUDENT"))))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.status").value("success"))
                 .andExpect(jsonPath("$.data.email").value("student@test.com"));
     }
 
@@ -94,7 +94,7 @@ public class StudentProfileRestControllerTest {
         mockMvc.perform(get("/api/student/profile")
                         .principal(new UsernamePasswordAuthenticationToken("noapp@test.com", null, AuthorityUtils.createAuthorityList("ROLE_STUDENT"))))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.success").value(false));
+                .andExpect(jsonPath("$.status").value("error"));
     }
 
     @Test
@@ -138,6 +138,6 @@ public class StudentProfileRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new StudentProfileRequest())))
                 .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.success").value(false));
+                .andExpect(jsonPath("$.status").value("error"));
     }
 }

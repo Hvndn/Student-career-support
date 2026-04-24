@@ -26,7 +26,9 @@ const ManageCompany = () => {
         description: '',
         companySize: '',
         foundingYear: '',
-        active: true
+        active: true,
+        email: '',
+        password: ''
     });
 
     useEffect(() => {
@@ -83,6 +85,25 @@ const ManageCompany = () => {
         }
     };
 
+    const openAddModal = () => {
+        setModalMode('add');
+        setFormData({
+            fullName: '',
+            name: '',
+            industry: '',
+            website: '',
+            phone: '',
+            address: '',
+            description: '',
+            companySize: '',
+            foundingYear: '',
+            active: true,
+            email: '',
+            password: ''
+        });
+        setIsModalOpen(true);
+    };
+
     const closeModal = () => {
         setIsModalOpen(false);
         setSelectedCompany(null);
@@ -105,6 +126,18 @@ const ManageCompany = () => {
             fetchCompanies();
         } catch (error) {
             alert('Lỗi cập nhật: ' + (error.response?.data?.message || error.message));
+        }
+    };
+
+    const handleAddSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await adminApi.createCompany(formData);
+            alert('Thêm doanh nghiệp thành công');
+            closeModal();
+            fetchCompanies();
+        } catch (error) {
+            alert('Lỗi khi thêm doanh nghiệp: ' + (error.response?.data?.message || error.message));
         }
     };
 
@@ -145,7 +178,7 @@ const ManageCompany = () => {
 
                     <div className="management-controls">
                         <div className="controls-left">
-                            <button className="btn-add-main">
+                            <button className="btn-add-main" onClick={openAddModal}>
                                 <span className="material-symbols-outlined">add_business</span>
                                 Thêm doanh nghiệp
                             </button>
@@ -266,6 +299,7 @@ const ManageCompany = () => {
                             <h3>
                                 {modalMode === 'view' ? 'Hồ sơ doanh nghiệp' : 
                                  modalMode === 'edit' ? 'Cập nhật doanh nghiệp' : 
+                                 modalMode === 'add' ? 'Thêm doanh nghiệp mới' :
                                  'Xác nhận xóa doanh nghiệp'}
                             </h3>
                             <button className="close-btn" onClick={closeModal}>
@@ -324,11 +358,23 @@ const ManageCompany = () => {
                                         </div>
                                     </div>
                                 </div>
-                            ) : modalMode === 'edit' ? (
-                                <form id="edit-company-form" onSubmit={handleUpdateSubmit}>
+                            ) : (modalMode === 'edit' || modalMode === 'add') ? (
+                                <form id="company-form" onSubmit={modalMode === 'edit' ? handleUpdateSubmit : handleAddSubmit}>
                                     <div className="form-grid">
+                                        {modalMode === 'add' && (
+                                            <>
+                                                <div className="form-group">
+                                                    <label>Email đăng nhập <span style={{color: 'red'}}>*</span></label>
+                                                    <input type="email" className="form-control" name="email" value={formData.email} onChange={handleFormChange} required />
+                                                </div>
+                                                <div className="form-group">
+                                                    <label>Mật khẩu <span style={{color: 'red'}}>*</span></label>
+                                                    <input type="password" className="form-control" name="password" value={formData.password} onChange={handleFormChange} required />
+                                                </div>
+                                            </>
+                                        )}
                                         <div className="form-group">
-                                            <label>Tên hiển thị (Tài khoản)</label>
+                                            <label>Tên hiển thị (Tài khoản) <span style={{color: 'red'}}>*</span></label>
                                             <input type="text" className="form-control" name="fullName" value={formData.fullName} onChange={handleFormChange} required />
                                         </div>
                                         <div className="form-group">
@@ -351,6 +397,10 @@ const ManageCompany = () => {
                                             <label>Quy mô</label>
                                             <input type="text" className="form-control" name="companySize" value={formData.companySize} onChange={handleFormChange} placeholder="Vd: 50-100 nhân viên" />
                                         </div>
+                                        <div className="form-group">
+                                            <label>Năm thành lập</label>
+                                            <input type="number" className="form-control" name="foundingYear" value={formData.foundingYear} onChange={handleFormChange} />
+                                        </div>
                                         <div className="form-group full-width">
                                             <label>Địa chỉ</label>
                                             <input type="text" className="form-control" name="address" value={formData.address} onChange={handleFormChange} />
@@ -359,10 +409,12 @@ const ManageCompany = () => {
                                             <label>Mô tả ngắn</label>
                                             <textarea className="form-control" name="description" value={formData.description} onChange={handleFormChange} rows="3"></textarea>
                                         </div>
-                                        <div className="form-group" style={{ flexDirection: 'row', alignItems: 'center', gap: '10px' }}>
-                                            <input type="checkbox" id="active-status-comp" name="active" checked={formData.active} onChange={handleFormChange} />
-                                            <label htmlFor="active-status-comp">Tài khoản đang hoạt động</label>
-                                        </div>
+                                        {modalMode === 'edit' && (
+                                            <div className="form-group" style={{ flexDirection: 'row', alignItems: 'center', gap: '10px' }}>
+                                                <input type="checkbox" id="active-status-comp" name="active" checked={formData.active} onChange={handleFormChange} />
+                                                <label htmlFor="active-status-comp">Tài khoản đang hoạt động</label>
+                                            </div>
+                                        )}
                                     </div>
                                 </form>
                             ) : (
@@ -381,7 +433,10 @@ const ManageCompany = () => {
                         <div className="modal-footer">
                             <button className="btn-secondary" onClick={closeModal}>Hủy</button>
                             {modalMode === 'edit' && (
-                                <button type="submit" form="edit-company-form" className="btn-primary">Lưu thay đổi</button>
+                                <button type="submit" form="company-form" className="btn-primary">Lưu thay đổi</button>
+                            )}
+                            {modalMode === 'add' && (
+                                <button type="submit" form="company-form" className="btn-primary">Thêm mới</button>
                             )}
                             {modalMode === 'delete' && (
                                 <button onClick={confirmDelete} className="btn-primary" style={{ backgroundColor: '#ef4444' }}>Xác nhận xóa</button>

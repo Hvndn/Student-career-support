@@ -73,6 +73,10 @@ export const studentApi = {
     updateAvatar: (formData, onUploadProgress) => api.post('/student/profile/avatar', formData, {
         onUploadProgress,
     }),
+    // Skills
+    getSkills: () => api.get('/admin/skills'),
+    addSkill: (skillId, level) => api.post(`/student/profile/skills`, { skillId, level }),
+    deleteSkill: (id) => api.delete(`/student/profile/skills/${id}`),
     // Education
     addEducation: (data) => api.post('/student/profile/educations', data),
     updateEducation: (id, data) => api.put(`/student/profile/educations/${id}`, data),
@@ -154,6 +158,7 @@ export const adminApi = {
     getStats: () => api.get('/admin/statistics'),
     getUsers: (params) => api.get('/admin/users', { params }),
     createAdmin: (data) => api.post('/admin/create-admin', data),
+    createCompany: (data) => api.post('/admin/create-company', data),
     getUserDetail: (id) => api.get(`/admin/users/${id}`),
     toggleUserStatus: (userId) => api.post(`/admin/users/${userId}/toggle-status`),
     updateUserRole: (userId, role) => api.patch(`/admin/users/${userId}/role?role=${role}`),
@@ -172,8 +177,8 @@ export const adminApi = {
     approvePasswordRequest: (id) => api.post(`/admin/password-requests/${id}/approve`),
     getInterviews: () => api.get('/admin/interviews'),
     createStudent: (data) => api.post('/admin/create-student', data),
-    updateStudent: (id, data) => api.put(`/users/${id}/student`, data),
-    updateCompany: (id, data) => api.put(`/users/${id}/company`, data),
+    updateStudent: (id, data) => api.put(`/admin/users/${id}/student`, data),
+    updateCompany: (id, data) => api.put(`/admin/users/${id}/company`, data),
     // CV Templates
     getCvTemplates: () => api.get('/admin/cv-templates'),
     createCvTemplate: (formData) => api.post('/admin/cv-templates', formData),

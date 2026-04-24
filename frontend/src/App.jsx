@@ -152,7 +152,7 @@ const AppContent = () => {
 
       <Routes>
         {/* Công khai */}
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<StudentLayoutWrapper><Home /></StudentLayoutWrapper>} />
         <Route path="/login" element={<Login />} />
         <Route path="/login-success" element={<LoginSuccess />} />
         <Route path="/register" element={<Register />} />

@@ -1,48 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { authApi } from '../../api';
 import toast from 'react-hot-toast';
 import '../Auth.css';
 
 const ResetPassword = () => {
+    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const token = searchParams.get('token');
+
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [searchParams] = useSearchParams();
-    const token = searchParams.get('token');
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        if (!token) {
-            toast.error("Token không hợp lệ hoặc đã hết hạn!");
-            navigate('/login');
-        }
-    }, [token, navigate]);
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        if (password.length < 6) {
-            toast.error("Mật khẩu phải từ 6 ký tự trở lên");
-            return;
-        }
-
         if (password !== confirmPassword) {
-            toast.error("Mật khẩu xác nhận không khớp");
+            toast.error("Mật khẩu xác nhận không khớp!");
             return;
         }
 
         setLoading(true);
         try {
-            await authApi.resetPassword(token, password);
-            setIsSuccess(true);
-            toast.success("Mật khẩu đã được thay đổi!");
-            setTimeout(() => {
-                navigate('/login');
-            }, 3000);
+            await authApi.resetPassword({ token, newPassword: password });
+            toast.success("Mật khẩu đã được thay đổi thành công!");
+            setTimeout(() => navigate('/login'), 2000);
         } catch (error) {
-            console.error(error);
+            toast.error(error.response?.data?.message || "Đã xảy ra lỗi khi đặt lại mật khẩu.");
         } finally {
             setLoading(false);
         }
@@ -53,56 +38,64 @@ const ResetPassword = () => {
             <div className="auth-left">
                 <div className="brand-title">Fivecore</div>
                 <div className="brand-desc">
-                    Hỗ trợ sinh viên kiến tạo sự nghiệp tương lai với công nghệ kết nối thông minh.
+                    Thiết lập mật khẩu mới để tiếp tục hành trình sự nghiệp của bạn.
                 </div>
-                <div className="copyright">© 2024 Fivecore. All rights reserved.</div>
+                <div className="copyright">
+                    &copy; 2025 Fivecore. Nền tảng kết nối tri thức và sự nghiệp.
+                </div>
             </div>
 
             <div className="auth-right">
                 <div className="auth-form-box">
                     <div className="form-header">
-                        <h2>{isSuccess ? "Thành công!" : "Thiết lập mật khẩu"}</h2>
-                        <p>
-                            {isSuccess 
-                                ? "Mật khẩu của bạn đã được cập nhật. Bạn sẽ được chuyển hướng về trang đăng nhập trong giây lát." 
-                                : "Nhập mật khẩu mới cho tài khoản của bạn."}
-                        </p>
+                        <h2>Đặt lại mật khẩu</h2>
+                        <p>Vui lòng nhập mật khẩu mới cho tài khoản của bạn.</p>
                     </div>
 
-                    {!isSuccess ? (
-                        <form onSubmit={handleSubmit}>
-                            <div className="form-group">
-                                <label>Mật khẩu mới</label>
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-group">
+                            <label>MẬT KHẨU MỚI</label>
+                            <div className="password-input-wrapper">
                                 <input
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     className="form-input"
                                     placeholder="••••••••"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
                                 />
+                                <button 
+                                    type="button" 
+                                    className="password-toggle-btn"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>
+                                        {showPassword ? 'visibility_off' : 'visibility'}
+                                    </span>
+                                </button>
                             </div>
-                            <div className="form-group">
-                                <label>Xác nhận mật khẩu mới</label>
-                                <input
-                                    type="password"
-                                    className="form-input"
-                                    placeholder="••••••••"
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                    required
-                                />
-                            </div>
+                        </div>
 
-                            <button type="submit" className="btn-submit" disabled={loading}>
-                                {loading ? "Đang cập nhật..." : "Cập nhật mật khẩu"}
-                            </button>
-                        </form>
-                    ) : (
-                        <Link to="/login" className="btn-submit">
-                            Quay lại đăng nhập
-                        </Link>
-                    )}
+                        <div className="form-group" style={{ marginBottom: '2.5rem' }}>
+                            <label>XÁC NHẬN MẬT KHẨU</label>
+                            <input
+                                type="password"
+                                className="form-input"
+                                placeholder="••••••••"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        <button type="submit" className="btn-submit" disabled={loading}>
+                            {loading ? 'Đang cập nhật...' : 'Cập nhật mật khẩu'}
+                        </button>
+
+                        <div className="auth-prompt">
+                            Quay lại <Link to="/login" className="auth-link">Đăng nhập</Link>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

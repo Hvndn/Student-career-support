@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ProfessionalTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick }) => {
+const ProfessionalTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick, themeColor = '#334e5a' }) => {
   const cv = cvData;
   if (!cv) return <div style={{ padding: '20px', textAlign: 'center' }}>Đang tải dữ liệu CV...</div>;
 
@@ -29,8 +29,8 @@ const ProfessionalTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick 
   // Header Helper: Pill-shaped title with a horizontal line
   const PillHeader = ({ title, light = false }) => (
     <div className={`pro-pill-header ${light ? 'light' : ''}`}>
-      <div className="pro-pill-box">{title}</div>
-      <div className="pro-pill-line"></div>
+      <div className="pro-pill-box" style={{ background: light ? 'rgba(255,255,255,0.2)' : themeColor }}>{title}</div>
+      <div className="pro-pill-line" style={{ background: light ? 'rgba(255,255,255,0.3)' : themeColor }}></div>
     </div>
   );
 
@@ -49,7 +49,7 @@ const ProfessionalTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick 
         /* Sidebar Styling */
         .pro-sidebar {
           width: 30%;
-          background: #334e5a;
+          background: ${themeColor};
           color: white;
           padding: 40px 20px;
           display: flex;
@@ -70,7 +70,7 @@ const ProfessionalTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick 
           width: 170px;
           height: 170px;
           border-radius: 50%;
-          border: 12px solid #5b8591;
+          border: 8px solid rgba(255,255,255,0.2);
           overflow: hidden;
           background: #e2e8f0;
         }
@@ -86,12 +86,14 @@ const ProfessionalTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick 
           font-weight: 800;
           margin-bottom: 5px;
           letter-spacing: 0.5px;
+          color: white !important;
         }
 
         .pro-major {
           font-size: 1.1rem;
           opacity: 0.9;
           font-weight: 500;
+          color: rgba(255,255,255,0.9) !important;
         }
 
         .pro-sidebar-section {
@@ -102,7 +104,7 @@ const ProfessionalTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick 
         }
 
         .pro-sidebar-section:hover {
-          background: rgba(255,255,255,0.05);
+          background: rgba(255,255,255,0.1);
         }
 
         .pro-contact-list {
@@ -116,11 +118,12 @@ const ProfessionalTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick 
           display: flex;
           align-items: center;
           gap: 12px;
+          color: rgba(255,255,255,0.95) !important;
         }
 
         .pro-contact-item span {
           font-size: 20px;
-          color: #9ab4bb;
+          color: rgba(255,255,255,0.7);
         }
 
         .pro-skill-list, .pro-interest-list, .pro-sidebar-edu-list {
@@ -129,6 +132,7 @@ const ProfessionalTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick 
           gap: 10px;
           font-size: 0.9rem;
           padding-left: 5px;
+          color: rgba(255,255,255,0.95) !important;
         }
 
         /* Pill Header Styling */
@@ -140,13 +144,9 @@ const ProfessionalTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick 
         }
 
         .pro-pill-box {
-          background: #5b8591;
           color: white;
           padding: 6px 20px;
-          border-top-right-radius: 20px;
-          border-bottom-right-radius: 20px;
-          border-top-left-radius: 20px;
-          border-bottom-left-radius: 20px;
+          border-radius: 20px;
           font-weight: 700;
           font-size: 1.05rem;
           white-space: nowrap;
@@ -155,17 +155,7 @@ const ProfessionalTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick 
         .pro-pill-line {
           flex: 1;
           height: 1px;
-          background: #5b8591;
           opacity: 0.5;
-        }
-
-        .pro-sidebar .pro-pill-box {
-          background: #5b8591;
-          font-size: 0.95rem;
-        }
-
-        .pro-sidebar .pro-pill-line {
-          background: rgba(255,255,255,0.3);
         }
 
         /* Main Content Styling */
@@ -224,6 +214,7 @@ const ProfessionalTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick 
         .pro-item-time {
           font-size: 0.95rem;
           font-weight: 700;
+          color: ${themeColor};
         }
 
         .pro-item-org {
@@ -253,8 +244,15 @@ const ProfessionalTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick 
           content: "•";
           position: absolute;
           left: 0;
-          color: #5b8591;
+          color: ${themeColor};
           font-weight: bold;
+        }
+
+        .pro-sidebar .pro-bullet-item {
+            color: rgba(255,255,255,0.95) !important;
+        }
+        .pro-sidebar .pro-bullet-item::before {
+            color: white;
         }
 
         .pro-award-item {
@@ -266,6 +264,7 @@ const ProfessionalTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick 
         .pro-award-year {
           font-weight: 700;
           width: 80px;
+          color: ${themeColor};
         }
 
         .pro-award-name {
@@ -312,7 +311,7 @@ const ProfessionalTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick 
           </div>
         </div>
 
-        {/* Education in Sidebar as requested in screenshot */}
+        {/* Education in Sidebar */}
         <div className="pro-sidebar-section" onClick={() => onSectionClick('educations')}>
           <PillHeader title="Học vấn" light />
           <div className="pro-sidebar-edu-list">
@@ -327,10 +326,9 @@ const ProfessionalTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick 
               </div>
             )) : (
               <div style={{ marginBottom: '15px' }}>
-                <div style={{ fontWeight: '700' }}>Cử nhân Public Relation & Advertising</div>
+                <div style={{ fontWeight: '700' }}>Cử nhân PR & Advertising</div>
                 <div style={{ fontSize: '0.85rem', opacity: 0.8 }}>2015 - 2019</div>
-                <div style={{ fontWeight: '600' }}>Đại học Kinh tế TOPCV</div>
-                <div style={{ fontSize: '0.8rem', opacity: 0.7 }}>Đạt giải Nhì cuộc thi "Chiến lược truyền thông sáng tạo" do khoa PR tổ chức</div>
+                <div style={{ fontWeight: '600' }}>Đại học Đông Á</div>
               </div>
             )}
           </div>
@@ -343,7 +341,7 @@ const ProfessionalTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick 
             {(skills || []).length > 0 ? (skills || []).map((s, idx) => (
               <div key={idx} className="pro-bullet-item">{s.name}</div>
             )) : (
-              ['Kỹ năng giao tiếp', 'Kỹ năng làm việc nhóm', 'Kỹ năng giải quyết vấn đề', 'Kỹ năng Quản lý thời gian', 'Kỹ năng tin học', 'Kỹ năng ngoại ngữ'].map((s, idx) => (
+              ['Giao tiếp', 'Làm việc nhóm', 'Tiếng Anh'].map((s, idx) => (
                 <div key={idx} className="pro-bullet-item">{s}</div>
               ))
             )}
@@ -357,7 +355,7 @@ const ProfessionalTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick 
             {(interests || []).length > 0 ? (interests || []).map((it, idx) => (
               <div key={idx} className="pro-bullet-item">{it}</div>
             )) : (
-              <div className="pro-bullet-item">Đọc sách về Phát triển bản thân</div>
+              <div className="pro-bullet-item">Đọc sách phát triển bản thân</div>
             )}
           </div>
         </div>
@@ -393,116 +391,16 @@ const ProfessionalTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick 
                 )}
               </div>
             )) : (
-              <>
-                <div className="pro-item">
-                  <div className="pro-item-header">
-                    <div className="pro-item-title">Content Leader</div>
-                    <div className="pro-item-time">2023 - Nay</div>
-                  </div>
-                  <div className="pro-item-org">Công ty Công nghệ NTD Tech</div>
-                  <ul className="pro-item-desc">
-                    <li className="pro-bullet-item">Xây dựng chiến lược nội dung cho website, social media và các kênh digital...</li>
-                    <li className="pro-bullet-item">Quản lý đội ngũ nhóm 10 thành viên, phối hợp chặt chẽ với team Media...</li>
-                    <li className="pro-bullet-item">Dẫn dắt các dự án nội dung trọng điểm như: Ra mắt sản phẩm mới...</li>
-                    <li className="pro-bullet-item">Phân tích dữ liệu từ GA4, Meta Insights và Looker Studio...</li>
-                  </ul>
+              <div className="pro-item">
+                <div className="pro-item-header">
+                  <div className="pro-item-title">Content Leader</div>
+                  <div className="pro-item-time">2019 - Nay</div>
                 </div>
-                <div className="pro-item">
-                  <div className="pro-item-header">
-                    <div className="pro-item-title">Content Executive → Content Team Lead</div>
-                    <div className="pro-item-time">2019 - 2023</div>
-                  </div>
-                  <div className="pro-item-org">Agency NDS – Marketing & Advertising</div>
-                  <ul className="pro-item-desc">
-                    <li className="pro-bullet-item">Triển khai và quản lý hơn 100 chiến dịch nội dung cho các thương hiệu FMCG...</li>
-                    <li className="pro-bullet-item">Làm việc trực tiếp với khách hàng để đề xuất chiến lược nội dung...</li>
-                  </ul>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Awards */}
-        <div className="pro-main-section" onClick={() => onSectionClick('awards')}>
-          <PillHeader title="Danh hiệu và giải thưởng" />
-          <div className="pro-item-list">
-            {(awards || []).length > 0 ? (awards || []).map((a, idx) => (
-              <div key={idx} className="pro-award-item">
-                <span className="pro-award-year">{a.time}</span>
-                <span className="pro-award-name">
-                  <div style={{ fontWeight: '700' }}>{a.name}</div>
-                  {a.description && <div style={{ fontSize: '0.85rem', color: '#5b8591', whiteSpace: 'pre-wrap' }}>{a.description}</div>}
-                </span>
-              </div>
-            )) : (
-              <div className="pro-award-item">
-                <span className="pro-award-year">2022</span>
-                <span className="pro-award-name">Top 5 Chiến dịch Content hiệu quả nhất năm</span>
+                <div className="pro-item-org">Công ty Fivecore</div>
               </div>
             )}
           </div>
         </div>
-
-        {/* Certifications */}
-        <div className="pro-main-section" onClick={() => onSectionClick('certifications')}>
-          <PillHeader title="Chứng chỉ" />
-          <div className="pro-item-list">
-            {(certifications || []).length > 0 ? (certifications || []).map((c, idx) => (
-              <div key={idx} className="pro-award-item">
-                <span className="pro-award-year">{c.issueDate}</span>
-                <span className="pro-award-name">
-                  <div style={{ fontWeight: '700' }}>{c.name}</div>
-                  <div style={{ fontSize: '0.85rem', color: '#5b8591' }}>{c.issuer} {c.expirationDate ? ` (Hết hạn: ${c.expirationDate})` : ''}</div>
-                </span>
-              </div>
-            )) : (
-              <div className="pro-award-item">
-                <span className="pro-award-year">2022</span>
-                <span className="pro-award-name">Google Digital Garage: Fundamentals of Digital Marketing</span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Projects */}
-        {(projects || []).length > 0 && (
-          <div className="pro-main-section" onClick={() => onSectionClick('projects')}>
-            <PillHeader title="Dự án đã tham gia" />
-            <div className="pro-item-list">
-              {projects.map((p, idx) => (
-                <div key={idx} className="pro-item">
-                  <div className="pro-item-header">
-                    <div className="pro-item-title">{p.name}</div>
-                    <div className="pro-item-time">{p.year}</div>
-                  </div>
-                  <div className="pro-item-org">{p.role} {p.techStack ? ` | ${p.techStack}` : ''}</div>
-                  {p.description && <div className="pro-bio-text" style={{ fontSize: '0.9rem', marginTop: '5px' }}>{p.description}</div>}
-                  {p.demoUrl && <div style={{ fontSize: '0.85rem', color: '#5b8591' }}>Link: {p.demoUrl}</div>}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Activities */}
-        {(activities || []).length > 0 && (
-          <div className="pro-main-section" onClick={() => onSectionClick('activities')}>
-            <PillHeader title="Hoạt động" />
-            <div className="pro-item-list">
-              {activities.map((act, idx) => (
-                <div key={idx} className="pro-item">
-                  <div className="pro-item-header">
-                    <div className="pro-item-title">{act.name}</div>
-                    <div className="pro-item-time">{act.startDate} - {act.endDate || 'Hiện tại'}</div>
-                  </div>
-                  <div className="pro-item-org">{act.organization} — {act.role}</div>
-                  {act.description && <div className="pro-bio-text" style={{ fontSize: '0.9rem', marginTop: '5px' }}>{act.description}</div>}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

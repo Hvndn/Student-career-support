@@ -137,7 +137,7 @@ const SkillManagement = () => {
                         <div>
                             <h1 style={{ fontSize: '2rem', fontWeight: 800, color: '#0f172a', margin: 0, letterSpacing: '-0.025em' }}>Quản lý Ngành nghề</h1>
                             <p style={{ color: '#64748b', fontSize: '1rem', marginTop: '0.5rem' }}>
-                                Hệ thống phân loại và cập nhật xu hướng nghề nghiệp ScholarBridge.
+                                Hệ thống phân loại và cập nhật xu hướng nghề nghiệp Fivecore.
                             </p>
                         </div>
                         <button 

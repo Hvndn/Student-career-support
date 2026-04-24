@@ -3,6 +3,7 @@ package com.fivecore.jobportal.controller.api.admin;
 import com.fivecore.jobportal.dto.ApiResponse;
 import com.fivecore.jobportal.dto.admin.AdminCompanyUpdateRequest;
 import com.fivecore.jobportal.dto.admin.AdminCreateRequest;
+import com.fivecore.jobportal.dto.admin.AdminCompanyCreateRequest;
 import com.fivecore.jobportal.dto.admin.AdminStudentCreateRequest;
 import com.fivecore.jobportal.dto.admin.AdminInterviewResponse;
 import com.fivecore.jobportal.dto.admin.AdminStudentUpdateRequest;
@@ -85,6 +86,19 @@ public class AdminRestController {
             return ResponseEntity.ok(ApiResponse.success("Thêm tài khoản quản trị mới thành công", null));
         } catch (Exception e) {
             return ResponseEntity.status(400).body(ApiResponse.error("Lỗi khi thêm tài khoản: " + e.getMessage(), "CREATE_ERROR"));
+        }
+    }
+
+    /**
+     * API Tạo mới doanh nghiệp dành cho Admin.
+     */
+    @PostMapping("/create-company")
+    public ResponseEntity<ApiResponse<Object>> createCompanyFromAdmin(@RequestBody AdminCompanyCreateRequest request) {
+        try {
+            adminService.createCompanyFromAdmin(request);
+            return ResponseEntity.ok(ApiResponse.success("Thêm doanh nghiệp mới thành công", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(ApiResponse.error("Lỗi khi thêm doanh nghiệp: " + e.getMessage(), "CREATE_ERROR"));
         }
     }
 
@@ -240,11 +254,15 @@ public class AdminRestController {
      */
     @PostMapping("/password-requests/{id}/approve")
     public ResponseEntity<ApiResponse<Object>> approvePasswordRequest(@PathVariable Integer id) {
-        boolean success = passwordResetService.approveRequest(id);
-        if (success) {
-            return ResponseEntity.ok(ApiResponse.success("Đã cấp lại mật khẩu và gửi email thành công", null));
-        } else {
-            return ResponseEntity.badRequest().body(ApiResponse.error("Phê duyệt thất bại hoặc yêu cầu không tồn tại", "APPROVE_FAILED"));
+        try {
+            String newPassword = passwordResetService.approveRequest(id);
+            if (newPassword != null) {
+                return ResponseEntity.ok(ApiResponse.success("Đã cấp lại mật khẩu thành công. Mật khẩu mới là: " + newPassword, null));
+            } else {
+                return ResponseEntity.badRequest().body(ApiResponse.error("Yêu cầu không tồn tại hoặc đã được xử lý", "APPROVE_FAILED"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi hệ thống: " + e.getMessage(), "SYSTEM_ERROR"));
         }
     }
 

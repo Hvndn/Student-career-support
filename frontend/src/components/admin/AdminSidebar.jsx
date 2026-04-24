@@ -6,10 +6,10 @@ const AdminSidebar = () => {
     const location = useLocation();
     
     const [openMenus, setOpenMenus] = useState({
-        doanhNghiep: true,
+        doanhNghiep: false,
         thuThach: false,
         coVan: false,
-        website: true
+        website: false
     });
 
     const toggleMenu = (menu) => {
@@ -107,6 +107,11 @@ const AdminSidebar = () => {
                 <Link to="/admin/chat" className={`admin-nav-item ${location.pathname === '/admin/chat' ? 'active' : ''}`}>
                     <span className="material-symbols-outlined">chat_bubble_outline</span>
                     <span className="item-label">Trò chuyện</span>
+                </Link>
+
+                <Link to="/admin/password-requests" className={`admin-nav-item ${location.pathname === '/admin/password-requests' ? 'active' : ''}`}>
+                    <span className="material-symbols-outlined">lock_reset</span>
+                    <span className="item-label">Cấp lại mật khẩu</span>
                 </Link>
 
                 <div className={`nav-group ${openMenus.website ? 'open' : ''}`}>

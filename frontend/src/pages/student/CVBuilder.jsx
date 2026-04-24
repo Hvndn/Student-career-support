@@ -29,6 +29,7 @@ const SECTIONS = [
   { key: 'certifications', label: 'Chứng chỉ'            },
   { key: 'awards',         label: 'Danh hiệu và giải thưởng' },
   { key: 'skills',         label: 'Kỹ năng'              },
+  { key: 'interests',      label: 'Sở thích'             },
 ];
 
 const COLORS = [
@@ -235,6 +236,26 @@ const Editor = ({ section, cv, setCV, onAvatarClick }) => {
         ))}
       </div>
       <button className="cvb-add" onClick={()=>addItem('skills',{name:'',level:'Intermediate'})}><IcoPlus/> Thêm thẻ kỹ năng</button>
+    </div>
+  );
+
+  if (section==='interests') return (
+    <div className="cvb-ep">
+      <div className="cvb-ep-title">SỞ THÍCH</div>
+      <p className="cvb-ep-hint">Thêm các sở thích cá nhân để nhà tuyển dụng hiểu hơn về con người bạn.</p>
+      <div className="cvb-skills-list">
+        {(cv.interests||[]).map((it,i)=>(
+          <div key={i} className="cvb-sk-row">
+            <input className="cvb-fi" value={it||''} onChange={e=>{
+              const a=[...(cv.interests||[])]; a[i]=e.target.value; s('interests',a);
+            }} placeholder="Đọc sách, Chạy bộ..."/>
+            <button className="cvb-del" onClick={()=>{
+              const a=[...(cv.interests||[])]; a.splice(i,1); s('interests',a);
+            }}><IcoTrash/></button>
+          </div>
+        ))}
+      </div>
+      <button className="cvb-add" onClick={()=>s('interests', [...(cv.interests||[]), ''])}><IcoPlus/> Thêm sở thích</button>
     </div>
   );
 

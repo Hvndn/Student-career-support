@@ -38,7 +38,7 @@ const Login = () => {
             const res = await authApi.login({ email, password });
             if (res.data.status === 'success') {
                 const userData = res.data.data;
-                localStorage.setItem('token', userData.token); // Lưu JWT Token
+                localStorage.setItem('token', userData.token); // QUAN TRỌNG: Lưu JWT Token
                 localStorage.setItem('user', JSON.stringify(userData));
 
                 // Redirect based on role
@@ -50,15 +50,15 @@ const Login = () => {
                 } else if (userRole === 'COMPANY' || userRole === 'ROLE_COMPANY') {
                     navigate('/company/dashboard', loginSuccessMsg);
                 } else if (userRole === 'STUDENT' || userRole === 'ROLE_STUDENT') {
-                    navigate('/', loginSuccessMsg);
+                    navigate('/student/dashboard', loginSuccessMsg);
                 } else {
-                    navigate('/', loginSuccessMsg);
+                    navigate('/student/dashboard', loginSuccessMsg);
                 }
             } else {
-                setError(res.data.message);
+                setError(res.data.message || 'Đăng nhập thất bại');
             }
         } catch (err) {
-            setError('Sai email hoặc mật khẩu!');
+            setError(err.response?.data?.message || 'Sai email hoặc mật khẩu!');
         }
     };
 
@@ -66,7 +66,7 @@ const Login = () => {
         <div className="auth-container">
             {/* Left Panel */}
             <div className="auth-left">
-                <h1 className="brand-title">Five core</h1>
+                <h1 className="brand-title">Fivecore</h1>
                 <p className="brand-desc">
                     Nơi tri thức gặp gỡ cơ hội. Khởi đầu hành trình nghề nghiệp của bạn cùng mạng lưới chuyên gia hàng đầu.
                 </p>
@@ -98,7 +98,7 @@ const Login = () => {
                 </div>
 
                 <div className="copyright">
-                    &copy; 2024 ScholarBridge. Nền tảng kết nối tri thức và sự nghiệp.
+                    &copy; 2025 Fivecore. Nền tảng kết nối tri thức và sự nghiệp.
                 </div>
             </div>
 
