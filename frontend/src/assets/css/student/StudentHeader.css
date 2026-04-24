@@ -104,18 +104,18 @@
   top: calc(100% + 12px);
   right: 0;
   width: 250px;
-  background: white;
+  background: #0d3b94;
   border-radius: 16px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-  border: 1px solid #f1f5f9;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
   z-index: 1001;
 }
 
 .dau-dropdown-header-premium {
   padding: 20px;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-bottom: 1px solid #f1f5f9;
+  background: rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .dau-dropdown-user-info {
@@ -125,14 +125,14 @@
 
 .dau-dropdown-name {
   font-weight: 700;
-  color: #1e293b;
+  color: #ffffff;
   font-size: 15px;
   margin-bottom: 2px;
 }
 
 .dau-dropdown-role {
   font-size: 12px;
-  color: #0f409f;
+  color: #a5c2f5;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -147,7 +147,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px 14px;
-  color: #475569;
+  color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
   font-size: 14px;
   border-radius: 10px;
@@ -160,17 +160,17 @@
 }
 
 .dau-dropdown-item-premium:hover {
-  background: #f8fafc;
-  color: #0f409f;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 .dau-dropdown-item-premium svg {
-  color: #94a3b8;
+  color: rgba(255, 255, 255, 0.5);
   transition: color 0.2s;
 }
 
 .dau-dropdown-item-premium:hover svg {
-  color: #0f409f;
+  color: #ffffff;
 }
 
 .dau-dropdown-divider-premium {
