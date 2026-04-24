@@ -255,7 +255,7 @@ const Profile = () => {
                             <span className="pf-stat-lbl">DỰ ÁN</span>
                         </div>
                         <div className="pf-stat-box">
-                            <span className="pf-stat-val">{profile.resumeUrl ? 1 : 0}</span>
+                            <span className="pf-stat-val">{ (profile.cvData || profile.resumeUrl) ? 1 : 0 }</span>
                             <span className="pf-stat-lbl">BẢN CV</span>
                         </div>
                     </div>
@@ -368,29 +368,46 @@ const Profile = () => {
                                     Hồ sơ năng lực (CV)
                                 </h3>
                             </div>
-                            <div className="pf-cv-list">
+                            <div className="pf-cv-list" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                {/* Bản trực tuyến của hệ thống */}
+                                <div className="pf-cv-item" style={{ border: '1px dashed var(--dau-primary)', background: 'rgba(var(--dau-primary-rgb), 0.03)' }}>
+                                    <div className="pf-cv-left">
+                                        <div className="pf-cv-icon" style={{ color: 'var(--dau-primary)' }}><span className="material-symbols-outlined">auto_stories</span></div>
+                                        <div className="pf-cv-info">
+                                            <span className="pf-cv-title">Bản trực tuyến (Hệ thống)</span>
+                                            <span className="pf-cv-meta" style={{fontSize: '0.75rem', opacity: 0.7}}>Dùng mẫu thiết kế của hệ thống</span>
+                                        </div>
+                                    </div>
+                                    <Link to="/student/cv-management" className="pf-cv-btn" title="Chỉnh sửa bản thiết kế">
+                                        <span className="material-symbols-outlined">edit_note</span>
+                                    </Link>
+                                </div>
+
+                                <div style={{ height: '1px', background: '#eee', margin: '2px 0' }}></div>
+
+                                {/* File đính kèm */}
                                 {profile.resumeUrl ? (
                                     <div className="pf-cv-item">
                                         <div className="pf-cv-left">
-                                            <div className="pf-cv-icon"><span className="material-symbols-outlined">picture_as_pdf</span></div>
+                                            <div className="pf-cv-icon" style={{color: '#e74c3c'}}><span className="material-symbols-outlined">picture_as_pdf</span></div>
                                             <div className="pf-cv-info">
-                                                <span className="pf-cv-title">Hồ sơ đính kèm (PDF)</span>
+                                                <span className="pf-cv-title">File hồ sơ đính kèm</span>
                                             </div>
                                         </div>
                                         <div style={{display: 'flex', gap: '0.5rem'}}>
-                                            <a href={getImageUrl(profile.resumeUrl)} target="_blank" rel="noreferrer" className="pf-cv-btn" title="Xem CV">
+                                            <a href={getImageUrl(profile.resumeUrl)} target="_blank" rel="noreferrer" className="pf-cv-btn" title="Xem file">
                                                 <span className="material-symbols-outlined">visibility</span>
                                             </a>
-                                            <label className="pf-cv-btn" style={{cursor: 'pointer', margin: 0}} title="Đổi CV khác">
-                                                <span className="material-symbols-outlined">edit</span>
+                                            <label className="pf-cv-btn" style={{cursor: 'pointer', margin: 0}} title="Đổi file khác">
+                                                <span className="material-symbols-outlined">upload</span>
                                                 <input type="file" accept="application/pdf" hidden onChange={handleResumeUpload} disabled={isUploading} />
                                             </label>
                                         </div>
                                     </div>
                                 ) : (
-                                    <label className="pf-btn-dau" style={{ cursor: 'pointer', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--dau-primary)', margin: 0, padding: '0.875rem' }}>
-                                        <span className="material-symbols-outlined" style={{marginRight: '8px'}}>upload_file</span>
-                                        {isUploading ? 'Đang tải lên...' : 'Đính kèm CV (PDF)'}
+                                    <label className="pf-btn-dau" style={{ cursor: 'pointer', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f9fa', border: '1px solid #ddd', color: '#555', margin: 0, padding: '0.75rem' }}>
+                                        <span className="material-symbols-outlined" style={{marginRight: '8px'}}>attach_file</span>
+                                        {isUploading ? 'Đang tải lên...' : 'Đính kèm file PDF'}
                                         <input type="file" accept="application/pdf" hidden onChange={handleResumeUpload} disabled={isUploading} />
                                     </label>
                                 )}
