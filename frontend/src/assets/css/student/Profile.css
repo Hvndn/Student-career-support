@@ -619,3 +619,96 @@
   color: var(--dau-primary);
   font-weight: 700;
 }
+/* --- Projects List --- */
+.pf-projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pf-project-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.25rem;
+  background: #f8fafc;
+  border-radius: var(--dau-radius-md);
+  border: 1px solid var(--dau-border);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.pf-project-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-color: var(--dau-primary-light);
+}
+
+.pf-project-info h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--dau-text-main);
+  margin-bottom: 0.5rem;
+}
+
+.pf-project-info p {
+  font-size: 0.875rem;
+  color: var(--dau-text-muted);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.pf-project-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.pf-project-links a {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--dau-primary);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.pf-project-links a::before {
+  content: 'link';
+  font-family: 'Material Symbols Outlined';
+  font-size: 14px;
+}
+
+.pf-project-links a:hover {
+  text-decoration: underline;
+}
+
+.pf-btn-icon-delete {
+  background: none;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.pf-btn-icon-delete:hover {
+  background: #fee2e2;
+}
+
+.pf-modal-field textarea {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--dau-border);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.pf-modal-field textarea:focus {
+  border-color: var(--dau-primary);
+}
