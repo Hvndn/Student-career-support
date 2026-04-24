@@ -146,9 +146,11 @@ const TemplateSelectorModal = ({ isOpen, onClose }) => {
         <div className="dau-modal-header">
           <div className="modal-title-group">
             <h3>Chọn mẫu thiết kế CV</h3>
-            <p>Chọn một mẫu để bắt đầu tạo hồ sơ chuyên nghiệp của bạn</p>
+            <p>Khám phá bộ sưu tập mẫu CV chuyên nghiệp, chuẩn ATS giúp bạn nổi bật hơn trong mắt nhà tuyển dụng.</p>
           </div>
-          <button onClick={onClose} className="dau-close-btn">&times;</button>
+          <button onClick={onClose} className="dau-close-btn" title="Đóng">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
         </div>
 
         <div className="dau-modal-filters">
@@ -194,7 +196,13 @@ const TemplateSelectorModal = ({ isOpen, onClose }) => {
             ))
           ) : (
             <div className="no-templates">
-              <p>Không tìm thấy mẫu nào. <button style={{color:'#8b1538',background:'none',border:'none',cursor:'pointer',fontWeight:700}} onClick={() => handleSelect('MODERN_1')}>Dùng mẫu mặc định</button></p>
+              <div style={{textAlign:'center', padding: '40px 0'}}>
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" strokeWidth="1.5" style={{marginBottom:'16px'}}><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                <p style={{color:'#64748b', fontSize:'1.1rem'}}>Không tìm thấy mẫu nào trong danh mục này.</p>
+                <button className="dau-btn-select-template" style={{marginTop:'24px', maxWidth:'200px'}} onClick={() => handleSelect('MODERN_1')}>
+                  Dùng mẫu mặc định
+                </button>
+              </div>
             </div>
           )}
         </div>

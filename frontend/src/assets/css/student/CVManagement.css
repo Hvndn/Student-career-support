@@ -2,8 +2,11 @@
 
 .dau-cv-management-wrapper {
     min-height: 100vh;
-    background-color: #f8fafc;
-    padding: 30px;
+    background-color: #f1f5f9;
+    padding: 40px;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(15, 64, 159, 0.05) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(139, 21, 56, 0.05) 0px, transparent 50%);
 }
 
 .dau-cv-body {
@@ -15,8 +18,14 @@
 .dau-cv-header-row {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 40px;
+    align-items: center;
+    margin-bottom: 48px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    padding: 24px 32px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .dau-cv-title-box h1 {
@@ -40,23 +49,23 @@
 }
 
 .dau-btn-create-cv {
-    background: #0f409f;
+    background: linear-gradient(135deg, #0f409f 0%, #1e4ed8 100%);
     color: white;
     border: none;
-    padding: 12px 24px;
-    border-radius: 10px;
-    font-weight: 600;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 10px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(139, 21, 56, 0.2);
+    gap: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 15px -3px rgba(15, 64, 159, 0.3);
 }
 
 .dau-btn-create-cv:hover {
-    background: #a11c43;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(139, 21, 56, 0.3);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 20px 25px -5px rgba(15, 64, 159, 0.4);
+    filter: brightness(1.1);
 }
 
 .dau-plus-icon {
@@ -108,26 +117,29 @@
 /* CV Card */
 .dau-cv-card {
     background: white;
-    border-radius: 16px;
+    border-radius: 20px;
     overflow: hidden;
-    border: 1px solid #f1f5f9;
-    transition: all 0.3s ease;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     position: relative;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 .dau-cv-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(-12px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    border-color: rgba(15, 64, 159, 0.2);
 }
 
 .dau-cv-preview {
-    height: 350px;
-    background: #f1f5f9;
+    height: 380px;
+    background: #f8fafc;
     position: relative;
     overflow: hidden;
     display: flex;
     justify-content: center;
-    padding-top: 20px;
+    padding: 24px;
+    border-bottom: 1px solid #f1f5f9;
 }
 
 /* Specific templates colors for mock preview */
@@ -305,15 +317,17 @@
 }
 
 .dau-template-modal {
-    background: white;
-    width: 90%;
-    max-width: 1000px;
-    max-height: 90vh;
-    border-radius: 24px;
-    padding: 30px;
+    background: rgba(255, 255, 255, 0.95);
+    width: 95%;
+    max-width: 1240px;
+    max-height: 85vh;
+    border-radius: 28px;
+    padding: 32px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .dau-modal-header {
@@ -334,74 +348,138 @@
 }
 
 .dau-close-btn {
-    font-size: 2rem;
-    background: none;
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f1f5f9;
     border: none;
     cursor: pointer;
-    color: #94a3b8;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.dau-close-btn:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+    transform: rotate(90deg);
 }
 
 .dau-modal-filters {
     display: flex;
-    gap: 10px;
-    padding: 10px 0 20px;
-    border-bottom: 1px solid #f1f5f9;
-    margin-bottom: 20px;
-    overflow-x: auto;
+    flex-wrap: wrap;
+    gap: 6px;
+    background: #f8fafc;
+    padding: 8px;
+    border-radius: 16px;
+    border: 1px solid #eef2f6;
+    margin-bottom: 24px;
+    width: 100%;
 }
 
 .filter-chip {
-    padding: 8px 18px;
-    border-radius: 30px;
-    border: 1px solid #e2e8f0;
-    background: white;
-    color: #64748b;
-    font-size: 0.85rem;
-    font-weight: 500;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #718096;
+    background: transparent;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.filter-chip:hover:not(.active) {
+    background: #fff;
+    color: #0f409f;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .filter-chip.active {
     background: #0f409f;
     color: white;
-    border-color: #0f409f;
+    box-shadow: 0 4px 15px rgba(15, 64, 159, 0.3);
+    transform: translateY(-1px);
+}
+
+.category-tab:hover:not(.active) {
+    background: #fff;
+    color: #0652dd;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .dau-template-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px;
+    gap: 32px;
     overflow-y: auto;
-    padding: 10px 5px;
+    padding: 12px 8px 32px;
+    flex: 1;
+}
+
+.premium-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+.premium-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+.premium-scroll::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+}
+.premium-scroll::-webkit-scrollbar-thumb:hover {
+    background: #cbd5e1;
 }
 
 .dau-template-option {
-    border-radius: 12px;
-    border: 1px solid #f1f5f9;
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid rgba(226, 232, 240, 0.8);
     overflow: hidden;
-    transition: all 0.3s;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 540px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .dau-template-option:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    border-color: #0f409f;
 }
 
 .dau-template-preview {
-    height: 280px;
-    background: #f8fafc;
+    height: 400px;
+    width: 100%;
+    background: #ffffff;
     position: relative;
     display: flex;
     justify-content: center;
-    padding-top: 20px;
+    align-items: flex-start;
+    overflow: hidden;
+    border-bottom: 1px solid #f1f5f9;
+    flex-shrink: 0;
 }
 
 .dau-template-preview img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    background: #ffffff;
+    transition: transform 0.6s ease;
+}
+
+.dau-template-option:hover .dau-template-preview img {
+    transform: scale(1.05);
 }
 
 .template-hover-overlay {
@@ -433,7 +511,12 @@
 }
 
 .dau-template-info {
-    padding: 15px;
+    padding: 20px;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex-grow: 1;
 }
 
 .template-meta {

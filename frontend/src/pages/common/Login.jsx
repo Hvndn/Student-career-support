@@ -66,7 +66,9 @@ const Login = () => {
         <div className="auth-container">
             {/* Left Panel */}
             <div className="auth-left">
-                <h1 className="brand-title">Fivecore</h1>
+                <Link to="/" style={{ textDecoration: 'none' }}>
+                    <h1 className="brand-title">Five core</h1>
+                </Link>
                 <p className="brand-desc">
                     Nơi tri thức gặp gỡ cơ hội. Khởi đầu hành trình nghề nghiệp của bạn cùng mạng lưới chuyên gia hàng đầu.
                 </p>

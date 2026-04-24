@@ -338,31 +338,69 @@ const CVBuilder = () => {
         const dbCv = d.cvData ? JSON.parse(d.cvData) : null;
         const cached = localStorage.getItem(`dau_cv_${id}`);
         
-        if (dbCv) {
-          setCV(dbCv);
-          if (dbCv._name) setCvName(dbCv._name);
-        } else if (cached) {
-          const parsed = JSON.parse(cached);
-          setCV(parsed);
-          if (parsed._name) setCvName(parsed._name);
+        let initialCV = null;
+
+        if (cached) {
+          // 1. Ưu tiên dữ liệu từ localStorage nếu đang edit chính CV đó
+          initialCV = JSON.parse(cached);
+        } else if (dbCv && dbCv.id === id) {
+          // 2. Nếu không có cache, dùng dữ liệu từ DB nếu ID trùng khớp
+          initialCV = dbCv;
         } else {
-          setCV({
-            fullName: d.fullName||'', major: d.major||'', email: d.email||'',
-            phone: d.phone||'', address: d.address||'', bio: d.bio||'',
-            avatar: d.avatarUrl||'', avatarUrl: d.avatarUrl||'',
-            dob:'', gender:'', linkedin: d.linkedinUrl||'', github: d.githubUrl||'', website:'',
-            educations: d.educations||[],
-            certifications: d.certifications||[],
-            awards: [],
-            skills:[], experiences:[], projects:[], activities:[],
-            layoutKey: layoutParam||'MODERN_1',
-            themeColor:'#0f409f',
-          });
+          // 3. Tạo mới hoàn toàn dựa trên Profile và mẫu dữ liệu (Sample Data)
+          initialCV = {
+            fullName: d.fullName || 'NGUYỄN VĂN A',
+            major: d.major || 'Frontend Developer',
+            email: d.email || 'nguyenvana@gmail.com',
+            phone: d.phone || '0901 234 567',
+            address: d.address || 'Hải Châu, Đà Nẵng',
+            bio: d.bio || 'Tôi là một lập trình viên nhiệt huyết với đam mê tạo ra những trải nghiệm người dùng tuyệt vời. Mong muốn tìm kiếm cơ hội học hỏi và đóng góp cho các dự án sáng tạo.',
+            avatar: d.avatarUrl || '',
+            avatarUrl: d.avatarUrl || '',
+            dob: '01/01/2000',
+            gender: 'Nam',
+            linkedin: 'linkedin.com/in/nguyenvana',
+            github: 'github.com/nguyenvana',
+            website: 'myportfolio.com',
+            educations: d.educations?.length ? d.educations : [
+              { id: 1, schoolName: 'ĐẠI HỌC ĐÔNG Á', major: 'Công nghệ thông tin', degree: 'Cử nhân', startDate: '10/2018', endDate: '06/2022', description: 'Tốt nghiệp loại Giỏi, GPA 3.6/4.0' }
+            ],
+            experiences: d.experiences?.length ? d.experiences : [
+              { id: 1, companyName: 'CÔNG TY CÔNG NGHỆ ABC', jobTitle: 'Thực tập sinh Frontend', startDate: '03/2022', endDate: 'Hiện tại', description: '- Hỗ trợ phát triển giao diện người dùng bằng ReactJS.\n- Phối hợp với team thiết kế để tối ưu hóa trải nghiệm người dùng.' }
+            ],
+            skills: d.skills?.length ? d.skills : [
+              { id: 1, name: 'HTML/CSS/JS', level: 'Advanced' },
+              { id: 2, name: 'ReactJS', level: 'Intermediate' },
+              { id: 3, name: 'Thiết kế UI/UX', level: 'Intermediate' }
+            ],
+            certifications: d.certifications?.length ? d.certifications : [
+              { id: 1, name: 'TOEIC - 800', issuer: 'IIG Việt Nam', issueDate: '2023', expirationDate: '2025', certificateUrl: '' }
+            ],
+            awards: [
+              { id: 1, name: 'Sinh viên tiêu biểu năm 2021', time: '2021', description: 'Đạt thành tích xuất sắc trong học tập và rèn luyện.' }
+            ],
+            projects: [],
+            activities: [
+              { id: 1, name: 'Tình nguyện viên Mùa hè xanh', organization: 'Hội sinh viên', role: 'Thành viên', startDate: '07/2021', endDate: '08/2021', description: 'Tham gia hỗ trợ cộng đồng tại các vùng sâu vùng xa.' }
+            ],
+            interests: ['Đọc sách', 'Bơi lội', 'Chụp ảnh'],
+            layoutKey: layoutParam || 'MODERN_1',
+            themeColor: '#0f409f',
+          };
         }
+
+        // Nếu có layoutParam từ URL (vừa chọn mẫu), thì ghi đè layoutKey
+        if (layoutParam) {
+          initialCV.layoutKey = layoutParam;
+        }
+
+        setCV(initialCV);
+        if (initialCV._name) setCvName(initialCV._name);
+        else setCvName('CV MỚI CỦA TÔI');
       })
       .catch(console.error)
       .finally(()=>setLoading(false));
-  }, [id]);
+  }, [id, layoutParam]);
 
   const handleSave = async () => {
     if (!cv) return;
