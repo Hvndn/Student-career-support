@@ -29,6 +29,9 @@ const StudentHeader = () => {
     }, []);
 
     useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
         const fetchProfile = async () => {
             try {
                 const res = await studentApi.getProfile();
@@ -42,7 +45,7 @@ const StudentHeader = () => {
 
     // Breadcrumb Label Mapping
     const getBreadcrumbLabel = (pathname) => {
-        if (pathname.includes('/student/dashboard')) return 'Tổng quan';
+        if (pathname === '/' || pathname.includes('/student/dashboard')) return 'Tổng quan';
         if (pathname.includes('/student/profile')) return 'Hồ sơ cá nhân';
         if (pathname.includes('/student/cv-management')) return 'Quản lý CV';
         if (pathname.includes('/student/cv-builder')) return 'Tạo CV / Resume';
@@ -50,12 +53,10 @@ const StudentHeader = () => {
         if (pathname.includes('/student/applications')) return 'Đơn ứng tuyển';
         if (pathname.includes('/student/saved')) return 'Việc làm yêu thích';
         if (pathname.includes('/student/internships')) return 'Thực tập tốt nghiệp';
-        if (pathname.includes('/student/challenges')) return 'Thử thách dự án';
-        if (pathname.includes('/student/mentors')) return 'Cố vấn';
         if (pathname.includes('/student/chat')) return 'Trò chuyện';
         if (pathname.includes('/jobs')) return 'Tìm việc làm';
         if (pathname.includes('/companies')) return 'Danh sách công ty';
-        return 'DAU Connect';
+        return 'Trang chủ';
     };
 
     const displayName = profile?.fullName || 'Sinh viên';
