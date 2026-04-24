@@ -181,4 +181,22 @@ public class ProfileService {
             }
         } catch (Exception e) { throw new RuntimeException("Lỗi xử lý JSON: " + e.getMessage()); }
     }
+
+    /** Quản lý Dự án (Projects table). */
+    @Transactional
+    public void addProject(Integer studentId, com.fivecore.jobportal.entity.Project project) {
+        Student student = studentRepository.findById(studentId).orElseThrow();
+        project.setStudent(student);
+        projectRepository.save(project);
+    }
+
+    @Transactional
+    public void deleteProject(Integer id, Integer studentId) {
+        com.fivecore.jobportal.entity.Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy dự án"));
+        if (!project.getStudent().getId().equals(studentId)) {
+            throw new RuntimeException("Bạn không có quyền xóa mục này");
+        }
+        projectRepository.delete(project);
+    }
 }
