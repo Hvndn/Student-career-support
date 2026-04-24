@@ -7,8 +7,9 @@ const NavbarSelector = () => {
     const location = useLocation();
     const user = JSON.parse(localStorage.getItem('user'));
 
-    // Bỏ qua Navbar hoàn toàn cho sinh viên (vừa xóa Navbar vừa dùng Sidebar mới)
-    if (user?.role === 'ROLE_STUDENT') {
+    // Bỏ qua Navbar cho sinh viên khi đang ở trong các trang có Sidebar (Dashboard, Jobs, Companies, ...)
+    // Chỉ hiển thị Navbar ở trang chủ công khai (/)
+    if (user?.role === 'ROLE_STUDENT' && location.pathname !== '/') {
         return null;
     }
 
