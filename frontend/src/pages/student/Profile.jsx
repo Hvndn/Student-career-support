@@ -246,7 +246,7 @@ const Profile = () => {
                         </div>
                         <div className="pf-stat-box">
                             <span className="pf-stat-val">{profile.cvData ? 1 : 0}</span>
-                            <span className="pf-stat-lbl">CVS</span>
+                            <span className="pf-stat-lbl">BẢN CV</span>
                         </div>
                     </div>
                 </div>
