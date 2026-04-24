@@ -119,7 +119,7 @@ const TemplateSelectorModal = ({ isOpen, onClose }) => {
   const [categoryFilter, setCategoryFilter] = useState('Tất cả');
   const navigate = useNavigate();
 
-  const categories = ['Tất cả', 'Nghệ thuật', 'Hiện đại', 'Chuyên nghiệp', 'Đơn giản', 'Ấn tượng', 'Harvard', 'ATS'];
+  const categories = ['Tất cả', 'Công nghệ thông tin', 'Sáng tạo', 'Kinh doanh', 'Marketing', 'Hiện đại', 'Chuyên nghiệp', 'Đơn giản', 'Ấn tượng', 'Harvard', 'ATS'];
 
   useEffect(() => {
     if (!isOpen) return;

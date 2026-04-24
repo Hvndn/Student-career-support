@@ -3,15 +3,22 @@ import ProfessionalTemplate from './ProfessionalTemplate';
 import ClassicTemplate from './ClassicTemplate';
 import CreativeTemplate from './CreativeTemplate';
 import ModernTemplate from './ModernTemplate';
+import PremiumITTemplate from './PremiumITTemplate';
+import MinimalTemplate from './MinimalTemplate';
+import Modern3Template from './Modern3Template';
+import ChronoTemplate from './ChronoTemplate';
+import TechStackTemplate from './TechStackTemplate';
+import ElegantTemplate from './ElegantTemplate';
+import ColoredTopTemplate from './ColoredTopTemplate';
 import React from 'react';
 
 /**
  * Fallback Component khi không tìm thấy mẫu hoặc hệ thống đang được làm mới.
  */
 const FallbackTemplate = () => (
-  <div style={{ 
-    padding: '40px', 
-    textAlign: 'center', 
+  <div style={{
+    padding: '40px',
+    textAlign: 'center',
     color: '#64748b',
     background: '#f8fafc',
     borderRadius: '12px',
@@ -28,10 +35,17 @@ const FallbackTemplate = () => (
  */
 export const TEMPLATE_REGISTRY = {
   'ARTISTIC_1': ArtisticTemplate,
-  'PRO_1':      ProfessionalTemplate,
-  'CLASSIC_1':  ClassicTemplate,
+  'PRO_1': ProfessionalTemplate,
+  'CLASSIC_1': ClassicTemplate,
   'CREATIVE_1': CreativeTemplate,
-  'MODERN_1':   ModernTemplate,
+  'MODERN_1': ModernTemplate,
+  'PREMIUM_IT': PremiumITTemplate,
+  'MINIMAL_1': MinimalTemplate,
+  'MODERN_3': Modern3Template,
+  'CHRONO_1': ChronoTemplate,
+  'TECH_STACK_1': TechStackTemplate,
+  'ELEGANT_1': ElegantTemplate,
+  'COLORED_TOP_1': ColoredTopTemplate,
 };
 
 /**

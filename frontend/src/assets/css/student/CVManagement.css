@@ -219,13 +219,11 @@
 
 /* Real Thumbnail Image */
 .dau-cv-thumb-img {
-    width: 210mm;
-    height: 297mm;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     background: white;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    transform: scale(0.35); /* Scale down naturally to fit the preview container */
-    transform-origin: top center;
 }
 
 /* Mock Thumb Content (Fallback) */

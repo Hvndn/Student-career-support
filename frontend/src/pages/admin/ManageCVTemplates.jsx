@@ -66,7 +66,7 @@ const ManageCVTemplates = () => {
             { name: 'Nhân viên xuất sắc năm 2021', time: '2021', description: 'Ghi nhận những đóng góp vượt bậc cho sự phát triển của dự án A.' }
         ]
     };
-    
+
     // Modal states
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMode, setModalMode] = useState('add');
@@ -82,8 +82,27 @@ const ManageCVTemplates = () => {
     const [thumbnailFile, setThumbnailFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
 
-    const categories = ['Tất cả', 'Hiện đại', 'Chuyên nghiệp', 'Đơn giản', 'Ấn tượng', 'Harvard', 'ATS'];
-    const layoutKeys = ['ARTISTIC_1', 'PRO_1', 'CLASSIC_1', 'CREATIVE_1', 'MODERN_1']; // Danh sách các mẫu thiết kế khả dụng
+    const categories = ['Tất cả', 'Công nghệ thông tin', 'Sáng tạo', 'Kinh doanh', 'Marketing', 'Hiện đại', 'Chuyên nghiệp', 'Đơn giản', 'Ấn tượng', 'Harvard', 'ATS'];
+    const layoutKeys = [
+        'ARTISTIC_1', 'PRO_1', 'CLASSIC_1', 'CREATIVE_1', 'MODERN_1', 
+        'PREMIUM_IT', 'MINIMAL_1', 'MODERN_3', 'CHRONO_1',
+        'TECH_STACK_1', 'ELEGANT_1', 'COLORED_TOP_1'
+    ];
+
+    const LAYOUT_LABELS = {
+        'ARTISTIC_1': 'Nghệ thuật Sáng tạo',
+        'PRO_1': 'Chuyên nghiệp Cơ bản',
+        'CLASSIC_1': 'Cổ điển Truyền thống',
+        'CREATIVE_1': 'Sáng tạo Năng động',
+        'MODERN_1': 'Hiện đại Tối giản',
+        'PREMIUM_IT': 'IT Cao cấp (Sidebar)',
+        'MINIMAL_1': 'Tối giản Tinh tế',
+        'MODERN_3': 'Hiện đại (Header Đậm)',
+        'CHRONO_1': 'Dòng thời gian (Timeline)',
+        'TECH_STACK_1': 'Kỹ thuật Chuyên sâu (Dark)',
+        'ELEGANT_1': 'Thanh lịch & Sang trọng',
+        'COLORED_TOP_1': 'Header Màu nổi bật'
+    };
 
     useEffect(() => {
         fetchTemplates();
@@ -156,7 +175,7 @@ const ManageCVTemplates = () => {
 
     const handleAutoRenderThumbnail = async () => {
         if (isRendering) return;
-        
+
         const Template = getTemplateComponent(formData.layoutKey);
         if (!Template) {
             toast.error('Không tìm thấy Component cho Layout này');
@@ -169,13 +188,13 @@ const ManageCVTemplates = () => {
         try {
             // Đợi một chút để React render component ra vùng ẩn hoàn toàn
             await new Promise(resolve => setTimeout(resolve, 800));
-            
+
             if (!snapshotRef.current) {
                 throw new Error('Không tìm thấy vùng snapshot');
             }
 
             toast.loading('Đang chụp ảnh preview...', { id: loadingToast });
-            
+
             const canvas = await html2canvas(snapshotRef.current, {
                 useCORS: true,
                 scale: 1.5, // Tăng chất lượng một chút nhưng không quá nặng
@@ -184,10 +203,10 @@ const ManageCVTemplates = () => {
             });
 
             toast.loading('Đang nén ảnh...', { id: loadingToast });
-            
+
             const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.85));
             const file = new File([blob], 'captured-thumb.jpg', { type: 'image/jpeg' });
-            
+
             // Xóa preview cũ nếu có
             if (previewUrl && previewUrl.startsWith('blob:')) {
                 URL.revokeObjectURL(previewUrl);
@@ -196,7 +215,7 @@ const ManageCVTemplates = () => {
             const preview = URL.createObjectURL(blob);
             setPreviewUrl(preview);
             setThumbnailFile(file);
-            
+
             toast.success('Đã tự động render ảnh bìa thành công!', { id: loadingToast });
         } catch (error) {
             console.error('Render error:', error);
@@ -258,7 +277,7 @@ const ManageCVTemplates = () => {
         }
     };
 
-    const filteredTemplates = templates.filter(t => 
+    const filteredTemplates = templates.filter(t =>
         categoryFilter === 'Tất cả' || t.category === categoryFilter
     );
 
@@ -278,8 +297,8 @@ const ManageCVTemplates = () => {
                     <div className="cv-management-top">
                         <div className="category-tabs">
                             {categories.map(cat => (
-                                <button 
-                                    key={cat} 
+                                <button
+                                    key={cat}
                                     className={`category-tab ${categoryFilter === cat ? 'active' : ''}`}
                                     onClick={() => setCategoryFilter(cat)}
                                 >
@@ -301,11 +320,11 @@ const ManageCVTemplates = () => {
                                 <div key={t.id} className="cv-template-card">
                                     <div className="template-preview">
                                         {(t.thumbnailUrl || t.thumbnail) ? (
-                                            <img 
-                                                src={t.thumbnailUrl?.startsWith('/uploads') 
-                                                    ? `http://localhost:8080${t.thumbnailUrl}` 
-                                                    : t.thumbnailUrl} 
-                                                alt={t.name} 
+                                            <img
+                                                src={t.thumbnailUrl?.startsWith('/uploads')
+                                                    ? `http://localhost:8080${t.thumbnailUrl}`
+                                                    : t.thumbnailUrl}
+                                                alt={t.name}
                                             />
                                         ) : (
                                             <div className="preview-placeholder">
@@ -333,13 +352,13 @@ const ManageCVTemplates = () => {
                                         <div className="template-footer">
                                             <code>{t.layoutKey}</code>
                                             <label className="switch">
-                                                <input 
-                                                    type="checkbox" 
-                                                    checked={t.active ?? t.isActive} 
+                                                <input
+                                                    type="checkbox"
+                                                    checked={t.active ?? t.isActive}
                                                     onChange={(e) => {
                                                         e.stopPropagation();
                                                         handleToggleStatus(t.id);
-                                                    }} 
+                                                    }}
                                                 />
                                                 <span className="slider round"></span>
                                             </label>
@@ -365,23 +384,23 @@ const ManageCVTemplates = () => {
                                 <div className="form-row">
                                     <div className="form-group col-full">
                                         <label>Tên mẫu CV</label>
-                                        <input 
+                                        <input
                                             name="name"
                                             className="form-control"
                                             value={formData.name}
                                             onChange={handleFormChange}
                                             placeholder="Vd: CV Sinh viên IT Hiện đại"
-                                            required 
+                                            required
                                         />
                                     </div>
                                 </div>
                                 <div className="form-row">
                                     <div className="form-group">
                                         <label>Danh mục</label>
-                                        <select 
-                                            name="category" 
+                                        <select
+                                            name="category"
                                             className="form-control"
-                                            value={formData.category} 
+                                            value={formData.category}
                                             onChange={handleFormChange}
                                         >
                                             {categories.slice(1).map(c => <option key={c} value={c}>{c}</option>)}
@@ -389,15 +408,17 @@ const ManageCVTemplates = () => {
                                     </div>
                                     <div className="form-group">
                                         <label>Layout Key (Component Gốc)</label>
-                                        <select 
-                                            name="layoutKey" 
+                                        <select
+                                            name="layoutKey"
                                             className="form-control"
-                                            value={formData.layoutKey} 
-                                            onChange={handleFormChange} 
+                                            value={formData.layoutKey}
+                                            onChange={(e) => setFormData({ ...formData, layoutKey: e.target.value })}
                                             required
                                         >
                                             <option value="">Chọn một layout...</option>
-                                            {layoutKeys.map(k => <option key={k} value={k}>{k}</option>)}
+                                            {layoutKeys.map(key => (
+                                                <option key={key} value={key}>{LAYOUT_LABELS[key] || key}</option>
+                                            ))}
                                         </select>
                                     </div>
                                 </div>
@@ -405,10 +426,10 @@ const ManageCVTemplates = () => {
                                     <label>Ảnh Xem Trước (Thumbnail)</label>
                                     <div className="thumbnail-upload-wrapper">
                                         <div className="thumbnail-upload-box" onClick={() => fileInputRef.current?.click()}>
-                                            <input 
-                                                type="file" 
+                                            <input
+                                                type="file"
                                                 ref={fileInputRef}
-                                                accept="image/*" 
+                                                accept="image/*"
                                                 onChange={(e) => setThumbnailFile(e.target.files[0])}
                                                 id="thumb-upload"
                                                 hidden
@@ -428,9 +449,9 @@ const ManageCVTemplates = () => {
                                                 </div>
                                             )}
                                         </div>
-                                        
-                                        <button 
-                                            type="button" 
+
+                                        <button
+                                            type="button"
                                             className="btn-auto-render"
                                             onClick={handleAutoRenderThumbnail}
                                             disabled={isRendering || !formData.layoutKey}
@@ -444,8 +465,8 @@ const ManageCVTemplates = () => {
                                 </div>
                                 <div className="form-group featured-toggle">
                                     <label className="checkbox-container">
-                                        <input 
-                                            type="checkbox" 
+                                        <input
+                                            type="checkbox"
                                             name="isFeatured"
                                             checked={formData.isFeatured}
                                             onChange={handleFormChange}
@@ -456,7 +477,7 @@ const ManageCVTemplates = () => {
                                 </div>
                                 <div className="form-group">
                                     <label>Mô tả (Ghi chú)</label>
-                                    <textarea 
+                                    <textarea
                                         name="description"
                                         className="form-control"
                                         value={formData.description}

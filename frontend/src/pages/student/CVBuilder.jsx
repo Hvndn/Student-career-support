@@ -504,7 +504,7 @@ const CVBuilder = () => {
             <IcoSave/>
             {saved ? 'Đã lưu ✓' : 'Lưu'}
           </button>
-          <button className="cvb-hbtn cvb-hbtn-red" onClick={()=>{handleSave();navigate(-1);}}>
+          <button className="cvb-hbtn cvb-hbtn-red" onClick={async ()=>{ await handleSave(); navigate(-1); }}>
             <IcoDl/> Lưu &amp; Thoát
           </button>
         </div>
