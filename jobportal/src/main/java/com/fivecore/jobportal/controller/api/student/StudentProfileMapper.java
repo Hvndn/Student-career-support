@@ -53,6 +53,11 @@ public class StudentProfileMapper {
                 .description(p.getDescription())
                 .repositoryUrl(p.getRepositoryUrl())
                 .demoUrl(p.getDemoUrl())
+                .role(p.getRole())
+                .technologies(p.getTechnologies())
+                .responsibilities(p.getResponsibilities())
+                .startDate(p.getStartDate())
+                .endDate(p.getEndDate())
                 .build()).collect(Collectors.toList());
     }
 

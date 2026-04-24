@@ -83,6 +83,11 @@ public class StudentProfileResponse {
         private String description;
         private String repositoryUrl;
         private String demoUrl;
+        private String role;
+        private String technologies;
+        private String responsibilities;
+        private LocalDate startDate;
+        private LocalDate endDate;
     }
 
     @Data
