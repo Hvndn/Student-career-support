@@ -39,10 +39,22 @@ public class StudentProfileMapper {
                 .educations(mapEducations(student.getEducations()))
                 .certifications(mapCertifications(student.getCertifications()))
                 .experiences(mapExperiencesFromJson(student.getCvData()))
-                .projects(mapProjectsFromJson(student.getCvData()))
+                .projects(student.getProjects() != null && !student.getProjects().isEmpty() 
+                        ? mapRealProjects(student.getProjects()) 
+                        : mapProjectsFromJson(student.getCvData()))
                 .skills(mapSkillsFromJson(student.getCvData()))
                 .cvData(student.getCvData())
                 .build();
+    }
+
+    private List<StudentProfileResponse.ProjectDto> mapRealProjects(List<Project> projs) {
+        return projs.stream().map(p -> StudentProfileResponse.ProjectDto.builder()
+                .id(p.getId())
+                .name(p.getName())
+                .description(p.getDescription())
+                .repositoryUrl(p.getRepositoryUrl())
+                .demoUrl(p.getDemoUrl())
+                .build()).collect(Collectors.toList());
     }
 
     private List<StudentProfileResponse.ProjectDto> mapProjectsFromJson(String json) {

@@ -88,6 +88,10 @@ export const studentApi = {
     addCertification: (data) => api.post('/student/profile/certifications', data),
     updateCertification: (id, data) => api.put(`/student/profile/certifications/${id}`, data),
     deleteCertification: (id) => api.delete(`/student/profile/certifications/${id}`),
+    // Projects
+    addProject: (data) => api.post('/student/profile/projects', data),
+    updateProject: (id, data) => api.put(`/student/profile/projects/${id}`, data),
+    deleteProject: (id) => api.delete(`/student/profile/projects/${id}`),
     // Jobs
     applyJob: (jobId) => api.post(`/student/jobs/${jobId}/apply`),
     applyJobWithData: (jobId, formData) => api.post(`/student/jobs/${jobId}/apply`, formData, {

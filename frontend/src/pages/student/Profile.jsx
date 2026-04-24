@@ -22,6 +22,10 @@ const Profile = () => {
     const [skillLevel, setSkillLevel] = useState('intermediate');
     const [allSkills, setAllSkills] = useState([]);
 
+    const [showProjectModal, setShowProjectModal] = useState(false);
+    const [projectData, setProjectData] = useState({ name: '', description: '', repositoryUrl: '', demoUrl: '' });
+    const [isSaving, setSavingState] = useState(false);
+
     const flash = (msg) => { setMessage(msg); setTimeout(() => setMessage(''), 3000); };
 
     const reload = () => studentApi.getProfile().then(res => {
@@ -63,6 +67,29 @@ const Profile = () => {
             flash('✅ Cập nhật hồ sơ thành công!');
         } catch { flash('❌ Lỗi khi cập nhật.'); }
         setSaving(false);
+    };
+
+    const handleProjectAction = async (e) => {
+        e.preventDefault();
+        setSavingState(true);
+        try {
+            if (projectData.id) await studentApi.updateProject(projectData.id, projectData);
+            else await studentApi.addProject(projectData);
+            setShowProjectModal(false);
+            setProjectData({ name: '', description: '', repositoryUrl: '', demoUrl: '' });
+            await reload();
+            flash('✅ Lưu dự án thành công!');
+        } catch { flash('❌ Lỗi khi lưu dự án.'); }
+        setSavingState(false);
+    };
+
+    const handleDeleteProject = async (id) => {
+        if (!window.confirm('Xóa dự án này?')) return;
+        try {
+            await studentApi.deleteProject(id);
+            await reload();
+            flash('✅ Đã xóa dự án.');
+        } catch { flash('❌ Lỗi khi xóa dự án.'); }
     };
 
     const handleAvatarChange = async (e) => {
@@ -228,7 +255,7 @@ const Profile = () => {
                 </div>
 
                 <div className="pf-content-grid">
-                    <div className="pf-main-col">
+                    <div className="pf-main-col" style={{display: 'flex', flexDirection: 'column', gap: '2rem'}}>
                         <div className="pf-card">
                             <div className="pf-card-header">
                                 <h3 className="pf-card-title">
@@ -239,6 +266,51 @@ const Profile = () => {
                             </div>
                             <div className="pf-bio-box">
                                 <div dangerouslySetInnerHTML={{ __html: profile.bio || 'Chưa có thông tin giới thiệu.' }} />
+                            </div>
+                        </div>
+
+                        <div className="pf-card">
+                            <div className="pf-card-header">
+                                <h3 className="pf-card-title">
+                                    <span className="material-symbols-outlined">folder_special</span>
+                                    Dự án tiêu biểu
+                                </h3>
+                                <button className="pf-btn-text" onClick={() => { setProjectData({ name: '', description: '', repositoryUrl: '', demoUrl: '' }); setShowProjectModal(true); }}>+ Thêm dự án</button>
+                            </div>
+                            <div className="pf-list">
+                                {profile.projects?.length > 0 ? profile.projects.map(proj => (
+                                    <div key={proj.id} className="pf-item">
+                                        <div className="pf-item-info">
+                                            <h4 className="pf-item-title">{proj.name}</h4>
+                                            <p className="pf-item-subtitle">{proj.description}</p>
+                                            <div className="pf-item-links" style={{marginTop: '8px', display: 'flex', gap: '15px'}}>
+                                                {proj.repositoryUrl && (
+                                                    <a href={proj.repositoryUrl} target="_blank" rel="noreferrer" className="pf-link-small" style={{display: 'flex', alignItems: 'center', gap: '4px'}}>
+                                                        <span className="material-symbols-outlined" style={{fontSize: '16px'}}>link</span> GitHub
+                                                    </a>
+                                                )}
+                                                {proj.demoUrl && (
+                                                    <a href={proj.demoUrl} target="_blank" rel="noreferrer" className="pf-link-small" style={{display: 'flex', alignItems: 'center', gap: '4px'}}>
+                                                        <span className="material-symbols-outlined" style={{fontSize: '16px'}}>visibility</span> Demo
+                                                    </a>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="pf-item-actions">
+                                            <button className="pf-btn-icon" onClick={() => { setProjectData(proj); setShowProjectModal(true); }}>
+                                                <span className="material-symbols-outlined">edit</span>
+                                            </button>
+                                            <button className="pf-btn-icon pf-delete" onClick={() => handleDeleteProject(proj.id)}>
+                                                <span className="material-symbols-outlined">delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                )) : (
+                                    <div className="pf-empty-state" style={{padding: '2rem', textAlign: 'center'}}>
+                                        <span className="material-symbols-outlined" style={{fontSize: '48px', color: '#cbd5e1'}}>folder_off</span>
+                                        <p className="pf-text-muted">Bạn chưa thêm dự án nào. Hãy giới thiệu các dự án ấn tượng của bạn!</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -434,6 +506,42 @@ const Profile = () => {
                         </div>
                     </div>
                 )}
+            {showProjectModal && (
+                <div className="pf-modal-overlay">
+                    <div className="pf-modal">
+                        <div className="pf-modal-header">
+                            <h3>{projectData.id ? 'Sửa dự án' : 'Thêm dự án mới'}</h3>
+                            <button className="pf-close-btn" onClick={() => setShowProjectModal(false)}>&times;</button>
+                        </div>
+                        <form onSubmit={handleProjectAction} className="pf-form">
+                            <div className="pf-form-group">
+                                <label>Tên dự án</label>
+                                <input type="text" value={projectData.name} onChange={e => setProjectData({...projectData, name: e.target.value})} required placeholder="Ví dụ: JobPortal Website" />
+                            </div>
+                            <div className="pf-form-group">
+                                <label>Mô tả ngắn</label>
+                                <textarea value={projectData.description} onChange={e => setProjectData({...projectData, description: e.target.value})} placeholder="Mô tả công nghệ sử dụng, vai trò của bạn..." />
+                            </div>
+                            <div className="pf-form-row">
+                                <div className="pf-form-group">
+                                    <label>Link Repository (GitHub)</label>
+                                    <input type="url" value={projectData.repositoryUrl} onChange={e => setProjectData({...projectData, repositoryUrl: e.target.value})} placeholder="https://github.com/..." />
+                                </div>
+                                <div className="pf-form-group">
+                                    <label>Link Demo</label>
+                                    <input type="url" value={projectData.demoUrl} onChange={e => setProjectData({...projectData, demoUrl: e.target.value})} placeholder="https://..." />
+                                </div>
+                            </div>
+                            <div className="pf-modal-actions">
+                                <button type="button" className="pf-btn-secondary" onClick={() => setShowProjectModal(false)}>Hủy</button>
+                                <button type="submit" className="pf-btn-dau" disabled={isSaving}>
+                                    {isSaving ? 'Đang lưu...' : 'Lưu dự án'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

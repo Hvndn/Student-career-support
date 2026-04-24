@@ -218,4 +218,31 @@ public class StudentProfileRestController {
         profileService.deleteSkill(studentId, name);
         return ResponseEntity.ok(ApiResponse.success("Xóa kỹ năng thành công", null));
     }
+
+    /* ---- Projects ---- */
+    @PostMapping("/projects")
+    public ResponseEntity<ApiResponse<Object>> addProject(@RequestBody com.fivecore.jobportal.dto.StudentProfileResponse.ProjectDto request, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        profileService.addProject(studentId, com.fivecore.jobportal.entity.Project.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .repositoryUrl(request.getRepositoryUrl())
+                .demoUrl(request.getDemoUrl())
+                .build());
+        return ResponseEntity.ok(ApiResponse.success("Thêm dự án thành công", null));
+    }
+
+    @PutMapping("/projects/{id}")
+    public ResponseEntity<ApiResponse<Object>> updateProject(@PathVariable Integer id, @RequestBody com.fivecore.jobportal.dto.StudentProfileResponse.ProjectDto request, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        profileService.updateProject(id, studentId, request);
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật dự án thành công", null));
+    }
+
+    @DeleteMapping("/projects/{id}")
+    public ResponseEntity<ApiResponse<Object>> deleteProject(@PathVariable Integer id, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        profileService.deleteProject(id, studentId);
+        return ResponseEntity.ok(ApiResponse.success("Xóa dự án thành công", null));
+    }
 }
