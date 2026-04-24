@@ -20,9 +20,8 @@ const Profile = () => {
     const [showSkillForm, setShowSkillForm] = useState(false);
     const [showProjectForm, setShowProjectForm] = useState(false);
     const [projectForm, setProjectForm] = useState({ name: '', role: '', technologies: '', startDate: '', endDate: '', description: '', responsibilities: '', repositoryUrl: '', demoUrl: '' });
-    const [skillId, setSkillId] = useState('');
+    const [skillName, setSkillName] = useState('');
     const [skillLevel, setSkillLevel] = useState('intermediate');
-    const [allSkills, setAllSkills] = useState([]);
 
     const flash = (msg) => { setMessage(msg); setTimeout(() => setMessage(''), 3000); };
 
@@ -101,22 +100,16 @@ const Profile = () => {
         setIsUploading(false);
     };
 
-    const loadSkills = async () => {
-        try {
-            const res = await studentApi.getSkills();
-            setAllSkills(res.data.data);
-        } catch { flash('❌ Không thể tải kỹ năng.'); }
-    };
 
-    useEffect(() => { if (showSkillForm) loadSkills(); }, [showSkillForm]);
 
     const handleAddSkill = async () => {
-        if (!skillId) return flash('⚠️ Chọn kỹ năng');
+        if (!skillName) return flash('⚠️ Nhập tên kỹ năng');
         setSaving(true);
         try {
-            await studentApi.addSkill(skillId, skillLevel);
+            await studentApi.addSkill(skillName, skillLevel);
             await reload();
             setShowSkillForm(false);
+            setSkillName('');
             flash('✅ Đã thêm kỹ năng!');
         } catch { flash('❌ Lỗi khi thêm.'); }
         setSaving(false);
@@ -489,11 +482,14 @@ const Profile = () => {
                             </div>
                             <div className="pf-modal-body">
                                 <div className="pf-modal-field">
-                                    <label>Chọn kỹ năng</label>
-                                    <select className="pf-input" value={skillId} onChange={e => setSkillId(e.target.value)}>
-                                        <option value="">-- Chọn kỹ năng --</option>
-                                        {allSkills.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                                    </select>
+                                    <label>Tên kỹ năng</label>
+                                    <input 
+                                        type="text" 
+                                        className="pf-input" 
+                                        value={skillName} 
+                                        onChange={e => setSkillName(e.target.value)} 
+                                        placeholder="Nhập tên kỹ năng (vd: AutoCAD, Thuyết trình...)" 
+                                    />
                                 </div>
                             </div>
                             <div className="pf-modal-footer">

@@ -206,9 +206,9 @@ public class StudentProfileRestController {
     @PostMapping("/skills")
     public ResponseEntity<ApiResponse<Object>> addSkill(@RequestBody Map<String, Object> body, Authentication authentication) {
         Integer studentId = getCurrentStudentId(authentication);
-        Integer skillId = (Integer) body.get("skillId");
+        String skillName = (String) body.get("skillName");
         String level = (String) body.get("level");
-        profileService.addSkill(studentId, skillId, level);
+        profileService.addSkill(studentId, skillName, level);
         return ResponseEntity.ok(ApiResponse.success("Thêm kỹ năng thành công", null));
     }
 

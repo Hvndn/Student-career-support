@@ -78,7 +78,7 @@ export const studentApi = {
     }),
     // Skills
     getSkills: () => api.get('/admin/skills'),
-    addSkill: (skillId, level) => api.post(`/student/profile/skills`, { skillId, level }),
+    addSkill: (skillName, level) => api.post(`/student/profile/skills`, { skillName, level }),
     deleteSkill: (id) => api.delete(`/student/profile/skills/${id}`),
     // Projects
     addProject: (data) => api.post('/student/profile/projects', data),

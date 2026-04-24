@@ -124,10 +124,11 @@ public class ProfileService {
 
     /** Quản lý Kỹ năng trong cvData (JSON). */
     @Transactional
-    public void addSkill(Integer studentId, Integer skillId, String level) {
+    public void addSkill(Integer studentId, String skillName, String level) {
         Student student = studentRepository.findById(studentId).orElseThrow();
-        com.fivecore.jobportal.entity.Skill skillEntity = skillRepository.findById(skillId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy kỹ năng hệ thống"));
+        if (skillName == null || skillName.trim().isEmpty()) {
+            throw new RuntimeException("Tên kỹ năng không được để trống");
+        }
         
         String json = student.getCvData();
         try {
@@ -142,7 +143,7 @@ public class ProfileService {
             // Tránh trùng lặp
             boolean exists = false;
             for (com.fasterxml.jackson.databind.JsonNode node : skills) {
-                if (node.path("name").asText().equalsIgnoreCase(skillEntity.getName())) {
+                if (node.path("name").asText().equalsIgnoreCase(skillName.trim())) {
                     exists = true;
                     break;
                 }
@@ -150,8 +151,8 @@ public class ProfileService {
             
             if (!exists) {
                 com.fasterxml.jackson.databind.node.ObjectNode newSkill = mapper.createObjectNode();
-                newSkill.put("name", skillEntity.getName());
-                newSkill.put("level", level);
+                newSkill.put("name", skillName.trim());
+                newSkill.put("level", level != null ? level : "intermediate");
                 skills.add(newSkill);
                 student.setCvData(mapper.writeValueAsString(root));
                 studentRepository.save(student);
