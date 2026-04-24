@@ -221,22 +221,10 @@ public class StudentProfileRestController {
 
     /* ---- Projects ---- */
     @PostMapping("/projects")
-    public ResponseEntity<ApiResponse<Object>> addProject(@RequestBody com.fivecore.jobportal.dto.StudentProfileResponse.ProjectDto request, Authentication authentication) {
+    public ResponseEntity<ApiResponse<Object>> addProject(@RequestBody com.fivecore.jobportal.entity.Project project, Authentication authentication) {
         Integer studentId = getCurrentStudentId(authentication);
-        profileService.addProject(studentId, com.fivecore.jobportal.entity.Project.builder()
-                .name(request.getName())
-                .description(request.getDescription())
-                .repositoryUrl(request.getRepositoryUrl())
-                .demoUrl(request.getDemoUrl())
-                .build());
+        profileService.addProject(studentId, project);
         return ResponseEntity.ok(ApiResponse.success("Thêm dự án thành công", null));
-    }
-
-    @PutMapping("/projects/{id}")
-    public ResponseEntity<ApiResponse<Object>> updateProject(@PathVariable Integer id, @RequestBody com.fivecore.jobportal.dto.StudentProfileResponse.ProjectDto request, Authentication authentication) {
-        Integer studentId = getCurrentStudentId(authentication);
-        profileService.updateProject(id, studentId, request);
-        return ResponseEntity.ok(ApiResponse.success("Cập nhật dự án thành công", null));
     }
 
     @DeleteMapping("/projects/{id}")

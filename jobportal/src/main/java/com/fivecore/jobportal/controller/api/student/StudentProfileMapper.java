@@ -39,41 +39,21 @@ public class StudentProfileMapper {
                 .educations(mapEducations(student.getEducations()))
                 .certifications(mapCertifications(student.getCertifications()))
                 .experiences(mapExperiencesFromJson(student.getCvData()))
-                .projects(student.getProjects() != null && !student.getProjects().isEmpty() 
-                        ? mapRealProjects(student.getProjects()) 
-                        : mapProjectsFromJson(student.getCvData()))
+                .projects(mapProjects(student.getProjects()))
                 .skills(mapSkillsFromJson(student.getCvData()))
                 .cvData(student.getCvData())
                 .build();
     }
 
-    private List<StudentProfileResponse.ProjectDto> mapRealProjects(List<Project> projs) {
-        return projs.stream().map(p -> StudentProfileResponse.ProjectDto.builder()
+    private List<StudentProfileResponse.ProjectDto> mapProjects(List<Project> projects) {
+        if (projects == null) return new ArrayList<>();
+        return projects.stream().map(p -> StudentProfileResponse.ProjectDto.builder()
                 .id(p.getId())
                 .name(p.getName())
                 .description(p.getDescription())
                 .repositoryUrl(p.getRepositoryUrl())
                 .demoUrl(p.getDemoUrl())
                 .build()).collect(Collectors.toList());
-    }
-
-    private List<StudentProfileResponse.ProjectDto> mapProjectsFromJson(String json) {
-        List<StudentProfileResponse.ProjectDto> projects = new ArrayList<>();
-        if (json == null || json.isBlank()) return projects;
-        try {
-            JsonNode root = objectMapper.readTree(json);
-            JsonNode projectsNode = root.get("projects");
-            if (projectsNode != null && projectsNode.isArray()) {
-                for (JsonNode node : projectsNode) {
-                    projects.add(StudentProfileResponse.ProjectDto.builder()
-                            .name(node.path("name").asText())
-                            .description(node.path("description").asText())
-                            .demoUrl(node.path("demoUrl").asText())
-                            .build());
-                }
-            }
-        } catch (Exception e) { /* ignore */ }
-        return projects;
     }
 
     private List<StudentProfileResponse.ExperienceDto> mapExperiencesFromJson(String json) {

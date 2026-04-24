@@ -180,30 +180,4 @@ public class ProfileService {
             }
         } catch (Exception e) { throw new RuntimeException("Lỗi xử lý JSON: " + e.getMessage()); }
     }
-
-    /* ---- Project Management ---- */
-    @Transactional
-    public com.fivecore.jobportal.entity.Project addProject(Integer studentId, com.fivecore.jobportal.entity.Project project) {
-        Student student = studentRepository.findById(studentId).orElseThrow();
-        project.setStudent(student);
-        return projectRepository.save(project);
-    }
-
-    @Transactional
-    public void updateProject(Integer id, Integer studentId, com.fivecore.jobportal.dto.StudentProfileResponse.ProjectDto request) {
-        com.fivecore.jobportal.entity.Project proj = projectRepository.findById(id).orElseThrow();
-        if (!proj.getStudent().getId().equals(studentId)) throw new RuntimeException("Unauthorized");
-        proj.setName(request.getName());
-        proj.setDescription(request.getDescription());
-        proj.setRepositoryUrl(request.getRepositoryUrl());
-        proj.setDemoUrl(request.getDemoUrl());
-        projectRepository.save(proj);
-    }
-
-    @Transactional
-    public void deleteProject(Integer id, Integer studentId) {
-        com.fivecore.jobportal.entity.Project proj = projectRepository.findById(id).orElseThrow();
-        if (!proj.getStudent().getId().equals(studentId)) throw new RuntimeException("Unauthorized");
-        projectRepository.delete(proj);
-    }
 }
