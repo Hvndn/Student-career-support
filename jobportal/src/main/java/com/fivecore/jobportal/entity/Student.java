@@ -50,6 +50,9 @@ public class Student {
     @Column(name = "video_url", length = 255)
     private String videoUrl;
 
+    @Column(name = "resume_url", length = 255)
+    private String resumeUrl;
+
     private java.time.LocalDate dob;
 
     @Column(name = "github_url", length = 255)

@@ -83,6 +83,15 @@ public class ProfileService {
         studentRepository.save(student);
     }
 
+    /** Cập nhật riêng CV (PDF). */
+    @Transactional
+    public void updateResumeUrl(Integer studentId, String resumeUrl) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
+        student.setResumeUrl(resumeUrl);
+        studentRepository.save(student);
+    }
+
     /** Thêm Học vấn mới. */
     @Transactional
     public Education addEducation(Integer studentId, Education education) {

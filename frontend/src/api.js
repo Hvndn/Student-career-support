@@ -76,6 +76,9 @@ export const studentApi = {
     updateVideo: (formData, onUploadProgress) => api.post('/student/profile/video', formData, {
         onUploadProgress,
     }),
+    uploadResume: (formData, onUploadProgress) => api.post('/student/profile/resume/upload', formData, {
+        onUploadProgress,
+    }),
     // Skills
     getSkills: () => api.get('/admin/skills'),
     addSkill: (skillName, level) => api.post(`/student/profile/skills`, { skillName, level }),

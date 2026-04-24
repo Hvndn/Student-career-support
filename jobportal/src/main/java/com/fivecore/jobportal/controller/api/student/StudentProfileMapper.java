@@ -34,6 +34,7 @@ public class StudentProfileMapper {
                 .avatarUrl(student.getAvatarUrl())
                 .coverImageUrl(student.getCoverImageUrl())
                 .videoUrl(student.getVideoUrl())
+                .resumeUrl(student.getResumeUrl())
                 .githubUrl(student.getGithubUrl())
                 .linkedinUrl(student.getLinkedinUrl())
                 .educations(mapEducations(student.getEducations()))

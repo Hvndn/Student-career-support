@@ -100,6 +100,23 @@ const Profile = () => {
         setIsUploading(false);
     };
 
+    const handleResumeUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (file.type !== 'application/pdf') return flash('⚠️ Vui lòng tải lên file PDF');
+        if (file.size > 10 * 1024 * 1024) return flash('⚠️ File quá lớn (Tối đa 10MB)');
+        
+        const formData = new FormData();
+        formData.append('file', file);
+        setIsUploading(true);
+        try {
+            await studentApi.uploadResume(formData);
+            await reload();
+            flash('✅ Đính kèm CV thành công!');
+        } catch { flash('❌ Lỗi khi đính kèm CV.'); }
+        setIsUploading(false);
+    };
+
 
 
     const handleAddSkill = async () => {
@@ -238,7 +255,7 @@ const Profile = () => {
                             <span className="pf-stat-lbl">DỰ ÁN</span>
                         </div>
                         <div className="pf-stat-box">
-                            <span className="pf-stat-val">{profile.cvData ? 1 : 0}</span>
+                            <span className="pf-stat-val">{profile.resumeUrl ? 1 : 0}</span>
                             <span className="pf-stat-lbl">BẢN CV</span>
                         </div>
                     </div>
@@ -352,22 +369,30 @@ const Profile = () => {
                                 </h3>
                             </div>
                             <div className="pf-cv-list">
-                                {profile.cvs?.length > 0 ? (
+                                {profile.resumeUrl ? (
                                     <div className="pf-cv-item">
                                         <div className="pf-cv-left">
                                             <div className="pf-cv-icon"><span className="material-symbols-outlined">picture_as_pdf</span></div>
                                             <div className="pf-cv-info">
-                                                <span className="pf-cv-title">CV mới của tôi</span>
+                                                <span className="pf-cv-title">Hồ sơ đính kèm (PDF)</span>
                                             </div>
                                         </div>
-                                        <Link to="/student/cv-management" className="pf-cv-btn">
-                                            <span className="material-symbols-outlined">open_in_new</span>
-                                        </Link>
+                                        <div style={{display: 'flex', gap: '0.5rem'}}>
+                                            <a href={getImageUrl(profile.resumeUrl)} target="_blank" rel="noreferrer" className="pf-cv-btn" title="Xem CV">
+                                                <span className="material-symbols-outlined">visibility</span>
+                                            </a>
+                                            <label className="pf-cv-btn" style={{cursor: 'pointer', margin: 0}} title="Đổi CV khác">
+                                                <span className="material-symbols-outlined">edit</span>
+                                                <input type="file" accept="application/pdf" hidden onChange={handleResumeUpload} disabled={isUploading} />
+                                            </label>
+                                        </div>
                                     </div>
                                 ) : (
-                                    <Link to="/student/cv-management" className="pf-btn-dau" style={{background: 'var(--dau-primary)'}}>
-                                        Tạo CV ngay
-                                    </Link>
+                                    <label className="pf-btn-dau" style={{ cursor: 'pointer', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--dau-primary)', margin: 0, padding: '0.875rem' }}>
+                                        <span className="material-symbols-outlined" style={{marginRight: '8px'}}>upload_file</span>
+                                        {isUploading ? 'Đang tải lên...' : 'Đính kèm CV (PDF)'}
+                                        <input type="file" accept="application/pdf" hidden onChange={handleResumeUpload} disabled={isUploading} />
+                                    </label>
                                 )}
                             </div>
                         </div>

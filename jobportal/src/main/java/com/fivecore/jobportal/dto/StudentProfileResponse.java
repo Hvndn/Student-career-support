@@ -28,6 +28,7 @@ public class StudentProfileResponse {
     private String avatarUrl;
     private String coverImageUrl;
     private String videoUrl;
+    private String resumeUrl;
     private String githubUrl;
     private String linkedinUrl;
     private List<EducationDto> educations;

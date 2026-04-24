@@ -159,6 +159,25 @@ public class StudentProfileRestController {
         }
     }
 
+    @PostMapping("/resume/upload")
+    public ResponseEntity<ApiResponse<String>> updateResume(@RequestParam("file") MultipartFile file,
+            Authentication authentication) {
+        try {
+            Integer studentId = getCurrentStudentId(authentication);
+            if (file == null || file.isEmpty()) {
+                return ResponseEntity.badRequest().body(ApiResponse.error("Vui lòng chọn file CV", "INVALID_FILE"));
+            }
+            String resumeUrl = storageService.saveFile(file, "resumes");
+            profileService.updateResumeUrl(studentId, resumeUrl);
+            return ResponseEntity.ok(ApiResponse.success("Đính kèm CV thành công", resumeUrl));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage(), "UPLOAD_ERROR"));
+        } catch (Exception e) {
+            log.error("Lỗi không xác định khi upload CV: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi hệ thống", "SERVER_ERROR"));
+        }
+    }
+
     /* ---- Export PDF ---- */
     @GetMapping("/export-pdf")
     public void exportToPdf(HttpServletResponse response, Authentication authentication) throws Exception {
