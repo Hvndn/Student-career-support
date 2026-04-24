@@ -49,7 +49,6 @@ const StudentHeader = () => {
         if (pathname.includes('/student/profile')) return 'Hồ sơ cá nhân';
         if (pathname.includes('/student/cv-management')) return 'Quản lý CV';
         if (pathname.includes('/student/cv-builder')) return 'Tạo CV / Resume';
-        if (pathname.includes('/student/cv-template')) return 'Mẫu CV';
         if (pathname.includes('/student/applications')) return 'Đơn ứng tuyển';
         if (pathname.includes('/student/saved')) return 'Việc làm yêu thích';
         if (pathname.includes('/student/internships')) return 'Thực tập tốt nghiệp';

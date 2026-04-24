@@ -16,6 +16,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 /**
  * REST API Controller cho Hồ sơ Sinh viên.
  * Quản lý thông tin cơ bản, học vấn và chứng chỉ.
@@ -138,6 +140,25 @@ public class StudentProfileRestController {
         }
     }
 
+    @PostMapping("/video")
+    public ResponseEntity<ApiResponse<String>> updateVideo(@RequestParam("videoFile") MultipartFile videoFile,
+            Authentication authentication) {
+        try {
+            Integer studentId = getCurrentStudentId(authentication);
+            if (videoFile == null || videoFile.isEmpty()) {
+                return ResponseEntity.badRequest().body(ApiResponse.error("Vui lòng chọn video", "INVALID_FILE"));
+            }
+            String videoUrl = storageService.saveFile(videoFile, "videos");
+            profileService.updateVideo(studentId, videoUrl);
+            return ResponseEntity.ok(ApiResponse.success("Cập nhật video giới thiệu thành công", videoUrl));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage(), "UPLOAD_ERROR"));
+        } catch (Exception e) {
+            log.error("Lỗi không xác định khi upload video: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi hệ thống", "SERVER_ERROR"));
+        }
+    }
+
     /* ---- Export PDF ---- */
     @GetMapping("/export-pdf")
     public void exportToPdf(HttpServletResponse response, Authentication authentication) throws Exception {
@@ -179,5 +200,22 @@ public class StudentProfileRestController {
         Integer studentId = getCurrentStudentId(authentication);
         certificationService.deleteCertification(id, studentId);
         return ResponseEntity.ok(ApiResponse.success("Xóa chứng chỉ thành công", null));
+    }
+
+    /* ---- Skills (via cvData JSON) ---- */
+    @PostMapping("/skills")
+    public ResponseEntity<ApiResponse<Object>> addSkill(@RequestBody Map<String, Object> body, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        Integer skillId = (Integer) body.get("skillId");
+        String level = (String) body.get("level");
+        profileService.addSkill(studentId, skillId, level);
+        return ResponseEntity.ok(ApiResponse.success("Thêm kỹ năng thành công", null));
+    }
+
+    @DeleteMapping("/skills/{name}")
+    public ResponseEntity<ApiResponse<Object>> deleteSkill(@PathVariable String name, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        profileService.deleteSkill(studentId, name);
+        return ResponseEntity.ok(ApiResponse.success("Xóa kỹ năng thành công", null));
     }
 }

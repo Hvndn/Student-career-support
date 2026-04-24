@@ -22,6 +22,7 @@ public class ProfileService {
 
     private final StudentRepository studentRepository;
     private final EducationRepository educationRepository;
+    private final com.fivecore.jobportal.repository.SkillRepository skillRepository;
 
     /**
      * Lấy danh sách Học vấn của sinh viên.
@@ -72,6 +73,15 @@ public class ProfileService {
         studentRepository.save(student);
     }
 
+    /** Cập nhật riêng Video giới thiệu. */
+    @Transactional
+    public void updateVideo(Integer studentId, String videoUrl) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
+        student.setVideoUrl(videoUrl);
+        studentRepository.save(student);
+    }
+
     /** Thêm Học vấn mới. */
     @Transactional
     public Education addEducation(Integer studentId, Education education) {
@@ -109,5 +119,64 @@ public class ProfileService {
             throw new RuntimeException("Bạn không có quyền xóa mục này");
         }
         educationRepository.delete(edu);
+    }
+
+    /** Quản lý Kỹ năng trong cvData (JSON). */
+    @Transactional
+    public void addSkill(Integer studentId, Integer skillId, String level) {
+        Student student = studentRepository.findById(studentId).orElseThrow();
+        com.fivecore.jobportal.entity.Skill skillEntity = skillRepository.findById(skillId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy kỹ năng hệ thống"));
+        
+        String json = student.getCvData();
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            com.fasterxml.jackson.databind.node.ObjectNode root = (json == null || json.isBlank()) 
+                ? mapper.createObjectNode() 
+                : (com.fasterxml.jackson.databind.node.ObjectNode) mapper.readTree(json);
+            
+            com.fasterxml.jackson.databind.node.ArrayNode skills = (com.fasterxml.jackson.databind.node.ArrayNode) root.get("skills");
+            if (skills == null) skills = root.putArray("skills");
+            
+            // Tránh trùng lặp
+            boolean exists = false;
+            for (com.fasterxml.jackson.databind.JsonNode node : skills) {
+                if (node.path("name").asText().equalsIgnoreCase(skillEntity.getName())) {
+                    exists = true;
+                    break;
+                }
+            }
+            
+            if (!exists) {
+                com.fasterxml.jackson.databind.node.ObjectNode newSkill = mapper.createObjectNode();
+                newSkill.put("name", skillEntity.getName());
+                newSkill.put("level", level);
+                skills.add(newSkill);
+                student.setCvData(mapper.writeValueAsString(root));
+                studentRepository.save(student);
+            }
+        } catch (Exception e) { throw new RuntimeException("Lỗi xử lý JSON: " + e.getMessage()); }
+    }
+
+    @Transactional
+    public void deleteSkill(Integer studentId, String skillName) {
+        Student student = studentRepository.findById(studentId).orElseThrow();
+        String json = student.getCvData();
+        if (json == null || json.isBlank()) return;
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            com.fasterxml.jackson.databind.node.ObjectNode root = (com.fasterxml.jackson.databind.node.ObjectNode) mapper.readTree(json);
+            com.fasterxml.jackson.databind.node.ArrayNode skills = (com.fasterxml.jackson.databind.node.ArrayNode) root.get("skills");
+            if (skills != null) {
+                for (int i = 0; i < skills.size(); i++) {
+                    if (skills.get(i).path("name").asText().equalsIgnoreCase(skillName)) {
+                        skills.remove(i);
+                        break;
+                    }
+                }
+                student.setCvData(mapper.writeValueAsString(root));
+                studentRepository.save(student);
+            }
+        } catch (Exception e) { throw new RuntimeException("Lỗi xử lý JSON: " + e.getMessage()); }
     }
 }

@@ -79,6 +79,26 @@ const Profile = () => {
         setIsUploading(false);
     };
 
+    const handleVideoChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        // Validate file size (e.g., max 50MB)
+        if (file.size > 50 * 1024 * 1024) {
+            return flash('⚠️ Video quá lớn (Tối đa 50MB)');
+        }
+
+        const formData = new FormData();
+        formData.append('videoFile', file);
+        setIsUploading(true);
+        try {
+            await studentApi.updateVideo(formData);
+            await reload();
+            flash('✅ Cập nhật video giới thiệu thành công!');
+        } catch { flash('❌ Lỗi khi tải video lên.'); }
+        setIsUploading(false);
+    };
+
     const loadSkills = async () => {
         try {
             const res = await studentApi.getSkills();
@@ -201,7 +221,7 @@ const Profile = () => {
                             <span className="pf-stat-lbl">DỰ ÁN</span>
                         </div>
                         <div className="pf-stat-box">
-                            <span className="pf-stat-val">{profile.cvs?.length || 0}</span>
+                            <span className="pf-stat-val">{profile.cvData ? 1 : 0}</span>
                             <span className="pf-stat-lbl">CVS</span>
                         </div>
                     </div>
@@ -233,15 +253,17 @@ const Profile = () => {
                             </div>
                             <div className="pf-video-window">
                                 {profile.videoUrl ? (
-                                    <video src={profile.videoUrl} controls className="pf-video-obj" />
+                                    <video src={getImageUrl(profile.videoUrl)} controls className="pf-video-obj" />
                                 ) : (
                                     <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=400" alt="Video Placeholder" className="pf-video-obj" />
                                 )}
+                                {isUploading && <div className="pf-upload-overlay">Đang tải...</div>}
                             </div>
-                            <button className="pf-btn-dau" onClick={() => flash('Chức năng tải video đang phát triển')}>
+                            <label className="pf-btn-dau" style={{ cursor: 'pointer', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 <span className="material-symbols-outlined">upload</span>
-                                Thêm / Đổi Video
-                            </button>
+                                {profile.videoUrl ? 'Đổi Video' : 'Thêm Video'}
+                                <input type="file" accept="video/*" hidden onChange={handleVideoChange} />
+                            </label>
                         </div>
 
                         <div className="pf-card">
@@ -253,8 +275,8 @@ const Profile = () => {
                                 <button className="pf-btn-text" onClick={() => setShowSkillForm(true)}>+ Thêm</button>
                             </div>
                             <div className="pf-skill-tags">
-                                {profile.skills?.length > 0 ? profile.skills.map(skill => (
-                                    <div key={skill.id} className="pf-tag" onDoubleClick={() => handleDeleteSkill(skill.id)}>
+                                {profile.skills?.length > 0 ? profile.skills.map((skill, idx) => (
+                                    <div key={idx} className="pf-tag" onDoubleClick={() => handleDeleteSkill(skill.name)}>
                                         {skill.name}
                                     </div>
                                 )) : <p className="pf-text-muted">Chưa cập nhật kỹ năng.</p>}

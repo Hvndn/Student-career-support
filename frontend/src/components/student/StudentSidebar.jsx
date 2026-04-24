@@ -18,7 +18,7 @@ const NAV_ITEMS = [
   },
   { icon: 'building', label: 'Danh sách công ty', to: '/companies' },
   { icon: 'message-square', label: 'Trò chuyện', to: '/student/chat' },
-  { icon: 'file-text', label: 'Tạo CV / Resume', to: '/student/cv-template' },
+  { icon: 'file-text', label: 'Quản lý CV', to: '/student/cv-management' },
   { icon: 'user', label: 'Hồ sơ & Portfolio', to: '/student/profile' },
 ];
 
