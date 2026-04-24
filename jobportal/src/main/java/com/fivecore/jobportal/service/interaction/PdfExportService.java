@@ -60,7 +60,15 @@ public class PdfExportService {
         document.add(new Paragraph("Email: " + student.getUser().getEmail(), fontBody));
         document.add(new Paragraph("Trường: " + (student.getUniversity() != null ? student.getUniversity() : "N/A"), fontBody));
         document.add(new Paragraph("Ngành: " + (student.getMajor() != null ? student.getMajor() : "N/A"), fontBody));
-        document.add(new Paragraph("Giới thiệu: " + (student.getBio() != null ? student.getBio() : ""), fontBody));
+        String cleanBio = "";
+        if (student.getBio() != null) {
+            cleanBio = student.getBio().replaceAll("(?i)<br\\s*/?>", "\n")
+                    .replaceAll("(?i)</p>", "\n")
+                    .replaceAll("<[^>]*>", "")
+                    .replaceAll("&nbsp;", " ")
+                    .trim();
+        }
+        document.add(new Paragraph("Giới thiệu: " + cleanBio, fontBody));
         document.add(new Paragraph("\n"));
 
         // Educations
@@ -75,6 +83,40 @@ public class PdfExportService {
                             + (edu.getDegree() != null ? edu.getDegree() + " - " : "") + edu.getMajor();
                     document.add(new Paragraph(eduInfo + " (" + edu.getStartDate() + " - "
                             + (edu.getEndDate() != null ? edu.getEndDate() : "Nay") + ")", fontBody));
+                } catch (Exception e) { }
+            });
+        }
+        document.add(new Paragraph("\n"));
+
+        // Projects
+        document.add(new Paragraph("DỰ ÁN CÁ NHÂN", fontSubtitle));
+        var projects = student.getProjects();
+        if (projects == null || projects.isEmpty()) {
+            document.add(new Paragraph("- (Chưa có dự án nào)", fontBody));
+        } else {
+            projects.forEach(proj -> {
+                try {
+                    String projTitle = "- " + proj.getName();
+                    if (proj.getRole() != null && !proj.getRole().isEmpty()) {
+                        projTitle += " | Vai trò: " + proj.getRole();
+                    }
+                    document.add(new Paragraph(projTitle, fontBody));
+
+                    if (proj.getTechnologies() != null && !proj.getTechnologies().isEmpty()) {
+                        document.add(new Paragraph("  Công nghệ/Công cụ: " + proj.getTechnologies(), fontBody));
+                    }
+                    if (proj.getDescription() != null && !proj.getDescription().isEmpty()) {
+                        document.add(new Paragraph("  Mô tả: " + proj.getDescription(), fontBody));
+                    }
+                    if (proj.getResponsibilities() != null && !proj.getResponsibilities().isEmpty()) {
+                        String cleanResp = proj.getResponsibilities().replaceAll("(?i)<br\\s*/?>", "\n")
+                                .replaceAll("(?i)</p>", "\n")
+                                .replaceAll("<[^>]*>", "")
+                                .replaceAll("&nbsp;", " ")
+                                .trim();
+                        document.add(new Paragraph("  Chi tiết:\n  " + cleanResp.replace("\n", "\n  "), fontBody));
+                    }
+                    document.add(new Paragraph("\n"));
                 } catch (Exception e) { }
             });
         }
