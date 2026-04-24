@@ -288,7 +288,7 @@ const Profile = () => {
                                             )}
                                             {proj.technologies && (
                                                 <div className="pf-project-tech" style={{fontSize: '0.75rem', color: 'var(--dau-text-muted)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '4px'}}>
-                                                    <span className="material-symbols-outlined" style={{fontSize: '14px'}}>code</span> {proj.technologies}
+                                                    <span className="material-symbols-outlined" style={{fontSize: '14px'}}>build</span> {proj.technologies}
                                                 </div>
                                             )}
                                             {proj.description && <p>{proj.description}</p>}
@@ -298,8 +298,8 @@ const Profile = () => {
                                                 </div>
                                             )}
                                             <div className="pf-project-links" style={{marginTop: '1rem'}}>
-                                                {proj.repositoryUrl && <a href={proj.repositoryUrl} target="_blank" rel="noreferrer">GitHub</a>}
-                                                {proj.demoUrl && <a href={proj.demoUrl} target="_blank" rel="noreferrer">Demo</a>}
+                                                {proj.repositoryUrl && <a href={proj.repositoryUrl} target="_blank" rel="noreferrer">Tài liệu đính kèm</a>}
+                                                {proj.demoUrl && <a href={proj.demoUrl} target="_blank" rel="noreferrer">Sản phẩm / Demo</a>}
                                             </div>
                                         </div>
                                         <button className="pf-btn-icon-delete" onClick={() => handleDeleteProject(proj.id)}>
@@ -514,16 +514,16 @@ const Profile = () => {
                             <div className="pf-modal-body">
                                 <div className="pf-modal-field">
                                     <label>Tên dự án</label>
-                                    <input type="text" value={projectForm.name} onChange={e => setProjectForm({...projectForm, name: e.target.value})} placeholder="E-commerce App" />
+                                    <input type="text" value={projectForm.name} onChange={e => setProjectForm({...projectForm, name: e.target.value})} placeholder="Tên dự án, Đồ án, Công trình..." />
                                 </div>
                                 <div className="pf-modal-grid">
                                     <div className="pf-modal-field">
                                         <label>Vai trò / Vị trí</label>
-                                        <input type="text" value={projectForm.role} onChange={e => setProjectForm({...projectForm, role: e.target.value})} placeholder="Frontend Developer, Fullstack..." />
+                                        <input type="text" value={projectForm.role} onChange={e => setProjectForm({...projectForm, role: e.target.value})} placeholder="Kiến trúc sư, Quản lý dự án, Developer..." />
                                     </div>
                                     <div className="pf-modal-field">
-                                        <label>Công nghệ sử dụng</label>
-                                        <input type="text" value={projectForm.technologies} onChange={e => setProjectForm({...projectForm, technologies: e.target.value})} placeholder="React, Node.js, MongoDB..." />
+                                        <label>Công cụ / Kỹ năng sử dụng</label>
+                                        <input type="text" value={projectForm.technologies} onChange={e => setProjectForm({...projectForm, technologies: e.target.value})} placeholder="AutoCAD, React, Excel, Photoshop..." />
                                     </div>
                                 </div>
                                 <div className="pf-modal-grid">
@@ -538,20 +538,20 @@ const Profile = () => {
                                 </div>
                                 <div className="pf-modal-field">
                                     <label>Mô tả ngắn</label>
-                                    <textarea rows="2" value={projectForm.description} onChange={e => setProjectForm({...projectForm, description: e.target.value})} placeholder="Ứng dụng mua sắm trực tuyến..."></textarea>
+                                    <textarea rows="2" value={projectForm.description} onChange={e => setProjectForm({...projectForm, description: e.target.value})} placeholder="Mô tả tóm tắt về dự án..."></textarea>
                                 </div>
                                 <div className="pf-modal-field" style={{marginBottom: '1.5rem'}}>
                                     <label>Chi tiết công việc / Thành tựu</label>
-                                    <textarea rows="4" value={projectForm.responsibilities} onChange={e => setProjectForm({...projectForm, responsibilities: e.target.value})} placeholder="- Phát triển tính năng giỏ hàng&#10;- Tối ưu hóa hiệu suất hiển thị..."></textarea>
+                                    <textarea rows="4" value={projectForm.responsibilities} onChange={e => setProjectForm({...projectForm, responsibilities: e.target.value})} placeholder="- Thiết kế bản vẽ 3D&#10;- Phân tích dữ liệu tài chính&#10;- Phát triển tính năng..."></textarea>
                                 </div>
                                 <div className="pf-modal-grid">
                                     <div className="pf-modal-field">
-                                        <label>Link Repository (GitHub/GitLab)</label>
-                                        <input type="text" value={projectForm.repositoryUrl} onChange={e => setProjectForm({...projectForm, repositoryUrl: e.target.value})} placeholder="https://github.com/..." />
+                                        <label>Link tài liệu / Mã nguồn (Tùy chọn)</label>
+                                        <input type="text" value={projectForm.repositoryUrl} onChange={e => setProjectForm({...projectForm, repositoryUrl: e.target.value})} placeholder="Google Drive, GitHub..." />
                                     </div>
                                     <div className="pf-modal-field">
-                                        <label>Link Demo (Live URL)</label>
-                                        <input type="text" value={projectForm.demoUrl} onChange={e => setProjectForm({...projectForm, demoUrl: e.target.value})} placeholder="https://demo.example.com" />
+                                        <label>Link sản phẩm / Demo (Tùy chọn)</label>
+                                        <input type="text" value={projectForm.demoUrl} onChange={e => setProjectForm({...projectForm, demoUrl: e.target.value})} placeholder="Behance, YouTube, Website..." />
                                     </div>
                                 </div>
                             </div>
