@@ -34,34 +34,32 @@ public class StudentProfileMapper {
                 .avatarUrl(student.getAvatarUrl())
                 .coverImageUrl(student.getCoverImageUrl())
                 .videoUrl(student.getVideoUrl())
+                .resumeUrl(student.getResumeUrl())
                 .githubUrl(student.getGithubUrl())
                 .linkedinUrl(student.getLinkedinUrl())
                 .educations(mapEducations(student.getEducations()))
                 .certifications(mapCertifications(student.getCertifications()))
                 .experiences(mapExperiencesFromJson(student.getCvData()))
-                .projects(mapProjectsFromJson(student.getCvData()))
+                .projects(mapProjects(student.getProjects()))
                 .skills(mapSkillsFromJson(student.getCvData()))
                 .cvData(student.getCvData())
                 .build();
     }
 
-    private List<StudentProfileResponse.ProjectDto> mapProjectsFromJson(String json) {
-        List<StudentProfileResponse.ProjectDto> projects = new ArrayList<>();
-        if (json == null || json.isBlank()) return projects;
-        try {
-            JsonNode root = objectMapper.readTree(json);
-            JsonNode projectsNode = root.get("projects");
-            if (projectsNode != null && projectsNode.isArray()) {
-                for (JsonNode node : projectsNode) {
-                    projects.add(StudentProfileResponse.ProjectDto.builder()
-                            .name(node.path("name").asText())
-                            .description(node.path("description").asText())
-                            .demoUrl(node.path("demoUrl").asText())
-                            .build());
-                }
-            }
-        } catch (Exception e) { /* ignore */ }
-        return projects;
+    private List<StudentProfileResponse.ProjectDto> mapProjects(List<Project> projects) {
+        if (projects == null) return new ArrayList<>();
+        return projects.stream().map(p -> StudentProfileResponse.ProjectDto.builder()
+                .id(p.getId())
+                .name(p.getName())
+                .description(p.getDescription())
+                .repositoryUrl(p.getRepositoryUrl())
+                .demoUrl(p.getDemoUrl())
+                .role(p.getRole())
+                .technologies(p.getTechnologies())
+                .responsibilities(p.getResponsibilities())
+                .startDate(p.getStartDate())
+                .endDate(p.getEndDate())
+                .build()).collect(Collectors.toList());
     }
 
     private List<StudentProfileResponse.ExperienceDto> mapExperiencesFromJson(String json) {

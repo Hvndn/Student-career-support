@@ -34,4 +34,19 @@ public class Project {
 
     @Column(name = "demo_url", length = 255)
     private String demoUrl;
+
+    @Column(length = 100)
+    private String role;
+
+    @Column(length = 255)
+    private String technologies;
+
+    @Column(columnDefinition = "TEXT")
+    private String responsibilities;
+
+    @Column(name = "start_date")
+    private java.time.LocalDate startDate;
+
+    @Column(name = "end_date")
+    private java.time.LocalDate endDate;
 }

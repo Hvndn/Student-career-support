@@ -32,7 +32,7 @@ public class DataInitializer implements CommandLineRunner {
         initializeAdmin();
         initializeSampleCvTemplates();
         initializeCategories();
-        
+
         // Đã tắt tự động tạo dữ liệu mẫu theo lệnh của Người
         // initializeSampleSkills();
         // initializeSampleStudents();
@@ -55,8 +55,9 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeSampleSkills() {
-        if (skillRepository.count() > 0) return;
-        
+        if (skillRepository.count() > 0)
+            return;
+
         log.info("🌱 Khởi tạo danh mục kỹ năng mẫu...");
         getOrCreateSkill("Java", "Programming");
         getOrCreateSkill("Python", "Programming");
@@ -72,8 +73,9 @@ public class DataInitializer implements CommandLineRunner {
     private void initializeSampleStudents() {
         String studentEmail = "student@scholarbridge.vn";
         String studentCode = "SV001";
-        if (userRepository.findByEmail(studentEmail).isPresent() || 
-            studentRepository.findByStudentIdStr(studentCode).isPresent()) return;
+        if (userRepository.findByEmail(studentEmail).isPresent() ||
+                studentRepository.findByStudentIdStr(studentCode).isPresent())
+            return;
 
         log.info("🌱 Khởi tạo dữ liệu sinh viên mẫu...");
         Skill javaSkill = getOrCreateSkill("Java", "Programming");
@@ -81,13 +83,15 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeSampleCompaniesAndJobs() {
-        if (userRepository.findByEmail("hr@techflow.vn").isPresent()) return;
+        if (userRepository.findByEmail("hr@techflow.vn").isPresent())
+            return;
 
         log.info("🌱 Khởi tạo dữ liệu doanh nghiệp và tin tuyển dụng mẫu...");
 
         // 1. Doanh nghiệp đã được duyệt và có tin tuyển dụng
         Company techFlow = createCompany("hr@techflow.vn", "TechFlow Solutions", "Công ty công nghệ hàng đầu", true);
-        createJob(techFlow, "Senior Java Developer", "Phát triển hệ thống backend", 25000000, 40000000, Job.JobStatus.open);
+        createJob(techFlow, "Senior Java Developer", "Phát triển hệ thống backend", 25000000, 40000000,
+                Job.JobStatus.open);
         createJob(techFlow, "Product Manager", "Quản lý vòng đời sản phẩm", 30000000, 50000000, Job.JobStatus.pending);
 
         // 2. Doanh nghiệp ĐANG CHỜ DUYỆT (isActive = false)
@@ -96,8 +100,10 @@ public class DataInitializer implements CommandLineRunner {
 
         // 3. Tin tuyển dụng ĐANG CHỜ DUYỆT từ doanh nghiệp khác
         Company futureSoft = createCompany("jobs@futuresoft.io", "FutureSoft", "Product house chuyên về AI", true);
-        createJob(futureSoft, "AI Engineer Intern", "Nghiên cứu và triển khai LLMs", 5000000, 10000000, Job.JobStatus.pending);
-        createJob(futureSoft, "React Native Developer", "Xây dựng ứng dụng di động", 15000000, 25000000, Job.JobStatus.pending);
+        createJob(futureSoft, "AI Engineer Intern", "Nghiên cứu và triển khai LLMs", 5000000, 10000000,
+                Job.JobStatus.pending);
+        createJob(futureSoft, "React Native Developer", "Xây dựng ứng dụng di động", 15000000, 25000000,
+                Job.JobStatus.pending);
     }
 
     private Skill getOrCreateSkill(String name, String category) {
@@ -105,7 +111,8 @@ public class DataInitializer implements CommandLineRunner {
                 .orElseGet(() -> skillRepository.save(Skill.builder().name(name).category(category).build()));
     }
 
-    private void createStudent(String email, String fullName, String university, String major, String code, Skill skill) {
+    private void createStudent(String email, String fullName, String university, String major, String code,
+            Skill skill) {
         User user = User.builder()
                 .email(email)
                 .password(passwordEncoder.encode("123456"))
@@ -162,22 +169,41 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeSampleCvTemplates() {
-        if (cvTemplateRepository.count() > 0) return;
 
         log.info("🌱 Khởi tạo danh sách mẫu CV...");
 
-        createCvTemplate("Hiện đại Classic",    "Hiện đại",      "MODERN_1",   "/uploads/cv-templates/modern_1.png",   "Bố cục 2 cột hiện đại, sidebar màu thương hiệu.");
-        createCvTemplate("Hiện đại Sáng tạo",   "Hiện đại",      "MODERN_2",   "/uploads/cv-templates/modern_2.png",   "Phong cách gradient, nhấn mạnh kỹ năng.");
-        createCvTemplate("Chuyên nghiệp Basic",  "Chuyên nghiệp", "PRO_1",      "/uploads/cv-templates/pro_1.png",      "Bố cục truyền thống, phù hợp doanh nghiệp lớn.");
-        createCvTemplate("Chuyên nghiệp Plus",   "Chuyên nghiệp", "PRO_2",      "/uploads/cv-templates/pro_2.png",      "Thêm timeline kinh nghiệm, phù hợp Manager.");
-        createCvTemplate("Đơn giản Tối giản",    "Đơn giản",      "CLASSIC_1",  "/uploads/cv-templates/classic_1.png",  "Thiết kế tối giản, trắng đen, dễ đọc.");
-        createCvTemplate("Ấn tượng Creative",    "Ấn tượng",      "CREATIVE_1", "/uploads/cv-templates/creative_1.png", "Màu sắc nổi bật, dành cho ngành sáng tạo.");
-        createCvTemplate("Harvard Format",       "Harvard",       "HARVARD_1",  "/uploads/cv-templates/harvard_1.png",  "Chuẩn format Harvard, tập trung học thuật.");
-        createCvTemplate("ATS Friendly",         "ATS",           "ATS_1",      "/uploads/cv-templates/ats_1.png",      "Tối ưu cho hệ thống ATS, không hình ảnh trang trí.");
+        createCvTemplate("Hiện đại Classic", "Hiện đại", "MODERN_1", "/uploads/cv-templates/modern_1.png",
+                "Bố cục 2 cột hiện đại, sidebar màu thương hiệu.");
+        createCvTemplate("Hiện đại Sáng tạo", "Hiện đại", "MODERN_2", "/uploads/cv-templates/modern_2.png",
+                "Phong cách gradient, nhấn mạnh kỹ năng.");
+        createCvTemplate("Chuyên nghiệp Basic", "Chuyên nghiệp", "PRO_1", "/uploads/cv-templates/pro_1.png",
+                "Bố cục truyền thống, phù hợp doanh nghiệp lớn.");
+        createCvTemplate("Chuyên nghiệp Plus", "Chuyên nghiệp", "PRO_2", "/uploads/cv-templates/pro_2.png",
+                "Thêm timeline kinh nghiệm, phù hợp Manager.");
+        createCvTemplate("Đơn giản Tối giản", "Đơn giản", "CLASSIC_1", "/uploads/cv-templates/classic_1.png",
+                "Thiết kế tối giản, trắng đen, dễ đọc.");
+        createCvTemplate("Ấn tượng Creative", "Ấn tượng", "CREATIVE_1", "/uploads/cv-templates/creative_1.png",
+                "Màu sắc nổi bật, dành cho ngành sáng tạo.");
+        createCvTemplate("Harvard Format", "Harvard", "HARVARD_1", "/uploads/cv-templates/harvard_1.png",
+                "Chuẩn format Harvard, tập trung học thuật.");
+        createCvTemplate("ATS Friendly", "ATS", "ATS_1", "/uploads/cv-templates/ats_1.png",
+                "Tối ưu cho hệ thống ATS, không hình ảnh trang trí.");
+
+        // Bổ sung các mẫu cho ngành Công nghệ thông tin
+        createCvTemplate("Kỹ sư Phần mềm Pro", "Công nghệ thông tin", "PRO_1", "/uploads/cv-templates/it_pro_1.png",
+                "Mẫu chuyên sâu cho Developer, tập trung vào Tech Stack.");
+        createCvTemplate("Lập trình viên Web", "Công nghệ thông tin", "MODERN_1", "/uploads/cv-templates/it_web.png",
+                "Thiết kế hiện đại, làm nổi bật các dự án cá nhân.");
+        createCvTemplate("Data Scientist", "Công nghệ thông tin", "HARVARD_1", "/uploads/cv-templates/it_data.png",
+                "Format học thuật chuyên sâu cho nghiên cứu dữ liệu.");
+        createCvTemplate("Mobile App Dev", "Công nghệ thông tin", "CREATIVE_1", "/uploads/cv-templates/it_mobile.png",
+                "Năng động, nhấn mạnh vào các sản phẩm trên Store.");
+        createCvTemplate("UI/UX Designer", "Sáng tạo", "ARTISTIC_1", "/uploads/cv-templates/uiux.png",
+                "Màu sắc hài hòa, tập trung vào tư duy thiết kế.");
     }
 
     private void createCvTemplate(String name, String category, String key, String thumb, String description) {
-        if (cvTemplateRepository.findByLayoutKey(key).isEmpty()) {
+        if (cvTemplateRepository.findByName(name).isEmpty()) {
             cvTemplateRepository.save(CvTemplate.builder()
                     .name(name)
                     .category(category)
@@ -190,17 +216,22 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeCategories() {
-        if (categoryRepository.count() > 0) return;
+        if (categoryRepository.count() > 0)
+            return;
 
         log.info("🌱 Khởi tạo danh mục Công nghệ thông tin mẫu...");
 
         createCategory("Lập trình Web", "web-development", "window", "Phát triển các ứng dụng web chuyên nghiệp.");
-        createCategory("Lập trình Di động", "mobile-development", "smartphone", "Xây dựng ứng dụng đa nền tảng iOS & Android.");
-        createCategory("Trí tuệ nhân tạo", "ai-ml", "psychology", "Nghiên cứu và triển khai các mô hình AI/Machine Learning.");
+        createCategory("Lập trình Di động", "mobile-development", "smartphone",
+                "Xây dựng ứng dụng đa nền tảng iOS & Android.");
+        createCategory("Trí tuệ nhân tạo", "ai-ml", "psychology",
+                "Nghiên cứu và triển khai các mô hình AI/Machine Learning.");
         createCategory("An ninh mạng", "cyber-security", "security", "Bảo mật hệ thống và an toàn thông tin.");
-        createCategory("Điện toán đám mây", "cloud-computing", "cloud", "Triển khai hạ tầng trên AWS, Azure, Google Cloud.");
+        createCategory("Điện toán đám mây", "cloud-computing", "cloud",
+                "Triển khai hạ tầng trên AWS, Azure, Google Cloud.");
         createCategory("Tester / QA QC", "tester-qa-qc", "verified", "Đảm bảo chất lượng sản phẩm phần mềm.");
-        createCategory("Quản trị cơ sở dữ liệu", "database-administration", "database", "Thiết kế và tối ưu hóa hệ quản trị dữ liệu.");
+        createCategory("Quản trị cơ sở dữ liệu", "database-administration", "database",
+                "Thiết kế và tối ưu hóa hệ quản trị dữ liệu.");
         createCategory("UI-UX Design", "ui-ux-design", "palette", "Thiết kế trải nghiệm và giao diện người dùng.");
     }
 

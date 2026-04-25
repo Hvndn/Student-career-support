@@ -28,6 +28,7 @@ public class StudentProfileResponse {
     private String avatarUrl;
     private String coverImageUrl;
     private String videoUrl;
+    private String resumeUrl;
     private String githubUrl;
     private String linkedinUrl;
     private List<EducationDto> educations;
@@ -84,6 +85,11 @@ public class StudentProfileResponse {
         private String description;
         private String repositoryUrl;
         private String demoUrl;
+        private String role;
+        private String technologies;
+        private String responsibilities;
+        private LocalDate startDate;
+        private LocalDate endDate;
     }
 
     @Data

@@ -159,6 +159,25 @@ public class StudentProfileRestController {
         }
     }
 
+    @PostMapping("/resume/upload")
+    public ResponseEntity<ApiResponse<String>> updateResume(@RequestParam("file") MultipartFile file,
+            Authentication authentication) {
+        try {
+            Integer studentId = getCurrentStudentId(authentication);
+            if (file == null || file.isEmpty()) {
+                return ResponseEntity.badRequest().body(ApiResponse.error("Vui lòng chọn file CV", "INVALID_FILE"));
+            }
+            String resumeUrl = storageService.saveFile(file, "resumes");
+            profileService.updateResumeUrl(studentId, resumeUrl);
+            return ResponseEntity.ok(ApiResponse.success("Đính kèm CV thành công", resumeUrl));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage(), "UPLOAD_ERROR"));
+        } catch (Exception e) {
+            log.error("Lỗi không xác định khi upload CV: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi hệ thống", "SERVER_ERROR"));
+        }
+    }
+
     /* ---- Export PDF ---- */
     @GetMapping("/export-pdf")
     public void exportToPdf(HttpServletResponse response, Authentication authentication) throws Exception {
@@ -206,9 +225,9 @@ public class StudentProfileRestController {
     @PostMapping("/skills")
     public ResponseEntity<ApiResponse<Object>> addSkill(@RequestBody Map<String, Object> body, Authentication authentication) {
         Integer studentId = getCurrentStudentId(authentication);
-        Integer skillId = (Integer) body.get("skillId");
+        String skillName = (String) body.get("skillName");
         String level = (String) body.get("level");
-        profileService.addSkill(studentId, skillId, level);
+        profileService.addSkill(studentId, skillName, level);
         return ResponseEntity.ok(ApiResponse.success("Thêm kỹ năng thành công", null));
     }
 
@@ -217,5 +236,20 @@ public class StudentProfileRestController {
         Integer studentId = getCurrentStudentId(authentication);
         profileService.deleteSkill(studentId, name);
         return ResponseEntity.ok(ApiResponse.success("Xóa kỹ năng thành công", null));
+    }
+
+    /* ---- Projects ---- */
+    @PostMapping("/projects")
+    public ResponseEntity<ApiResponse<Object>> addProject(@RequestBody com.fivecore.jobportal.entity.Project project, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        profileService.addProject(studentId, project);
+        return ResponseEntity.ok(ApiResponse.success("Thêm dự án thành công", null));
+    }
+
+    @DeleteMapping("/projects/{id}")
+    public ResponseEntity<ApiResponse<Object>> deleteProject(@PathVariable Integer id, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        profileService.deleteProject(id, studentId);
+        return ResponseEntity.ok(ApiResponse.success("Xóa dự án thành công", null));
     }
 }

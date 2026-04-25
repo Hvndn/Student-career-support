@@ -18,9 +18,10 @@ const Profile = () => {
     const [form, setForm] = useState({});
 
     const [showSkillForm, setShowSkillForm] = useState(false);
-    const [skillId, setSkillId] = useState('');
+    const [showProjectForm, setShowProjectForm] = useState(false);
+    const [projectForm, setProjectForm] = useState({ name: '', role: '', technologies: '', startDate: '', endDate: '', description: '', responsibilities: '', repositoryUrl: '', demoUrl: '' });
+    const [skillName, setSkillName] = useState('');
     const [skillLevel, setSkillLevel] = useState('intermediate');
-    const [allSkills, setAllSkills] = useState([]);
 
     const flash = (msg) => { setMessage(msg); setTimeout(() => setMessage(''), 3000); };
 
@@ -99,22 +100,33 @@ const Profile = () => {
         setIsUploading(false);
     };
 
-    const loadSkills = async () => {
+    const handleResumeUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (file.type !== 'application/pdf') return flash('⚠️ Vui lòng tải lên file PDF');
+        if (file.size > 10 * 1024 * 1024) return flash('⚠️ File quá lớn (Tối đa 10MB)');
+        
+        const formData = new FormData();
+        formData.append('file', file);
+        setIsUploading(true);
         try {
-            const res = await studentApi.getSkills();
-            setAllSkills(res.data.data);
-        } catch { flash('❌ Không thể tải kỹ năng.'); }
+            await studentApi.uploadResume(formData);
+            await reload();
+            flash('✅ Đính kèm CV thành công!');
+        } catch { flash('❌ Lỗi khi đính kèm CV.'); }
+        setIsUploading(false);
     };
 
-    useEffect(() => { if (showSkillForm) loadSkills(); }, [showSkillForm]);
+
 
     const handleAddSkill = async () => {
-        if (!skillId) return flash('⚠️ Chọn kỹ năng');
+        if (!skillName) return flash('⚠️ Nhập tên kỹ năng');
         setSaving(true);
         try {
-            await studentApi.addSkill(skillId, skillLevel);
+            await studentApi.addSkill(skillName, skillLevel);
             await reload();
             setShowSkillForm(false);
+            setSkillName('');
             flash('✅ Đã thêm kỹ năng!');
         } catch { flash('❌ Lỗi khi thêm.'); }
         setSaving(false);
@@ -126,6 +138,28 @@ const Profile = () => {
             await studentApi.deleteSkill(id);
             await reload();
             flash('✅ Đã xóa kỹ năng.');
+        } catch { flash('❌ Lỗi khi xóa.'); }
+    };
+
+    const handleAddProject = async () => {
+        if (!projectForm.name) return flash('⚠️ Tên dự án là bắt buộc');
+        setSaving(true);
+        try {
+            await studentApi.addProject(projectForm);
+            await reload();
+            setShowProjectForm(false);
+            setProjectForm({ name: '', role: '', technologies: '', startDate: '', endDate: '', description: '', responsibilities: '', repositoryUrl: '', demoUrl: '' });
+            flash('✅ Đã thêm dự án!');
+        } catch { flash('❌ Lỗi khi thêm.'); }
+        setSaving(false);
+    };
+
+    const handleDeleteProject = async (id) => {
+        if (!window.confirm('Xóa dự án này?')) return;
+        try {
+            await studentApi.deleteProject(id);
+            await reload();
+            flash('✅ Đã xóa dự án.');
         } catch { flash('❌ Lỗi khi xóa.'); }
     };
 
@@ -221,8 +255,8 @@ const Profile = () => {
                             <span className="pf-stat-lbl">DỰ ÁN</span>
                         </div>
                         <div className="pf-stat-box">
-                            <span className="pf-stat-val">{profile.cvData ? 1 : 0}</span>
-                            <span className="pf-stat-lbl">CVS</span>
+                            <span className="pf-stat-val">{ (profile.cvData || profile.resumeUrl) ? 1 : 0 }</span>
+                            <span className="pf-stat-lbl">BẢN CV</span>
                         </div>
                     </div>
                 </div>
@@ -239,6 +273,50 @@ const Profile = () => {
                             </div>
                             <div className="pf-bio-box">
                                 <div dangerouslySetInnerHTML={{ __html: profile.bio || 'Chưa có thông tin giới thiệu.' }} />
+                            </div>
+                        </div>
+
+                        {/* Projects Management Section */}
+                        <div className="pf-card">
+                            <div className="pf-card-header">
+                                <h3 className="pf-card-title">
+                                    <span className="material-symbols-outlined">rocket_launch</span>
+                                    Dự án cá nhân ({profile.projects?.length || 0})
+                                </h3>
+                                <button className="pf-btn-text" onClick={() => setShowProjectForm(true)}>+ Thêm dự án</button>
+                            </div>
+                            <div className="pf-projects-list">
+                                {profile.projects?.length > 0 ? profile.projects.map((proj, idx) => (
+                                    <div key={idx} className="pf-project-item">
+                                        <div className="pf-project-info">
+                                            <h4>{proj.name}</h4>
+                                            {(proj.role || proj.startDate) && (
+                                                <div className="pf-project-meta" style={{fontSize: '0.8125rem', color: 'var(--dau-primary)', fontWeight: 600, marginBottom: '0.5rem', display: 'flex', gap: '1rem'}}>
+                                                    {proj.role && <span><span className="material-symbols-outlined" style={{fontSize: '14px', verticalAlign: 'text-bottom'}}>person</span> {proj.role}</span>}
+                                                    {(proj.startDate || proj.endDate) && <span><span className="material-symbols-outlined" style={{fontSize: '14px', verticalAlign: 'text-bottom'}}>calendar_month</span> {proj.startDate ? new Date(proj.startDate).toLocaleDateString('vi-VN') : ''} - {proj.endDate ? new Date(proj.endDate).toLocaleDateString('vi-VN') : 'Hiện tại'}</span>}
+                                                </div>
+                                            )}
+                                            {proj.technologies && (
+                                                <div className="pf-project-tech" style={{fontSize: '0.75rem', color: 'var(--dau-text-muted)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '4px'}}>
+                                                    <span className="material-symbols-outlined" style={{fontSize: '14px'}}>build</span> {proj.technologies}
+                                                </div>
+                                            )}
+                                            {proj.description && <p>{proj.description}</p>}
+                                            {proj.responsibilities && (
+                                                <div className="pf-project-resp" style={{fontSize: '0.8125rem', color: 'var(--dau-text-main)', marginTop: '0.5rem', whiteSpace: 'pre-line', lineHeight: '1.6'}}>
+                                                    {proj.responsibilities}
+                                                </div>
+                                            )}
+                                            <div className="pf-project-links" style={{marginTop: '1rem'}}>
+                                                {proj.repositoryUrl && <a href={proj.repositoryUrl} target="_blank" rel="noreferrer">Tài liệu đính kèm</a>}
+                                                {proj.demoUrl && <a href={proj.demoUrl} target="_blank" rel="noreferrer">Sản phẩm / Demo</a>}
+                                            </div>
+                                        </div>
+                                        <button className="pf-btn-icon-delete" onClick={() => handleDeleteProject(proj.id)}>
+                                            <span className="material-symbols-outlined">delete</span>
+                                        </button>
+                                    </div>
+                                )) : <p className="pf-text-muted">Chưa có dự án nào được thêm.</p>}
                             </div>
                         </div>
                     </div>
@@ -290,23 +368,48 @@ const Profile = () => {
                                     Hồ sơ năng lực (CV)
                                 </h3>
                             </div>
-                            <div className="pf-cv-list">
-                                {profile.cvs?.length > 0 ? (
+                            <div className="pf-cv-list" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                {/* Bản trực tuyến của hệ thống */}
+                                <div className="pf-cv-item" style={{ border: '1px dashed var(--dau-primary)', background: 'rgba(var(--dau-primary-rgb), 0.03)' }}>
+                                    <div className="pf-cv-left">
+                                        <div className="pf-cv-icon" style={{ color: 'var(--dau-primary)' }}><span className="material-symbols-outlined">auto_stories</span></div>
+                                        <div className="pf-cv-info">
+                                            <span className="pf-cv-title">Bản trực tuyến (Hệ thống)</span>
+                                            <span className="pf-cv-meta" style={{fontSize: '0.75rem', opacity: 0.7}}>Dùng mẫu thiết kế của hệ thống</span>
+                                        </div>
+                                    </div>
+                                    <Link to="/student/cv-management" className="pf-cv-btn" title="Chỉnh sửa bản thiết kế">
+                                        <span className="material-symbols-outlined">edit_note</span>
+                                    </Link>
+                                </div>
+
+                                <div style={{ height: '1px', background: '#eee', margin: '2px 0' }}></div>
+
+                                {/* File đính kèm */}
+                                {profile.resumeUrl ? (
                                     <div className="pf-cv-item">
                                         <div className="pf-cv-left">
-                                            <div className="pf-cv-icon"><span className="material-symbols-outlined">picture_as_pdf</span></div>
+                                            <div className="pf-cv-icon" style={{color: '#e74c3c'}}><span className="material-symbols-outlined">picture_as_pdf</span></div>
                                             <div className="pf-cv-info">
-                                                <span className="pf-cv-title">CV mới của tôi</span>
+                                                <span className="pf-cv-title">File hồ sơ đính kèm</span>
                                             </div>
                                         </div>
-                                        <Link to="/student/cv-management" className="pf-cv-btn">
-                                            <span className="material-symbols-outlined">open_in_new</span>
-                                        </Link>
+                                        <div style={{display: 'flex', gap: '0.5rem'}}>
+                                            <a href={getImageUrl(profile.resumeUrl)} target="_blank" rel="noreferrer" className="pf-cv-btn" title="Xem file">
+                                                <span className="material-symbols-outlined">visibility</span>
+                                            </a>
+                                            <label className="pf-cv-btn" style={{cursor: 'pointer', margin: 0}} title="Đổi file khác">
+                                                <span className="material-symbols-outlined">upload</span>
+                                                <input type="file" accept="application/pdf" hidden onChange={handleResumeUpload} disabled={isUploading} />
+                                            </label>
+                                        </div>
                                     </div>
                                 ) : (
-                                    <Link to="/student/cv-management" className="pf-btn-dau" style={{background: 'var(--dau-primary)'}}>
-                                        Tạo CV ngay
-                                    </Link>
+                                    <label className="pf-btn-dau" style={{ cursor: 'pointer', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f9fa', border: '1px solid #ddd', color: '#555', margin: 0, padding: '0.75rem' }}>
+                                        <span className="material-symbols-outlined" style={{marginRight: '8px'}}>attach_file</span>
+                                        {isUploading ? 'Đang tải lên...' : 'Đính kèm file PDF'}
+                                        <input type="file" accept="application/pdf" hidden onChange={handleResumeUpload} disabled={isUploading} />
+                                    </label>
                                 )}
                             </div>
                         </div>
@@ -421,15 +524,77 @@ const Profile = () => {
                             </div>
                             <div className="pf-modal-body">
                                 <div className="pf-modal-field">
-                                    <label>Chọn kỹ năng</label>
-                                    <select className="pf-input" value={skillId} onChange={e => setSkillId(e.target.value)}>
-                                        <option value="">-- Chọn kỹ năng --</option>
-                                        {allSkills.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                                    </select>
+                                    <label>Tên kỹ năng</label>
+                                    <input 
+                                        type="text" 
+                                        className="pf-input" 
+                                        value={skillName} 
+                                        onChange={e => setSkillName(e.target.value)} 
+                                        placeholder="Nhập tên kỹ năng (vd: AutoCAD, Thuyết trình...)" 
+                                    />
                                 </div>
                             </div>
                             <div className="pf-modal-footer">
                                 <button className="pf-btn-save-all" onClick={handleAddSkill} disabled={saving}>Thêm kỹ năng</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* --- PROJECT FORM MODAL --- */}
+                {showProjectForm && (
+                    <div className="pf-modal-overlay">
+                        <div className="pf-modal-container">
+                            <div className="pf-modal-header">
+                                <h3>Thêm dự án mới</h3>
+                                <button className="pf-modal-close" onClick={() => setShowProjectForm(false)}>&times;</button>
+                            </div>
+                            <div className="pf-modal-body">
+                                <div className="pf-modal-field">
+                                    <label>Tên dự án</label>
+                                    <input type="text" value={projectForm.name} onChange={e => setProjectForm({...projectForm, name: e.target.value})} placeholder="Tên dự án, Đồ án, Công trình..." />
+                                </div>
+                                <div className="pf-modal-grid">
+                                    <div className="pf-modal-field">
+                                        <label>Vai trò / Vị trí</label>
+                                        <input type="text" value={projectForm.role} onChange={e => setProjectForm({...projectForm, role: e.target.value})} placeholder="Kiến trúc sư, Quản lý dự án, Developer..." />
+                                    </div>
+                                    <div className="pf-modal-field">
+                                        <label>Công cụ / Kỹ năng sử dụng</label>
+                                        <input type="text" value={projectForm.technologies} onChange={e => setProjectForm({...projectForm, technologies: e.target.value})} placeholder="AutoCAD, React, Excel, Photoshop..." />
+                                    </div>
+                                </div>
+                                <div className="pf-modal-grid">
+                                    <div className="pf-modal-field">
+                                        <label>Ngày bắt đầu</label>
+                                        <input type="date" value={projectForm.startDate} onChange={e => setProjectForm({...projectForm, startDate: e.target.value})} />
+                                    </div>
+                                    <div className="pf-modal-field">
+                                        <label>Ngày kết thúc (Để trống nếu đang làm)</label>
+                                        <input type="date" value={projectForm.endDate} onChange={e => setProjectForm({...projectForm, endDate: e.target.value})} />
+                                    </div>
+                                </div>
+                                <div className="pf-modal-field">
+                                    <label>Mô tả ngắn</label>
+                                    <textarea rows="2" value={projectForm.description} onChange={e => setProjectForm({...projectForm, description: e.target.value})} placeholder="Mô tả tóm tắt về dự án..."></textarea>
+                                </div>
+                                <div className="pf-modal-field" style={{marginBottom: '1.5rem'}}>
+                                    <label>Chi tiết công việc / Thành tựu</label>
+                                    <textarea rows="4" value={projectForm.responsibilities} onChange={e => setProjectForm({...projectForm, responsibilities: e.target.value})} placeholder="- Thiết kế bản vẽ 3D&#10;- Phân tích dữ liệu tài chính&#10;- Phát triển tính năng..."></textarea>
+                                </div>
+                                <div className="pf-modal-grid">
+                                    <div className="pf-modal-field">
+                                        <label>Link tài liệu / Mã nguồn (Tùy chọn)</label>
+                                        <input type="text" value={projectForm.repositoryUrl} onChange={e => setProjectForm({...projectForm, repositoryUrl: e.target.value})} placeholder="Google Drive, GitHub..." />
+                                    </div>
+                                    <div className="pf-modal-field">
+                                        <label>Link sản phẩm / Demo (Tùy chọn)</label>
+                                        <input type="text" value={projectForm.demoUrl} onChange={e => setProjectForm({...projectForm, demoUrl: e.target.value})} placeholder="Behance, YouTube, Website..." />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="pf-modal-footer">
+                                <button className="pf-btn-save-all" onClick={handleAddProject} disabled={saving}>Lưu dự án</button>
                             </div>
                         </div>
                     </div>

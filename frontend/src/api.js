@@ -76,10 +76,16 @@ export const studentApi = {
     updateVideo: (formData, onUploadProgress) => api.post('/student/profile/video', formData, {
         onUploadProgress,
     }),
+    uploadResume: (formData, onUploadProgress) => api.post('/student/profile/resume/upload', formData, {
+        onUploadProgress,
+    }),
     // Skills
     getSkills: () => api.get('/admin/skills'),
-    addSkill: (skillId, level) => api.post(`/student/profile/skills`, { skillId, level }),
+    addSkill: (skillName, level) => api.post(`/student/profile/skills`, { skillName, level }),
     deleteSkill: (id) => api.delete(`/student/profile/skills/${id}`),
+    // Projects
+    addProject: (data) => api.post('/student/profile/projects', data),
+    deleteProject: (id) => api.delete(`/student/profile/projects/${id}`),
     // Education
     addEducation: (data) => api.post('/student/profile/educations', data),
     updateEducation: (id, data) => api.put(`/student/profile/educations/${id}`, data),
