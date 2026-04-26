@@ -120,9 +120,7 @@ const CompanyCandidates = () => {
         try {
             const res = await recruitmentApi.updateStatus(appId, status);
             if (res.data.status === 'success') {
-                if (status === 'suitable') {
-                    toast.success("Đã duyệt ứng viên");
-                } else if (status === 'pending') {
+                if (status === 'pending') {
                     toast.success("Đã hoàn tác trạng thái ứng viên");
                 } else {
                     toast.success(`Đã chuyển ứng viên sang trạng thái ${getStatusLabel(status)}`);
@@ -248,14 +246,12 @@ const CompanyCandidates = () => {
 
     const getStatusLabel = (status) => {
         const labels = {
-            'pending': 'Chờ đánh giá',
-            'suitable': 'Đã duyệt',
+            'pending': 'Chờ duyệt',
+            'review': 'Theo dõi thêm',
             'interview': 'Phỏng vấn',
-            'offered': 'Đã gửi offer',
-            'accepted': 'Đã nhận',
             'rejected': 'Từ chối'
         };
-        return labels[status.toLowerCase()] || status;
+        return labels[status.toLowerCase()] || 'Chờ xử lý';
     };
 
     const getMatchClass = (percent) => {
@@ -308,10 +304,8 @@ const CompanyCandidates = () => {
                                     >
                                         <option value="all">Tất cả trạng thái</option>
                                         <option value="pending">Chờ duyệt</option>
-                                        <option value="suitable">Đã duyệt</option>
                                         <option value="interview">Phỏng vấn</option>
-                                        <option value="offered">Đã gửi offer</option>
-                                        <option value="accepted">Đã nhận</option>
+                                        <option value="review">Theo dõi thêm</option>
                                         <option value="rejected">Từ chối</option>
                                     </select>
 
@@ -320,9 +314,9 @@ const CompanyCandidates = () => {
                                         className="dau-select filter-control"
                                         value={selectedJobId}
                                         onChange={(e) => setSelectedJobId(e.target.value)}
-                                        style={{ width: '160px', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 14px', color: '#64748b', fontSize: '14px' }}
+                                        style={{ width: '180px', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 14px', color: '#64748b', fontSize: '14px' }}
                                     >
-                                        <option value="all">Tất cả vị trí</option>
+                                        <option value="all">Tất cả tin tuyển dụng</option>
                                         {jobs.map(job => (
                                             <option key={job.id} value={job.id.toString()}>
                                                 {job.title}
@@ -486,31 +480,29 @@ const CompanyCandidates = () => {
                                                 <td style={{ padding: '16px 20px', textAlign: 'center' }}>
                                                     <span style={{ 
                                                         display: 'inline-flex', alignItems: 'center', gap: '6px', 
-                                                        color: app.status === 'pending' ? '#ea580c' : app.status === 'suitable' ? '#16a34a' : app.status === 'rejected' ? '#dc2626' : '#2563eb', 
-                                                        fontSize: '14px', fontWeight: '600'
+                                                        color: app.status === 'pending' ? '#ea580c' : app.status === 'review' ? '#7c3aed' : app.status === 'rejected' ? '#dc2626' : app.status === 'interview' ? '#2563eb' : '#64748b', 
+                                                        fontSize: '14px', fontWeight: '600',
+                                                        background: app.status === 'pending' ? '#fff7ed' : app.status === 'review' ? '#f5f3ff' : app.status === 'rejected' ? '#fef2f2' : '#eff6ff',
+                                                        padding: '4px 10px',
+                                                        borderRadius: '20px'
                                                     }}>
-                                                        {app.status === 'pending' ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> : null}
-                                                        {app.status === 'suitable' ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> : null}
-                                                        {app.status === 'rejected' ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> : null}
-                                                        {app.status === 'pending' ? 'Chờ duyệt' : app.status === 'suitable' ? 'Đã duyệt' : app.status === 'rejected' ? 'Từ chối' : 'Chờ xử lý'}
+                                                        {app.status === 'pending' && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>}
+                                                        {app.status === 'review' && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>}
+                                                        {app.status === 'rejected' && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>}
+                                                        {app.status === 'interview' && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>}
+                                                        {getStatusLabel(app.status)}
                                                     </span>
                                                 </td>
 
                                                 {/* Cột 5: Hành động */}
                                                 <td style={{ padding: '16px 20px', textAlign: 'right' }}>
-                                                    <div style={{ display: 'flex', gap: '16px', justifyContent: 'flex-end', alignItems: 'center' }}>
+                                                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', alignItems: 'center' }}>
                                                         <button 
-                                                            style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13.5px', fontWeight: '500' }}
+                                                            style={{ background: '#f8fafc', border: '1px solid #e2e8f0', color: '#64748b', height: '32px', padding: '0 12px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: '600' }}
                                                             onClick={() => handleOpenModal(app)}
                                                         >
                                                             <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                                            Xem
-                                                        </button>
-                                                        <button 
-                                                            style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13.5px', fontWeight: '500' }}
-                                                        >
-                                                            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                                                            Xóa
+                                                            Chi tiết
                                                         </button>
                                                     </div>
                                                 </td>

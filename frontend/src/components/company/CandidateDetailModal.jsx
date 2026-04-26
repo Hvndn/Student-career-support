@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { recruitmentApi } from '../../api';
-import { tagService } from '../../utils/tagService';
 import { getImageUrl } from '../../utils/urlUtils';
 import StudentProfileModal from './StudentProfileModal';
 import '../../assets/css/company/CandidateDetailModal.css';
@@ -24,18 +23,12 @@ const CandidateDetailModal = ({
     const [loading, setLoading] = useState(true);
     const [status, setStatus] = useState(initialStatus || '');
     const [updatingStatus, setUpdatingStatus] = useState(false);
-    const [allTags, setAllTags] = useState([]);
-    const [candidateTagIds, setCandidateTagIds] = useState([]);
     const [showProfile, setShowProfile] = useState(false);
     const [downloading, setDownloading] = useState(false);
 
     useEffect(() => {
         if (show && applicationId) {
             fetchDetail();
-            // Load tags from service
-            setAllTags(tagService.getTags());
-            const mappings = tagService.getAllMappings();
-            setCandidateTagIds(mappings[applicationId] || []);
         }
     }, [show, applicationId]);
 
@@ -72,11 +65,6 @@ const CandidateDetailModal = ({
         }
     };
 
-    const handleToggleTag = (tagId) => {
-        tagService.toggleTag(applicationId, tagId);
-        const mappings = tagService.getAllMappings();
-        setCandidateTagIds(mappings[applicationId] || []);
-    };
 
     const handleDownloadCV = async () => {
         const urlToDownload = initialCvUrl || candidate?.cvUrl;
@@ -103,12 +91,11 @@ const CandidateDetailModal = ({
     const getStatusConfig = (s) => {
         const lowerS = (s || '').toLowerCase();
         switch (lowerS) {
-            case 'pending': return { label: 'Đang chờ', className: 'status-applied' };
+            case 'pending': return { label: 'Chờ duyệt', className: 'status-applied' };
             case 'interview': return { label: 'Phỏng vấn', className: 'status-interviewing' };
-            case 'accepted': return { label: 'Chấp nhận', className: 'status-accepted' };
+            case 'review': return { label: 'Theo dõi thêm', className: 'status-review' };
             case 'rejected': return { label: 'Từ chối', className: 'status-rejected' };
-            case 'suitable': return { label: 'Phù hợp', className: 'status-accepted' };
-            default: return { label: s || 'N/A', className: 'status-applied' };
+            default: return { label: 'Chờ xử lý', className: 'status-applied' };
         }
     };
 
@@ -199,28 +186,6 @@ const CandidateDetailModal = ({
                                     </ul>
                                 </div>
 
-                                {/* Phân loại ứng viên */}
-                                {allTags.length > 0 && (
-                                    <div className="cdm-section">
-                                        <p className="cdm-section-title">Phân loại ứng viên</p>
-                                        <div className="cdm-tag-pills">
-                                            {allTags.map(tag => {
-                                                const isActive = candidateTagIds.includes(tag.id);
-                                                return (
-                                                    <button
-                                                        key={tag.id}
-                                                        className={`cdm-tag-pill ${isActive ? 'active' : ''}`}
-                                                        style={isActive ? { background: `${tag.color}18`, color: tag.color, borderColor: `${tag.color}50` } : {}}
-                                                        onClick={() => handleToggleTag(tag.id)}
-                                                    >
-                                                        {tag.name}
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-                                )}
-
                                 {/* Tệp đính kèm */}
                                 <div className="cdm-section">
                                     <p className="cdm-section-title">Tệp đính kèm</p>
@@ -275,8 +240,8 @@ const CandidateDetailModal = ({
                                         </div>
                                         <div className="cdm-status-radios">
                                             {[
+                                                { key: 'review', label: 'Theo dõi thêm' },
                                                 { key: 'interview', label: 'Hẹn phỏng vấn' },
-                                                { key: 'accepted', label: 'Chấp nhận' },
                                                 { key: 'rejected', label: 'Từ chối' },
                                             ].map(opt => (
                                                 <label key={opt.key} className={`cdm-radio-label ${opt.key}`}>

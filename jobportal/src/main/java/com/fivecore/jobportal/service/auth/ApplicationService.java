@@ -159,17 +159,9 @@ public class ApplicationService {
         String message = "Đơn ứng tuyển của bạn vào vị trí " + application.getJob().getTitle() + " đã được cập nhật.";
 
         switch (status) {
-            case accepted:
-                title = "Chúc mừng! Đơn ứng tuyển được chấp nhận";
-                message = "Hồ sơ của bạn cho vị trí " + application.getJob().getTitle() + " đã được " + application.getJob().getCompany().getName() + " chấp nhận. Vui lòng chuẩn bị cho các bước tiếp theo.";
-                break;
             case rejected:
                 title = "Kết quả đơn ứng tuyển";
                 message = "Cảm ơn bạn đã quan tâm. Rất tiếc, hồ sơ của bạn cho vị trí " + application.getJob().getTitle() + " chưa phù hợp tại thời điểm này.";
-                break;
-            case suitable:
-                title = "Hồ sơ phù hợp";
-                message = "Hồ sơ của bạn được đánh giá là phù hợp với vị trí " + application.getJob().getTitle() + ". Doanh nghiệp sẽ sớm liên hệ với bạn.";
                 break;
             case interview:
                 title = "Mời phỏng vấn";
@@ -177,7 +169,7 @@ public class ApplicationService {
                 break;
             case review:
                 title = "Đang xem xét hồ sơ";
-                message = "Hồ sơ của bạn đang được " + application.getJob().getCompany().getName() + " xem xét kỹ hơn cho vị trí " + application.getJob().getTitle() + ".";
+                message = "Hồ sơ của bạn đang được " + application.getJob().getCompany().getName() + " theo dõi và xem xét thêm cho vị trí " + application.getJob().getTitle() + ".";
                 break;
             default:
                 break;
