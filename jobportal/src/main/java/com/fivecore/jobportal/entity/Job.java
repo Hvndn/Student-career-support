@@ -72,6 +72,9 @@ public class Job {
     @Column(length = 255)
     private String location;
 
+    @Column(length = 100)
+    private String region;
+
     private LocalDate deadline;
 
     @Column(name = "posted_at")

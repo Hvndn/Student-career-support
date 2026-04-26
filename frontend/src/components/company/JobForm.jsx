@@ -61,12 +61,28 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
 
     useEffect(() => {
         if (jobData) {
-            setForm({
-                ...form,
-                ...jobData,
-                quantity: String(jobData.quantity || 1),
-                jobType: (jobData.jobType || 'fulltime').toLowerCase(),
+            setForm(prev => {
+                const updated = {
+                    ...prev,
+                    ...jobData,
+                    title: jobData.title || '',
+                    industry: jobData.industry || '',
+                    level: jobData.level || '',
+                    region: jobData.region || '',
+                    location: jobData.location || '',
+                    description: jobData.description || '',
+                    requirements: jobData.requirements || '',
+                    benefits: jobData.benefits || '',
+                    deadline: jobData.deadline || '',
+                    minSalary: jobData.minSalary !== null ? String(jobData.minSalary) : '',
+                    maxSalary: jobData.maxSalary !== null ? String(jobData.maxSalary) : '',
+                    salaryType: jobData.salaryType || (jobData.minSalary || jobData.maxSalary ? 'range' : 'agreement'),
+                    quantity: String(jobData.quantity || 1),
+                    jobType: (jobData.jobType || 'fulltime').toLowerCase(),
+                };
+                return updated;
             });
+
             if (Array.isArray(jobData.skills)) setSelectedSkills(jobData.skills);
             if (jobData.bannerUrl) setBannerPreview(getImageUrl(jobData.bannerUrl));
             
@@ -74,7 +90,11 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
                 const foundProv = vietnamLocations.find(p => p.name === jobData.region);
                 if (foundProv) {
                     setDistricts(foundProv.districts);
-                    // Try to extract district from location if possible, or just leave it
+                    if (jobData.location && jobData.location.includes(',')) {
+                        const districtPart = jobData.location.split(',')[0].trim();
+                        const foundDist = foundProv.districts.find(d => d.name === districtPart);
+                        if (foundDist) setSelectedDistrict(foundDist.name);
+                    }
                 }
             }
         }
@@ -122,28 +142,35 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
     const handleSkillRemove = (skill) => setSelectedSkills(selectedSkills.filter(s => s !== skill));
 
     const handleSubmit = async (isDraft = false) => {
+        // Final check before sending
         if (!form.title || !form.industry || !form.region || !form.description) {
-            toast.error('Vui lòng điền đầy đủ các trường bắt buộc (*)');
+            toast.error('Vui lòng điền đủ: Tiêu đề, Lĩnh vực, Địa điểm, Mô tả');
             return;
         }
 
+        const payload = {
+            ...form,
+            quantity: parseInt(form.quantity) || 1,
+            minSalary: form.salaryType === 'agreement' ? null : (form.minSalary ? parseFloat(form.minSalary) : null),
+            maxSalary: form.salaryType === 'agreement' ? null : (form.maxSalary ? parseFloat(form.maxSalary) : null),
+            skills: selectedSkills,
+            status: isDraft ? 'draft' : (jobData?.status || 'open')
+        };
+
+        // Explicitly ensure all required fields are present in payload
+        payload.title = form.title;
+        payload.industry = form.industry;
+        payload.region = form.region;
+        payload.description = form.description;
+
+        console.log("Final Payload to API:", payload);
+
         setSubmitting(true);
         try {
-            let finalBannerUrl = form.bannerUrl;
             if (selectedBannerFile) {
                 const res = await companyApi.uploadBanner(selectedBannerFile);
-                if (res.data.status === 'success') finalBannerUrl = res.data.data;
+                if (res.data.status === 'success') payload.bannerUrl = res.data.data;
             }
-
-            const payload = {
-                ...form,
-                quantity: parseInt(form.quantity) || 1,
-                minSalary: form.salaryType === 'agreement' ? null : (form.minSalary ? parseFloat(form.minSalary) : null),
-                maxSalary: form.salaryType === 'agreement' ? null : (form.maxSalary ? parseFloat(form.maxSalary) : null),
-                skills: selectedSkills,
-                bannerUrl: finalBannerUrl,
-                status: isDraft ? 'draft' : (jobData ? jobData.status : 'open')
-            };
 
             const response = jobData?.id 
                 ? await companyApi.updateJob(jobData.id, payload)
@@ -154,7 +181,8 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
                 onSuccess();
             }
         } catch (err) {
-            toast.error(err.response?.data?.message || 'Đã có lỗi xảy ra!');
+            console.error("Submit Error:", err);
+            toast.error(err.response?.data?.message || 'Lỗi hệ thống khi lưu tin!');
         } finally {
             setSubmitting(false);
         }
