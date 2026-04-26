@@ -17,6 +17,15 @@ const JOB_TYPES = [
     { value: 'freelance', label: 'Hợp đồng' }
 ];
 
+const SUGGESTED_SKILLS = {
+    'Công nghệ thông tin': ['Java', 'Python', 'ReactJS', 'NodeJS', 'SQL', 'Git', 'AWS', 'Docker', 'Spring Boot', 'TypeScript', 'C++', 'PHP'],
+    'Marketing': ['SEO', 'Content Marketing', 'Google Ads', 'Facebook Ads', 'Social Media', 'Data Analysis', 'Email Marketing', 'Copywriting'],
+    'Thiết kế': ['Photoshop', 'Illustrator', 'Figma', 'UI/UX', 'After Effects', 'Design Thinking', 'InDesign'],
+    'Tài chính': ['Excel', 'Data Analysis', 'Accounting', 'Risk Management', 'Financial Planning', 'ERP'],
+    'Kinh doanh/Bán hàng': ['CRM', 'Negotiation', 'Communication', 'Presentation', 'Sales Strategy', 'Market Research'],
+    'Hành chính/Nhân sự': ['HRM', 'Recruitment', 'Payroll', 'MS Office', 'Employee Relations', 'Training']
+};
+
 const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
     const fileInputRef = useRef(null);
     const [submitting, setSubmitting] = useState(false);
@@ -93,10 +102,21 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
         }
     };
 
-    const handleSkillAdd = () => {
-        const val = skillInput.trim();
-        if (val && !selectedSkills.includes(val)) setSelectedSkills([...selectedSkills, val]);
+    const handleSkillAdd = (val = skillInput) => {
+        const trimmed = val.trim().replace(/,$/, '');
+        if (trimmed && !selectedSkills.includes(trimmed)) {
+            setSelectedSkills([...selectedSkills, trimmed]);
+        }
         setSkillInput('');
+    };
+
+    const handleSkillInputChange = (e) => {
+        const val = e.target.value;
+        if (val.endsWith(',')) {
+            handleSkillAdd(val);
+        } else {
+            setSkillInput(val);
+        }
     };
 
     const handleSkillRemove = (skill) => setSelectedSkills(selectedSkills.filter(s => s !== skill));
@@ -249,12 +269,60 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
 
             {/* Skills */}
             <div className="pjm-section">
-                <div className="pjm-section-title"><i className="fa-solid fa-tags"></i> Kỹ năng</div>
-                <div className="pjm-tags-container">
-                    {selectedSkills.map(s => (
-                        <span key={s} className="pjm-tag">{s} <button onClick={() => handleSkillRemove(s)}>×</button></span>
-                    ))}
-                    <input className="pjm-tag-input" placeholder="Thêm kỹ năng..." value={skillInput} onChange={e => setSkillInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSkillAdd()} />
+                <div className="pjm-section-title">
+                    <i className="fa-solid fa-tags"></i> 
+                    Kỹ năng yêu cầu
+                    <span className="pjm-title-hint">(Dùng để AI so khớp ứng viên)</span>
+                </div>
+                
+                <div className="pjm-skills-wrapper">
+                    {/* Added Tags Above */}
+                    <div className="pjm-added-tags">
+                        {selectedSkills.length > 0 ? (
+                            selectedSkills.map(s => (
+                                <span key={s} className="pjm-tag">
+                                    {s} <button type="button" onClick={() => handleSkillRemove(s)}>×</button>
+                                </span>
+                            ))
+                        ) : (
+                            <span className="pjm-no-skills">Chưa có kỹ năng nào được thêm</span>
+                        )}
+                    </div>
+
+                    <div className="pjm-tag-input-wrap">
+                        <i className="fa-solid fa-plus"></i>
+                        <input 
+                            className="pjm-tag-input-v2" 
+                            placeholder="Nhập kỹ năng (ví dụ: ReactJS) rồi nhấn Enter hoặc dấu phẩy..." 
+                            value={skillInput} 
+                            onChange={handleSkillInputChange}
+                            onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleSkillAdd())}
+                            onBlur={() => handleSkillAdd()}
+                        />
+                    </div>
+
+                    {/* Suggestions */}
+                    {form.industry && SUGGESTED_SKILLS[form.industry] && (
+                        <div className="pjm-skill-suggestions">
+                            <span className="pjm-sug-label">Gợi ý cho {form.industry}:</span>
+                            <div className="pjm-sug-list">
+                                {SUGGESTED_SKILLS[form.industry]
+                                    .filter(s => !selectedSkills.includes(s))
+                                    .slice(0, 8)
+                                    .map(s => (
+                                        <button 
+                                            key={s} 
+                                            type="button" 
+                                            className="pjm-sug-item"
+                                            onClick={() => setSelectedSkills([...selectedSkills, s])}
+                                        >
+                                            + {s}
+                                        </button>
+                                    ))
+                                }
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
