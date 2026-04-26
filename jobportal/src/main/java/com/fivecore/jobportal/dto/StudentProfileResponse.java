@@ -38,6 +38,7 @@ public class StudentProfileResponse {
     private List<SkillDto> skills;
     private String cvData;
     private Double matchScore; // Tỷ lệ phù hợp (0-100)
+    private java.util.Map<String, Object> matchDetails; // Chi tiết chấm điểm
 
     @Data
     @Builder

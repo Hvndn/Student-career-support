@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.fivecore.jobportal.service.interaction.NotificationService;
+import com.fivecore.jobportal.service.company.CandidateMatchingService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,6 +31,7 @@ public class ApplicationService {
     private final StudentRepository studentRepository;
     private final JobRepository jobRepository;
     private final NotificationService notificationService;
+    private final CandidateMatchingService candidateMatchingService;
 
     public Application getApplicationEntity(Integer id) {
         return applicationRepository.findById(id).orElse(null);
@@ -72,6 +74,18 @@ public class ApplicationService {
         return mapToDto(savedApp);
     }
 
+    private Double calculateMatchScore(Application app) {
+        if (app.getStudent() == null || app.getJob() == null) return 0.0;
+        return candidateMatchingService.calculateDetailedScore(app.getStudent(), app.getJob(), new java.util.HashMap<>());
+    }
+
+    private java.util.Map<String, Object> calculateMatchDetails(Application app) {
+        if (app.getStudent() == null || app.getJob() == null) return new java.util.HashMap<>();
+        java.util.Map<String, Object> details = new java.util.HashMap<>();
+        candidateMatchingService.calculateDetailedScore(app.getStudent(), app.getJob(), details);
+        return details;
+    }
+
     private com.fivecore.jobportal.dto.ApplicationDto mapToDto(Application app) {
         Job job = app.getJob();
         String salaryRange = "Thỏa thuận";
@@ -85,7 +99,7 @@ public class ApplicationService {
                 .map(js -> js.getSkill().getName())
                 .collect(java.util.stream.Collectors.toList());
 
-        return com.fivecore.jobportal.dto.ApplicationDto.builder()
+        return ApplicationDto.builder()
                 .id(app.getId())
                 .jobId(job.getId())
                 .jobTitle(job.getTitle())
@@ -98,7 +112,8 @@ public class ApplicationService {
                 .studentName(app.getStudent().getUser().getFullName())
                 .studentAvatar(app.getStudent().getAvatarUrl())
                 .studentId(app.getStudent().getId())
-                .matchPercentage(85) // Giả lập tỷ lệ phù hợp
+                .matchScore(calculateMatchScore(app))
+                .matchDetails(calculateMatchDetails(app))
                 .status(app.getStatus().name())
                 .appliedAt(app.getAppliedAt())
                 .salaryRange(salaryRange)

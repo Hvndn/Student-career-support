@@ -156,9 +156,9 @@ const SuggestedCandidates = () => {
 
                     {selectedStudent && (
                         <StudentProfileModal 
-                            isOpen={isModalOpen}
+                            show={isModalOpen}
+                            candidate={selectedStudent}
                             onClose={() => setIsModalOpen(false)}
-                            studentId={selectedStudent.id}
                         />
                     )}
                 </div>

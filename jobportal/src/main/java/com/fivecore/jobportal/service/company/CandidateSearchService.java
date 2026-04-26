@@ -27,15 +27,19 @@ public class CandidateSearchService {
     private final StudentProfileMapper studentProfileMapper;
     private final ObjectMapper objectMapper;
 
+    private final CandidateMatchingService candidateMatchingService;
+
     public CandidateSearchService(
             StudentRepository studentRepository,
             ApplicationRepository applicationRepository,
             StudentProfileMapper studentProfileMapper,
-            ObjectMapper objectMapper) {
+            ObjectMapper objectMapper,
+            CandidateMatchingService candidateMatchingService) {
         this.studentRepository = studentRepository;
         this.applicationRepository = applicationRepository;
         this.studentProfileMapper = studentProfileMapper;
         this.objectMapper = objectMapper;
+        this.candidateMatchingService = candidateMatchingService;
     }
 
     /**
@@ -120,6 +124,12 @@ public class CandidateSearchService {
             res.put("cvData", profile.getCvData());
             res.put("resumeUrl", profile.getResumeUrl());
             res.put("coverImageUrl", profile.getCoverImageUrl());
+            
+            // Phân tích AI
+            Map<String, Object> matchDetails = new HashMap<>();
+            double matchScore = candidateMatchingService.calculateDetailedScore(s, app.getJob(), matchDetails);
+            res.put("matchScore", matchScore);
+            res.put("matchDetails", matchDetails);
             
             // Toàn bộ profile DTO để dùng cho các component con
             res.put("studentProfile", profile);

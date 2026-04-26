@@ -143,140 +143,19 @@ const CompanyCandidates = () => {
     // Filter and Sort logic
     const filteredApps = applications
         .map(app => {
-            // TÌM THÔNG TIN CÔNG VIỆC ĐỂ SO SÁNH
-            const job = jobs.find(j => j.id === app.jobId);
-            if (!job) return { ...app, enhancedMatch: app.matchPercentage || 0 };
-
-            let score = 0;
-            
-            // 1. KỸ NĂNG (40%) - TRỌNG YẾU
-            let requiredSkills = job.skills || [];
-            if (requiredSkills.length === 0) {
-                // Trích xuất từ title nếu skills trống
-                const title = (job.title || '').toLowerCase();
-                if (title.includes('react')) requiredSkills.push('reactjs');
-                if (title.includes('node')) requiredSkills.push('nodejs');
-                if (title.includes('java')) requiredSkills.push('java');
-                if (title.includes('spring')) requiredSkills.push('spring boot');
-                if (title.includes('frontend')) requiredSkills.push('frontend');
-                if (title.includes('backend')) requiredSkills.push('backend');
-                if (title.includes('fullstack')) { requiredSkills.push('frontend'); requiredSkills.push('backend'); }
-                if (title.includes('mobile') || title.includes('flutter')) requiredSkills.push('mobile');
-            }
-
-            const rawSkillsData = app.studentSkills || app.skills || app.student?.skills || app.student?.studentSkills || '';
-            let studentSkills = [];
-            if (typeof rawSkillsData === 'string') {
-                studentSkills = rawSkillsData.toLowerCase().split(',').map(s => s.trim()).filter(s => s !== '');
-            } else if (Array.isArray(rawSkillsData)) {
-                studentSkills = rawSkillsData.map(s => (typeof s === 'string' ? s : (s.name || '')).toLowerCase());
-            }
-            
-            if (requiredSkills.length > 0) {
-                if (studentSkills.length > 0) {
-                    const matchedSkills = requiredSkills.filter(sk => 
-                        studentSkills.some(ss => ss.includes(sk.toLowerCase()) || sk.toLowerCase().includes(ss))
-                    );
-                    score += (matchedSkills.length / requiredSkills.length) * 40;
-
-                    // KIỂM TRA DỰ ÁN CÁ NHÂN (PROJECT SYNERGY)
-                    const projects = app.studentProjects || [];
-                    let projectBonus = 0;
-                    if (projects.length > 0) {
-                        const projectSkills = projects.flatMap(p => 
-                            (p.technologies || '').toLowerCase().split(',').map(s => s.trim())
-                        );
-                        
-                        // 1. Cộng điểm nếu có dự án dùng công nghệ yêu cầu
-                        const practicalMatchedSkills = requiredSkills.filter(sk => 
-                            projectSkills.some(ps => ps.includes(sk.toLowerCase()) || sk.toLowerCase().includes(ps))
-                        );
-                        
-                        if (practicalMatchedSkills.length > 0) {
-                            projectBonus += (practicalMatchedSkills.length / requiredSkills.length) * 10;
-                        }
-
-                        // 2. Thưởng "Thực chiến" (Practical Mastery): Skill vừa có trong profile vừa có trong dự án
-                        const masterSkills = matchedSkills.filter(ms => 
-                            projectSkills.some(ps => ps.includes(ms.toLowerCase()) || ms.toLowerCase().includes(ps))
-                        );
-                        if (masterSkills.length > 0) {
-                            projectBonus += (masterSkills.length / requiredSkills.length) * 5;
-                        }
-                        
-                        score += projectBonus;
-                        app._projectBonus = Math.round(projectBonus);
-                    }
-                }
-            } else {
-                // Job không yêu cầu skill cụ thể, cho điểm cơ bản dựa trên title
-                const jobTitleLower = (job.title || '').toLowerCase();
-                const hasRelatedSkill = studentSkills.some(ss => jobTitleLower.includes(ss) || ss.includes(jobTitleLower));
-                score += hasRelatedSkill ? 30 : 15;
-            }
-
-            // 2. KINH NGHIỆM (20%)
-            const jobExp = (job.experience || 'Chưa có kinh nghiệm').toLowerCase();
-            const stuExp = (app.studentExperience || 'Chưa có kinh nghiệm').toLowerCase();
-            if (stuExp.includes(jobExp) || jobExp === 'chưa có kinh nghiệm') {
-                score += 20;
-            } else if (stuExp !== 'chưa có kinh nghiệm') {
-                score += 10; // Có kinh nghiệm nhưng không khớp hoàn toàn
-            }
-
-            // 3. HỌC VẤN & CHUYÊN NGÀNH (10%)
-            const rawMajor = app.studentMajor || app.major || app.majorName || app.student?.major || app.student?.majorName || app.major?.name || app.studentMajor?.name || app.major_name || '';
-            const studentMajor = (typeof rawMajor === 'string' ? rawMajor : (rawMajor?.name || '')).toLowerCase();
-            const jobIndustry = (job.industry || '').toLowerCase();
-            
-            let majorScore = 0;
-            if (studentMajor && jobIndustry && (studentMajor.includes(jobIndustry) || jobIndustry.includes(studentMajor))) {
-                majorScore = 10;
-            } else if (studentMajor && !studentMajor.includes('chưa cập nhật') && studentMajor.length > 2) {
-                majorScore = 5;
-            } else {
-                majorScore = -15; // Phạt nặng nếu chưa cập nhật
-            }
-            score += majorScore;
-
-            // 4. MỨC LƯƠNG KỲ VỌNG (10%)
-            const expected = parseFloat(app.expectedSalary || 0);
-            const min = parseFloat(job.minSalary || 0);
-            const max = parseFloat(job.maxSalary || 1000000000);
-            let salScore = 0;
-            if (expected === 0 || (expected >= min && expected <= max)) {
-                salScore = 10;
-            } else {
-                salScore = 4;
-            }
-            score += salScore;
-
-            // 5. ĐỊA ĐIỂM & HÌNH THỨC (10%)
-            const stuLoc = (app.studentLocation || app.location || '').toLowerCase();
-            const jobLoc = (job.region || '').toLowerCase();
-            let locScore = 0;
-            if (stuLoc && jobLoc && (stuLoc.includes(jobLoc) || jobLoc.includes(stuLoc))) {
-                locScore = 10;
-            } else {
-                locScore = 2;
-            }
-            score += locScore;
-
-            // 6. BONUS (Dự án, Portfolio, GitHub) (10%)
-            if (app.githubUrl || app.cvUrl) score += 5;
-            if (app.studentSkills && app.studentSkills.length > 50) score += 5; // Có nhiều kỹ năng chi tiết
-
-            const finalScore = Math.min(100, Math.max(0, Math.round(score)));
+            // SỬ DỤNG TRỰC TIẾP ĐIỂM SỐ VÀ CHI TIẾT TỪ BACKEND
+            const score = app.matchScore || app.matchPercentage || 0;
+            const details = app.matchDetails || {};
             
             return { 
                 ...app, 
-                enhancedMatch: finalScore,
+                enhancedMatch: score,
                 matchBreakdown: {
-                    skills: Math.round(studentSkills.length > 0 ? 40 : 0),
-                    major: majorScore,
-                    location: locScore,
-                    salary: salScore,
-                    projectBonus: app._projectBonus || 0
+                    skills: details.skillsScore || 0,
+                    major: details.educationScore || 0,
+                    location: details.locationScore || 0,
+                    experience: details.experienceScore || 0,
+                    projectBonus: (details.projectScore || 0) + (details.softSkillScore || 0)
                 }
             };
         })
@@ -563,7 +442,7 @@ const CompanyCandidates = () => {
                                                                 })()}
                                                                 {app.enhancedMatch && (
                                                                     <span 
-                                                                        title={`Chi tiết: Kỹ năng: +${app.matchBreakdown?.skills || 0}, Chuyên ngành: ${app.matchBreakdown?.major || 0}, Địa điểm: +${app.matchBreakdown?.location || 0}, Thưởng dự án: +${app.matchBreakdown?.projectBonus || 0}`}
+                                                                        title={`Phân tích: Kỹ năng (+${app.matchBreakdown?.skills || 0}), Kinh nghiệm (+${app.matchBreakdown?.experience || 0}), Học vấn (+${app.matchBreakdown?.major || 0}), Địa điểm (+${app.matchBreakdown?.location || 0}), Dự án (+${app.matchBreakdown?.projectBonus || 0})`}
                                                                         style={{ 
                                                                             background: app.enhancedMatch >= 80 ? '#f0fdf4' : app.enhancedMatch >= 60 ? '#fffbeb' : '#fef2f2', 
                                                                             color: app.enhancedMatch >= 80 ? '#16a34a' : app.enhancedMatch >= 60 ? '#d97706' : '#dc2626',

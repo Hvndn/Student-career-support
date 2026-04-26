@@ -92,6 +92,52 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                         {/* MAIN COLUMN (LEFT) */}
                         <div className="spm-main-col">
                             
+                            {/* ── MATCHING ANALYSIS (AI Recommendation Only) ── */}
+                            {candidate.matchScore && (
+                                <div className="spm-card spm-matching-card">
+                                    <div className="spm-match-header">
+                                        <h3 className="spm-card-title">
+                                            <span className="material-symbols-outlined">analytics</span>
+                                            Phân tích độ phù hợp (AI)
+                                        </h3>
+                                        <div className="spm-match-score-big">
+                                            {Math.round(candidate.matchScore)}%
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="spm-match-grid">
+                                        <div className="spm-match-item">
+                                            <span className="spm-mi-label">Kỹ năng</span>
+                                            <span className="spm-mi-value">{candidate.matchDetails?.skillsMatch || 'N/A'}</span>
+                                            <span className={`spm-match-pill ${candidate.matchDetails?.skillsScore > 15 ? 'success' : 'warning'}`}>
+                                                {candidate.matchDetails?.skillsScore || 0}đ
+                                            </span>
+                                        </div>
+                                        <div className="spm-match-item">
+                                            <span className="spm-mi-label">Kinh nghiệm</span>
+                                            <span className="spm-mi-value">{candidate.matchDetails?.experienceYears || 0} năm</span>
+                                            <span className={`spm-match-pill ${candidate.matchDetails?.experienceScore > 10 ? 'success' : 'warning'}`}>
+                                                {candidate.matchDetails?.experienceScore || 0}đ
+                                            </span>
+                                        </div>
+                                        <div className="spm-match-item">
+                                            <span className="spm-mi-label">Dự án</span>
+                                            <span className="spm-mi-value">{candidate.matchDetails?.projectScore > 7 ? 'Tốt' : 'Trung bình'}</span>
+                                            <span className={`spm-match-pill ${candidate.matchDetails?.projectScore > 7 ? 'success' : 'warning'}`}>
+                                                {candidate.matchDetails?.projectScore || 0}đ
+                                            </span>
+                                        </div>
+                                        <div className="spm-match-item">
+                                            <span className="spm-mi-label">Địa điểm</span>
+                                            <span className="spm-mi-value">{candidate.matchDetails?.locationScore >= 5 ? 'Khớp' : 'Khác'}</span>
+                                            <span className={`spm-match-pill ${candidate.matchDetails?.locationScore >= 5 ? 'success' : 'warning'}`}>
+                                                {candidate.matchDetails?.locationScore || 0}đ
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Bio */}
                             <div className="spm-card">
                                 <h3 className="spm-card-title">
