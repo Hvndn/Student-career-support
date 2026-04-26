@@ -5,6 +5,7 @@ import '../../assets/css/common/Navbar.css';
 const PublicNavbar = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem('user'));
 
     const scrollToSection = (id) => {
         if (location.pathname !== '/') {
@@ -15,6 +16,19 @@ const PublicNavbar = () => {
         if (element) {
             element.scrollIntoView({ behavior: 'smooth' });
         }
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        navigate('/login');
+    };
+
+    const getDashboardLink = () => {
+        if (!user) return '/login';
+        if (user.role === 'ROLE_ADMIN') return '/admin/dashboard';
+        if (user.role === 'ROLE_COMPANY') return '/company/dashboard';
+        return '/student/dashboard';
     };
 
     return (
@@ -32,8 +46,18 @@ const PublicNavbar = () => {
                     <button onClick={() => scrollToSection('support')} className="nav-link-btn">Hỗ trợ</button>
                 </div>
                 <div className="nav-actions">
-                    <Link to="/login" className="login-link">Đăng nhập</Link>
-                    <Link to="/register" className="register-btn-primary">Đăng ký</Link>
+                    {user ? (
+                        <>
+                            <span className="user-name">Chào, {user.fullName?.split(' ').pop()}</span>
+                            <Link to={getDashboardLink()} className="login-link">Dashboard</Link>
+                            <button onClick={handleLogout} className="register-btn-primary logout-btn">Đăng xuất</button>
+                        </>
+                    ) : (
+                        <>
+                            <Link to="/login" className="login-link">Đăng nhập</Link>
+                            <Link to="/register" className="register-btn-primary">Đăng ký</Link>
+                        </>
+                    )}
                 </div>
             </div>
         </nav>
