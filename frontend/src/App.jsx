@@ -19,6 +19,7 @@ import JobDetail from './pages/common/JobDetail'
 import JobList from './pages/common/JobList'
 import ForgotPassword from './pages/common/ForgotPassword'
 import ResetPassword from './pages/common/ResetPassword'
+import PublicCvView from './pages/common/PublicCvView'
 
 // student pages
 import Dashboard from './pages/student/Dashboard'
@@ -158,6 +159,7 @@ const AppContent = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/cv/view/:appId" element={<PublicCvView />} />
 
         {/* Nhà tuyển dụng (Landing & Pricing) */}
         <Route path="/employer" element={<CompanyDashboard />} />

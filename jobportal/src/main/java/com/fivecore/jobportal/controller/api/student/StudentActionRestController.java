@@ -51,6 +51,7 @@ public class StudentActionRestController {
             @RequestParam(value = "phone", required = false) String phone,
             @RequestParam(value = "coverLetter", required = false) String coverLetter,
             @RequestParam(value = "cvFile", required = false) org.springframework.web.multipart.MultipartFile cvFile,
+            @RequestParam(value = "cvData", required = false) String cvData,
             Authentication authentication) {
         Integer studentId = getCurrentStudentId(authentication);
         if (studentId == null)
@@ -62,7 +63,7 @@ public class StudentActionRestController {
                 cvUrl = storageService.saveFile(cvFile, "cvs");
             }
 
-            applicationService.applyForJob(studentId, jobId, fullName, email, phone, coverLetter, cvUrl);
+            applicationService.applyForJob(studentId, jobId, fullName, email, phone, coverLetter, cvUrl, cvData);
             return ResponseEntity.ok(ApiResponse.success("Ứng tuyển thành công", null));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage(), "APPLY_ERROR"));

@@ -35,11 +35,17 @@ public class ApplicationService {
         return applicationRepository.findById(id).orElse(null);
     }
 
+    public ApplicationDto getApplicationDtoById(Integer id) {
+        return applicationRepository.findById(id)
+                .map(this::mapToDto)
+                .orElse(null);
+    }
+
     /**
      * Sinh viên nộp đơn ứng tuyển (US-007).
      */
     @Transactional
-    public ApplicationDto applyForJob(Integer studentId, Integer jobId, String fullName, String email, String phone, String coverLetter, String cvUrl) {
+    public ApplicationDto applyForJob(Integer studentId, Integer jobId, String fullName, String email, String phone, String coverLetter, String cvUrl, String cvData) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
         Job job = jobRepository.findById(jobId)
@@ -56,13 +62,14 @@ public class ApplicationService {
                 .appliedAt(LocalDateTime.now())
                 .coverLetter(coverLetter)
                 .cvUrl(cvUrl)
+                .cvData(cvData)
                 .fullName(fullName)
                 .email(email)
                 .phone(phone)
                 .build();
 
         Application savedApp = applicationRepository.save(application);
-        log.info("Sinh viên {} đã ứng tuyển vào vị trí {} với CV: {}", student.getUser().getFullName(), job.getTitle(), cvUrl);
+        log.info("Sinh viên {} đã ứng tuyển vào vị trí {} với CV: {}, Data: {}", student.getUser().getFullName(), job.getTitle(), cvUrl, cvData != null ? "Yes" : "No");
 
         // Bắn thông báo nội sinh cho Student (US-019)
         notificationService.sendNotification(student.getUser(),
@@ -105,6 +112,7 @@ public class ApplicationService {
                 .skills(skills)
                 .coverLetter(app.getCoverLetter())
                 .cvUrl(app.getCvUrl())
+                .cvData(app.getCvData())
                 // Snapshot Data with Fallback to current profile
                 .fullName(app.getFullName() != null ? app.getFullName() : app.getStudent().getUser().getFullName())
                 .email(app.getEmail() != null ? app.getEmail() : app.getStudent().getUser().getEmail())

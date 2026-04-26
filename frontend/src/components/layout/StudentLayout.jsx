@@ -6,15 +6,17 @@ import { useMessaging } from '../../context/MessagingContext';
 
 const StudentLayout = ({ children }) => {
   const { isChatOpen } = useMessaging();
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+
   return (
     <div className="dau-student-layout" style={{ display: 'flex', minHeight: '100vh', background: '#f8fafd' }}>
-      <StudentSidebar />
+      <StudentSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       <GlobalChatSidebar />
       <main 
         className="dau-main-content" 
         style={{ 
           flex: 1, 
-          marginLeft: isChatOpen ? '580px' : '260px', 
+          marginLeft: (window.innerWidth > 1024) ? (isChatOpen ? '580px' : '260px') : '0', 
           padding: '0', 
           minHeight: '100vh', 
           display: 'flex', 
@@ -22,11 +24,22 @@ const StudentLayout = ({ children }) => {
           transition: 'margin-left 0.3s ease-in-out'
         }}
       >
-        <StudentHeader />
+        <StudentHeader onMenuClick={() => setIsSidebarOpen(true)} />
         <div className="dau-page-content" style={{ flex: 1 }}>
           {children}
         </div>
       </main>
+      
+      {/* Mobile Overlay */}
+      {isSidebarOpen && (
+        <div 
+          onClick={() => setIsSidebarOpen(false)}
+          style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            background: 'rgba(0,0,0,0.5)', zIndex: 999
+          }}
+        />
+      )}
     </div>
   );
 };

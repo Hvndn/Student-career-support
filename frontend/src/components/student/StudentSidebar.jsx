@@ -22,7 +22,7 @@ const NAV_ITEMS = [
   { icon: 'user', label: 'Hồ sơ & Portfolio', to: '/student/profile' },
 ];
 
-const StudentSidebar = () => {
+const StudentSidebar = ({ isOpen, onClose }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { setIsChatOpen, isChatOpen } = useMessaging();
@@ -35,6 +35,10 @@ const StudentSidebar = () => {
   };
 
   useEffect(() => {
+    // Close sidebar on route change for mobile
+    if (window.innerWidth <= 1024) {
+      onClose();
+    }
     // Automatically expand if a sub-item's path is active
     NAV_ITEMS.forEach(item => {
       if (item.subItems) {
@@ -79,7 +83,7 @@ const StudentSidebar = () => {
   };
 
   return (
-    <aside className="student-sidebar">
+    <aside className={`student-sidebar ${isOpen ? 'is-open' : ''}`}>
       <div className="ss-header">
         <Link to="/" className="ss-brand">
           <div className="ss-logo-box">
@@ -87,6 +91,9 @@ const StudentSidebar = () => {
           </div>
           <span className="ss-brand-name">DAU Connect</span>
         </Link>
+        <button className="ss-mobile-close" onClick={onClose}>
+          <span className="material-symbols-outlined">close</span>
+        </button>
       </div>
 
       <nav className="ss-nav">

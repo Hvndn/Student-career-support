@@ -549,8 +549,20 @@
 }
 
 @media (max-width: 768px) {
-  .dau-main-content { margin-left: 0; }
-  .dau-student-sidebar { display: none; }
-  .dau-stats-grid { grid-template-columns: 1fr; }
+  .dau-dashboard-body { padding: 20px; }
+  .dau-main-content { margin-left: 0 !important; }
+  .dau-stats-grid { grid-template-columns: 1fr; gap: 16px; }
   .dau-welcome-row { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .dau-welcome-text h1 { font-size: 1.75rem; }
+  .dau-stat-card { padding: 16px; }
+  .dau-white-card { padding: 16px; }
+}
+
+@media (max-width: 480px) {
+  .dau-top-header { padding: 0 16px; }
+  .dau-welcome-text h1 { font-size: 1.5rem; }
+  .dau-welcome-text p { font-size: 0.95rem; }
+  .dau-refresh-btn span:not(.material-symbols-outlined) { display: none; }
+  .dau-refresh-btn { padding: 10px; }
+  .dau-stat-info h3 { font-size: 1.25rem; }
 }

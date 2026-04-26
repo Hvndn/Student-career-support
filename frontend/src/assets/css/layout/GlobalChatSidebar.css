@@ -286,3 +286,11 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: #cbd5e1;
 }
+
+@media (max-width: 1024px) {
+    .global-chat-sidebar {
+        left: 0;
+        width: 100%;
+        z-index: 1100; /* Above sidebar */
+    }
+}

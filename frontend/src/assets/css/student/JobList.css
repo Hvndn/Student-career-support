@@ -355,10 +355,28 @@
 @media (max-width: 1024px) {
     .job-list-content {
         flex-direction: column;
+        gap: 1.5rem;
     }
     .jobs-sidebar {
         width: 100%;
         position: static;
+    }
+    .jobs-title {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .job-list-container {
+        padding-top: 60px;
+    }
+    .job-list-content {
+        padding: 1.5rem 1rem;
+    }
+    .jobs-title-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
     }
 }
 
@@ -366,8 +384,32 @@
     .job-card {
         flex-direction: column;
         gap: 1rem;
+        padding: 1.25rem;
     }
+    .job-card-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .job-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    .job-actions button {
+        width: 100%;
+        justify-content: center;
+    }
+    .job-meta {
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
     .jobs-title {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
+    }
+    .company-logo-wrapper {
+        width: 48px;
+        height: 48px;
+        font-size: 1.2rem;
     }
 }

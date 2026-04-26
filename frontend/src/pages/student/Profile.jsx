@@ -18,10 +18,46 @@ const Profile = () => {
     const [form, setForm] = useState({});
 
     const [showSkillForm, setShowSkillForm] = useState(false);
+    const [showCVSelector, setShowCVSelector] = useState(false);
+    const [localCVs, setLocalCVs] = useState([]);
     const [showProjectForm, setShowProjectForm] = useState(false);
     const [projectForm, setProjectForm] = useState({ name: '', role: '', technologies: '', startDate: '', endDate: '', description: '', responsibilities: '', repositoryUrl: '', demoUrl: '' });
     const [skillName, setSkillName] = useState('');
     const [skillLevel, setSkillLevel] = useState('intermediate');
+    
+    const loadLocalCVs = () => {
+        const cvs = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('dau_cv_')) {
+                try {
+                    const data = JSON.parse(localStorage.getItem(key));
+                    cvs.push({
+                        id: key.replace('dau_cv_', ''),
+                        title: data._name || 'CV không tên',
+                        updatedAt: data._updatedAt || null,
+                        layoutKey: data.layoutKey || 'MODERN_1',
+                        _raw: data,
+                    });
+                } catch (e) { /* ignore */ }
+            }
+        }
+        setLocalCVs(cvs.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || '')));
+    };
+
+    const handleSelectLocalCV = async (cv) => {
+        setSaving(true);
+        try {
+            // Đính kèm dữ liệu CV vào Profile
+            await studentApi.updateProfile({ cvData: JSON.stringify(cv._raw) });
+            await reload();
+            setShowCVSelector(false);
+            flash('✅ Đã đính kèm CV thành công!');
+        } catch { 
+            flash('❌ Lỗi khi đính kèm CV.'); 
+        }
+        setSaving(false);
+    };
 
     const flash = (msg) => { setMessage(msg); setTimeout(() => setMessage(''), 3000); };
 
@@ -370,18 +406,46 @@ const Profile = () => {
                             </div>
                             <div className="pf-cv-list" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                                 {/* Bản trực tuyến của hệ thống */}
-                                <div className="pf-cv-item" style={{ border: '1px dashed var(--dau-primary)', background: 'rgba(var(--dau-primary-rgb), 0.03)' }}>
-                                    <div className="pf-cv-left">
-                                        <div className="pf-cv-icon" style={{ color: 'var(--dau-primary)' }}><span className="material-symbols-outlined">auto_stories</span></div>
-                                        <div className="pf-cv-info">
-                                            <span className="pf-cv-title">Bản trực tuyến (Hệ thống)</span>
-                                            <span className="pf-cv-meta" style={{fontSize: '0.75rem', opacity: 0.7}}>Dùng mẫu thiết kế của hệ thống</span>
+                                {(() => {
+                                    let attachedCvName = null;
+                                    try {
+                                        if (profile.cvData) {
+                                            const data = JSON.parse(profile.cvData);
+                                            attachedCvName = data._name || data.fullName;
+                                        }
+                                    } catch (e) { /* ignore */ }
+
+                                    return (
+                                        <div className="pf-cv-item" style={{ 
+                                            border: attachedCvName ? '1px solid var(--dau-primary)' : '1px dashed #ccc', 
+                                            background: attachedCvName ? 'rgba(var(--dau-primary-rgb), 0.05)' : 'transparent' 
+                                        }}>
+                                            <div className="pf-cv-left">
+                                                <div className="pf-cv-icon" style={{ color: 'var(--dau-primary)' }}>
+                                                    <span className="material-symbols-outlined">{attachedCvName ? 'verified' : 'auto_stories'}</span>
+                                                </div>
+                                                <div className="pf-cv-info">
+                                                    <span className="pf-cv-title">CV Online (Hệ thống)</span>
+                                                    <span className="pf-cv-meta" style={{fontSize: '0.75rem', color: attachedCvName ? 'var(--dau-primary)' : '#888', fontWeight: attachedCvName ? '600' : '400'}}>
+                                                        {attachedCvName ? `Đã đính kèm: ${attachedCvName}` : 'Chưa chọn bản thiết kế'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                <button 
+                                                    className="pf-cv-btn" 
+                                                    title="Chọn CV khác từ danh sách"
+                                                    onClick={() => { loadLocalCVs(); setShowCVSelector(true); }}
+                                                >
+                                                    <span className="material-symbols-outlined">swap_horiz</span>
+                                                </button>
+                                                <Link to="/student/cv-management" className="pf-cv-btn" title="Quản lý tất cả CV">
+                                                    <span className="material-symbols-outlined">settings</span>
+                                                </Link>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <Link to="/student/cv-management" className="pf-cv-btn" title="Chỉnh sửa bản thiết kế">
-                                        <span className="material-symbols-outlined">edit_note</span>
-                                    </Link>
-                                </div>
+                                    );
+                                })()}
 
                                 <div style={{ height: '1px', background: '#eee', margin: '2px 0' }}></div>
 
@@ -595,6 +659,73 @@ const Profile = () => {
                             </div>
                             <div className="pf-modal-footer">
                                 <button className="pf-btn-save-all" onClick={handleAddProject} disabled={saving}>Lưu dự án</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* --- CV SELECTOR MODAL --- */}
+                {showCVSelector && (
+                    <div className="pf-modal-overlay">
+                        <div className="pf-modal-container">
+                            <div className="pf-modal-header">
+                                <h3>Chọn CV để hiển thị</h3>
+                                <button className="pf-modal-close" onClick={() => setShowCVSelector(false)}>
+                                    <span className="material-symbols-outlined">close</span>
+                                </button>
+                            </div>
+                            <div className="pf-modal-body">
+                                <p className="pf-text-muted" style={{ marginBottom: '1.5rem' }}>
+                                    Chọn một bản CV từ danh sách bạn đã tạo để đính kèm vào hồ sơ hiển thị cho nhà tuyển dụng.
+                                </p>
+                                <div className="pf-local-cv-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1rem' }}>
+                                    {localCVs.length > 0 ? localCVs.map(cv => (
+                                        <div key={cv.id} className="pf-local-cv-card" style={{ 
+                                            border: '1px solid #eee', 
+                                            borderRadius: '12px', 
+                                            padding: '1rem',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: '0.5rem'
+                                        }}
+                                        onClick={() => handleSelectLocalCV(cv)}
+                                        onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--dau-primary)'}
+                                        onMouseLeave={(e) => e.currentTarget.style.borderColor = '#eee'}
+                                        >
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                                <div style={{ 
+                                                    width: '40px', 
+                                                    height: '40px', 
+                                                    borderRadius: '8px', 
+                                                    background: 'rgba(var(--dau-primary-rgb), 0.1)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    color: 'var(--dau-primary)'
+                                                }}>
+                                                    <span className="material-symbols-outlined">description</span>
+                                                </div>
+                                                <div style={{ flex: 1, minWidth: 0 }}>
+                                                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cv.title}</h4>
+                                                    <span style={{ fontSize: '0.75rem', color: '#888' }}>
+                                                        Cập nhật: {cv.updatedAt ? new Date(cv.updatedAt).toLocaleDateString('vi-VN') : 'n/a'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <button className="pf-btn-dau small" style={{ width: '100%', marginTop: '0.5rem', padding: '0.4rem' }}>
+                                                Chọn bản này
+                                            </button>
+                                        </div>
+                                    )) : (
+                                        <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '2rem' }}>
+                                            <span className="material-symbols-outlined" style={{ fontSize: '48px', color: '#ddd' }}>no_sim</span>
+                                            <p style={{ marginTop: '1rem', color: '#888' }}>Bạn chưa có bản CV nào được tạo trực tuyến.</p>
+                                            <Link to="/student/cv-management" className="pf-btn-text">Đến trang quản lý CV</Link>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>

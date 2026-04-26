@@ -49,6 +49,33 @@ public class RecruitmentRestController {
     }
 
     /**
+     * API Xem chi tiết hồ sơ ứng tuyển (Snapshot).
+     */
+    @GetMapping("/applications/{appId}")
+    public ResponseEntity<ApiResponse<Object>> getApplicationDetail(@PathVariable Integer appId, Authentication authentication) {
+        Application application = applicationService.getApplicationEntity(appId);
+        if (application == null) {
+            return ResponseEntity.status(404).body(ApiResponse.error("Không tìm thấy hồ sơ", "NOT_FOUND"));
+        }
+
+        // Kiểm tra quyền: Công ty sở hữu Job hoặc Sinh viên sở hữu Application
+        Integer companyId = getCurrentCompanyId(authentication);
+        boolean isOwnerCompany = companyId != null && application.getJob().getCompany().getId().equals(companyId);
+        
+        boolean isOwnerStudent = false;
+        com.fivecore.jobportal.entity.User user = userRepository.findByEmail(authentication.getName()).orElse(null);
+        if (user != null && user.getStudent() != null && application.getStudent().getId().equals(user.getStudent().getId())) {
+            isOwnerStudent = true;
+        }
+
+        if (!isOwnerCompany && !isOwnerStudent) {
+            return ResponseEntity.status(403).body(ApiResponse.error("Bạn không có quyền xem hồ sơ này", "FORBIDDEN"));
+        }
+
+        return ResponseEntity.ok(ApiResponse.success("Lấy chi tiết hồ sơ thành công", applicationService.getApplicationDtoById(appId)));
+    }
+
+    /**
      * API Xem danh sách ứng viên cho một tin tuyển dụng.
      */
     @GetMapping("/jobs/{jobId}/applicants")

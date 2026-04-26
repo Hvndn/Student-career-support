@@ -611,3 +611,90 @@
 
 /* ── Delete button ── */
 .dau-action-delete:hover { color: #dc2626 !important; border-color: #dc2626 !important; background: #fef2f2 !important; }
+
+/* ── RESPONSIVE DESIGN ── */
+
+@media (max-width: 1024px) {
+    .dau-cv-management-wrapper {
+        padding: 24px;
+    }
+
+    .dau-cv-header-row {
+        padding: 20px;
+        margin-bottom: 32px;
+    }
+
+    .dau-cv-title-box h1 {
+        font-size: 1.75rem;
+    }
+
+    .dau-cv-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .dau-cv-header-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .dau-btn-create-cv {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .dau-cv-stats {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .dau-stat-item {
+        width: 100%;
+    }
+
+    .dau-template-modal {
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+    .dau-template-list {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 20px;
+    }
+
+    .dau-template-option {
+        min-height: auto;
+    }
+
+    .dau-template-preview {
+        height: 280px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dau-cv-management-wrapper {
+        padding: 16px;
+    }
+
+    .dau-cv-title-box h1 {
+        font-size: 1.5rem;
+    }
+
+    .dau-search-wrapper {
+        width: 100%;
+    }
+
+    .dau-cv-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dau-template-list {
+        grid-template-columns: 1fr;
+    }
+
+    .dau-template-preview {
+        height: 320px;
+    }
+}

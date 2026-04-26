@@ -217,6 +217,51 @@
   animation: fadeInDown 0.2s ease-out;
 }
 
+.dau-header-left-side {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.dau-mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: #1e293b;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.dau-mobile-menu-btn:hover {
+    background: #f1f5f9;
+}
+
+@media (max-width: 1024px) {
+    .dau-top-header {
+        padding: 0 20px;
+    }
+
+    .dau-mobile-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .dau-breadcrumb-prev {
+        display: none;
+    }
+
+    .dau-breadcrumb-sep {
+        display: none;
+    }
+
+    .dau-header-actions {
+        gap: 15px;
+    }
+}
+
 @keyframes fadeInDown {
   from {
     opacity: 0;

@@ -153,6 +153,7 @@ export const companyApi = {
 export const recruitmentApi = {
     getApplications: () => api.get('/company/management/applications'),
     getApplicants: (jobId) => api.get(`/company/management/jobs/${jobId}/applicants`),
+    getApplicationDetail: (appId) => api.get(`/company/management/applications/${appId}`),
     updateStatus: (appId, status) => api.patch(`/company/management/applications/${appId}/status?status=${status}`),
     searchCandidates: (params) => api.get('/company/management/candidates/search', { params }),
     scheduleInterview: (data) => api.post('/company/management/applications/schedule', data),

@@ -85,6 +85,7 @@ const Applicants = () => {
                                     <tr style={{ color: 'var(--text-muted)', borderBottom: '1px solid var(--border)' }}>
                                         <th style={{ padding: '1rem', textAlign: 'left' }}>Ứng viên</th>
                                         <th style={{ padding: '1rem', textAlign: 'left' }}>Ngày nộp</th>
+                                        <th style={{ padding: '1rem', textAlign: 'left' }}>Hồ sơ</th>
                                         <th style={{ padding: '1rem', textAlign: 'left' }}>Trạng thái</th>
                                         <th style={{ padding: '1rem', textAlign: 'center' }}>Thao tác</th>
                                     </tr>
@@ -119,6 +120,44 @@ const Applicants = () => {
                                                     </div>
                                                 </td>
                                                 <td style={{ padding: '1.5rem 1rem' }}>{formatDate(app.appliedAt)}</td>
+                                                <td style={{ padding: '1.5rem 1rem' }}>
+                                                    {app.cvData ? (
+                                                        <Link 
+                                                            to={`/cv/view/${app.id}`} 
+                                                            target="_blank"
+                                                            style={{ 
+                                                                color: 'var(--dau-primary)', 
+                                                                display: 'flex', 
+                                                                alignItems: 'center', 
+                                                                gap: '0.25rem',
+                                                                fontWeight: 600,
+                                                                fontSize: '0.85rem'
+                                                            }}
+                                                        >
+                                                            <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>auto_stories</span>
+                                                            CV Online
+                                                        </Link>
+                                                    ) : app.cvUrl ? (
+                                                        <a 
+                                                            href={app.cvUrl.startsWith('http') ? app.cvUrl : `http://localhost:8080${app.cvUrl}`} 
+                                                            target="_blank" 
+                                                            rel="noopener noreferrer"
+                                                            style={{ 
+                                                                color: '#6366f1', 
+                                                                display: 'flex', 
+                                                                alignItems: 'center', 
+                                                                gap: '0.25rem',
+                                                                fontWeight: 600,
+                                                                fontSize: '0.85rem'
+                                                            }}
+                                                        >
+                                                            <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>picture_as_pdf</span>
+                                                            File PDF
+                                                        </a>
+                                                    ) : (
+                                                        <span style={{ color: '#ccc', fontSize: '0.85rem' }}>N/A</span>
+                                                    )}
+                                                </td>
                                                 <td style={{ padding: '1.5rem 1rem' }}>
                                                     <span style={{
                                                         padding: '0.35rem 0.75rem',

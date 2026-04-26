@@ -32,6 +32,7 @@ public class ApplicationDto {
     private Integer companyUserId;
     private String coverLetter;
     private String cvUrl;
+    private String cvData;
 
     // Contact info submitted
     private String fullName;

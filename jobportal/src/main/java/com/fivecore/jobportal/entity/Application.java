@@ -43,6 +43,9 @@ public class Application {
     @Column(name = "cv_url", length = 255)
     private String cvUrl;
 
+    @Column(name = "cv_data", columnDefinition = "LONGTEXT")
+    private String cvData;
+
     @CreationTimestamp
     @Column(name = "applied_at", nullable = false, updatable = false)
     private LocalDateTime appliedAt;
