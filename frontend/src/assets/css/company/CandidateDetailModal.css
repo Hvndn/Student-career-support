@@ -1,448 +1,365 @@
-/* ══════════════════════════════════════════════════
-   CandidateDetailModal.css — DAU Connect style
-   ══════════════════════════════════════════════════ */
+/* --- CANDIDATE DETAIL MODAL (PREMIUM NAVY) --- */
 
-/* Overlay */
 .cdm-overlay {
     position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.45);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    padding: 20px;
-    animation: cdm-fade-in 0.2s ease;
+    animation: cdmFadeIn 0.3s ease;
 }
 
-@keyframes cdm-fade-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-
-/* Container */
 .cdm-container {
-    width: 95%;
-    max-width: 1100px;
-    background: white;
-    border-radius: 16px;
+    width: 90%;
+    max-width: 1000px;
     max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
-    animation: cdm-slide-up 0.25s ease;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    animation: cdmSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes cdm-slide-up {
-    from { transform: translateY(24px); opacity: 0; }
-    to   { transform: translateY(0);   opacity: 1; }
+@keyframes cdmFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-/* ── HEADER ── */
+@keyframes cdmSlideUp {
+    from { transform: translateY(40px) scale(0.95); opacity: 0; }
+    to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* --- HEADER --- */
 .cdm-header {
+    padding: 30px 40px;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    color: white;
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    padding: 20px 24px 16px;
-    border-bottom: 1px solid #f1f5f9;
-    gap: 16px;
-    flex-shrink: 0;
+    align-items: center;
 }
 
 .cdm-header-left {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 20px;
 }
 
 .cdm-avatar-wrap {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    background: #334155;
     flex-shrink: 0;
 }
 
 .cdm-avatar {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    border: 2px solid #e8e8e8;
 }
 
 .cdm-avatar-placeholder {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #7b1f1f, #a33030);
-    color: #fff;
-    font-size: 1.3rem;
-    font-weight: 700;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    text-transform: uppercase;
-}
-
-.cdm-name {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin: 0 0 6px 0;
-}
-
-.cdm-meta-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.cdm-applied-date {
-    font-size: 0.78rem;
+    font-size: 32px;
+    font-weight: bold;
     color: #94a3b8;
 }
 
-/* Status badges */
-.cdm-status-badge,
-.cdm-current-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
+.cdm-name {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
 }
 
-.status-pending   { background: #fef9c3; color: #854d0e; }
-.status-review    { background: #dbeafe; color: #1e40af; }
-.status-suitable  { background: #dcfce7; color: #166534; }
-.status-interview { background: #ede9fe; color: #5b21b6; }
-.status-accepted  { background: #d1fae5; color: #065f46; }
-.status-rejected  { background: #fee2e2; color: #991b1b; }
-
-/* "Xem hồ sơ" button */
-.cdm-btn-view-profile {
-    display: inline-flex;
+.cdm-meta-row {
+    margin-top: 8px;
+    display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
-    border: 1.5px solid #7b1f1f;
-    border-radius: 8px;
-    color: #7b1f1f;
-    font-size: 0.83rem;
+    gap: 12px;
+}
+
+.cdm-status-badge {
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 12px;
     font-weight: 600;
-    text-decoration: none;
-    white-space: nowrap;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.cdm-applied-date {
+    font-size: 14px;
+    color: #94a3b8;
+}
+
+.cdm-btn-view-profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
     transition: all 0.2s;
 }
 
 .cdm-btn-view-profile:hover {
-    background: #7b1f1f;
-    color: #fff;
+    background: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
 
-/* ── LOADING ── */
-.cdm-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 24px;
-    gap: 14px;
-    color: #64748b;
-}
-
-.cdm-spinner {
-    width: 36px;
-    height: 36px;
-    border: 3px solid #e2e8f0;
-    border-top-color: #7b1f1f;
-    border-radius: 50%;
-    animation: cdm-spin 0.7s linear infinite;
-}
-
-@keyframes cdm-spin {
-    to { transform: rotate(360deg); }
-}
-
-/* ── BODY: 2 columns ── */
+/* --- BODY --- */
 .cdm-body {
+    padding: 40px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    padding: 20px 0;
+    grid-template-columns: 320px 1fr;
+    gap: 40px;
+    overflow-y: auto;
     flex: 1;
 }
 
-/* ── COLUMNS ── */
-.cdm-col-left {
-    padding: 0 20px 0 24px;
-    border-right: 1px solid #f1f5f9;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+.cdm-section {
+    margin-bottom: 30px;
 }
 
-.cdm-col-right {
-    padding: 0 24px 0 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-/* ── SECTION ── */
 .cdm-section-title {
-    font-size: 0.75rem;
+    font-size: 14px;
     font-weight: 700;
-    color: #94a3b8;
+    color: #64748b;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin: 0 0 10px 0;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
 }
 
-/* Info list */
 .cdm-info-list {
     list-style: none;
-    margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    margin: 0;
 }
 
 .cdm-info-list li {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 0.875rem;
-    color: #334155;
+    gap: 12px;
+    margin-bottom: 12px;
+    color: #1e293b;
+    font-size: 15px;
 }
 
 .cdm-info-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    flex-shrink: 0;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
 }
 
-/* Tag pills */
+/* Tags */
 .cdm-tag-pills {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 8px;
 }
 
 .cdm-tag-pill {
-    padding: 4px 12px;
-    border-radius: 20px;
-    border: 1.5px solid #e2e8f0;
-    background: transparent;
-    color: #64748b;
-    font-size: 0.78rem;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
     font-weight: 500;
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .cdm-tag-pill:hover {
-    border-color: #7b1f1f;
-    color: #7b1f1f;
+    border-color: #cbd5e1;
+    background: #e2e8f0;
 }
 
 .cdm-tag-pill.active {
-    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 /* Attachment */
 .cdm-attachment {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
+    gap: 15px;
+    padding: 15px;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
     cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
+    transition: all 0.2s;
 }
 
 .cdm-attachment:hover {
-    border-color: #7b1f1f;
-    background: #fff5f5;
+    background: #f1f5f9;
+    border-color: #3b82f6;
 }
 
 .cdm-attachment-icon {
-    font-size: 1.3rem;
+    font-size: 24px;
 }
 
 .cdm-attachment-info {
     display: flex;
     flex-direction: column;
-    gap: 2px;
 }
 
 .cdm-attachment-name {
-    font-size: 0.8rem;
     font-weight: 600;
+    font-size: 14px;
     color: #1e293b;
 }
 
 .cdm-attachment-action {
-    font-size: 0.72rem;
-    color: #7b1f1f;
-    font-weight: 500;
+    font-size: 12px;
+    color: #3b82f6;
+    font-weight: 600;
 }
 
-/* Cover letter */
+/* Right Column */
 .cdm-cover-letter {
+    padding: 20px;
     background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 12px 14px;
-    min-height: 68px;
-    font-size: 0.85rem;
-    color: #475569;
+    border-radius: 12px;
+    border-left: 4px solid #e2e8f0;
     line-height: 1.6;
-}
-
-.cdm-cover-letter .cdm-placeholder {
-    color: #94a3b8;
+    color: #334155;
     font-style: italic;
-    margin: 0;
 }
 
-/* Job position */
 .cdm-job-title {
-    font-size: 0.95rem;
+    font-size: 18px;
     font-weight: 700;
-    color: #1e293b;
-    margin: 0 0 8px 0;
+    color: #0f172a;
+    margin-bottom: 10px;
 }
 
 .cdm-job-tags {
     display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
+    gap: 10px;
 }
 
 .cdm-job-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
+    background: #eff6ff;
+    color: #1d4ed8;
     padding: 4px 10px;
     border-radius: 6px;
-    background: #f1f5f9;
-    color: #475569;
-    font-size: 0.78rem;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 600;
 }
 
-/* Status update */
-.cdm-status-update-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
-
-.cdm-status-update-header .cdm-section-title {
-    margin: 0;
-}
-
-.cdm-current-badge {
-    font-size: 0.72rem;
-    padding: 2px 8px;
-}
-
+/* Status Radios */
 .cdm-status-radios {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
 }
 
 .cdm-radio-label {
+    padding: 12px 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 0.875rem;
-    color: #475569;
-    cursor: pointer;
-    padding: 6px 10px;
-    border-radius: 8px;
-    transition: background 0.15s;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.cdm-radio-label input {
+    margin: 0;
+    width: 16px;
+    height: 16px;
 }
 
 .cdm-radio-label:hover {
+    border-color: #cbd5e1;
     background: #f8fafc;
 }
 
-.cdm-radio-label input[type="radio"] {
-    accent-color: #7b1f1f;
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-}
+.cdm-radio-label.interview:has(input:checked) { border-color: #7c3aed; background: #f5f3ff; color: #7c3aed; }
+.cdm-radio-label.accepted:has(input:checked) { border-color: #10b981; background: #ecfdf5; color: #10b981; }
+.cdm-radio-label.rejected:has(input:checked) { border-color: #ef4444; background: #fef2f2; color: #ef4444; }
 
-.cdm-radio-label.interview { color: #5b21b6; }
-.cdm-radio-label.accepted  { color: #166534; }
-.cdm-radio-label.rejected  { color: #991b1b; }
-
-/* ── FOOTER ── */
+/* --- FOOTER --- */
 .cdm-footer {
-    padding: 16px 24px;
+    padding: 20px 40px;
     border-top: 1px solid #f1f5f9;
     display: flex;
-    justify-content: center;
-    flex-shrink: 0;
+    justify-content: flex-end;
+    background: #f8fafc;
 }
 
 .cdm-btn-close {
-    padding: 10px 40px;
-    background: #7b1f1f;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.9rem;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 10px 25px;
+    border-radius: 10px;
     font-weight: 600;
+    color: #64748b;
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s;
 }
 
 .cdm-btn-close:hover {
-    background: #5e1717;
+    background: #f1f5f9;
+    color: #1e293b;
 }
 
-/* Status Update Logic Styles */
-.status-option input:disabled + label {
-    opacity: 0.6;
-    cursor: not-allowed;
+/* Loading State */
+.cdm-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 100px;
+    color: #64748b;
 }
 
-.status-option input:disabled {
-    cursor: not-allowed;
+.cdm-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f1f5f9;
+    border-top: 4px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
 }
 
-/* ── RESPONSIVE ── */
-@media (max-width: 600px) {
-    .cdm-body {
-        grid-template-columns: 1fr;
-    }
-    .cdm-col-left {
-        border-right: none;
-        border-bottom: 1px solid #f1f5f9;
-        padding: 0 20px 20px;
-    }
-    .cdm-col-right {
-        padding: 20px;
-    }
-    .cdm-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
+
+/* Badges */
+.status-applied { background: #e0f2fe; color: #0369a1; }
+.status-interviewing { background: #f5f3ff; color: #6d28d2; }
+.status-accepted { background: #ecfdf5; color: #047857; }
+.status-rejected { background: #fef2f2; color: #b91c1c; }

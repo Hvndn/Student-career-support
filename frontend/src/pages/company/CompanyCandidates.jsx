@@ -76,7 +76,8 @@ const CompanyCandidates = () => {
                                     expectedSalary: detail.expectedSalary || a.expectedSalary,
                                     githubUrl: detail.githubUrl || a.githubUrl,
                                     cvUrl: detail.cvUrl || a.cvUrl,
-                                    gpa: detail.gpa || a.gpa
+                                    gpa: detail.gpa || a.gpa,
+                                    studentProjects: detail.projects || []
                                 };
                             }
                             return a;
@@ -149,11 +150,24 @@ const CompanyCandidates = () => {
             let score = 0;
             
             // 1. KỸ NĂNG (40%) - TRỌNG YẾU
-            const requiredSkills = job.skills || [];
+            let requiredSkills = job.skills || [];
+            if (requiredSkills.length === 0) {
+                // Trích xuất từ title nếu skills trống
+                const title = (job.title || '').toLowerCase();
+                if (title.includes('react')) requiredSkills.push('reactjs');
+                if (title.includes('node')) requiredSkills.push('nodejs');
+                if (title.includes('java')) requiredSkills.push('java');
+                if (title.includes('spring')) requiredSkills.push('spring boot');
+                if (title.includes('frontend')) requiredSkills.push('frontend');
+                if (title.includes('backend')) requiredSkills.push('backend');
+                if (title.includes('fullstack')) { requiredSkills.push('frontend'); requiredSkills.push('backend'); }
+                if (title.includes('mobile') || title.includes('flutter')) requiredSkills.push('mobile');
+            }
+
             const rawSkillsData = app.studentSkills || app.skills || app.student?.skills || app.student?.studentSkills || '';
             let studentSkills = [];
             if (typeof rawSkillsData === 'string') {
-                studentSkills = rawSkillsData.toLowerCase().split(',').map(s => s.trim());
+                studentSkills = rawSkillsData.toLowerCase().split(',').map(s => s.trim()).filter(s => s !== '');
             } else if (Array.isArray(rawSkillsData)) {
                 studentSkills = rawSkillsData.map(s => (typeof s === 'string' ? s : (s.name || '')).toLowerCase());
             }
@@ -164,6 +178,35 @@ const CompanyCandidates = () => {
                         studentSkills.some(ss => ss.includes(sk.toLowerCase()) || sk.toLowerCase().includes(ss))
                     );
                     score += (matchedSkills.length / requiredSkills.length) * 40;
+
+                    // KIỂM TRA DỰ ÁN CÁ NHÂN (PROJECT SYNERGY)
+                    const projects = app.studentProjects || [];
+                    let projectBonus = 0;
+                    if (projects.length > 0) {
+                        const projectSkills = projects.flatMap(p => 
+                            (p.technologies || '').toLowerCase().split(',').map(s => s.trim())
+                        );
+                        
+                        // 1. Cộng điểm nếu có dự án dùng công nghệ yêu cầu
+                        const practicalMatchedSkills = requiredSkills.filter(sk => 
+                            projectSkills.some(ps => ps.includes(sk.toLowerCase()) || sk.toLowerCase().includes(ps))
+                        );
+                        
+                        if (practicalMatchedSkills.length > 0) {
+                            projectBonus += (practicalMatchedSkills.length / requiredSkills.length) * 10;
+                        }
+
+                        // 2. Thưởng "Thực chiến" (Practical Mastery): Skill vừa có trong profile vừa có trong dự án
+                        const masterSkills = matchedSkills.filter(ms => 
+                            projectSkills.some(ps => ps.includes(ms.toLowerCase()) || ms.toLowerCase().includes(ps))
+                        );
+                        if (masterSkills.length > 0) {
+                            projectBonus += (masterSkills.length / requiredSkills.length) * 5;
+                        }
+                        
+                        score += projectBonus;
+                        app._projectBonus = Math.round(projectBonus);
+                    }
                 }
             } else {
                 // Job không yêu cầu skill cụ thể, cho điểm cơ bản dựa trên title
@@ -232,7 +275,8 @@ const CompanyCandidates = () => {
                     skills: Math.round(studentSkills.length > 0 ? 40 : 0),
                     major: majorScore,
                     location: locScore,
-                    salary: salScore
+                    salary: salScore,
+                    projectBonus: app._projectBonus || 0
                 }
             };
         })
@@ -519,7 +563,7 @@ const CompanyCandidates = () => {
                                                                 })()}
                                                                 {app.enhancedMatch && (
                                                                     <span 
-                                                                        title={`Chi tiết: Kỹ năng: +${app.matchBreakdown?.skills || 0}, Chuyên ngành: ${app.matchBreakdown?.major || 0}, Địa điểm: +${app.matchBreakdown?.location || 0}`}
+                                                                        title={`Chi tiết: Kỹ năng: +${app.matchBreakdown?.skills || 0}, Chuyên ngành: ${app.matchBreakdown?.major || 0}, Địa điểm: +${app.matchBreakdown?.location || 0}, Thưởng dự án: +${app.matchBreakdown?.projectBonus || 0}`}
                                                                         style={{ 
                                                                             background: app.enhancedMatch >= 80 ? '#f0fdf4' : app.enhancedMatch >= 60 ? '#fffbeb' : '#fef2f2', 
                                                                             color: app.enhancedMatch >= 80 ? '#16a34a' : app.enhancedMatch >= 60 ? '#d97706' : '#dc2626',

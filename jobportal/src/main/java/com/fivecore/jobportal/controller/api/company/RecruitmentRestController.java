@@ -182,11 +182,11 @@ public class RecruitmentRestController {
         if (companyId == null)
             return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
 
-        com.fivecore.jobportal.dto.StudentProfileResponse profile = candidateSearchService.getStudentById(id);
-        if (profile == null) {
-            return ResponseEntity.status(404).body(ApiResponse.error("Không tìm thấy sinh viên", "NOT_FOUND"));
+        try {
+            java.util.Map<String, Object> detail = candidateSearchService.getCandidateDetail(id);
+            return ResponseEntity.ok(ApiResponse.success("Lấy chi tiết ứng tuyển thành công", detail));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(ApiResponse.error(e.getMessage(), "NOT_FOUND"));
         }
-
-        return ResponseEntity.ok(ApiResponse.success("Lấy hồ sơ sinh viên thành công", profile));
     }
 }

@@ -1,118 +1,130 @@
 package com.fivecore.jobportal.service.company;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fivecore.jobportal.dto.StudentProfileResponse;
+import com.fivecore.jobportal.entity.Application;
 import com.fivecore.jobportal.entity.Student;
+import com.fivecore.jobportal.entity.User;
+import com.fivecore.jobportal.repository.ApplicationRepository;
 import com.fivecore.jobportal.repository.StudentRepository;
-import jakarta.persistence.criteria.Predicate;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.domain.Specification;
+import com.fivecore.jobportal.controller.api.student.StudentProfileMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Dịch vụ Tìm kiếm Ứng viên (US-014).
- * Hỗ trợ doanh nghiệp tìm kiếm sinh viên theo tên, chuyên ngành.
+ * Dịch vụ tìm kiếm và xem chi tiết ứng viên dành cho Doanh nghiệp.
  */
 @Service
-@RequiredArgsConstructor
-@org.springframework.transaction.annotation.Transactional(readOnly = true)
 public class CandidateSearchService {
 
     private final StudentRepository studentRepository;
+    private final ApplicationRepository applicationRepository;
+    private final StudentProfileMapper studentProfileMapper;
+    private final ObjectMapper objectMapper;
+
+    public CandidateSearchService(
+            StudentRepository studentRepository,
+            ApplicationRepository applicationRepository,
+            StudentProfileMapper studentProfileMapper,
+            ObjectMapper objectMapper) {
+        this.studentRepository = studentRepository;
+        this.applicationRepository = applicationRepository;
+        this.studentProfileMapper = studentProfileMapper;
+        this.objectMapper = objectMapper;
+    }
 
     /**
-     * Tìm kiếm sinh viên theo tên hoặc chuyên ngành.
+     * Tìm kiếm sinh viên theo tên, chuyên ngành hoặc kỹ năng.
      */
-    public List<StudentProfileResponse> searchStudents(String queryStr, String skill) {
-        Specification<Student> spec = (root, query, cb) -> {
-            List<Predicate> predicates = new ArrayList<>();
-
-            if (queryStr != null && !queryStr.isEmpty()) {
-                String lQuery = "%" + queryStr.toLowerCase() + "%";
-                Predicate fullName = cb.like(cb.lower(root.get("user").get("fullName")), lQuery);
-                Predicate major = cb.like(cb.lower(root.get("major")), lQuery);
-                predicates.add(cb.or(fullName, major));
-            }
-
-            // skill param kept for API compatibility but ignored since student_skills table removed
-            if (skill != null && !skill.isEmpty()) {
-                String lSkill = "%" + skill.toLowerCase() + "%";
-                predicates.add(cb.like(cb.lower(root.get("major")), lSkill));
-            }
-
-            return cb.and(predicates.toArray(new Predicate[0]));
-        };
-
-        return studentRepository.findAll(spec).stream()
-                .map(this::mapToResponse)
+    public List<StudentProfileResponse> searchStudents(String query, String skill) {
+        List<Student> students = studentRepository.findAll();
+        
+        return students.stream()
+                .filter(s -> {
+                    boolean matchesQuery = true;
+                    User u = s.getUser();
+                    if (query != null && !query.isBlank()) {
+                        String q = query.toLowerCase();
+                        matchesQuery = (u != null && u.getFullName() != null && u.getFullName().toLowerCase().contains(q)) || 
+                                       (u != null && u.getEmail() != null && u.getEmail().toLowerCase().contains(q)) ||
+                                       (s.getMajor() != null && s.getMajor().toLowerCase().contains(q));
+                    }
+                    
+                    boolean matchesSkill = true;
+                    if (skill != null && !skill.isBlank()) {
+                        String sk = skill.toLowerCase();
+                        String cvData = s.getCvData();
+                        matchesSkill = cvData != null && cvData.toLowerCase().contains(sk);
+                    }
+                    
+                    return matchesQuery && matchesSkill;
+                })
+                .map(s -> studentProfileMapper.toResponse(s.getUser(), s))
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Lấy profile sinh viên theo ID.
+     */
     public StudentProfileResponse getStudentById(Integer studentId) {
         return studentRepository.findById(studentId)
-                .map(this::mapToResponse)
+                .map(s -> studentProfileMapper.toResponse(s.getUser(), s))
                 .orElse(null);
     }
 
-    private StudentProfileResponse mapToResponse(Student student) {
-        return StudentProfileResponse.builder()
-                .id(student.getId())
-                .fullName(student.getUser().getFullName())
-                .email(student.getUser().getEmail())
-                .studentIdStr(student.getStudentIdStr())
-                .university(student.getUniversity())
-                .major(student.getMajor())
-                .graduationYear(student.getGraduationYear())
-                .bio(student.getBio())
-                .phone(student.getPhone())
-                .address(student.getAddress())
-                .avatarUrl(student.getAvatarUrl())
-                .coverImageUrl(student.getCoverImageUrl())
-                .githubUrl(student.getGithubUrl())
-                .linkedinUrl(student.getLinkedinUrl())
-                .educations(student.getEducations().stream().map(ed ->
-                    StudentProfileResponse.EducationDto.builder()
-                        .id(ed.getId())
-                        .schoolName(ed.getSchoolName())
-                        .major(ed.getMajor())
-                        .degree(ed.getDegree())
-                        .startDate(ed.getStartDate())
-                        .endDate(ed.getEndDate())
-                        .description(ed.getDescription())
-                        .build()
-                ).collect(Collectors.toList()))
-                .experiences(student.getExperiences().stream().map(ex ->
-                    StudentProfileResponse.ExperienceDto.builder()
-                        .id(ex.getId())
-                        .jobTitle(ex.getJobTitle())
-                        .companyName(ex.getCompanyName())
-                        .startDate(ex.getStartDate())
-                        .endDate(ex.getEndDate())
-                        .description(ex.getDescription())
-                        .build()
-                ).collect(Collectors.toList()))
-                .projects(student.getProjects().stream().map(p ->
-                    StudentProfileResponse.ProjectDto.builder()
-                        .id(p.getId())
-                        .name(p.getName())
-                        .description(p.getDescription())
-                        .repositoryUrl(p.getRepositoryUrl())
-                        .demoUrl(p.getDemoUrl())
-                        .build()
-                ).collect(Collectors.toList()))
-                .certifications(student.getCertifications().stream().map(c ->
-                    StudentProfileResponse.CertificationDto.builder()
-                        .id(c.getId())
-                        .name(c.getName())
-                        .issuer(c.getIssuer())
-                        .issueDate(c.getIssueDate() != null ? c.getIssueDate().toString() : null)
-                        .expirationDate(c.getExpirationDate() != null ? c.getExpirationDate().toString() : null)
-                        .certificateUrl(c.getCertificateUrl())
-                        .build()
-                ).collect(Collectors.toList()))
-                .build();
+    /**
+     * Lấy chi tiết ứng viên cho giao diện Quản lý Tuyển dụng (Premium View).
+     */
+    public Map<String, Object> getCandidateDetail(Integer applicationId) {
+        Application app = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new RuntimeException("Application not found with ID: " + applicationId));
+        Student s = app.getStudent();
+
+        Map<String, Object> res = new HashMap<>();
+        res.put("id", app.getId());
+        res.put("status", app.getStatus());
+        res.put("appliedAt", app.getAppliedAt());
+        res.put("jobTitle", app.getJob() != null ? app.getJob().getTitle() : "N/A");
+        res.put("jobType", app.getJob() != null ? app.getJob().getJobType() : "N/A");
+        res.put("jobLocation", app.getJob() != null ? app.getJob().getLocation() : "N/A");
+        res.put("coverLetter", app.getCoverLetter());
+        res.put("cvUrl", app.getCvUrl());
+        res.put("applicationStatus", app.getStatus());
+
+        if (s != null) {
+            StudentProfileResponse profile = studentProfileMapper.toResponse(s.getUser(), s);
+            
+            // Map chính xác các trường từ DTO vào Map kết quả (làm phẳng cho frontend)
+            res.put("studentId", s.getId());
+            res.put("fullName", profile.getFullName());
+            res.put("email", profile.getEmail());
+            res.put("phone", profile.getPhone());
+            res.put("avatarUrl", profile.getAvatarUrl());
+            res.put("major", profile.getMajor() != null ? profile.getMajor() : "Chưa cập nhật");
+            res.put("studentIdStr", profile.getStudentIdStr());
+            res.put("location", profile.getAddress());
+            res.put("address", profile.getAddress());
+            res.put("gpa", profile.getGpa());
+            res.put("academicYear", profile.getAcademicYear());
+            res.put("videoUrl", profile.getVideoUrl());
+            res.put("skills", profile.getSkills());
+            res.put("projects", profile.getProjects());
+            res.put("educations", profile.getEducations());
+            res.put("experiences", profile.getExperiences());
+            res.put("bio", profile.getBio());
+            res.put("cvData", profile.getCvData());
+            res.put("resumeUrl", profile.getResumeUrl());
+            res.put("coverImageUrl", profile.getCoverImageUrl());
+            
+            // Toàn bộ profile DTO để dùng cho các component con
+            res.put("studentProfile", profile);
+        }
+
+        return res;
     }
 }
