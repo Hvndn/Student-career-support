@@ -528,9 +528,37 @@
     box-shadow: 0 4px 12px rgba(139, 21, 56, 0.2);
 }
 
-.jd-btn-apply-full.active:hover {
-    background: #6b102b;
+.jd-btn-apply-full:hover.active {
+    background: #5a0b22;
     transform: translateY(-2px);
+}
+
+.jd-action-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.jd-btn-chat-full {
+    width: 100%;
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    padding: 1rem;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.jd-btn-chat-full:hover {
+    background: #e2e8f0;
+    color: #1e293b;
 }
 
 /* AI WIDGET */

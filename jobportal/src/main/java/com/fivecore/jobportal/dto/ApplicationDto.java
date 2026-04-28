@@ -23,6 +23,7 @@ public class ApplicationDto {
     private Double matchScore; // Tỷ lệ phù hợp (0-100)
     private java.util.Map<String, Object> matchDetails;
     private Integer studentId;
+    private Integer studentUserId;
     private String status; // pending, review, suitable, interview, accepted, rejected
     private LocalDateTime appliedAt;
 

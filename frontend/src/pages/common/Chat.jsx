@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useMessaging } from '../../context/MessagingContext';
 import '../../assets/css/common/Chat.css';
 
-/**
- * Refactored Chat component that uses the global MessagingContext.
- * Focuses purely on the message thread and input area, 
- * leveraging the persistent GlobalChatSidebar for navigation.
- */
 const Chat = () => {
+    const [searchParams] = useSearchParams();
+    const partnerIdParam = searchParams.get('partnerId');
+
     const { 
         messages, 
         activeChat, 
@@ -16,6 +15,12 @@ const Chat = () => {
         conversations,
         isConnected 
     } = useMessaging();
+
+    useEffect(() => {
+        if (partnerIdParam) {
+            loadMessages(parseInt(partnerIdParam));
+        }
+    }, [partnerIdParam]);
 
     const [chatInput, setChatInput] = useState('');
     const messagesEndRef = useRef(null);

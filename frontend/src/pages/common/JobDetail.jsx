@@ -272,13 +272,23 @@ const JobDetail = () => {
                     )}
 
                     {/* Apply Action */}
-                    <button 
-                        className={`jd-btn-apply-full ${job.isApplied ? '' : 'active'}`}
-                        onClick={!job.isApplied ? handleApplyClick : null}
-                        disabled={job.isApplied}
-                    >
-                        {job.isApplied ? 'Đã ứng tuyển' : 'Ứng tuyển ngay'}
-                    </button>
+                    <div className="jd-action-group">
+                        <button 
+                            className={`jd-btn-apply-full ${job.isApplied ? '' : 'active'}`}
+                            onClick={!job.isApplied ? handleApplyClick : null}
+                            disabled={job.isApplied}
+                        >
+                            {job.isApplied ? 'Đã ứng tuyển' : 'Ứng tuyển ngay'}
+                        </button>
+
+                        <button 
+                            className="jd-btn-chat-full"
+                            onClick={() => navigate(`${isStudent ? '/student' : ''}/chat?partnerId=${job.userId}`)}
+                        >
+                            <span className="material-symbols-outlined">chat</span>
+                            Nhắn tin
+                        </button>
+                    </div>
 
                     {/* AI Analysis Card */}
                     <div className="jd-ai-card">

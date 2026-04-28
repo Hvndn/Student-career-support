@@ -119,6 +119,7 @@ public class ApplicationService {
                 .studentName(app.getStudent().getUser().getFullName())
                 .studentAvatar(app.getStudent().getAvatarUrl())
                 .studentId(app.getStudent().getId())
+                .studentUserId(app.getStudent().getUser().getId())
                 .matchScore(calculateMatchScore(app))
                 .matchDetails(calculateMatchDetails(app))
                 .status(app.getStatus().name())

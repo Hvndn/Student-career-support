@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { recruitmentApi } from '../../api';
 import toast from 'react-hot-toast';
 import CompanySidebar from '../../components/company/CompanySidebar';
@@ -7,6 +7,7 @@ import CompanyNavbar from '../../components/company/CompanyNavbar';
 
 const Applicants = () => {
     const { jobId } = useParams();
+    const navigate = useNavigate();
     const [applicants, setApplicants] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -189,6 +190,10 @@ const Applicants = () => {
                                                                 <button onClick={() => handleStatusUpdate(app.id, 'accepted')} className="btn glass" style={{ fontSize: '0.75rem', color: '#10b981', padding: '0.4rem 0.6rem', border: '1px solid #10b981' }}>
                                                                     <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>check_circle</span>
                                                                     Duyệt
+                                                                </button>
+                                                                <button onClick={() => navigate(`/company/chat?partnerId=${app.studentUserId}`)} className="btn glass" style={{ fontSize: '0.75rem', color: '#6366f1', padding: '0.4rem 0.6rem' }}>
+                                                                    <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>chat</span>
+                                                                    Nhắn tin
                                                                 </button>
                                                                 <button onClick={() => handleStatusUpdate(app.id, 'rejected')} className="btn glass" style={{ fontSize: '0.75rem', color: '#ef4444', padding: '0.4rem 0.6rem' }}>
                                                                     <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>cancel</span>
