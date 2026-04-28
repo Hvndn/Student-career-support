@@ -23,8 +23,11 @@ const CreateBookingModal = ({ isOpen, onClose, onSuccess }) => {
         try {
             const response = await recruitmentApi.getApplications();
             if (response.data.status === 'success') {
-                // Chỉ lấy những ứng viên có trạng thái "suitable" hoặc "pending" hoặc "interview"
-                setApplications(response.data.data || []);
+                // Chỉ lấy những ứng viên có trạng thái cần đặt lịch
+                const filtered = (response.data.data || []).filter(app => 
+                    ['suitable', 'pending', 'interview', 'review'].includes(app.status.toLowerCase())
+                );
+                setApplications(filtered);
             }
         } catch (error) {
             console.error('Error fetching applications:', error);
@@ -66,6 +69,16 @@ const CreateBookingModal = ({ isOpen, onClose, onSuccess }) => {
         }
     };
 
+    const formatStatus = (status) => {
+        const map = {
+            'pending': 'Chờ duyệt',
+            'review': 'Đang xem xét',
+            'suitable': 'Phù hợp',
+            'interview': 'Phỏng vấn'
+        };
+        return map[status.toLowerCase()] || status;
+    };
+
     if (!isOpen) return null;
 
     return (
@@ -95,7 +108,7 @@ const CreateBookingModal = ({ isOpen, onClose, onSuccess }) => {
                                 <option value="">-- Chọn ứng viên --</option>
                                 {applications.map(app => (
                                     <option key={app.id} value={app.id}>
-                                        {app.student?.user?.fullName} - {app.job?.title} ({app.status})
+                                        {app.studentName} | {app.jobTitle} ({formatStatus(app.status)})
                                     </option>
                                 ))}
                             </select>

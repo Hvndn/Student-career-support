@@ -39,8 +39,6 @@ import CompanyDashboard from './pages/company/CompanyDashboard'
 import CompanyJobManagement from './pages/company/CompanyJobManagement'
 import PostJobSelection from './pages/company/PostJobSelection'
 import PostJob from './pages/company/PostJob'
-import PostJobAI from './pages/company/PostJobAI'
-import PostJobJD from './pages/company/PostJobJD'
 import Applicants from './pages/company/Applicants'
 import CompanyCandidates from './pages/company/CompanyCandidates'
 import CompanyProfile from './pages/company/CompanyProfile'
@@ -51,6 +49,8 @@ import CompanyCandidateNotifications from './pages/company/CompanyCandidateNotif
 // import EmployerHome from './pages/company/EmployerHome' (Đã đổi tên sang CompanyDashboard)
 import EmployerPricing from './pages/company/EmployerPricing'
 import CompanyBooking from './pages/company/CompanyBooking'
+
+import SuggestedCandidates from './pages/company/SuggestedCandidates'
 
 // admin pages
 import AdminDashboard from './pages/admin/AdminDashboard'
@@ -199,14 +199,13 @@ const AppContent = () => {
               <Route path="jobs/post" element={<PostJobSelection />} />
               <Route path="jobs/create" element={<PostJob />} />
               <Route path="jobs/edit/:id" element={<PostJob />} />
-              <Route path="jobs/create-ai" element={<PostJobAI />} />
-              <Route path="jobs/create-jd" element={<PostJobJD />} />
               <Route path="management/jobs/:jobId/applicants" element={<Applicants />} />
               <Route path="management/candidates" element={<CompanyCandidates />} />
               <Route path="candidates/saved" element={<CompanySavedCandidates />} />
               <Route path="candidates/search" element={<CompanySearchCandidates />} />
               <Route path="candidates/tags" element={<CompanyCandidateTags />} />
               <Route path="candidates/notifications" element={<CompanyCandidateNotifications />} />
+              <Route path="candidates/suggested" element={<SuggestedCandidates />} />
               <Route path="booking" element={<CompanyBooking />} />
               <Route path="chat" element={<Chat />} />
               <Route path="profile" element={<CompanyProfile />} />

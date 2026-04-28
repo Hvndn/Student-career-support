@@ -5,6 +5,7 @@ import com.fivecore.jobportal.dto.InterviewResponse;
 import com.fivecore.jobportal.entity.Application;
 import com.fivecore.jobportal.entity.Interview;
 import com.fivecore.jobportal.service.auth.ApplicationService;
+import com.fivecore.jobportal.service.company.CandidateMatchingService;
 import com.fivecore.jobportal.service.company.CandidateSearchService;
 import com.fivecore.jobportal.service.company.InterviewService;
 import com.fivecore.jobportal.repository.InterviewRepository;
@@ -22,14 +23,26 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/api/company/management")
 @RequiredArgsConstructor
-@org.springframework.transaction.annotation.Transactional(readOnly = true)
 public class RecruitmentRestController {
 
     private final ApplicationService applicationService;
     private final CandidateSearchService candidateSearchService;
+    private final CandidateMatchingService candidateMatchingService;
     private final InterviewService interviewService;
     private final InterviewRepository interviewRepository;
     private final UserRepository userRepository;
+
+    /**
+     * API Gợi ý ứng viên phù hợp cho một công việc.
+     */
+    @GetMapping("/jobs/{jobId}/recommendations")
+    public ResponseEntity<ApiResponse<Object>> getRecommendedCandidates(@PathVariable Integer jobId, Authentication authentication) {
+        Integer companyId = getCurrentCompanyId(authentication);
+        if (companyId == null) return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+        
+        return ResponseEntity.ok(ApiResponse.success("Lấy danh sách ứng viên gợi ý thành công", 
+                candidateMatchingService.getRecommendedCandidates(jobId)));
+    }
 
     private Integer getCurrentCompanyId(Authentication authentication) {
         return userRepository.findByEmail(authentication.getName())
@@ -195,11 +208,11 @@ public class RecruitmentRestController {
         if (companyId == null)
             return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
 
-        com.fivecore.jobportal.dto.StudentProfileResponse profile = candidateSearchService.getStudentById(id);
-        if (profile == null) {
-            return ResponseEntity.status(404).body(ApiResponse.error("Không tìm thấy sinh viên", "NOT_FOUND"));
+        try {
+            java.util.Map<String, Object> detail = candidateSearchService.getCandidateDetail(id);
+            return ResponseEntity.ok(ApiResponse.success("Lấy chi tiết ứng tuyển thành công", detail));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(ApiResponse.error(e.getMessage(), "NOT_FOUND"));
         }
-
-        return ResponseEntity.ok(ApiResponse.success("Lấy hồ sơ sinh viên thành công", profile));
     }
 }

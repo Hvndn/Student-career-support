@@ -178,7 +178,7 @@ const CompanyProfile = () => {
         <div className="cd-layout">
             <CompanySidebar />
             <div className="cd-main">
-                <CompanyNavbar activeTab="Profile" />
+                <CompanyNavbar />
 
                 <div className="cp-page">
                     {/* Breadcrumb */}
@@ -404,7 +404,7 @@ const CompanyProfile = () => {
                                          </div>
  
                                          {/* Địa chỉ cụ thể */}
-                                         <div className="cp-field-group">
+                                         <div className="cp-field-group cp-full-width">
                                              <label>Xã/Phường/Số nhà <span className="cp-required">*</span></label>
                                              <input type="text" name="address" value={formData.address} onChange={handleChange} placeholder="Nhập địa chỉ chi tiết..." />
                                          </div>

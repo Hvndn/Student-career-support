@@ -33,53 +33,62 @@
   margin-bottom: 2rem;
 }
 
-.stat-card {
+.db-stat-card {
   background: #fff;
   padding: 1.25rem;
   border-radius: 16px;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px !important;
   border: 1px solid #f1f5f9;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  min-width: 0;
 }
 
-.stat-icon-box {
-  width: 48px;
-  height: 48px;
+.db-stat-card:hover {
+  transform: translateX(4px);
+  background: #f8fafc;
+  border-color: #dbeafe;
+}
+
+.db-stat-icon-box {
+  width: 44px;
+  height: 44px;
   border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   flex-shrink: 0;
 }
 
-.stat-icon-box.blue { background: #eff6ff; color: #3b82f6; }
-.stat-icon-box.orange { background: #fff7ed; color: #f97316; }
-.stat-icon-box.green { background: #f0fdf4; color: #22c55e; }
-.stat-icon-box.purple { background: #faf5ff; color: #a855f7; }
+.db-stat-icon-box.blue { background: #eff6ff; color: #3b82f6; }
+.db-stat-icon-box.orange { background: #fff7ed; color: #f97316; }
+.db-stat-icon-box.green { background: #f0fdf4; color: #22c55e; }
+.db-stat-icon-box.purple { background: #faf5ff; color: #a855f7; }
 
-.stat-info {
+.db-stat-info {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
   min-width: 0;
-  flex: 1;
+  text-align: left !important;
 }
 
-.stat-info h3 { 
-  font-size: 1.4rem; 
+.db-stat-info h3 { 
+  font-size: 1.25rem; 
   font-weight: 800; 
   color: #1e293b; 
-  margin: 0; 
-  line-height: 1.2; 
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  margin: 0 !important; 
+  line-height: 1.2 !important;
 }
 
-.stat-info p { 
+.db-stat-info p { 
   font-size: 0.85rem; 
   color: #64748b; 
-  margin: 0; 
-  font-weight: 500; 
+  margin: 0 !important; 
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
