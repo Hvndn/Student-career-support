@@ -112,14 +112,26 @@ public class RecommendationService {
                 .id(job.getId())
                 .title(job.getTitle())
                 .companyName(job.getCompany().getName())
-                .imageUrl(job.getCompany().getLogoUrl()) // Map logoUrl to imageUrl for frontend
+                .companyId(job.getCompany().getId())
+                .imageUrl(job.getBannerUrl() != null ? job.getBannerUrl() : (job.getCompany() != null ? job.getCompany().getLogoUrl() : null))
+                .bannerUrl(job.getBannerUrl())
                 .location(job.getLocation())
                 .minSalary(job.getMinSalary())
                 .maxSalary(job.getMaxSalary())
+                .salary(job.getMaxSalary() != null
+                        ? job.getMinSalary() + " - " + job.getMaxSalary()
+                        : (job.getMinSalary() != null ? job.getMinSalary().toString() : "Thỏa thuận"))
                 .jobType(job.getJobType().name())
                 .status(job.getStatus().name())
                 .deadline(job.getDeadline())
                 .postedAt(job.getPostedAt())
+                .description(job.getDescription())
+                .requirements(job.getRequirements())
+                .benefits(job.getBenefits())
+                .companySize(job.getCompany().getCompanySize())
+                .website(job.getCompany().getWebsite())
+                .companyImages(job.getCompany().getActivityImages() != null ? 
+                    job.getCompany().getActivityImages().stream().map(com.fivecore.jobportal.entity.CompanyImage::getImageUrl).collect(Collectors.toList()) : null)
                 .build();
     }
 

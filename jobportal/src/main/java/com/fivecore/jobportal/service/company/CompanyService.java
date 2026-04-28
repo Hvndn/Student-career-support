@@ -136,6 +136,7 @@ public class CompanyService {
                 .jobType(savedJob.getJobType().name())
                 .status(savedJob.getStatus().name())
                 .deadline(savedJob.getDeadline())
+                .imageUrl(savedJob.getBannerUrl() != null ? savedJob.getBannerUrl() : (company.getLogoUrl()))
                 .build();
     }
 
@@ -308,6 +309,7 @@ public class CompanyService {
                 .id(job.getId())
                 .title(job.getTitle())
                 .companyName(job.getCompany().getName())
+                .companyId(job.getCompany().getId())
                 .industry(job.getIndustry())
                 .level(job.getLevel())
                 .description(job.getDescription())
@@ -333,13 +335,17 @@ public class CompanyService {
                 .contactEmail(job.getContactEmail())
                 .contactPhone(job.getContactPhone())
                 .bannerUrl(job.getBannerUrl())
-                .imageUrl(job.getCompany().getLogoUrl())
+                .imageUrl(job.getBannerUrl() != null ? job.getBannerUrl() : (job.getCompany() != null ? job.getCompany().getLogoUrl() : null))
+                .companySize(job.getCompany().getCompanySize())
+                .website(job.getCompany().getWebsite())
                 .skills(job.getSkills() != null
                         ? job.getSkills().stream()
                                 .map(js -> js.getSkill().getName())
                                 .collect(Collectors.toList())
                         : new java.util.ArrayList<>())
                 .applicantsCount(job.getApplications() != null ? job.getApplications().size() : 0)
+                .companyImages(job.getCompany().getActivityImages() != null ? 
+                    job.getCompany().getActivityImages().stream().map(com.fivecore.jobportal.entity.CompanyImage::getImageUrl).collect(Collectors.toList()) : null)
                 .build();
     }
 }
