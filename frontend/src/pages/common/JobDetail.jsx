@@ -240,7 +240,7 @@ const JobDetail = () => {
                             </div>
                             <div className="jd-company-name">
                                 <h4>{job.companyName}</h4>
-                                <Link to={`/company/${job.companyId}`}>Xem hồ sơ chi tiết</Link>
+                                <Link to={`/companies/${job.companyId}`}>Xem hồ sơ chi tiết</Link>
                             </div>
                         </div>
                         <div className="jd-company-info-row">

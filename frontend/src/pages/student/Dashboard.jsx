@@ -221,7 +221,9 @@ const Dashboard = () => {
                           </div>
                           <div className="dau-job-main">
                             <h6>{job.title}</h6>
-                            <p>{job.companyName} • {idx + 2} ngày trước</p>
+                            <Link to={`/companies/${job.companyId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                <p>{job.companyName} • {idx + 2} ngày trước</p>
+                            </Link>
                           </div>
                         </div>
                         <div className="dau-job-salary">

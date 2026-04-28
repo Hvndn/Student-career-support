@@ -258,7 +258,9 @@ const JobList = () => {
                                         <div className="company-logo-placeholder" style={{ background: '#1e293b', color: 'white' }}>
                                             {job.companyName ? job.companyName.charAt(0) : 'C'}
                                         </div>
-                                        <span className="company-name-premium" style={{ color: '#64748b' }}>{job.companyName}</span>
+                                        <Link to={`/companies/${job.companyId}`} className="company-name-premium" style={{ color: '#64748b', textDecoration: 'none' }}>
+                                            {job.companyName}
+                                        </Link>
                                     </div>
                                     <div className="job-detail-box" style={{ background: '#f8fafc', border: 'none' }}>
                                         <span className="material-symbols-outlined" style={{ color: '#10b981', fontSize: '20px' }}>payments</span>

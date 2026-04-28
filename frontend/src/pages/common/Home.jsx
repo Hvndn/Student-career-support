@@ -125,7 +125,7 @@ const Home = () => {
                     <span className="mr-job-type">{job.jobType}</span>
                   </div>
                   <h3>{job.title}</h3>
-                  <p className="mr-job-company">{job.companyName}</p>
+                  <Link to={`/companies/${job.companyId}`} className="mr-job-company" style={{ textDecoration: 'none', display: 'block' }}>{job.companyName}</Link>
                   <div className="mr-job-footer">
                     <span>📍 {job.location}</span>
                     <span className="mr-job-salary">{job.salaryRange}</span>
