@@ -114,6 +114,7 @@ public class JobSearchService {
     public JobResponse mapToResponse(Job job, boolean isSaved) {
         return JobResponse.builder()
                 .id(job.getId())
+                .userId(job.getCompany() != null && job.getCompany().getUser() != null ? job.getCompany().getUser().getId() : null)
                 .title(job.getTitle())
                 .companyName(job.getCompany() != null ? job.getCompany().getName() : "DAU Partner")
                 .companyId(job.getCompany() != null ? job.getCompany().getId() : null)

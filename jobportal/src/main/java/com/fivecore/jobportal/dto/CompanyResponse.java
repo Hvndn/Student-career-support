@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CompanyResponse {
     private Integer id;
+    private Integer userId;
     private String name;
     private String description;
     private String website;

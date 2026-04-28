@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 public class JobResponse {
     private Integer id;
+    private Integer userId;
     private String title;
     private String companyName;
     private String industry;

@@ -9,8 +9,12 @@ const CompanyDetail = () => {
     const navigate = useNavigate();
     const [company, setCompany] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
+        const savedUser = JSON.parse(localStorage.getItem('user'));
+        setUser(savedUser);
+
         const fetchDetail = async () => {
             try {
                 const response = await jobApi.getCompanyDetail(id);
@@ -23,6 +27,16 @@ const CompanyDetail = () => {
         };
         fetchDetail();
     }, [id]);
+
+    const handleChatClick = () => {
+        if (!user) {
+            import('react-hot-toast').then(m => m.default.error("Bạn cần đăng nhập để nhắn tin!"));
+            navigate('/login');
+            return;
+        }
+        const rolePath = user.role === 'ROLE_STUDENT' ? '/student' : '/company';
+        navigate(`${rolePath}/chat?partnerId=${company.userId}`);
+    };
 
     if (loading) return <div className="cd-loading">Đang tải thông tin doanh nghiệp...</div>;
     if (!company) return <div className="cd-error">Không tìm thấy thông tin doanh nghiệp.</div>;
@@ -43,7 +57,7 @@ const CompanyDetail = () => {
                     </button>
                     <button 
                         className="cd-message-btn-header" 
-                        onClick={() => navigate(`/student/chat?partnerId=${company.userId || company.id}`)}
+                        onClick={handleChatClick}
                     >
                         <span className="material-symbols-outlined">chat_bubble</span>
                         Nhắn tin
@@ -207,7 +221,7 @@ const CompanyDetail = () => {
                             </div>
                             <button 
                                 className="cd-btn-message-full"
-                                onClick={() => navigate(`/student/chat?partnerId=${company.userId || company.id}`)}
+                                onClick={handleChatClick}
                             >
                                 <span className="material-symbols-outlined">chat</span> Nhắn tin ngay
                             </button>

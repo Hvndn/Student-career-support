@@ -8,29 +8,17 @@ import '../../assets/css/layout/GlobalChatSidebar.css';
  * Features: Search bar, all-user directory, and real-time unread badges.
  */
 const GlobalChatSidebar = ({ onClose }) => {
-    const { conversations, loadMessages, activeChat, unreadCount, isChatOpen, setIsChatOpen } = useMessaging();
+    const { 
+        conversations, 
+        directory,
+        loadMessages, 
+        activeChat, 
+        unreadCount, 
+        isChatOpen, 
+        setIsChatOpen 
+    } = useMessaging();
     const [searchTerm, setSearchTerm] = useState('');
-    const [directory, setDirectory] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
     const [viewMode, setViewMode] = useState('recent'); // 'recent' or 'all'
-
-    // Fetch full directory of Admins & Companies
-    useEffect(() => {
-        const fetchDirectory = async () => {
-            setIsLoading(true);
-            try {
-                const res = await chatApi.getDirectory();
-                if (res.data.success) {
-                    setDirectory(res.data.data);
-                }
-            } catch (err) {
-                console.error("Failed to fetch user directory", err);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchDirectory();
-    }, []);
 
     // Filter list based on search term
     const filteredDirectory = useMemo(() => {

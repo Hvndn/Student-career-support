@@ -10,20 +10,77 @@ export const MessagingProvider = ({ children }) => {
     const [stompClient, setStompClient] = useState(null);
     const [isConnected, setIsConnected] = useState(false);
     const [conversations, setConversations] = useState([]);
+    const [directory, setDirectory] = useState([]);
     const [activeChat, setActiveChat] = useState(null);
     const [messages, setMessages] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [isChatOpen, setIsChatOpen] = useState(false);
+    const [isLoadingDirectory, setIsLoadingDirectory] = useState(false);
     const activeChatRef = useRef(null);
+    
+    const [user, setUser] = useState(() => {
+        try {
+            const userStr = localStorage.getItem('user');
+            return userStr ? JSON.parse(userStr) : null;
+        } catch (e) {
+            return null;
+        }
+    });
 
-    const user = JSON.parse(localStorage.getItem('user'));
+    // Sync user state with localStorage
+    useEffect(() => {
+        const handleStorageChange = () => {
+            try {
+                const userStr = localStorage.getItem('user');
+                const parsed = userStr ? JSON.parse(userStr) : null;
+                if (JSON.stringify(parsed) !== JSON.stringify(user)) {
+                    setUser(parsed);
+                }
+            } catch (e) {
+                setUser(null);
+            }
+        };
 
-    // Sync activeChatRef with state to avoid stale closures in listeners
+        const interval = setInterval(handleStorageChange, 1000);
+        window.addEventListener('storage', handleStorageChange);
+        return () => {
+            clearInterval(interval);
+            window.removeEventListener('storage', handleStorageChange);
+        };
+    }, [user]);
+
+    const fetchDirectory = useCallback(async () => {
+        if (!localStorage.getItem('token')) return;
+        setIsLoadingDirectory(true);
+        try {
+            const res = await chatApi.getDirectory();
+            if (res.data.success) {
+                setDirectory(res.data.data);
+            }
+        } catch (err) {
+            console.error("Failed to fetch user directory", err);
+        } finally {
+            setIsLoadingDirectory(false);
+        }
+    }, []);
+
+    const getPartnerInfo = useCallback((partnerId) => {
+        if (!partnerId) return null;
+        let partner = conversations.find(c => c.partnerId === partnerId);
+        if (partner) return partner;
+
+        partner = directory.find(u => u.partnerId === partnerId);
+        if (partner) return partner;
+
+        return null;
+    }, [conversations, directory]);
+
     useEffect(() => {
         activeChatRef.current = activeChat;
     }, [activeChat]);
 
     const refreshConversations = useCallback(async () => {
+        if (!localStorage.getItem('token')) return;
         try {
             const res = await chatApi.getConversations();
             if (res.data?.success) {
@@ -31,40 +88,35 @@ export const MessagingProvider = ({ children }) => {
                 const totalUnread = res.data.data.filter(c => c.isUnread).length;
                 setUnreadCount(totalUnread);
             }
-        } catch (err) {
-            // Silently fail connection check
-        }
+        } catch (err) {}
     }, []);
 
     const handleIncomingMessage = useCallback((newMsg) => {
         setMessages((prev) => {
-            // Check if message ID already exists to avoid duplicates
             if (prev.some(m => m.id === newMsg.id)) return prev;
             return [...prev, newMsg];
         });
-
-        // Show notification if sender is not the one user is currently talking to
         if (!activeChatRef.current || activeChatRef.current !== newMsg.senderId) {
             toast(`💬 Tin nhắn mới từ ${newMsg.partnerName || 'đối tác'}: ${newMsg.content?.substring(0, 25)}...`);
         }
-        
         refreshConversations();
     }, [refreshConversations]);
 
-    // WebSocket Initialization
     useEffect(() => {
-        if (!user?.id) return;
+        if (!user?.id) {
+            setIsConnected(false);
+            setConversations([]);
+            setDirectory([]);
+            return;
+        }
 
         let client;
         try {
             client = new Client({
                 webSocketFactory: () => new SockJS('/ws'),
                 reconnectDelay: 5000,
-                heartbeatIncoming: 4000,
-                heartbeatOutgoing: 4000,
                 onConnect: () => {
                     setIsConnected(true);
-                    // Subscribe to the private message queue for the current user
                     client.subscribe(`/user/${user.id}/queue/messages`, (message) => {
                         try {
                             const newMsg = JSON.parse(message.body);
@@ -90,6 +142,7 @@ export const MessagingProvider = ({ children }) => {
         }
 
         refreshConversations();
+        fetchDirectory();
 
         return () => {
             if (client) {
@@ -100,7 +153,7 @@ export const MessagingProvider = ({ children }) => {
                 }
             }
         };
-    }, [user?.id]); // Only re-run if user ID changes
+    }, [user?.id, refreshConversations, fetchDirectory]);
 
     const sendMessage = async (partnerId, content) => {
         if (!content.trim()) return false;
@@ -108,7 +161,6 @@ export const MessagingProvider = ({ children }) => {
             const res = await chatApi.sendMessage(partnerId, { content });
             if (res.data?.success) {
                 const sentMsg = res.data.data;
-                // Add your own sent message to state immediately for immediate feedback
                 setMessages((prev) => [...prev, sentMsg]);
                 refreshConversations();
                 return true;
@@ -121,12 +173,11 @@ export const MessagingProvider = ({ children }) => {
     };
 
     const loadMessages = async (partnerId) => {
+        setActiveChat(partnerId);
         try {
             const res = await chatApi.getMessages(partnerId);
             if (res.data?.success) {
                 setMessages(res.data.data);
-                setActiveChat(partnerId);
-                // Refresh list to update unread status indicators
                 refreshConversations();
             }
         } catch (err) {
@@ -138,6 +189,7 @@ export const MessagingProvider = ({ children }) => {
         <MessagingContext.Provider value={{
             isConnected,
             conversations,
+            directory,
             messages,
             activeChat,
             unreadCount,
@@ -145,9 +197,11 @@ export const MessagingProvider = ({ children }) => {
             loadMessages,
             setActiveChat,
             refreshConversations,
+            fetchDirectory,
+            getPartnerInfo,
             isChatOpen,
             setIsChatOpen,
-            stompClient // Exported just in case though currently managed internally
+            stompClient
         }}>
             {children}
         </MessagingContext.Provider>
@@ -157,18 +211,21 @@ export const MessagingProvider = ({ children }) => {
 export const useMessaging = () => {
     const context = useContext(MessagingContext);
     if (!context || Object.keys(context).length === 0) {
-        // Fallback object to prevent crashes
         return {
             isConnected: false,
             conversations: [],
+            directory: [],
             messages: [],
+            activeChat: null,
             unreadCount: 0,
             isChatOpen: false,
             setIsChatOpen: () => {},
             sendMessage: () => {},
             loadMessages: () => {},
             setActiveChat: () => {},
-            refreshConversations: () => {}
+            refreshConversations: () => {},
+            fetchDirectory: () => {},
+            getPartnerInfo: () => null
         };
     }
     return context;

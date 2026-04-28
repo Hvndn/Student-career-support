@@ -81,7 +81,15 @@ const JobDetail = () => {
         }
     };
 
-    const isStudent = user?.role === 'ROLE_STUDENT';
+    const handleChatClick = () => {
+        if (!user) {
+            toast.error("Bạn cần đăng nhập để nhắn tin!");
+            navigate('/login');
+            return;
+        }
+        const rolePath = user.role === 'ROLE_STUDENT' ? '/student' : '/company';
+        navigate(`${rolePath}/chat?partnerId=${job.userId}`);
+    };
 
     if (loading) return (
         <div className="job-detail-page flex items-center justify-center" style={{paddingTop: '100px'}}>
@@ -283,7 +291,7 @@ const JobDetail = () => {
 
                         <button 
                             className="jd-btn-chat-full"
-                            onClick={() => navigate(`${isStudent ? '/student' : ''}/chat?partnerId=${job.userId}`)}
+                            onClick={handleChatClick}
                         >
                             <span className="material-symbols-outlined">chat</span>
                             Nhắn tin

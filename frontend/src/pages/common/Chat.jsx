@@ -13,12 +13,16 @@ const Chat = () => {
         sendMessage, 
         loadMessages, 
         conversations,
+        getPartnerInfo,
         isConnected 
     } = useMessaging();
 
     useEffect(() => {
         if (partnerIdParam) {
-            loadMessages(parseInt(partnerIdParam));
+            const pid = parseInt(partnerIdParam);
+            if (!isNaN(pid)) {
+                loadMessages(pid);
+            }
         }
     }, [partnerIdParam]);
 
@@ -43,7 +47,7 @@ const Chat = () => {
         }
     };
 
-    const activePartner = conversations.find(c => c.partnerId === activeChat);
+    const activePartner = getPartnerInfo(activeChat);
 
     return (
         <div className="dau-chat-page-wrapper">
