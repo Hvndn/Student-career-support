@@ -92,6 +92,52 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                         {/* MAIN COLUMN (LEFT) */}
                         <div className="spm-main-col">
                             
+                            {/* ── MATCHING ANALYSIS (AI Recommendation Only) ── */}
+                            {candidate.matchScore && (
+                                <div className="spm-card spm-matching-card">
+                                    <div className="spm-match-header">
+                                        <h3 className="spm-card-title">
+                                            <span className="material-symbols-outlined">analytics</span>
+                                            Phân tích độ phù hợp (AI)
+                                        </h3>
+                                        <div className="spm-match-score-big">
+                                            {Math.round(candidate.matchScore)}%
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="spm-match-grid">
+                                        <div className="spm-match-item">
+                                            <span className="spm-mi-label">Kỹ năng</span>
+                                            <span className="spm-mi-value">{candidate.matchDetails?.skillsMatch || 'N/A'}</span>
+                                            <span className={`spm-match-pill ${candidate.matchDetails?.skillsScore > 15 ? 'success' : 'warning'}`}>
+                                                {candidate.matchDetails?.skillsScore || 0}đ
+                                            </span>
+                                        </div>
+                                        <div className="spm-match-item">
+                                            <span className="spm-mi-label">Kinh nghiệm</span>
+                                            <span className="spm-mi-value">{candidate.matchDetails?.experienceYears || 0} năm</span>
+                                            <span className={`spm-match-pill ${candidate.matchDetails?.experienceScore > 10 ? 'success' : 'warning'}`}>
+                                                {candidate.matchDetails?.experienceScore || 0}đ
+                                            </span>
+                                        </div>
+                                        <div className="spm-match-item">
+                                            <span className="spm-mi-label">Dự án</span>
+                                            <span className="spm-mi-value">{candidate.matchDetails?.projectScore > 7 ? 'Tốt' : 'Trung bình'}</span>
+                                            <span className={`spm-match-pill ${candidate.matchDetails?.projectScore > 7 ? 'success' : 'warning'}`}>
+                                                {candidate.matchDetails?.projectScore || 0}đ
+                                            </span>
+                                        </div>
+                                        <div className="spm-match-item">
+                                            <span className="spm-mi-label">Địa điểm</span>
+                                            <span className="spm-mi-value">{candidate.matchDetails?.locationScore >= 5 ? 'Khớp' : 'Khác'}</span>
+                                            <span className={`spm-match-pill ${candidate.matchDetails?.locationScore >= 5 ? 'success' : 'warning'}`}>
+                                                {candidate.matchDetails?.locationScore || 0}đ
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Bio */}
                             <div className="spm-card">
                                 <h3 className="spm-card-title">
@@ -108,12 +154,12 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                             </div>
 
                             {/* Educations */}
-                            {candidate.educations?.length > 0 && (
-                                <div className="spm-card">
-                                    <h3 className="spm-card-title">
-                                        <span className="material-symbols-outlined">school</span>
-                                        Học vấn
-                                    </h3>
+                            <div className="spm-card">
+                                <h3 className="spm-card-title">
+                                    <span className="material-symbols-outlined">school</span>
+                                    Học vấn
+                                </h3>
+                                {candidate.educations?.length > 0 ? (
                                     <div className="spm-timeline">
                                         {candidate.educations.map((edu, i) => (
                                             <div key={i} className="spm-timeline-item">
@@ -125,16 +171,18 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                             </div>
                                         ))}
                                     </div>
-                                </div>
-                            )}
+                                ) : (
+                                    <p className="spm-text-muted" style={{fontStyle:'italic', fontSize:'0.9rem'}}>Sinh viên chưa cập nhật thông tin học vấn.</p>
+                                )}
+                            </div>
 
                             {/* Experiences */}
-                            {candidate.experiences?.length > 0 && (
-                                <div className="spm-card">
-                                    <h3 className="spm-card-title">
-                                        <span className="material-symbols-outlined">work</span>
-                                        Kinh nghiệm làm việc
-                                    </h3>
+                            <div className="spm-card">
+                                <h3 className="spm-card-title">
+                                    <span className="material-symbols-outlined">work</span>
+                                    Kinh nghiệm làm việc
+                                </h3>
+                                {candidate.experiences?.length > 0 ? (
                                     <div className="spm-timeline">
                                         {candidate.experiences.map((exp, i) => (
                                             <div key={i} className="spm-timeline-item">
@@ -148,8 +196,10 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                             </div>
                                         ))}
                                     </div>
-                                </div>
-                            )}
+                                ) : (
+                                    <p className="spm-text-muted" style={{fontStyle:'italic', fontSize:'0.9rem'}}>Sinh viên chưa cập nhật kinh nghiệm làm việc.</p>
+                                )}
+                            </div>
                         </div>
 
                         {/* SIDEBAR COLUMN (RIGHT) */}
@@ -173,12 +223,12 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                             </div>
 
                             {/* Skills */}
-                            {candidate.skills?.length > 0 && (
-                                <div className="spm-card">
-                                    <h3 className="spm-card-title">
-                                        <span className="material-symbols-outlined">psychology</span>
-                                        Kỹ năng chuyên môn
-                                    </h3>
+                            <div className="spm-card">
+                                <h3 className="spm-card-title">
+                                    <span className="material-symbols-outlined">psychology</span>
+                                    Kỹ năng chuyên môn
+                                </h3>
+                                {candidate.skills?.length > 0 ? (
                                     <div className="spm-skill-tags">
                                         {candidate.skills.map((s, i) => (
                                             <div key={i} className="spm-tag">
@@ -186,8 +236,10 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                             </div>
                                         ))}
                                     </div>
-                                </div>
-                            )}
+                                ) : (
+                                    <p className="spm-text-muted" style={{fontStyle:'italic', fontSize:'0.85rem'}}>Chưa cập nhật kỹ năng.</p>
+                                )}
+                            </div>
 
                             {/* CV / Resume */}
                             <div className="spm-card">
@@ -211,13 +263,13 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                             </div>
 
                             {/* Projects */}
-                            {candidate.projects?.length > 0 && (
-                                <div className="spm-card">
-                                    <h3 className="spm-card-title">
-                                        <span className="material-symbols-outlined">rocket_launch</span>
-                                        Dự án nổi bật
-                                    </h3>
-                                    {candidate.projects.map((pj, i) => (
+                            <div className="spm-card">
+                                <h3 className="spm-card-title">
+                                    <span className="material-symbols-outlined">rocket_launch</span>
+                                    Dự án nổi bật
+                                </h3>
+                                {candidate.projects?.length > 0 ? (
+                                    candidate.projects.map((pj, i) => (
                                         <div key={i} className="spm-project-item">
                                             <p className="spm-pj-name">{pj.name}</p>
                                             <p className="spm-pj-desc">{pj.description}</p>
@@ -226,9 +278,11 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                                 {pj.demoUrl && <a href={pj.demoUrl} target="_blank" rel="noreferrer">Demo</a>}
                                             </div>
                                         </div>
-                                    ))}
-                                </div>
-                            )}
+                                    ))
+                                ) : (
+                                    <p className="spm-text-muted" style={{fontSize:'0.85rem', fontStyle:'italic'}}>Sinh viên chưa cập nhật dự án nổi bật.</p>
+                                )}
+                            </div>
                         </aside>
                     </div>
                 </div>

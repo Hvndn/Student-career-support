@@ -20,7 +20,8 @@ public class ApplicationDto {
     private String companyLogoUrl;
     private String studentName;
     private String studentAvatar;
-    private Integer matchPercentage; // Tỷ lệ phù hợp (0-100)
+    private Double matchScore; // Tỷ lệ phù hợp (0-100)
+    private java.util.Map<String, Object> matchDetails;
     private Integer studentId;
     private String status; // pending, review, suitable, interview, accepted, rejected
     private LocalDateTime appliedAt;

@@ -136,135 +136,115 @@ const CompanySavedCandidates = () => {
                 <main className="cd-main">
                     <div className="saved-candidates-page">
                         <div className="header-flex">
-                            <h2 className="title-with-count">Hồ sơ đã lưu ({filteredCandidates.length})</h2>
+                            <h2 className="title-with-count intro-y">Hồ sơ đã lưu ({filteredCandidates.length})</h2>
                         </div>
 
-                        <div className="policy-banner">
-                            <svg viewBox="0 0 24 24" width="20" height="20" stroke="#f59e0b" strokeWidth="2" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                            <span>Hệ thống chỉ lưu trữ hồ sơ tối đa 12 tháng kể từ ngày lưu. Sau thời gian này hồ sơ sẽ tự động bị xóa để đảm bảo hiệu quả tuyển dụng.</span>
+                        <div className="policy-banner intro-y" style={{ animationDelay: '0.1s' }}>
+                            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2.5" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                            <span>Hệ thống chỉ lưu trữ hồ sơ tối đa 12 tháng. Hồ sơ sẽ tự động ẩn sau thời gian này để đảm bảo hiệu suất.</span>
                         </div>
 
-                        <div className="filter-panel glass">
-                            <div className="filter-grid">
-                                <div className="filter-item search">
-                                    <label>Tìm kiếm hồ sơ</label>
-                                    <div className="search-input-wrapper">
-                                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                                        <input 
-                                            type="text" 
-                                            placeholder="Nhập tên ứng viên..." 
-                                            className="filter-control"
-                                            value={searchTerm}
-                                            onChange={(e) => setSearchTerm(e.target.value)}
-                                        />
-                                    </div>
+                        {/* Modern Filters */}
+                        <div className="filter-panel-premium intro-y" style={{ animationDelay: '0.2s' }}>
+                            <div className="filter-group">
+                                <label>Tìm kiếm nhanh</label>
+                                <div className="premium-input-box">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2.5" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                    <input 
+                                        type="text" 
+                                        placeholder="Tên hoặc vị trí..." 
+                                        className="premium-control"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
                                 </div>
+                            </div>
 
-                                <div className="filter-item">
-                                    <label>Trường đại học</label>
-                                    <select 
-                                        className="filter-control select"
-                                        value={universityFilter}
-                                        onChange={(e) => setUniversityFilter(e.target.value)}
-                                    >
-                                        <option value="">Tất cả các trường</option>
-                                        {[...new Set(savedCandidates.map(c => c.university))].filter(Boolean).map(uni => (
-                                            <option key={uni} value={uni}>{uni}</option>
-                                        ))}
-                                    </select>
-                                </div>
+                            <div className="filter-group">
+                                <label>Trường đại học</label>
+                                <select 
+                                    className="premium-control select"
+                                    value={universityFilter}
+                                    onChange={(e) => setUniversityFilter(e.target.value)}
+                                >
+                                    <option value="">Tất cả các trường</option>
+                                    {[...new Set(savedCandidates.map(c => c.university))].filter(Boolean).map(uni => (
+                                        <option key={uni} value={uni}>{uni}</option>
+                                    ))}
+                                </select>
+                            </div>
 
-                                <div className="filter-item">
-                                    <label>Lĩnh vực chuyên môn</label>
-                                    <select 
-                                        className="filter-control select"
-                                        value={positionFilter}
-                                        onChange={(e) => setPositionFilter(e.target.value)}
-                                    >
-                                        <option value="">Tất cả lĩnh vực</option>
-                                        {[...new Set(savedCandidates.map(c => c.position))].filter(Boolean).map(pos => (
-                                            <option key={pos} value={pos}>{pos}</option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div className="filter-item">
-                                    <label>Thời gian lưu</label>
-                                    <select 
-                                        className="filter-control select"
-                                        value={timeFilter}
-                                        onChange={(e) => setTimeFilter(e.target.value)}
-                                    >
-                                        <option value="all">Tất cả thời gian</option>
-                                        <option value="15m">15 phút qua</option>
-                                        <option value="30m">30 phút qua</option>
-                                        <option value="60m">60 phút qua</option>
-                                        <option value="24h">24 giờ qua</option>
-                                        <option value="7d">7 ngày qua</option>
-                                        <option value="30d">30 ngày qua</option>
-                                        <option value="3m">3 tháng qua</option>
-                                        <option value="6m">6 tháng qua</option>
-                                        <option value="older">Hồ sơ cũ hơn</option>
-                                    </select>
-                                </div>
+                            <div className="filter-group">
+                                <label>Thời gian lưu</label>
+                                <select 
+                                    className="premium-control select"
+                                    value={timeFilter}
+                                    onChange={(e) => setTimeFilter(e.target.value)}
+                                >
+                                    <option value="all">Tất cả thời gian</option>
+                                    <option value="24h">24 giờ qua</option>
+                                    <option value="7d">7 ngày qua</option>
+                                    <option value="30d">1 tháng qua</option>
+                                    <option value="older">Lâu hơn</option>
+                                </select>
                             </div>
                         </div>
 
-                        <div className="saved-list-card glass">
+                        {/* Candidate Grid */}
+                        <div className="candidates-list-area intro-y" style={{ animationDelay: '0.3s' }}>
                             {loading ? (
-                                <div className="loading-state">
-                                    <div className="spinner"></div>
+                                <div className="loading-state-premium">
+                                    <div className="premium-spinner"></div>
+                                    <p>Đang tải danh sách hồ sơ...</p>
                                 </div>
                             ) : filteredCandidates.length === 0 ? (
-                                <div className="empty-state">Chưa có hồ sơ ứng viên nào được lưu.</div>
+                                <div className="empty-state-premium">
+                                    <p>Chưa có ứng viên nào khớp với tìm kiếm của bạn.</p>
+                                </div>
                             ) : (
-                                <table className="saved-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Ứng viên</th>
-                                            <th>Tình trạng</th>
-                                            <th>Thời gian lưu</th>
-                                            <th>Lĩnh vực chuyển môn</th>
-                                            <th>Hành động</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {filteredCandidates.map(candidate => (
-                                            <tr key={candidate.id}>
-                                                <td>
-                                                    <div className="user-profile">
-                                                        <img src={candidate.avatar || `https://ui-avatars.com/api/?name=${candidate.name}&background=random`} alt={candidate.name} className="user-avatar" />
-                                                        <div className="user-info">
-                                                            <span className="user-name">{candidate.name}</span>
-                                                            <span className="user-pos">{candidate.university}</span>
-                                                        </div>
+                                <div className="candidates-grid-premium">
+                                    {filteredCandidates.map(candidate => (
+                                        <div key={candidate.id} className="candidate-premium-card">
+                                            <div className="candidate-card-header">
+                                                <div className="avatar-large-box">
+                                                    <img src={candidate.avatar || `https://ui-avatars.com/api/?name=${candidate.name}&background=random`} alt={candidate.name} />
+                                                </div>
+                                                <span className="time-badge">
+                                                    {formatSavedTime(candidate.savedDate)}
+                                                </span>
+                                            </div>
+
+                                            <div className="candidate-card-body">
+                                                <h3>{candidate.name}</h3>
+                                                <p className="candidate-uni">{candidate.university}</p>
+                                                
+                                                <div className="candidate-meta-info">
+                                                    <div className="meta-item">
+                                                        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2.5" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                                        <span>{candidate.position}</span>
                                                     </div>
-                                                </td>
-                                                <td><span className="status-badge">Đã lưu</span></td>
-                                                <td>{formatSavedTime(candidate.savedDate)}</td>
-                                                <td><span className="recruit-status pending">{candidate.position}</span></td>
-                                                <td>
-                                                    <div className="action-btns">
-                                                        <button 
-                                                            className="btn-icon" 
-                                                            title="Xem chi tiết"
-                                                            onClick={() => handleViewCV(candidate.studentId)}
-                                                        >
-                                                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                                                        </button>
-                                                        <button 
-                                                            className="btn-icon delete" 
-                                                            title="Xóa"
-                                                            onClick={() => handleDeleteClick(candidate.studentId)}
-                                                        >
-                                                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                                </div>
+                                            </div>
+
+                                            <div className="card-actions-row">
+                                                <button 
+                                                    className="btn-premium-view"
+                                                    onClick={() => handleViewCV(candidate.studentId)}
+                                                >
+                                                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                                    Xem chi tiết
+                                                </button>
+                                                <button 
+                                                    className="btn-premium-delete"
+                                                    title="Gỡ khỏi danh sách"
+                                                    onClick={() => handleDeleteClick(candidate.studentId)}
+                                                >
+                                                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2.5" fill="none"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             )}
                         </div>
                     </div>

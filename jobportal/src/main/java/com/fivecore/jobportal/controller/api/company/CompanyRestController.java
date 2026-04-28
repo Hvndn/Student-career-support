@@ -68,12 +68,8 @@ public class CompanyRestController {
                         com.fivecore.jobportal.entity.Application.ApplicationStatus.pending))
                 .reviewCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(),
                         com.fivecore.jobportal.entity.Application.ApplicationStatus.review))
-                .suitableCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(),
-                        com.fivecore.jobportal.entity.Application.ApplicationStatus.suitable))
                 .interviewCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(),
                         com.fivecore.jobportal.entity.Application.ApplicationStatus.interview))
-                .acceptedCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(),
-                        com.fivecore.jobportal.entity.Application.ApplicationStatus.accepted))
                 .rejectedCount(applicationRepository.countByJobCompanyIdAndStatus(company.getId(),
                         com.fivecore.jobportal.entity.Application.ApplicationStatus.rejected))
                 .pendingInterviewsCount(0) // Mock

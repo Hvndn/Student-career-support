@@ -33,6 +33,7 @@ public class CompanyService {
     private final JobRepository jobRepository;
     private final UserRepository userRepository;
     private final StorageService storageService;
+    private final com.fivecore.jobportal.repository.SkillRepository skillRepository;
 
     /**
      * Lấy thông tin công ty theo Email người dùng.
@@ -101,6 +102,7 @@ public class CompanyService {
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .location(request.getLocation())
+                .region(request.getRegion())
                 .minSalary(request.getMinSalary())
                 .maxSalary(request.getMaxSalary())
                 .jobType(Enum.valueOf(Job.JobType.class, request.getJobType().toLowerCase()))
@@ -108,6 +110,19 @@ public class CompanyService {
                 .status(Job.JobStatus.open)
                 .bannerUrl(request.getBannerUrl())
                 .build();
+
+        // Xử lý kỹ năng cho tin đăng mới
+        if (request.getSkills() != null) {
+            for (String skillName : request.getSkills()) {
+                com.fivecore.jobportal.entity.Skill skill = skillRepository.findByName(skillName)
+                        .orElseGet(() -> skillRepository.save(com.fivecore.jobportal.entity.Skill.builder().name(skillName).build()));
+                
+                job.getSkills().add(com.fivecore.jobportal.entity.JobSkill.builder()
+                    .job(job)
+                    .skill(skill)
+                    .build());
+            }
+        }
 
         Job savedJob = jobRepository.save(job);
         log.info("Doanh nghiệp {} đã đăng tin mới: {}", company.getName(), savedJob.getTitle());
@@ -173,6 +188,7 @@ public class CompanyService {
         job.setMinSalary(request.getMinSalary());
         job.setMaxSalary(request.getMaxSalary());
         job.setLocation(request.getLocation());
+        job.setRegion(request.getRegion());
         job.setDeadline(request.getDeadline());
         job.setContactName(request.getContactName());
         job.setContactEmail(request.getContactEmail());
@@ -185,7 +201,8 @@ public class CompanyService {
         if (request.getSkills() != null) {
             job.getSkills().clear();
             for (String skillName : request.getSkills()) {
-                com.fivecore.jobportal.entity.Skill skill = com.fivecore.jobportal.entity.Skill.builder().name(skillName).build(); // Assuming Skill has this builder
+                com.fivecore.jobportal.entity.Skill skill = skillRepository.findByName(skillName)
+                        .orElseGet(() -> skillRepository.save(com.fivecore.jobportal.entity.Skill.builder().name(skillName).build()));
                 
                 job.getSkills().add(com.fivecore.jobportal.entity.JobSkill.builder()
                     .job(job)
@@ -243,6 +260,7 @@ public class CompanyService {
                 .minSalary(job.getMinSalary())
                 .maxSalary(job.getMaxSalary())
                 .location(job.getLocation())
+                .region(job.getRegion())
                 .deadline(job.getDeadline())
                 .contactName(job.getContactName())
                 .contactEmail(job.getContactEmail())
@@ -296,6 +314,7 @@ public class CompanyService {
                 .requirements(job.getRequirements())
                 .benefits(job.getBenefits())
                 .location(job.getLocation())
+                .region(job.getRegion())
                 .minSalary(job.getMinSalary())
                 .maxSalary(job.getMaxSalary())
                 .salary(job.getMaxSalary() != null

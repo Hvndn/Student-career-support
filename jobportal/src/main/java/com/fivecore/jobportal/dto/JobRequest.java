@@ -33,6 +33,7 @@ public class JobRequest {
     private BigDecimal minSalary;
     private BigDecimal maxSalary;
     private String location;
+    private String region;
     private LocalDate deadline;
     private String contactName;
     private String contactEmail;

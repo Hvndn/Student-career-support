@@ -196,6 +196,9 @@ public class ProfileService {
     public void addProject(Integer studentId, com.fivecore.jobportal.entity.Project project) {
         Student student = studentRepository.findById(studentId).orElseThrow();
         project.setStudent(student);
+        if (project.getTitle() == null) {
+            project.setTitle(project.getName());
+        }
         projectRepository.save(project);
     }
 
