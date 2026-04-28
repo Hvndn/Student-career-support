@@ -54,5 +54,9 @@ public class JobResponse {
     private String imageUrl;
     private String bannerUrl;
     private List<String> skills;
+    private List<String> companyImages;
+    private Integer companyId;
+    private String companySize;
+    private String website;
 }
 

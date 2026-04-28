@@ -113,7 +113,7 @@ public class ApplicationService {
                 .jobType(job.getJobType() != null ? job.getJobType().name() : "intern")
                 .jobLocation(job.getLocation())
                 .companyName(job.getCompany().getName())
-                .companyLogoUrl(job.getCompany().getLogoUrl())
+                .companyLogoUrl(job.getBannerUrl() != null ? job.getBannerUrl() : job.getCompany().getLogoUrl())
                 .companyId(job.getCompany().getId())
                 .companyUserId(job.getCompany().getUser().getId())
                 .studentName(app.getStudent().getUser().getFullName())

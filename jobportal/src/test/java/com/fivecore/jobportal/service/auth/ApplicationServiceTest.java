@@ -77,7 +77,7 @@ public class ApplicationServiceTest {
             return a;
         });
 
-        ApplicationDto result = applicationService.applyForJob(1, 1, "Name", "email@com", "123", "Letter", "cv.pdf");
+        ApplicationDto result = applicationService.applyForJob(1, 1, "Name", "email@com", "123", "Letter", "cv.pdf", null);
 
         assertNotNull(result);
         assertEquals("Java Dev", result.getJobTitle());
@@ -91,7 +91,7 @@ public class ApplicationServiceTest {
         when(jobRepository.findById(1)).thenReturn(Optional.of(testJob));
         when(applicationRepository.findByStudentIdAndJobId(1, 1)).thenReturn(Optional.of(new Application()));
 
-        assertThrows(RuntimeException.class, () -> applicationService.applyForJob(1, 1, "N", "E", "P", "L", "C"));
+        assertThrows(RuntimeException.class, () -> applicationService.applyForJob(1, 1, "N", "E", "P", "L", "C", null));
     }
 
     @Test
@@ -167,7 +167,7 @@ public class ApplicationServiceTest {
         when(jobRepository.findById(1)).thenReturn(Optional.of(testJob));
         when(applicationRepository.save(any())).thenReturn(app);
 
-        ApplicationDto dto = applicationService.applyForJob(1, 1, "N", "E", "P", "L", "C");
+        ApplicationDto dto = applicationService.applyForJob(1, 1, "N", "E", "P", "L", "C", null);
         assertEquals("10 - 20 triệu", dto.getSalaryRange());
     }
 }

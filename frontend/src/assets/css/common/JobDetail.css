@@ -87,6 +87,147 @@
   gap: 32px;
 }
 
+/* Banner Hero Section */
+.jd-banner-hero {
+  position: relative;
+  height: 400px;
+  border-radius: 24px;
+  overflow: hidden;
+  margin-bottom: 32px;
+  background: #1e293b;
+}
+
+.jd-banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.jd-banner-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+}
+
+.jd-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.9), transparent);
+}
+
+.jd-banner-content {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+  right: 40px;
+  color: white;
+  z-index: 2;
+}
+
+.jd-banner-tag {
+  background: #ef4444;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-block;
+  margin-bottom: 16px;
+}
+
+.jd-banner-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.jd-banner-meta {
+  display: flex;
+  gap: 24px;
+  font-weight: 600;
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.jd-banner-meta span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Quick Stats Grid */
+.jd-quick-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.jd-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 16px;
+  transition: all 0.3s;
+}
+
+.jd-stat-item:hover {
+  background: #f1f5f9;
+  transform: translateY(-4px);
+}
+
+.jd-stat-item .material-symbols-outlined {
+  color: #8b1538;
+  font-size: 28px;
+}
+
+.jd-stat-info label {
+  display: block;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.jd-stat-info span {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* Gallery Grid */
+.jd-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.jd-gallery-item {
+  height: 150px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.jd-gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s;
+}
+
+.jd-gallery-item:hover img {
+  transform: scale(1.1);
+}
+
 /* Job Content Card */
 .jd-content-card {
   background: white;

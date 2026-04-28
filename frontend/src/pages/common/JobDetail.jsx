@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { jobApi, studentApi } from '../../api';
+import { getImageUrl } from '../../utils/urlUtils';
 import '../../assets/css/common/JobDetail.css';
 import ApplyModal from '../../components/common/ApplyModal';
 
@@ -99,46 +100,59 @@ const JobDetail = () => {
 
     const renderContent = () => (
         <div className="job-detail-inner">
+            {/* ── BANNER HERO ── */}
+            <div className="jd-banner-hero">
+                {job.bannerUrl ? (
+                    <img src={getImageUrl(job.bannerUrl)} alt="Banner" className="jd-banner-img" />
+                ) : (
+                    <div className="jd-banner-placeholder"></div>
+                )}
+                <div className="jd-banner-overlay"></div>
+                <div className="jd-banner-content">
+                    <span className="jd-banner-tag">{job.jobType || 'Thực tập'}</span>
+                    <h1 className="jd-banner-title">{job.title}</h1>
+                    <div className="jd-banner-meta">
+                        <span><span className="material-symbols-outlined">location_on</span> {job.location}</span>
+                        <span><span className="material-symbols-outlined">payments</span> {job.salary}</span>
+                    </div>
+                </div>
+            </div>
 
             <div className="jd-grid">
                 {/* Left Column: Job Info */}
                 <div className="jd-main-col">
                     <div className="jd-content-card">
-                        <header className="jd-header-info">
-                            <span className="jd-tag-badge">Thực tập</span>
-                            <h1 className="job-title-premium">{job.title}</h1>
-                            
-                            <div className="jd-info-grid">
-                                <div className="jd-info-item">
-                                    <span className="material-symbols-outlined jd-item-icon">payments</span>
-                                    <div className="jd-item-content">
-                                        <label>Mức lương</label>
-                                        <span>{job.salary || '3 - 5 triệu'}</span>
-                                    </div>
-                                </div>
-                                <div className="jd-info-item">
-                                    <span className="material-symbols-outlined jd-item-icon">location_on</span>
-                                    <div className="jd-item-content">
-                                        <label>Địa điểm</label>
-                                        <span>{job.location || 'Hải Châu, Đà Nẵng'}</span>
-                                    </div>
-                                </div>
-                                <div className="jd-info-item">
-                                    <span className="material-symbols-outlined jd-item-icon">work</span>
-                                    <div className="jd-item-content">
-                                        <label>Lĩnh vực</label>
-                                        <span>{job.industry || 'Chưa cập nhật'}</span>
-                                    </div>
-                                </div>
-                                <div className="jd-info-item">
-                                    <span className="material-symbols-outlined jd-item-icon">schedule</span>
-                                    <div className="jd-item-content">
-                                        <label>Hạn nộp hồ sơ</label>
-                                        <span>{job.deadline || 'Đang cập nhật'}</span>
-                                    </div>
+                        {/* Quick Stats Grid */}
+                        <div className="jd-quick-stats">
+                            <div className="jd-stat-item">
+                                <span className="material-symbols-outlined">group</span>
+                                <div className="jd-stat-info">
+                                    <label>Số lượng</label>
+                                    <span>{job.quantity || 1} người</span>
                                 </div>
                             </div>
-                        </header>
+                            <div className="jd-stat-item">
+                                <span className="material-symbols-outlined">workspace_premium</span>
+                                <div className="jd-stat-info">
+                                    <label>Cấp bậc</label>
+                                    <span>{job.level || 'Sinh viên / Thực tập'}</span>
+                                </div>
+                            </div>
+                            <div className="jd-stat-item">
+                                <span className="material-symbols-outlined">history_edu</span>
+                                <div className="jd-stat-info">
+                                    <label>Kinh nghiệm</label>
+                                    <span>{job.experience || 'Không yêu cầu'}</span>
+                                </div>
+                            </div>
+                            <div className="jd-stat-item">
+                                <span className="material-symbols-outlined">wc</span>
+                                <div className="jd-stat-info">
+                                    <label>Giới tính</label>
+                                    <span>{job.gender || 'Không yêu cầu'}</span>
+                                </div>
+                            </div>
+                        </div>
 
                         <div className="jd-divider"></div>
 
@@ -149,7 +163,7 @@ const JobDetail = () => {
                                 <h3>Mô tả công việc</h3>
                             </div>
                             <div className="jd-sec-content">
-                                <p>{job.description || "Hỗ trợ triển khai bản vẽ kỹ thuật, làm mô hình concept cho các dự án nhà ở và văn phòng."}</p>
+                                <p style={{ whiteSpace: 'pre-line' }}>{job.description}</p>
                             </div>
                         </section>
 
@@ -160,14 +174,7 @@ const JobDetail = () => {
                                 <h3>Yêu cầu ứng viên</h3>
                             </div>
                             <div className="jd-sec-content">
-                                {job.requirements ? (
-                                    <div style={{ whiteSpace: 'pre-line' }}>{job.requirements}</div>
-                                ) : (
-                                    <ul>
-                                        <li>Sinh viên năm 3, 4 chuyên ngành liên quan.</li>
-                                        <li>Có tinh thần trách nhiệm và ham học hỏi.</li>
-                                    </ul>
-                                )}
+                                <div style={{ whiteSpace: 'pre-line' }}>{job.requirements || 'Trao đổi trực tiếp khi phỏng vấn'}</div>
                             </div>
                         </section>
 
@@ -178,16 +185,26 @@ const JobDetail = () => {
                                 <h3>Quyền lợi được hưởng</h3>
                             </div>
                             <div className="jd-sec-content">
-                                {job.benefits ? (
-                                    <div style={{ whiteSpace: 'pre-line' }}>{job.benefits}</div>
-                                ) : (
-                                    <ul>
-                                        <li>Có hỗ trợ lương/phụ cấp thực tập.</li>
-                                        <li>Môi trường chuyên nghiệp, năng động.</li>
-                                    </ul>
-                                )}
+                                <div style={{ whiteSpace: 'pre-line' }}>{job.benefits || 'Chế độ đãi ngộ hấp dẫn'}</div>
                             </div>
                         </section>
+
+                        {/* Activity Gallery */}
+                        {job.companyImages && job.companyImages.length > 0 && (
+                            <section className="jd-section">
+                                <div className="jd-sec-header">
+                                    <span className="material-symbols-outlined">photo_library</span>
+                                    <h3>Hình ảnh hoạt động</h3>
+                                </div>
+                                <div className="jd-gallery-grid">
+                                    {job.companyImages.map((img, idx) => (
+                                        <div key={idx} className="jd-gallery-item">
+                                            <img src={getImageUrl(img)} alt={`Activity ${idx}`} />
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        )}
 
                          {/* Skills */}
                         <section className="jd-section">
@@ -215,38 +232,44 @@ const JobDetail = () => {
                         <div className="jd-widget-title">Thông tin công ty</div>
                         <div className="jd-company-box">
                             <div className="jd-company-logo">
-                                {job.companyName ? job.companyName.charAt(0) : 'K'}
+                                {job.imageUrl ? (
+                                    <img src={getImageUrl(job.imageUrl)} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                                ) : (
+                                    job.companyName ? job.companyName.charAt(0) : 'K'
+                                )}
                             </div>
                             <div className="jd-company-name">
-                                <h4>{job.companyName || 'Kiến Trúc Việt'}</h4>
+                                <h4>{job.companyName}</h4>
                                 <Link to={`/company/${job.companyId}`}>Xem hồ sơ chi tiết</Link>
                             </div>
                         </div>
                         <div className="jd-company-info-row">
                             <span className="material-symbols-outlined">groups</span>
-                            <span>Quy mô: 20-50</span>
+                            <span>Quy mô: {job.companySize || 'Chưa cập nhật'}</span>
                         </div>
                         <div className="jd-company-info-row">
                             <span className="material-symbols-outlined">language</span>
-                            <span>https://kientrucviet.com</span>
+                            <span>{job.website || 'Đang cập nhật website'}</span>
                         </div>
                         <div className="jd-company-info-row">
                             <span className="material-symbols-outlined">business_center</span>
-                            <span>Lĩnh vực: Kiến trúc & Nội thất</span>
+                            <span>Lĩnh vực: {job.industry || 'Chưa cập nhật'}</span>
                         </div>
                     </div>
 
                      {/* Contact Person */}
-                    <div className="jd-widget-card" style={{ display: job.contactEmail ? 'block' : 'none' }}>
-                        <div className="jd-widget-title">Thông tin liên hệ</div>
-                        <div className="jd-contact-box">
-                            <div className="jd-contact-avatar">{job.contactName ? job.contactName.charAt(0) : 'HR'}</div>
-                            <div className="jd-contact-info">
-                                <div className="jd-contact-name">{job.contactName || 'Người phụ trách tuyển dụng'}</div>
-                                <div className="jd-contact-role">{job.contactEmail}</div>
+                    {job.contactEmail && (
+                        <div className="jd-widget-card">
+                            <div className="jd-widget-title">Thông tin liên hệ</div>
+                            <div className="jd-contact-box">
+                                <div className="jd-contact-avatar">{job.contactName ? job.contactName.charAt(0) : 'HR'}</div>
+                                <div className="jd-contact-info">
+                                    <div className="jd-contact-name">{job.contactName || 'Người phụ trách tuyển dụng'}</div>
+                                    <div className="jd-contact-role">{job.contactEmail}</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
 
                     {/* Apply Action */}
                     <button 
