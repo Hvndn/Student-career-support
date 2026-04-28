@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { jobApi, studentApi } from '../../api';
+import { getImageUrl } from '../../utils/urlUtils';
 import { toast } from 'react-hot-toast';
 import '../../assets/css/common/JobList.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -220,16 +221,14 @@ const JobList = () => {
                     <div className="job-grid-premium">
                         {filtered.map(job => (
                             <div key={job.id} className="job-card-premium fade-in">
-                                <div className="card-top-media" style={{ background: '#f1f5f9' }}>
-                                    <div className="media-placeholder">
-                                        {job.imageUrl ? (
-                                            <img src={job.imageUrl} alt={job.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                        ) : (
-                                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: '#cbd5e1' }}>
-                                                <span className="material-symbols-outlined" style={{ fontSize: '4rem' }}>apartment</span>
-                                            </div>
-                                        )}
-                                    </div>
+                                <div className="card-top-media">
+                                    {job.imageUrl ? (
+                                        <img src={getImageUrl(job.imageUrl)} alt={job.title} className="card-banner-img" />
+                                    ) : (
+                                        <div className="media-placeholder">
+                                            <span className="material-symbols-outlined">apartment</span>
+                                        </div>
+                                    )}
                                     <span className="card-type-tag" style={{ background: '#1e293b', padding: '6px 12px', borderRadius: '8px' }}>{job.jobType || 'Thực tập'}</span>
                                     <button 
                                         className="card-fav-btn"

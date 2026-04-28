@@ -216,7 +216,7 @@
 }
 .mr-job-card:hover { transform: translateY(-15px); box-shadow: 0 60px 120px rgba(0,0,0,0.1); border-color: transparent; }
 .mr-job-top { display: flex; justify-content: space-between; align-items: center; }
-.mr-job-logo { width: 70px; height: 70px; background: var(--primary); color: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.8rem; }
+.mr-job-logo { width: 70px; height: 70px; background: var(--primary); color: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.8rem; overflow: hidden; }
 .mr-job-type { background: #eef2ff; color: var(--primary); padding: 0.6rem 1.5rem; border-radius: 99px; font-size: 0.9rem; font-weight: 800; }
 .mr-job-card h3 { font-size: 1.8rem; font-weight: 800; margin: 0; letter-spacing: -0.02em; }
 .mr-job-company { font-size: 1.2rem; color: var(--text-light); font-weight: 600; margin: 0; }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { studentApi } from '../../api';
+import { getImageUrl } from '../../utils/urlUtils';
 import '../../assets/css/student/Dashboard.css';
 
 const DonutChart = ({ value, total }) => {
@@ -216,7 +217,7 @@ const Dashboard = () => {
                       <div key={idx} className="dau-job-row">
                         <div className="dau-job-left">
                           <div className="dau-company-logo">
-                            <img src={job.imageUrl || "https://ui-avatars.com/api/?name=" + job.companyName} alt="Logo" />
+                            <img src={getImageUrl(job.imageUrl) || "https://ui-avatars.com/api/?name=" + job.companyName} alt="Logo" />
                           </div>
                           <div className="dau-job-main">
                             <h6>{job.title}</h6>

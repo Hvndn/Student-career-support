@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { jobApi } from '../../api';
+import { getImageUrl } from '../../utils/urlUtils';
 import '../../assets/css/student/Home.css';
 
 const Home = () => {
@@ -114,7 +115,13 @@ const Home = () => {
               {featuredJobs.map(job => (
                 <div key={job.id} className="mr-job-card">
                   <div className="mr-job-top">
-                    <div className="mr-job-logo">{job.companyName?.charAt(0)}</div>
+                    <div className="mr-job-logo">
+                      {job.imageUrl ? (
+                        <img src={getImageUrl(job.imageUrl)} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }} />
+                      ) : (
+                        job.companyName?.charAt(0)
+                      )}
+                    </div>
                     <span className="mr-job-type">{job.jobType}</span>
                   </div>
                   <h3>{job.title}</h3>
