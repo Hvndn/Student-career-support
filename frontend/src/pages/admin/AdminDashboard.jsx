@@ -8,7 +8,8 @@ import '../../assets/css/admin/AdminSidebar.css';
 import '../../assets/css/admin/AdminNavbar.css';
 import '../../assets/css/admin/AdminDashboard.css';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 const AdminDashboard = () => {
     const [stats, setStats] = useState({
         totalStudents: 0,
@@ -72,6 +73,87 @@ const AdminDashboard = () => {
         return 'rank-other';
     };
 
+    const handleExportReport = async () => {
+        const workbook = new ExcelJS.Workbook();
+        workbook.creator = 'DAU Connect';
+        workbook.created = new Date();
+
+        const styleHeader = (worksheet, headers, width = 25) => {
+            const headerRow = worksheet.addRow(headers);
+            headerRow.font = { name: 'Arial', bold: true, color: { argb: 'FFFFFFFF' } };
+            headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
+            headerRow.eachCell((cell) => {
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0D5CDA' } };
+                cell.border = {
+                    top: { style: 'thin' }, left: { style: 'thin' },
+                    bottom: { style: 'thin' }, right: { style: 'thin' }
+                };
+            });
+            worksheet.columns.forEach(col => { col.width = width; });
+            return headerRow;
+        };
+
+        const addBorders = (row) => {
+            row.eachCell((cell) => {
+                cell.border = {
+                    top: { style: 'thin' }, left: { style: 'thin' },
+                    bottom: { style: 'thin' }, right: { style: 'thin' }
+                };
+            });
+        };
+
+        // 1. Sheet Tổng quan
+        const wsTongQuan = workbook.addWorksheet('Tổng quan');
+        styleHeader(wsTongQuan, ['Chỉ số', 'Giá trị'], 35);
+        [
+            ['Sinh viên', stats.totalStudents || 0],
+            ['Doanh nghiệp', stats.totalCompanies || 0],
+            ['Việc làm', stats.totalJobs || 0],
+            ['Thử thách dự án', stats.totalProjects || 0],
+            ['Lượt truy cập', stats.totalVisits || 0],
+            ['Ứng tuyển', stats.totalApplications || 0],
+            ['Lịch hẹn', stats.totalInterviews || 0],
+            ['Doanh nghiệp chờ duyệt', stats.pendingCompanies || 0],
+        ].forEach(data => addBorders(wsTongQuan.addRow(data)));
+
+        // 2. Sheet Lượt truy cập
+        if (stats.dailyVisits && stats.dailyVisits.length > 0) {
+            const wsTruyCap = workbook.addWorksheet('Lượt truy cập');
+            styleHeader(wsTruyCap, ['Ngày', 'Lượt truy cập']);
+            stats.dailyVisits.forEach(v => addBorders(wsTruyCap.addRow([v.date, v.truyCap])));
+        }
+
+        // 3. Sheet Ngành nghề
+        if (stats.industryDistribution && Object.keys(stats.industryDistribution).length > 0) {
+            const wsNganhNghe = workbook.addWorksheet('Ngành nghề');
+            styleHeader(wsNganhNghe, ['Ngành nghề', 'Số lượng doanh nghiệp'], 40);
+            Object.entries(stats.industryDistribution).forEach(([industry, count]) => {
+                addBorders(wsNganhNghe.addRow([industry, count]));
+            });
+        }
+
+        // 4. Sheet Việc làm nổi bật
+        if (stats.topJobs && stats.topJobs.length > 0) {
+            const wsViecLam = workbook.addWorksheet('Việc làm nổi bật');
+            styleHeader(wsViecLam, ['Tên việc làm', 'Công ty', 'Lượt xem', 'Lượt ứng tuyển'], 40);
+            stats.topJobs.forEach(job => addBorders(wsViecLam.addRow([job.title, job.companyName, job.views, job.applicants])));
+        }
+
+        // 5. Sheet Hoạt động gần đây
+        if (stats.recentActivities && stats.recentActivities.length > 0) {
+            const wsHoatDong = workbook.addWorksheet('Hoạt động gần đây');
+            styleHeader(wsHoatDong, ['Người dùng', 'Vai trò', 'Ngày tham gia'], 30);
+            stats.recentActivities.forEach(act => {
+                const roleName = act.role.toLowerCase() === 'student' ? 'Sinh viên' : 'Nhà tuyển dụng';
+                addBorders(wsHoatDong.addRow([act.name, roleName, new Date(act.createdAt).toLocaleDateString('vi-VN')]));
+            });
+        }
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        saveAs(blob, `Bao_cao_chi_tiet_DAU_Connect_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    };
+
     if (loading) return (
         <div className="admin-loading">
             <div className="loader"></div>
@@ -94,7 +176,11 @@ const AdminDashboard = () => {
                             <h1>Chào buổi tối, <span className="text-red">Admin</span> 👋</h1>
                             <p>Tổng quan hệ thống DAU Connect hôm nay</p>
                         </div>
-                        <div className="dau-header-right">
+                        <div className="dau-header-right" style={{ display: 'flex', gap: '10px' }}>
+                            <button onClick={handleExportReport} style={{ background: '#10b981', color: '#fff', border: 'none', padding: '0 1rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontWeight: '500', fontSize: '0.9rem', boxShadow: '0 2px 4px rgba(16,185,129,0.2)' }}>
+                                <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>download</span>
+                                Xuất báo cáo
+                            </button>
                             <button className="btn-refresh" onClick={() => window.location.reload()}>
                                 <span className="material-symbols-outlined">refresh</span>
                                 Làm mới

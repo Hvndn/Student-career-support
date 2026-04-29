@@ -12,6 +12,8 @@
   "dependencies": {
     "@stomp/stompjs": "^7.3.0",
     "axios": "^1.13.6",
+    "exceljs": "^4.4.0",
+    "file-saver": "^2.0.5",
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.14.0",
     "leaflet": "^1.9.4",
