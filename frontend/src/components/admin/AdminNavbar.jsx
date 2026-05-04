@@ -29,7 +29,7 @@ const AdminNavbar = ({ title }) => {
             <div className="navbar-content">
                 <div className="admin-navbar-left">
                     <div className="breadcrumb">
-                        <span className="breadcrumb-main">DAU Connect</span>
+                        <span className="breadcrumb-main">FiveCore</span>
                         <span className="material-symbols-outlined separator">chevron_right</span>
                         <span className="breadcrumb-page">{title || 'Trang chủ'}</span>
                     </div>

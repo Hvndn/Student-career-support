@@ -133,24 +133,21 @@ const UserManagement = () => {
         <div className="admin-layout">
             <AdminSidebar />
             <div className="admin-main-content">
-                <AdminNavbar />
-                <main className="admin-body">
-                    <section className="admin-header-section">
-                        <div className="header-text">
-                            <h1>Quản trị Người dùng</h1>
-                            <p>Quản lý quyền truy cập và giám sát hoạt động tài khoản ScholarBridge.</p>
-                        </div>
-                        <div className="header-actions">
-                            <button className="btn-secondary">
+                <AdminNavbar title="Quản trị người dùng" />
+                <main className="admin-management-container">
+                    <div className="management-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <h2 className="management-title">Quản trị Người dùng</h2>
+                        <div className="header-actions" style={{ display: 'flex', gap: '10px' }}>
+                            <button className="btn-secondary" style={{ padding: '0.6rem 1.2rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 <span className="material-symbols-outlined">download</span>
                                 Xuất CSV
                             </button>
-                            <button className="btn-primary">
+                            <button className="btn-primary" style={{ padding: '0.6rem 1.2rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                                 <span className="material-symbols-outlined">person_add</span>
                                 Thêm Admin
                             </button>
                         </div>
-                    </section>
+                    </div>
 
                     <section className="metrics-grid">
                         <div className="metric-card">

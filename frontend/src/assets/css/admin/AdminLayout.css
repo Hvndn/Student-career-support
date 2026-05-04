@@ -13,10 +13,9 @@
 }
 
 .admin-body {
-    padding: 3rem;
+    padding: 2.5rem 20px;
     flex: 1;
-    max-width: 1400px;
-    margin: 0 auto;
+    max-width: 100%;
     width: 100%;
     box-sizing: border-box;
 }

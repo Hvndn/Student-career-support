@@ -49,12 +49,10 @@ const AdminDashboard = () => {
     const metrics = [
         { label: 'Sinh viên', value: stats.totalStudents, icon: 'group', color: '#3b82f6', bg: '#eff6ff', link: '/admin/students' },
         { label: 'Doanh nghiệp', value: stats.totalCompanies, icon: 'domain', color: '#ef4444', bg: '#fef2f2', link: '/admin/companies' },
-        { label: 'Việc làm', value: stats.totalJobs, icon: 'work', color: '#f59e0b', bg: '#fffbeb' },
-        { label: 'Thử thách dự án', value: stats.totalProjects, icon: 'emoji_events', color: '#10b981', bg: '#ecfdf5' },
+        { label: 'Việc làm', value: stats.totalJobs, icon: 'work', color: '#f59e0b', bg: '#fffbeb', link: '/admin/jobs' },
         { label: 'Lượt truy cập', value: stats.totalVisits, icon: 'show_chart', color: '#8b5cf6', bg: '#f5f3ff' },
         { label: 'Ứng tuyển', value: stats.totalApplications, icon: 'assignment', color: '#ec4899', bg: '#fdf2f8' },
-        { label: 'Lịch hẹn', value: stats.totalInterviews, icon: 'event', color: '#0ea5e9', bg: '#f0f9ff' },
-        { label: 'Bài viết tin tức', value: '0', icon: 'article', color: '#14b8a6', bg: '#f0fdfa' }
+        { label: 'Lịch hẹn', value: stats.totalInterviews, icon: 'event', color: '#0ea5e9', bg: '#f0f9ff', link: '/admin/appointments' },
     ];
 
     const COLORS = ['#3b82f6', '#ef4444', '#f97316', '#8b5cf6', '#10b981', '#94a3b8'];
@@ -75,7 +73,7 @@ const AdminDashboard = () => {
 
     const handleExportReport = async () => {
         const workbook = new ExcelJS.Workbook();
-        workbook.creator = 'DAU Connect';
+        workbook.creator = 'FiveCore';
         workbook.created = new Date();
 
         const styleHeader = (worksheet, headers, width = 25) => {
@@ -165,16 +163,12 @@ const AdminDashboard = () => {
         <div className="admin-layout">
             <AdminSidebar />
             <div className="admin-main-content">
-                <AdminNavbar />
+                <AdminNavbar title="Trang chủ" />
                 <main className="admin-body">
                     <section className="dau-header-section">
                         <div className="dau-header-left">
-                            <div className="status-badge-dau">
-                                <span className="status-dot"></span>
-                                ADMIN DASHBOARD
-                            </div>
                             <h1>Chào buổi tối, <span className="text-red">Admin</span> 👋</h1>
-                            <p>Tổng quan hệ thống DAU Connect hôm nay</p>
+                            <p>Tổng quan hệ thống FiveCore hôm nay</p>
                         </div>
                         <div className="dau-header-right" style={{ display: 'flex', gap: '10px' }}>
                             <button onClick={handleExportReport} style={{ background: '#10b981', color: '#fff', border: 'none', padding: '0 1rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontWeight: '500', fontSize: '0.9rem', boxShadow: '0 2px 4px rgba(16,185,129,0.2)' }}>

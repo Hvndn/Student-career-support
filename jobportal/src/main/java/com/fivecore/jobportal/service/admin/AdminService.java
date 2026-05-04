@@ -365,18 +365,40 @@ public class AdminService {
      * Lấy toàn bộ danh sách lịch hẹn (Interviews).
      */
     public List<AdminInterviewResponse> getAllInterviews() {
-        return interviewRepository.findAll().stream().map(i -> {
-            Job job = (i.getApplication() != null) ? i.getApplication().getJob() : null;
+        return interviewRepository.findAllWithDetails().stream().map(i -> {
+            Application app = i.getApplication();
+            Job job = (app != null) ? app.getJob() : null;
             Company company = (job != null) ? job.getCompany() : null;
+            Student student = (app != null) ? app.getStudent() : null;
+            User studentUser = (student != null) ? student.getUser() : null;
+
+            // Ưu tiên lấy tên từ đơn ứng tuyển (nếu có), nếu không lấy từ Profile
+            String studentName = (app != null && app.getFullName() != null && !app.getFullName().isEmpty())
+                    ? app.getFullName()
+                    : (studentUser != null ? studentUser.getFullName() : "N/A");
+
+            String studentEmail = (app != null && app.getEmail() != null && !app.getEmail().isEmpty())
+                    ? app.getEmail()
+                    : (studentUser != null ? studentUser.getEmail() : "N/A");
+
             return AdminInterviewResponse.builder()
                     .id(i.getId())
                     .companyName(company != null ? company.getName() : "N/A")
                     .companyLogo(company != null ? company.getLogoUrl() : null)
                     .industry(company != null ? company.getIndustry() : "N/A")
-                    .department(i.getDepartment())
+                    .department(i.getDepartment() != null ? i.getDepartment() : "N/A")
+                    .studentName(studentName)
+                    .studentEmail(studentEmail)
+                    .studentAvatar(student != null ? student.getAvatarUrl() : null)
+                    .studentIdStr(
+                            student != null && student.getStudentIdStr() != null ? student.getStudentIdStr() : "N/A")
+                    .major(student != null && student.getMajor() != null ? student.getMajor() : "N/A")
+                    .phone(app != null && app.getPhone() != null ? app.getPhone()
+                            : (student != null && student.getPhone() != null ? student.getPhone() : "N/A"))
                     .interviewDate(i.getInterviewDate())
-                    .notes(i.getNotes())
-                    .status(i.getStatus())
+                    .location(i.getLocation() != null ? i.getLocation() : "N/A")
+                    .notes(i.getNotes() != null ? i.getNotes() : "Không có ghi chú")
+                    .status(i.getStatus() != null ? i.getStatus() : "pending")
                     .build();
         }).collect(Collectors.toList());
     }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
+import { Link } from 'react-router-dom';
 import { studentApi } from '../../api';
 import '../../assets/css/common/ApplyModal.css';
 
@@ -15,38 +16,39 @@ const ApplyModal = ({ job, profile, onClose, onApplySuccess }) => {
         coverLetter: ''
     });
     const [cvFile, setCvFile] = useState(null);
-    const [useOnlineCv, setUseOnlineCv] = useState(profile?.cvData ? true : false);
+    const [useOnlineCv, setUseOnlineCv] = useState(false);
     const [selectedOnlineCv, setSelectedOnlineCv] = useState(null);
     const [localCVs, setLocalCVs] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
 
-    // Load local CVs when useOnlineCv is true
+    // Load local CVs and set initial state
     React.useEffect(() => {
-        if (useOnlineCv) {
-            const cvs = [];
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key && key.startsWith('dau_cv_')) {
-                    try {
-                        const data = JSON.parse(localStorage.getItem(key));
-                        cvs.push({ id: key.replace('dau_cv_', ''), title: data._name || 'CV không tên', _raw: data });
-                    } catch (e) {}
-                }
-            }
-            setLocalCVs(cvs);
-            
-            // Set default if profile has cvData
-            if (profile?.cvData) {
+        if (profile?.cvData) {
+            setUseOnlineCv(true);
+            try {
+                const activeData = JSON.parse(profile.cvData);
+                setSelectedOnlineCv({ id: 'online_profile', title: activeData._name || 'CV hiện tại', _raw: activeData });
+            } catch (e) {}
+        }
+
+        const cvs = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith('dau_cv_')) {
                 try {
-                    const activeData = JSON.parse(profile.cvData);
-                    setSelectedOnlineCv({ title: activeData._name || 'CV hiện tại', _raw: activeData });
+                    const data = JSON.parse(localStorage.getItem(key));
+                    cvs.push({ id: key.replace('dau_cv_', ''), title: data._name || 'CV không tên', _raw: data });
                 } catch (e) {}
-            } else if (cvs.length > 0) {
-                setSelectedOnlineCv(cvs[0]);
             }
         }
-    }, [useOnlineCv, profile]);
+        setLocalCVs(cvs);
+
+        if (!profile?.cvData && cvs.length > 0) {
+            setUseOnlineCv(true);
+            setSelectedOnlineCv(cvs[0]);
+        }
+    }, [profile]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
