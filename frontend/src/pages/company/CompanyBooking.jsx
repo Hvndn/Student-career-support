@@ -117,11 +117,17 @@ const CompanyBooking = () => {
             const status = (item.status || '').trim().toLowerCase();
             const filterSearch = searchTerm.toLowerCase().trim();
             const filterStatus = statusFilter.toLowerCase().trim();
+            const filterJob = jobFilter.toLowerCase().trim();
 
             const matchesSearch = studentName.includes(filterSearch) || jobTitle.includes(filterSearch);
             const matchesStatus = statusFilter === 'all' || status === filterStatus;
-            const matchesJob = jobFilter === 'all' || item.jobTitle === jobFilter;
+            const matchesJob = jobFilter === 'all' || jobTitle === filterJob;
             
+            // Console log to help debug filtering issues
+            if (filterSearch || statusFilter !== 'all' || jobFilter !== 'all') {
+                console.log(`Filtering item: ${item.studentName}, Status: ${status}, Target: ${filterStatus}, Match: ${matchesStatus}`);
+            }
+
             return matchesSearch && matchesStatus && matchesJob;
         })
         .sort((a, b) => {

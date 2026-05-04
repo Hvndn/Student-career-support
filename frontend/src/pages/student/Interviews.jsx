@@ -54,16 +54,18 @@ const Interviews = () => {
         const companyName = item.companyName || '';
         const jobTitle = item.jobTitle || '';
         const status = (item.status || '').trim().toLowerCase();
+        const filterStatus = statusFilter.toLowerCase().trim();
+        const filterSearch = searchTerm.toLowerCase().trim();
         
         const matchesSearch = 
-            companyName.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
-            jobTitle.toLowerCase().includes(searchTerm.toLowerCase().trim());
+            companyName.toLowerCase().includes(filterSearch) ||
+            jobTitle.toLowerCase().includes(filterSearch);
             
-        let matchesStatus = false;
-        if (statusFilter === 'all') {
-            matchesStatus = true;
-        } else {
-            matchesStatus = status === statusFilter.toLowerCase().trim();
+        let matchesStatus = statusFilter === 'all' || status === filterStatus;
+
+        // Debugging logs
+        if (statusFilter !== 'all' || filterSearch) {
+            console.log(`Student filtering: Company: ${companyName}, Status: ${status}, Filter: ${filterStatus}, Match: ${matchesStatus}`);
         }
 
         return matchesSearch && matchesStatus;
