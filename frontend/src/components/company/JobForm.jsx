@@ -13,9 +13,8 @@ const LEVELS = [
     { label: 'Mid-level', desc: '2–4 năm' },
     { label: 'Senior', desc: '4+ năm' },
     { label: 'Tech Lead', desc: 'Dẫn dắt team' },
-    { label: 'Manager', desc: 'Quản lý' },
-    { label: 'Director', desc: 'Giám đốc' },
-    { label: 'Head/VP', desc: 'Lãnh đạo cấp cao' }
+    { label: 'Manager', desc: 'Quản lý' }
+ 
 ];
 const EXPERIENCES = ['Chưa có kinh nghiệm', 'Dưới 1 năm', '1 năm', '2 năm', '3 năm', '4 năm', '5 năm', 'Trên 5 năm'];
 const QUALIFICATIONS = ['Không yêu cầu bằng cấp', 'THPT', 'Cao đẳng', 'Đại học', 'Thạc sĩ', 'Tiến sĩ'];
@@ -284,7 +283,7 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
             minSalary: form.salaryType === 'agreement' ? null : (form.minSalary ? parseFloat(form.minSalary) : null),
             maxSalary: form.salaryType === 'agreement' ? null : (form.maxSalary ? parseFloat(form.maxSalary) : null),
             skills: selectedSkills,
-            status: isDraft ? 'draft' : (jobData?.status || 'open')
+            status: isDraft ? 'draft' : (jobData?.status === 'open' ? 'open' : 'pending')
         };
 
         // Explicitly ensure all required fields are present in payload

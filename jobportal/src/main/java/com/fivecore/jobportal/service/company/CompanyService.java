@@ -123,7 +123,7 @@ public class CompanyService {
                 .contactName(request.getContactName())
                 .contactEmail(request.getContactEmail())
                 .contactPhone(request.getContactPhone())
-                .status(request.getStatus() != null ? Job.JobStatus.valueOf(request.getStatus().toLowerCase()) : Job.JobStatus.pending)
+                .status("draft".equalsIgnoreCase(request.getStatus()) ? Job.JobStatus.draft : Job.JobStatus.pending)
                 .bannerUrl(request.getBannerUrl())
                 .postedAt(java.time.LocalDateTime.now())
                 .build();
