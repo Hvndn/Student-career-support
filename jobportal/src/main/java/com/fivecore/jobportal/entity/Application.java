@@ -25,11 +25,15 @@ public class Application {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "applications", "educations", "certifications", "savedJobs", "savedByCompanies"})
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Student student;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "applications", "company"})
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Job job;
 
     @Enumerated(EnumType.STRING)
@@ -61,6 +65,8 @@ public class Application {
 
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "application"})
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Interview> interviews;
 
     public enum ApplicationStatus {

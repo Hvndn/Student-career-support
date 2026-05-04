@@ -22,6 +22,8 @@ public class Interview {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Application application;
 
     @Column(name = "interview_date", nullable = false)

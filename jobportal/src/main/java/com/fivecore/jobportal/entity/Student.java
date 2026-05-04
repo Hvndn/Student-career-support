@@ -24,6 +24,8 @@ public class Student {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "student", "company"})
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private User user;
 
     @Column(name = "student_code", length = 20, unique = true)
@@ -98,9 +100,13 @@ public class Student {
     // Các bảng tham chiếu để hỗ trợ DELETE CASCADE
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private java.util.List<SavedJob> savedJobs;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private java.util.List<SavedCandidate> savedByCompanies;
 }
