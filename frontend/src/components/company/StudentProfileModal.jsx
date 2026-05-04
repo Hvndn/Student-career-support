@@ -287,6 +287,40 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                 )}
                             </div>
 
+                            {/* Match Analysis Breakdown (If available) */}
+                            {candidate.matchDetails?.breakdown && (
+                                <div className="spm-card">
+                                    <h3 className="spm-card-title">
+                                        <span className="material-symbols-outlined">analytics</span>
+                                        Phân tích độ phù hợp
+                                    </h3>
+                                    <div className="match-analysis" style={{ padding: 0, background: 'transparent', border: 'none' }}>
+                                        {Object.entries(candidate.matchDetails.breakdown).map(([key, data]) => (
+                                            <div key={key} className="analysis-item" title={data.experience_reason || data.skills_reason || data.projects_reason || data.education_reason || data.location_reason}>
+                                                <div className="analysis-label">
+                                                    <span>{key === 'skills' ? 'Kỹ năng' : key === 'experience' ? 'Kinh nghiệm' : key === 'projects' ? 'Dự án' : key === 'education' ? 'Học vấn' : 'Địa điểm'}</span>
+                                                    <span className="score-val" style={{ color: '#6366f1' }}>{data.score}%</span>
+                                                </div>
+                                                <div className="analysis-bar-bg" style={{ height: '4px', background: '#e2e8f0' }}>
+                                                    <div 
+                                                        className="analysis-bar-fill" 
+                                                        style={{ 
+                                                            width: `${data.score}%`,
+                                                            height: '100%',
+                                                            backgroundColor: data.score >= 80 ? '#10b981' : data.score >= 50 ? '#f59e0b' : '#ef4444'
+                                                        }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '1rem', fontStyle: 'italic' }}>
+                                        * Di chuột vào từng thanh để xem lý do chấm điểm
+                                    </p>
+                                </div>
+                            )}
+
+
                         </aside>
                     </div>
                 </div>

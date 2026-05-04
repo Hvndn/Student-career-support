@@ -141,20 +141,14 @@ const CompanyCandidates = () => {
     // Filter and Sort logic
     const filteredApps = applications
         .map(app => {
-            // SỬ DỤNG TRỰC TIẾP ĐIỂM SỐ VÀ CHI TIẾT TỪ BACKEND
             const score = app.matchScore || app.matchPercentage || 0;
             const details = app.matchDetails || {};
+            const breakdown = details.breakdown || {};
             
             return { 
                 ...app, 
                 enhancedMatch: score,
-                matchBreakdown: {
-                    skills: details.skillsScore || 0,
-                    major: details.educationScore || 0,
-                    location: details.locationScore || 0,
-                    experience: details.experienceScore || 0,
-                    projectBonus: (details.projectScore || 0) + (details.softSkillScore || 0)
-                }
+                matchBreakdown: breakdown
             };
         })
         .filter(app => {
@@ -436,7 +430,12 @@ const CompanyCandidates = () => {
                                                                 })()}
                                                                 {app.enhancedMatch && (
                                                                     <span 
-                                                                        title={`Phân tích: Kỹ năng (+${app.matchBreakdown?.skills || 0}), Kinh nghiệm (+${app.matchBreakdown?.experience || 0}), Học vấn (+${app.matchBreakdown?.major || 0}), Địa điểm (+${app.matchBreakdown?.location || 0}), Dự án (+${app.matchBreakdown?.projectBonus || 0})`}
+                                                                        title={`Phân tích chi tiết:
+• Kỹ năng: ${app.matchBreakdown?.skills?.skills_reason || 'N/A'} (+${app.matchBreakdown?.skills?.contribution || 0}đ)
+• Kinh nghiệm: ${app.matchBreakdown?.experience?.experience_reason || 'N/A'} (+${app.matchBreakdown?.experience?.contribution || 0}đ)
+• Dự án: ${app.matchBreakdown?.projects?.projects_reason || 'N/A'} (+${app.matchBreakdown?.projects?.contribution || 0}đ)
+• Học vấn: ${app.matchBreakdown?.education?.education_reason || 'N/A'} (+${app.matchBreakdown?.education?.contribution || 0}đ)
+• Địa điểm: ${app.matchBreakdown?.location?.location_reason || 'N/A'} (+${app.matchBreakdown?.location?.contribution || 0}đ)`}
                                                                         style={{ 
                                                                             background: app.enhancedMatch >= 80 ? '#f0fdf4' : app.enhancedMatch >= 60 ? '#fffbeb' : '#fef2f2', 
                                                                             color: app.enhancedMatch >= 80 ? '#16a34a' : app.enhancedMatch >= 60 ? '#d97706' : '#dc2626',
