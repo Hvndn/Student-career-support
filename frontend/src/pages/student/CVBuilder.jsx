@@ -151,15 +151,34 @@ const Editor = ({ section, cv, setCV, onAvatarClick }) => {
       {(cv.projects||[]).map((p,i)=>(
         <div key={p.id||i} className="cvb-card">
           <div className="cvb-card-hd"><span className="cvb-card-num">#{i+1}</span><button className="cvb-del" onClick={()=>delItem('projects',i)}><IcoTrash/></button></div>
-          <F label="Tên dự án"   value={p.name}        onChange={v=>upItem('projects',i,'name',v)}        ph="Đồ án tốt nghiệp / Hackathon"/>
-          <F label="Vai trò"     value={p.role}         onChange={v=>upItem('projects',i,'role',v)}         ph="Thiết kế chính / Backend Dev"/>
-          <F label="Năm"         value={p.year}         onChange={v=>upItem('projects',i,'year',v)}         ph="2023"/>
-          <F label="Công nghệ"   value={p.techStack}    onChange={v=>upItem('projects',i,'techStack',v)}    ph="React, Spring Boot, MySQL"/>
-          <F label="Link demo"   value={p.demoUrl}      onChange={v=>upItem('projects',i,'demoUrl',v)}      ph="https://demo.com"/>
-          <F label="Mô tả dự án" value={p.description}  onChange={v=>upItem('projects',i,'description',v)}  multi ph="Mô tả chức năng, kết quả đạt được..."/>
+          <F label="Tên dự án"    value={p.name||p.title||''}  onChange={v=>upItem('projects',i,'name',v)}  ph="Hệ thống quản lý sinh viên"/>
+          <F label="Vai trò"      value={p.role||''}            onChange={v=>upItem('projects',i,'role',v)}  ph="Frontend Developer / Leader"/>
+          <div className="cvb-f">
+            <label className="cvb-fl">Bắt đầu</label>
+            <input className="cvb-fi" type="month"
+              value={p.startDate ? (p.startDate.includes('-') ? p.startDate : (()=>{ const [m,y]=(p.startDate||'').split('/'); return y&&m?`${y}-${m.padStart(2,'0')}`:'' })()) : ''}
+              onChange={e=>{ const [y,m]=e.target.value.split('-'); upItem('projects',i,'startDate',e.target.value?`${m}/${y}`:''); }}
+            />
+          </div>
+          <div className="cvb-f">
+            <label className="cvb-fl">Kết thúc</label>
+            <input className="cvb-fi" type="month"
+              disabled={p.endDate==='Nay'}
+              value={(!p.endDate||p.endDate==='Nay')?'':(p.endDate.includes('-')?p.endDate:(()=>{ const [m,y]=(p.endDate||'').split('/'); return y&&m?`${y}-${m.padStart(2,'0')}`:'' })())}
+              onChange={e=>{ const [y,m]=e.target.value.split('-'); upItem('projects',i,'endDate',e.target.value?`${m}/${y}`:''); }}
+            />
+            <label style={{display:'flex',alignItems:'center',gap:'5px',fontSize:'0.78rem',color:'#64748b',cursor:'pointer',marginTop:'4px'}}>
+              <input type="checkbox" checked={p.endDate==='Nay'} onChange={e=>upItem('projects',i,'endDate',e.target.checked?'Nay':'')}/>
+              Hiện tại (Nay)
+            </label>
+          </div>
+          <F label="Công nghệ"   value={p.technologies||p.techStack||''} onChange={v=>upItem('projects',i,'technologies',v)} ph="React, Spring Boot, MySQL"/>
+          <F label="Link GitHub" value={p.repositoryUrl||''}  onChange={v=>upItem('projects',i,'repositoryUrl',v)} ph="https://github.com/user/repo"/>
+          <F label="Link Demo"   value={p.demoUrl||''}        onChange={v=>upItem('projects',i,'demoUrl',v)}       ph="https://demo.example.com"/>
+          <F label="Mô tả dự án" value={p.description||p.responsibilities||''} onChange={v=>upItem('projects',i,'description',v)} multi ph="Mô tả chức năng, kết quả đạt được..."/>
         </div>
       ))}
-      <button className="cvb-add" onClick={()=>addItem('projects',{name:'',role:'',year:'',techStack:'',demoUrl:'',description:''})}><IcoPlus/> Thêm dự án</button>
+      <button className="cvb-add" onClick={()=>addItem('projects',{name:'',role:'',startDate:'',endDate:'',technologies:'',repositoryUrl:'',demoUrl:'',description:''})}><IcoPlus/> Thêm dự án</button>
     </div>
   );
 
