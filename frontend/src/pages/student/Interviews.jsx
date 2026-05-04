@@ -140,6 +140,7 @@ const Interviews = () => {
                             const getStatusDisplay = (status) => {
                                 switch(status?.toLowerCase()) {
                                     case 'confirmed':
+                                        return { label: 'Đã xác nhận', class: 'confirmed' };
                                     case 'scheduled':
                                         return { label: 'Sắp diễn ra', class: 'scheduled' };
                                     case 'completed':
