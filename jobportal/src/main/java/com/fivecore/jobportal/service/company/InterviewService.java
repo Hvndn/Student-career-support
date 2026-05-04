@@ -48,20 +48,41 @@ public class InterviewService {
         // Cập nhật trạng thái đơn ứng tuyển sang 'interview'
         application.setStatus(com.fivecore.jobportal.entity.Application.ApplicationStatus.interview);
 
-        // Gửi email thông báo
+        // Gửi email và thông báo chi tiết
         String studentEmail = application.getStudent().getUser().getEmail();
-        String content = "Chào " + application.getStudent().getUser().getFullName() + ",\n\n" +
-                "Bạn có một lịch phỏng vấn cho vị trí: " + application.getJob().getTitle() + "\n" +
-                "Thời gian: " + request.getInterviewDate().toString() + "\n" +
-                "Địa điểm: " + request.getLocation() + "\n\n" +
-                "Chúc bạn có một buổi phỏng vấn thành công!";
+        String studentName = application.getStudent().getUser().getFullName();
+        String companyName = application.getJob().getCompany().getName();
+        String jobTitle = application.getJob().getTitle();
+        String interviewDateStr = request.getInterviewDate().toString().replace("T", " ");
+        
+        StringBuilder messageBuilder = new StringBuilder();
+        messageBuilder.append("Chào ").append(studentName).append(",\n\n");
+        messageBuilder.append("Chúc mừng! Công ty ").append(companyName).append(" đã đặt lịch phỏng vấn với bạn cho vị trí ").append(jobTitle).append(".\n\n");
+        messageBuilder.append("📍 Hình thức: ").append(request.getInterviewFormat()).append("\n");
+        messageBuilder.append("📅 Thời gian: ").append(interviewDateStr).append("\n");
+        messageBuilder.append("🏢 Địa điểm/Link: ").append(request.getLocation()).append("\n");
+        
+        if (request.getInterviewerInfo() != null && !request.getInterviewerInfo().isEmpty()) {
+            messageBuilder.append("👤 Người phỏng vấn: ").append(request.getInterviewerInfo()).append("\n");
+        }
+        
+        if (request.getRequiredDocuments() != null && !request.getRequiredDocuments().isEmpty()) {
+            messageBuilder.append("📁 Hồ sơ cần mang theo: ").append(request.getRequiredDocuments()).append("\n");
+        }
+        
+        if (request.getNotes() != null && !request.getNotes().isEmpty()) {
+            messageBuilder.append("\n📝 Ghi chú từ nhà tuyển dụng: ").append(request.getNotes()).append("\n");
+        }
+        
+        messageBuilder.append("\nChúc bạn có một buổi phỏng vấn thành công!\nTrân trọng,\nĐội ngũ Fivecore.");
 
-        emailService.sendSimpleEmail(studentEmail, "[Student Career] Thông báo lịch phỏng vấn", content);
+        String fullContent = messageBuilder.toString();
+
+        emailService.sendSimpleEmail(studentEmail, "[Fivecore] Thông báo lịch phỏng vấn - " + companyName, fullContent);
         
         notificationService.sendNotification(application.getStudent().getUser(), 
-            "Thông báo lịch phỏng vấn", content);
+            "Lịch phỏng vấn mới từ " + companyName, "Bạn có lịch phỏng vấn cho vị trí " + jobTitle + " vào lúc " + interviewDateStr);
         
-        log.info("Đã sắp xếp lịch phỏng vấn cho đơn ứng tuyển ID: {}", application.getId());
         return savedInterview;
     }
 
@@ -69,14 +90,14 @@ public class InterviewService {
      * Lấy danh sách phỏng vấn của sinh viên.
      */
     public java.util.List<Interview> getInterviewsByStudent(Integer studentId) {
-        return interviewRepository.findByApplication_Student_Id(studentId);
+        return interviewRepository.findByStudentIdWithDetails(studentId);
     }
 
     /**
      * Lấy danh sách phỏng vấn của doanh nghiệp.
      */
     public java.util.List<Interview> getInterviewsByCompany(Integer companyId) {
-        return interviewRepository.findByApplication_Job_Company_Id(companyId);
+        return interviewRepository.findByCompanyIdWithDetails(companyId);
     }
 
     /**
@@ -92,13 +113,17 @@ public class InterviewService {
 
         // Gửi thông báo cho sinh viên
         Application app = interview.getApplication();
+        String companyName = app.getJob().getCompany().getName();
+        String jobTitle = app.getJob().getTitle();
+        
         String content = "Chào " + app.getStudent().getUser().getFullName() + ",\n\n" +
-                "Lịch phỏng vấn cho vị trí: " + app.getJob().getTitle() + " vào lúc " + 
-                interview.getInterviewDate().toString() + " đã bị hủy.\n\n" +
+                "Rất tiếc, Công ty " + companyName + " vừa thông báo hủy lịch phỏng vấn cho vị trí " + jobTitle + 
+                " vào lúc " + interview.getInterviewDate().toString().replace("T", " ") + ".\n\n" +
+                "Vui lòng kiểm tra lại danh sách ứng tuyển hoặc liên hệ với nhà tuyển dụng để biết thêm chi tiết.\n" +
                 "Trân trọng!";
         
         notificationService.sendNotification(app.getStudent().getUser(), 
-            "Thông báo hủy lịch phỏng vấn", content);
+            "Thông báo hủy lịch phỏng vấn - " + companyName, "Lịch phỏng vấn vị trí " + jobTitle + " đã bị hủy.");
         
         log.info("Đã hủy lịch phỏng vấn ID: {}", interviewId);
     }
@@ -124,6 +149,39 @@ public class InterviewService {
         
         interviewRepository.save(interview);
         log.info("Đã cập nhật lịch phỏng vấn ID: {}", id);
+    }
+
+    /**
+     * Sinh viên xác nhận tham gia phỏng vấn.
+     */
+    @Transactional
+    public void confirmInterview(Integer id, Integer studentId) {
+        Interview interview = interviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch phỏng vấn"));
+        
+        if (!interview.getApplication().getStudent().getId().equals(studentId)) {
+            throw new RuntimeException("Bạn không có quyền xác nhận lịch phỏng vấn này");
+        }
+
+        if ("confirmed".equals(interview.getStatus())) {
+            throw new RuntimeException("Lịch phỏng vấn này đã được xác nhận trước đó");
+        }
+
+        interview.setStatus("confirmed");
+        interviewRepository.save(interview);
+
+        // Thông báo cho nhà tuyển dụng
+        Application app = interview.getApplication();
+        com.fivecore.jobportal.entity.User companyUser = app.getJob().getCompany().getUser();
+        String studentName = app.getStudent().getUser().getFullName();
+        String jobTitle = app.getJob().getTitle();
+
+        notificationService.sendNotification(companyUser, 
+            "Ứng viên xác nhận phỏng vấn", 
+            "Ứng viên " + studentName + " đã xác nhận tham gia buổi phỏng vấn cho vị trí " + jobTitle + 
+            " vào lúc " + interview.getInterviewDate().toString().replace("T", " "));
+
+        log.info("Sinh viên ID {} đã xác nhận lịch phỏng vấn ID {}", studentId, id);
     }
 
     /**
