@@ -39,7 +39,7 @@ const CompanyList = () => {
         <div className="cl-company-list-wrapper">
             <header className="cl-top-header">
                 <div className="cl-breadcrumb">
-                    <Link to="/student/dashboard" className="cl-breadcrumb-prev">DAU Connect</Link>
+                    <Link to="/student/dashboard" className="cl-breadcrumb-prev">Fivecore</Link>
                     <span className="cl-breadcrumb-sep">›</span>
                     <span className="cl-breadcrumb-current">Danh sách công ty</span>
                 </div>

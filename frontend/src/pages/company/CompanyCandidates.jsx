@@ -292,7 +292,7 @@ const CompanyCandidates = () => {
                     <div className="candidates-container">
                         <div className="candidates-main-content full-width">
                             
-                            {/* DAU Connect Standard Filter Bar */}
+                            {/* Fivecore Standard Filter Bar */}
                             <div className="dau-filter-bar intro-y" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
                                 <div className="filter-left" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                                     {/* Lọc Trạng Thái */}
