@@ -53,19 +53,17 @@ const Interviews = () => {
     const filteredInterviews = interviews.filter(item => {
         const companyName = item.companyName || '';
         const jobTitle = item.jobTitle || '';
-        const status = (item.status || '').toLowerCase();
+        const status = (item.status || '').trim().toLowerCase();
         
         const matchesSearch = 
-            companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            jobTitle.toLowerCase().includes(searchTerm.toLowerCase());
+            companyName.toLowerCase().includes(searchTerm.toLowerCase().trim()) ||
+            jobTitle.toLowerCase().includes(searchTerm.toLowerCase().trim());
             
         let matchesStatus = false;
         if (statusFilter === 'all') {
             matchesStatus = true;
         } else {
-            // Mapping UI filter values to data status values if necessary
-            // In our case, the values 'scheduled', 'confirmed', 'pending', etc. match the data
-            matchesStatus = status === statusFilter;
+            matchesStatus = status === statusFilter.toLowerCase().trim();
         }
 
         return matchesSearch && matchesStatus;
@@ -253,8 +251,21 @@ const Interviews = () => {
                     ) : (
                         <div className="no-data-card glass intro-y delay-2">
                             <div className="no-data-icon">📅</div>
-                            <h3>Chưa có lịch hẹn nào</h3>
-                            <p>Đừng nản lòng! Hãy tiếp tục ứng tuyển vào các vị trí phù hợp để nhận cơ hội phỏng vấn.</p>
+                            <h3>Không tìm thấy lịch hẹn nào</h3>
+                            <p>
+                                {statusFilter !== 'all' || searchTerm 
+                                    ? 'Không tìm thấy lịch hẹn phù hợp với tiêu chí lọc của bạn. Hãy thử thay đổi bộ lọc hoặc tìm kiếm khác.'
+                                    : 'Bạn chưa có lịch hẹn phỏng vấn nào. Hãy tiếp tục ứng tuyển để nhận cơ hội mới!'}
+                            </p>
+                            {(statusFilter !== 'all' || searchTerm) && (
+                                <button 
+                                    className="btn-clear-filter"
+                                    onClick={() => { setStatusFilter('all'); setSearchTerm(''); }}
+                                    style={{ marginTop: '1rem', padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--primary-color)', background: 'none', color: 'var(--primary-color)', cursor: 'pointer' }}
+                                >
+                                    Xóa tất cả bộ lọc
+                                </button>
+                            )}
                         </div>
                     )}
                 </div>
