@@ -170,9 +170,6 @@ const ManageStudent = () => {
                 <AdminNavbar title="Quản lý Sinh viên" />
                 <main className="admin-management-container">
                     <div className="management-header">
-                        <div className="breadcrumb-dau">
-                            Fivecore <span className="separator">›</span> Quản lý sinh viên
-                        </div>
                         <h2 className="management-title">Danh sách Sinh viên</h2>
                     </div>
 

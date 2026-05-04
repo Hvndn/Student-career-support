@@ -288,9 +288,7 @@ const ManageCVTemplates = () => {
                 <AdminNavbar title="Quản lý Mẫu CV" />
                 <main className="admin-management-container">
                     <div className="management-header">
-                        <div className="breadcrumb-dau">
-                            Fivecore <span className="separator">›</span> Quản lý mẫu CV
-                        </div>
+                        
                         <h2 className="management-title">Danh sách Mẫu CV</h2>
                     </div>
 
@@ -512,3 +510,4 @@ const ManageCVTemplates = () => {
 };
 
 export default ManageCVTemplates;
+

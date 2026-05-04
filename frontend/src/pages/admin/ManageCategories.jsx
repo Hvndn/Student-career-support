@@ -79,13 +79,13 @@ const ManageCategories = () => {
             if (editingCategory) {
                 const response = await adminApi.updateCategory(editingCategory.id, formData);
                 if (response.data.status === 'success') {
-                    toast.success('Cập nhật danh mục thành công');
+                    toast.success('Cập nhật lĩnh vực thành công');
                     fetchCategories();
                 }
             } else {
                 const response = await adminApi.addCategory(formData);
                 if (response.data.status === 'success') {
-                    toast.success('Thêm danh mục thành công');
+                    toast.success('Thêm lĩnh vực mới thành công');
                     fetchCategories();
                 }
             }
@@ -96,11 +96,11 @@ const ManageCategories = () => {
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm('Bạn có chắc chắn muốn xóa danh mục này?')) {
+        if (window.confirm('Bạn có chắc chắn muốn xóa lĩnh vực này?')) {
             try {
                 const response = await adminApi.deleteCategory(id);
                 if (response.data.status === 'success') {
-                    toast.success('Xóa danh mục thành công');
+                    toast.success('Xóa lĩnh vực thành công');
                     fetchCategories();
                 }
             } catch (error) {
@@ -115,7 +115,7 @@ const ManageCategories = () => {
     );
 
     const stats = [
-        { label: 'Tổng danh mục', value: categories.length, icon: 'inventory_2', color: 'blue' },
+        { label: 'Tổng lĩnh vực', value: categories.length, icon: 'inventory_2', color: 'blue' },
         { label: 'Đang hoạt động', value: categories.filter(c => c.status === 'ACTIVE').length, icon: 'verified', color: 'green' },
         { label: 'Tổng việc làm', value: categories.reduce((sum, c) => sum + (c.jobsCount || 0), 0), icon: 'work', color: 'yellow' }
     ];
@@ -124,10 +124,10 @@ const ManageCategories = () => {
         <div className="admin-layout">
             <AdminSidebar />
             <div className="admin-main-content">
-                <AdminNavbar title="Quản lý Danh mục" />
+                <AdminNavbar title="Quản lý lĩnh vực" />
                 <main className="admin-management-container">
                     <div className="management-header">
-                        <h2 className="management-title">Quản lý Danh mục</h2>
+                        <h2 className="management-title">Quản lý các Lĩnh vực Nghề nghiệp</h2>
                     </div>
 
                     <div className="stats-grid-categories">
@@ -169,7 +169,7 @@ const ManageCategories = () => {
                     <div className="management-table-container" style={{ marginTop: '1.5rem' }}>
                         <div className="management-table-header category-table-grid" style={{ color: '#64748b', fontSize: '0.8rem', fontWeight: 700, padding: '1rem 1.5rem', textTransform: 'uppercase', background: 'transparent', border: 'none' }}>
                             <div>ICON</div>
-                            <div>TÊN DANH MỤC</div>
+                            <div>TÊN LĨNH VỰC</div>
                             <div>SLUG</div>
                             <div style={{ textAlign: 'center' }}>VIỆC LÀM</div>
                             <div>TRẠNG THÁI</div>
@@ -223,7 +223,7 @@ const ManageCategories = () => {
                             ))
                         ) : (
                             <div style={{ textAlign: 'center', padding: '3rem', color: '#94a3b8' }}>
-                                Không tìm thấy danh mục nào
+                                Không tìm thấy lĩnh vực nào
                             </div>
                         )}
                     </div>
@@ -236,7 +236,7 @@ const ManageCategories = () => {
                     <div className="premium-modal" onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
                             <h3>
-                                {isViewMode ? 'Chi tiết Danh mục' : (editingCategory ? 'Chỉnh sửa Danh mục' : 'Thêm Danh mục mới')}
+                                {isViewMode ? 'Chi tiết lĩnh vực' : (editingCategory ? 'Chỉnh sửa lĩnh vực' : 'Thêm lĩnh vực mới')}
                             </h3>
                             <button className="close-btn" onClick={() => setIsModalOpen(false)}>
                                 <span className="material-symbols-outlined">close</span>
@@ -245,48 +245,64 @@ const ManageCategories = () => {
                         <form onSubmit={handleSubmit}>
                             <div className="modal-body">
                                 <div className="form-grid">
-                                    <div className="form-group full-width">
-                                        <label>Tên danh mục</label>
-                                        <input 
-                                            type="text" 
-                                            className="form-control" 
-                                            name="name" 
-                                            value={formData.name} 
-                                            onChange={handleInputChange} 
-                                            placeholder="Vd: Kiến trúc sư..."
-                                            required 
-                                            disabled={isViewMode}
-                                        />
+                                    <div className="form-group-premium full-width">
+                                        <label>
+                                            <span className="material-symbols-outlined">category</span>
+                                            Tên lĩnh vực <span className="required">*</span>
+                                        </label>
+                                        <div className="input-with-icon">
+                                            <input 
+                                                type="text" 
+                                                className="premium-input" 
+                                                name="name" 
+                                                value={formData.name} 
+                                                onChange={handleInputChange} 
+                                                placeholder="Vd: Công nghệ thông tin..."
+                                                required 
+                                                disabled={isViewMode}
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="form-group full-width">
-                                        <label>Đường dẫn (Slug)</label>
-                                        <input 
-                                            type="text" 
-                                            className="form-control" 
-                                            name="slug" 
-                                            value={formData.slug} 
-                                            onChange={handleInputChange} 
-                                            placeholder="kien-truc-su"
-                                            required 
-                                            disabled={isViewMode}
-                                        />
+                                    <div className="form-group-premium full-width">
+                                        <label>
+                                            <span className="material-symbols-outlined">link</span>
+                                            Đường dẫn (Slug) <span className="required">*</span>
+                                        </label>
+                                        <div className="input-with-icon">
+                                            <input 
+                                                type="text" 
+                                                className="premium-input" 
+                                                name="slug" 
+                                                value={formData.slug} 
+                                                onChange={handleInputChange} 
+                                                placeholder="cong-nghe-thong-tin"
+                                                required 
+                                                disabled={isViewMode}
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="form-group full-width">
-                                        <label>Mô tả ngắn</label>
+                                    <div className="form-group-premium full-width">
+                                        <label>
+                                            <span className="material-symbols-outlined">description</span>
+                                            Mô tả ngắn
+                                        </label>
                                         <textarea 
-                                            className="form-control" 
+                                            className="premium-input" 
                                             name="description" 
                                             value={formData.description} 
                                             onChange={handleInputChange} 
-                                            rows="2"
-                                            placeholder="Mô tả tóm tắt về danh mục này..."
+                                            rows="3"
+                                            placeholder="Mô tả tóm tắt về lĩnh vực này..."
                                             disabled={isViewMode}
                                         ></textarea>
                                     </div>
-                                    <div className="form-group">
-                                        <label>Trạng thái</label>
+                                    <div className="form-group-premium">
+                                        <label>
+                                            <span className="material-symbols-outlined">toggle_on</span>
+                                            Trạng thái
+                                        </label>
                                         <select 
-                                            className="form-control" 
+                                            className="premium-input" 
                                             name="status" 
                                             value={formData.status} 
                                             onChange={handleInputChange}
@@ -296,13 +312,16 @@ const ManageCategories = () => {
                                             <option value="INACTIVE">Tạm dừng</option>
                                         </select>
                                     </div>
-                                    <div className="form-group">
-                                        <label>Chọn biểu tượng</label>
-                                        <div className="category-select-icon">
+                                    <div className="form-group-premium">
+                                        <label>
+                                            <span className="material-symbols-outlined">grid_view</span>
+                                            Chọn biểu tượng
+                                        </label>
+                                        <div className="category-select-icon-premium">
                                             {iconsList.map(icon => (
                                                 <div 
                                                     key={icon} 
-                                                    className={`icon-option ${formData.icon === icon ? 'selected' : ''}`}
+                                                    className={`icon-option-premium ${formData.icon === icon ? 'selected' : ''}`}
                                                     onClick={() => !isViewMode && setFormData({ ...formData, icon })}
                                                     style={{ cursor: isViewMode ? 'default' : 'pointer' }}
                                                 >
@@ -335,7 +354,7 @@ const ManageCategories = () => {
                                 </button>
                                 {!isViewMode && (
                                     <button type="submit" className="btn-primary">
-                                        {editingCategory ? 'Lưu thay đổi' : 'Tạo danh mục'}
+                                        {editingCategory ? 'Lưu thay đổi' : 'Tạo lĩnh vực'}
                                     </button>
                                 )}
                             </div>

@@ -66,9 +66,6 @@ const WebsiteConfig = () => {
                 <AdminNavbar title="Quản lý Website" />
                 <main className="admin-management-container">
                     <div className="management-header">
-                        <div className="breadcrumb-dau">
-                            Fivecore <span className="separator">›</span> Quản lý Website
-                        </div>
                         <h2 className="management-title">Quản lý Website</h2>
                     </div>
 
