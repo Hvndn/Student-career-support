@@ -112,11 +112,22 @@ const CompanyBooking = () => {
 
     const filteredInterviews = interviews
         .filter(item => {
-            const matchesSearch = 
-                item.studentName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.jobTitle?.toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
-            const matchesJob = jobFilter === 'all' || item.jobTitle === jobFilter;
+            const studentName = (item.studentName || '').toLowerCase();
+            const jobTitle = (item.jobTitle || '').toLowerCase();
+            const status = (item.status || '').trim().toLowerCase();
+            const filterSearch = searchTerm.toLowerCase().trim();
+            const filterStatus = statusFilter.toLowerCase().trim();
+            const filterJob = jobFilter.toLowerCase().trim();
+
+            const matchesSearch = studentName.includes(filterSearch) || jobTitle.includes(filterSearch);
+            const matchesStatus = statusFilter === 'all' || status === filterStatus;
+            const matchesJob = jobFilter === 'all' || jobTitle === filterJob;
+            
+            // Console log to help debug filtering issues
+            if (filterSearch || statusFilter !== 'all' || jobFilter !== 'all') {
+                console.log(`Filtering item: ${item.studentName}, Status: ${status}, Target: ${filterStatus}, Match: ${matchesStatus}`);
+            }
+
             return matchesSearch && matchesStatus && matchesJob;
         })
         .sort((a, b) => {
@@ -184,7 +195,9 @@ const CompanyBooking = () => {
                                     onChange={(e) => setStatusFilter(e.target.value)}
                                 >
                                     <option value="all">Tất cả trạng thái</option>
+                                    <option value="pending">Chờ xác nhận</option>
                                     <option value="scheduled">Sắp diễn ra</option>
+                                    <option value="confirmed">Đã xác nhận</option>
                                     <option value="completed">Đã hoàn thành</option>
                                     <option value="cancelled">Đã hủy</option>
                                 </select>
@@ -275,8 +288,10 @@ const CompanyBooking = () => {
                                             <div className="booking-status-side">
                                                 <span className={`status-pill status-${interview.status.toLowerCase()}`}>
                                                     {interview.status === 'scheduled' ? 'Sắp diễn ra' : 
+                                                     interview.status === 'confirmed' ? 'Đã xác nhận' :
                                                      interview.status === 'completed' ? 'Hoàn thành' : 
-                                                     interview.status === 'cancelled' ? 'Đã hủy' : interview.status}
+                                                     interview.status === 'cancelled' ? 'Đã hủy' : 
+                                                     interview.status === 'pending' ? 'Chờ xác nhận' : interview.status}
                                                 </span>
                                                 <div className="card-actions">
                                                     <button className="icon-btn" onClick={() => handleViewDetail(interview)} title="Chi tiết lịch hẹn">

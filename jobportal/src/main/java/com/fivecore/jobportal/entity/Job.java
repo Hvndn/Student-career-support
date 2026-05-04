@@ -2,6 +2,8 @@ package com.fivecore.jobportal.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
@@ -28,6 +30,8 @@ public class Job {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "jobs", "user", "savedCandidates"})
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Company company;
 
     @Column(nullable = false, length = 255)
@@ -103,10 +107,17 @@ public class Job {
     @Builder.Default
     private List<JobSkill> skills = new ArrayList<>();
 
-    // Quan hệ hỗ trợ DELETE CASCADE
     @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Application> applications;
+
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<SavedJob> savedJobs;
 
     public enum JobType {
         intern, parttime, fulltime, remote, contract

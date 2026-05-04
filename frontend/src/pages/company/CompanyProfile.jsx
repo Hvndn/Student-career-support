@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import CompanySidebar from '../../components/company/CompanySidebar';
 import CompanyNavbar from '../../components/company/CompanyNavbar';
+import SearchableSelect from '../../components/common/SearchableSelect';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { companyApi, jobApi } from '../../api';
 import { getImageUrl } from '../../utils/urlUtils';
+import { vietnamLocations } from '../../utils/vietnamLocations';
 import '../../assets/css/company/CompanyProfile.css';
 
 const QUILL_MODULES = {
@@ -42,6 +44,7 @@ const CompanyProfile = () => {
     });
     const [selectedActivityFiles, setSelectedActivityFiles] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [districts, setDistricts] = useState([]);
     const [isEditingActivities, setIsEditingActivities] = useState(false);
     const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
@@ -88,6 +91,14 @@ const CompanyProfile = () => {
                     logo: data.logoUrl || '',
                     activityImages: data.activityImages || []
                 });
+
+                // Load districts if province exists
+                if (data.province) {
+                    const foundProv = vietnamLocations.find(p => p.name === data.province);
+                    if (foundProv) {
+                        setDistricts(foundProv.wards || []);
+                    }
+                }
             }
         } catch (err) {
             console.error('Error fetching profile:', err);
@@ -95,6 +106,16 @@ const CompanyProfile = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleProvinceChange = (provinceName) => {
+        setFormData(prev => ({ ...prev, province: provinceName, city: '' }));
+        const foundProv = vietnamLocations.find(p => p.name === provinceName);
+        setDistricts(foundProv ? (foundProv.wards || []) : []);
+    };
+
+    const handleWardChange = (wardName) => {
+        setFormData(prev => ({ ...prev, city: wardName }));
     };
 
     const handleChange = (e) => {
@@ -143,14 +164,8 @@ const CompanyProfile = () => {
             newImages.splice(index, 1);
             return { ...prev, activityImages: newImages };
         });
-        
-        // Nếu là file mới chọn, cũng phải xóa khỏi selectedActivityFiles
-        // Tuy nhiên index trong activityImages bao gồm cả ảnh cũ và mới
-        // Ta cần tìm xem index đó ứng với file mới nào nếu có
-        // Đơn giản hơn: khi submit ta sẽ so sánh activityImages (URL/DataURL) để biết cái nào giữ lại
-        // Nhưng backend hiện tại chỉ nhận file mới.
-        // Tạm thời xóa trên UI:
     };
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
@@ -246,10 +261,10 @@ const CompanyProfile = () => {
                                 <p className="cp-company-industry">{profile?.industry || 'Lĩnh vực chưa cập nhật'}</p>
 
                                 <div className="cp-verified-badge">
-                                    <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" strokeWidth="2.5" fill="none">
-                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                                        <polyline points="22 4 12 14.01 9 11.01"/>
-                                    </svg>
+                                     <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" strokeWidth="2.5" fill="none">
+                                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                         <polyline points="22 4 12 14.01 9 11.01"/>
+                                     </svg>
                                     Đã xác minh
                                 </div>
                             </div>
@@ -315,9 +330,12 @@ const CompanyProfile = () => {
                                         onClick={() => setIsEditingActivities(!isEditingActivities)}
                                         title={isEditingActivities ? "Xong" : "Chỉnh sửa ảnh"}
                                     >
-                                        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none">
+                                        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
                                             {isEditingActivities ? (
-                                                <path d="M20 6L9 17L4 12" />
+                                                <>
+                                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                                    <polyline points="22 4 12 14.01 9 11.01" />
+                                                </>
                                             ) : (
                                                 <>
                                                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -370,26 +388,26 @@ const CompanyProfile = () => {
                                  </div>
                              </div>
                          </div>
- 
+
                          {/* ===== RIGHT COLUMN: Edit Form ===== */}
                          <div className="cp-right-col">
                              <form id="cp-form" onSubmit={handleSubmit}>
                                  <div className="cp-form-card">
                                      <h3 className="cp-form-title">Cập nhật hồ sơ doanh nghiệp</h3>
- 
+
                                      <div className="cp-fields-grid">
                                          {/* Tên công ty */}
                                          <div className="cp-field-group">
                                              <label>Tên công ty <span className="cp-required">*</span></label>
                                              <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Nhập tên công ty..." required />
                                          </div>
- 
+
                                          {/* Mã số thuế */}
                                          <div className="cp-field-group">
                                              <label>Mã số thuế <span className="cp-required">*</span></label>
                                              <input type="text" name="taxCode" value={formData.taxCode} onChange={handleChange} placeholder="0000000000" />
                                          </div>
- 
+
                                          {/* Ngành nghề */}
                                          <div className="cp-field-group">
                                              <label>Lĩnh vực <span className="cp-required">*</span></label>
@@ -402,31 +420,31 @@ const CompanyProfile = () => {
                                                  ))}
                                              </select>
                                          </div>
- 
+
                                          {/* Website */}
                                          <div className="cp-field-group">
                                              <label>Website</label>
                                              <input type="text" name="website" value={formData.website} onChange={handleChange} placeholder="https://company.com" />
                                          </div>
- 
+
                                          {/* Hotline / SĐT */}
                                          <div className="cp-field-group">
                                              <label>Hotline / SĐT</label>
                                              <input type="text" name="phone" value={formData.phone} onChange={handleChange} placeholder="0xxxxxxxxx" />
                                          </div>
- 
+
                                          {/* Người đại diện */}
                                          <div className="cp-field-group">
                                              <label>Người đại diện <span className="cp-required">*</span></label>
                                              <input type="text" name="representativeName" value={formData.representativeName} onChange={handleChange} placeholder="Họ và tên người đại diện" />
                                          </div>
- 
+
                                          {/* Email liên hệ */}
                                          <div className="cp-field-group">
                                              <label>Email liên hệ <span className="cp-required">*</span></label>
                                              <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="contact@company.com" />
                                          </div>
- 
+
                                          {/* Quy mô nhân sự */}
                                          <div className="cp-field-group">
                                              <label>Quy mô nhân sự</label>
@@ -440,33 +458,34 @@ const CompanyProfile = () => {
                                                  <option value="1000+">Trên 1000 Nhân viên</option>
                                              </select>
                                          </div>
- 
-                                         {/* Địa chỉ tỉnh */}
+
+                                         {/* Tỉnh / Thành phố */}
                                          <div className="cp-field-group">
-                                             <label>Địa chỉ tỉnh</label>
-                                             <select name="province" value={formData.province} onChange={handleChange}>
-                                                 <option value="">Chọn Tỉnh</option>
-                                                 <option value="Hà Nội">Hà Nội</option>
-                                                 <option value="Hồ Chí Minh">Hồ Chí Minh</option>
-                                                 <option value="Đà Nẵng">Đà Nẵng</option>
-                                                 <option value="Hải Phòng">Hải Phòng</option>
-                                                 <option value="Cần Thơ">Cần Thơ</option>
-                                                 <option value="Quảng Nam">Quảng Nam</option>
-                                                 <option value="Huế">Huế</option>
-                                                 <option value="Khác">Tỉnh/Thành khác</option>
-                                             </select>
+                                             <label>Tỉnh <span className="cp-required">*</span></label>
+                                             <SearchableSelect
+                                                options={vietnamLocations.map(p => p.name)}
+                                                value={formData.province}
+                                                onChange={handleProvinceChange}
+                                                placeholder="Tìm hoặc chọn Tỉnh/Thành phố..."
+                                             />
                                          </div>
- 
-                                         {/* Quận Huyện */}
+
+                                         {/* Xã / Phường */}
                                          <div className="cp-field-group">
-                                             <label>Quận / Huyện <span className="cp-required">*</span></label>
-                                             <input type="text" name="city" value={formData.city} onChange={handleChange} placeholder="Hải Châu, Cẩm Lệ..." />
+                                             <label>Xã / Phường <span className="cp-required">*</span></label>
+                                             <SearchableSelect
+                                                options={districts.map(d => d.name)}
+                                                value={formData.city}
+                                                onChange={handleWardChange}
+                                                placeholder={districts.length === 0 ? 'Chọn Tỉnh/Thành trước...' : 'Tìm hoặc chọn Xã/Phường...'}
+                                                disabled={districts.length === 0}
+                                             />
                                          </div>
- 
-                                         {/* Địa chỉ cụ thể */}
+
+                                         {/* Số nhà / Tên đường */}
                                          <div className="cp-field-group cp-full-width">
-                                             <label>Xã/Phường/Số nhà <span className="cp-required">*</span></label>
-                                             <input type="text" name="address" value={formData.address} onChange={handleChange} placeholder="Nhập địa chỉ chi tiết..." />
+                                             <label>Số nhà / Tên đường <span className="cp-required">*</span></label>
+                                             <input type="text" name="address" value={formData.address} onChange={handleChange} placeholder="Số 123, đường ABC..." />
                                          </div>
                                     </div>
 

@@ -31,6 +31,7 @@ public class JobRestController {
             @RequestParam(required = false) String jobType,
             @RequestParam(required = false) java.math.BigDecimal minSalary,
             @RequestParam(required = false) java.math.BigDecimal maxSalary,
+            @RequestParam(required = false) Boolean negotiable,
             org.springframework.security.core.Authentication authentication) {
 
         Integer studentId = null;
@@ -39,7 +40,7 @@ public class JobRestController {
             studentId = jobSearchService.getStudentIdByEmail(authentication.getName());
         }
 
-        List<JobResponse> jobs = jobSearchService.searchJobs(keyword, location, industry, jobType, minSalary, maxSalary, studentId);
+        List<JobResponse> jobs = jobSearchService.searchJobs(keyword, location, industry, jobType, minSalary, maxSalary, negotiable, studentId);
         return ResponseEntity.ok(ApiResponse.success("Lấy danh sách công việc thành công", jobs));
     }
 

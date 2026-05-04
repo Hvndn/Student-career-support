@@ -188,13 +188,13 @@
     border-radius: 4px;
     display: flex;
     align-items: center;
+    justify-content: center;
     transition: color 0.2s;
 }
 .cp-activity-edit:hover { color: #475569; }
 .cp-activity-edit.active {
-    background: #22c55e;
-    color: white;
-    border-radius: 50%;
+    background: transparent;
+    color: #22c55e;
 }
 
 .cp-photo-remove {

@@ -3,6 +3,8 @@ package com.fivecore.jobportal.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 import java.time.LocalDateTime;
 
 /**
@@ -22,6 +24,8 @@ public class Interview {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Application application;
 
     @Column(name = "interview_date", nullable = false)

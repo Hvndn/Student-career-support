@@ -51,14 +51,23 @@ const Interviews = () => {
     };
 
     const filteredInterviews = interviews.filter(item => {
-        const companyName = item.application?.job?.company?.name || '';
-        const jobTitle = item.application?.job?.title || '';
+        const companyName = item.companyName || '';
+        const jobTitle = item.jobTitle || '';
+        const status = (item.status || '').trim().toLowerCase();
+        const filterStatus = statusFilter.toLowerCase().trim();
+        const filterSearch = searchTerm.toLowerCase().trim();
         
         const matchesSearch = 
-            companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            jobTitle.toLowerCase().includes(searchTerm.toLowerCase());
+            companyName.toLowerCase().includes(filterSearch) ||
+            jobTitle.toLowerCase().includes(filterSearch);
             
-        const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
+        let matchesStatus = statusFilter === 'all' || status === filterStatus;
+
+        // Debugging logs
+        if (statusFilter !== 'all' || filterSearch) {
+            console.log(`Student filtering: Company: ${companyName}, Status: ${status}, Filter: ${filterStatus}, Match: ${matchesStatus}`);
+        }
+
         return matchesSearch && matchesStatus;
     });
 
@@ -104,7 +113,9 @@ const Interviews = () => {
                             onChange={(e) => setStatusFilter(e.target.value)}
                         >
                             <option value="all">Tất cả trạng thái</option>
+                            <option value="pending">Chờ xác nhận</option>
                             <option value="scheduled">Sắp diễn ra</option>
+                            <option value="confirmed">Đã xác nhận</option>
                             <option value="completed">Đã hoàn thành</option>
                             <option value="cancelled">Đã hủy</option>
                         </select>
@@ -123,6 +134,7 @@ const Interviews = () => {
                             const getStatusDisplay = (status) => {
                                 switch(status?.toLowerCase()) {
                                     case 'confirmed':
+                                        return { label: 'Đã xác nhận', class: 'confirmed' };
                                     case 'scheduled':
                                         return { label: 'Sắp diễn ra', class: 'scheduled' };
                                     case 'completed':
@@ -217,7 +229,7 @@ const Interviews = () => {
                                             {statusInfo.label}
                                         </span>
                                         
-                                        {interview.status === 'scheduled' && (
+                                        {interview.status === 'pending' && (
                                             <button 
                                                 className="btn-confirm-interview"
                                                 onClick={() => handleConfirm(interview.id)}
@@ -241,8 +253,21 @@ const Interviews = () => {
                     ) : (
                         <div className="no-data-card glass intro-y delay-2">
                             <div className="no-data-icon">📅</div>
-                            <h3>Chưa có lịch hẹn nào</h3>
-                            <p>Đừng nản lòng! Hãy tiếp tục ứng tuyển vào các vị trí phù hợp để nhận cơ hội phỏng vấn.</p>
+                            <h3>Không tìm thấy lịch hẹn nào</h3>
+                            <p>
+                                {statusFilter !== 'all' || searchTerm 
+                                    ? 'Không tìm thấy lịch hẹn phù hợp với tiêu chí lọc của bạn. Hãy thử thay đổi bộ lọc hoặc tìm kiếm khác.'
+                                    : 'Bạn chưa có lịch hẹn phỏng vấn nào. Hãy tiếp tục ứng tuyển để nhận cơ hội mới!'}
+                            </p>
+                            {(statusFilter !== 'all' || searchTerm) && (
+                                <button 
+                                    className="btn-clear-filter"
+                                    onClick={() => { setStatusFilter('all'); setSearchTerm(''); }}
+                                    style={{ marginTop: '1rem', padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--primary-color)', background: 'none', color: 'var(--primary-color)', cursor: 'pointer' }}
+                                >
+                                    Xóa tất cả bộ lọc
+                                </button>
+                            )}
                         </div>
                     )}
                 </div>

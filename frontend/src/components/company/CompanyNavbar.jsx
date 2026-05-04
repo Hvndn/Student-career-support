@@ -166,7 +166,16 @@ const CompanyTopbar = () => {
       </div>
 
       <div className="cd-topbar-right">
-        <div className="topbar-actions">
+          <button 
+            className="tb-action-btn" 
+            title="Trò chuyện"
+            onClick={() => navigate('/company/chat')}
+          >
+            <span className="tb-icon">
+              <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            </span>
+          </button>
+
           <div className={`notification-container ${isNotifOpen ? 'open' : ''}`} ref={notifRef}>
             <button 
               className="tb-action-btn" 
@@ -220,7 +229,6 @@ const CompanyTopbar = () => {
               </div>
             </div>
           </div>
-        </div>
 
         <div className="divider"></div>
         
