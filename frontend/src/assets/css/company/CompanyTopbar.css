@@ -550,6 +550,16 @@
   flex: 1;
 }
 
+.notif-item-title-row {
+  margin-bottom: 2px;
+}
+
+.notif-item-title-text {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.875rem;
+}
+
 .notif-text {
   font-size: 0.875rem;
   color: #334155;

@@ -227,7 +227,23 @@ public class AdminService {
             }
             job.setStatus(newStatus);
             jobRepository.save(job);
-            log.info("Admin đã cập nhật trạng thái tin '{}' sang {}", job.getTitle(), status);
+
+            // Gửi thông báo cho doanh nghiệp
+            String title = "Cập nhật trạng thái tin tuyển dụng";
+            String statusText = "APPROVED".equalsIgnoreCase(status) ? "phê duyệt" : "từ chối";
+            String message = String.format("Tin tuyển dụng <strong>%s</strong> của bạn đã được <strong>%s</strong> bởi quản trị viên.", 
+                    job.getTitle(), statusText);
+
+            if (job.getCompany() != null && job.getCompany().getUser() != null) {
+                notificationRepository.save(Notification.builder()
+                        .user(job.getCompany().getUser())
+                        .title(title)
+                        .message(message)
+                        .isRead(false)
+                        .build());
+            }
+
+            log.info("Admin đã cập nhật trạng thái tin '{}' sang {} và gửi thông báo cho doanh nghiệp", job.getTitle(), status);
         });
     }
 

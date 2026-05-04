@@ -141,20 +141,14 @@ const CompanyCandidates = () => {
     // Filter and Sort logic
     const filteredApps = applications
         .map(app => {
-            // SỬ DỤNG TRỰC TIẾP ĐIỂM SỐ VÀ CHI TIẾT TỪ BACKEND
             const score = app.matchScore || app.matchPercentage || 0;
             const details = app.matchDetails || {};
+            const breakdown = details.breakdown || {};
             
             return { 
                 ...app, 
                 enhancedMatch: score,
-                matchBreakdown: {
-                    skills: details.skillsScore || 0,
-                    major: details.educationScore || 0,
-                    location: details.locationScore || 0,
-                    experience: details.experienceScore || 0,
-                    projectBonus: (details.projectScore || 0) + (details.softSkillScore || 0)
-                }
+                matchBreakdown: breakdown
             };
         })
         .filter(app => {
@@ -339,11 +333,11 @@ const CompanyCandidates = () => {
                                         <option value="custom">Tùy chọn...</option>
                                     </select>
 
-                                    {/* MỤC SẮP XẾP RIÊNG BIỆT - Nổi bật hơn */}
-                                    <div className="sort-section" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '4px 12px', background: '#eff6ff', borderRadius: '10px', border: '1px solid #dbeafe' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#1e3a8a' }}>
+                                    {/* MỤC SẮP XẾP RIÊNG BIỆT - Đồng bộ màu sắc */}
+                                    <div className="sort-section" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0 12px', background: '#fff', borderRadius: '8px', border: '1px solid #e2e8f0', height: '42px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b' }}>
                                             <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><path d="M3 6h18M6 12h12m-9 6h6"></path></svg>
-                                            <span style={{ fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Sắp xếp</span>
+                                            <span style={{ fontSize: '13px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Sắp xếp</span>
                                         </div>
                                         <select 
                                             className="dau-select filter-control"
@@ -352,7 +346,7 @@ const CompanyCandidates = () => {
                                                 const [key, direction] = e.target.value.split('-');
                                                 setSortConfig({ key, direction });
                                             }}
-                                            style={{ minWidth: '140px', border: 'none', background: 'transparent', color: '#1e3a8a', fontSize: '14px', fontWeight: '700', cursor: 'pointer', outline: 'none' }}
+                                            style={{ minWidth: '120px', border: 'none', background: 'transparent', color: '#64748b', fontSize: '14px', fontWeight: '500', cursor: 'pointer', outline: 'none', paddingRight: '4px' }}
                                         >
                                             <option value="matchPercentage-desc">Phù hợp nhất ↑</option>
                                             <option value="appliedAt-desc">Mới nhất ↑</option>
@@ -436,7 +430,12 @@ const CompanyCandidates = () => {
                                                                 })()}
                                                                 {app.enhancedMatch && (
                                                                     <span 
-                                                                        title={`Phân tích: Kỹ năng (+${app.matchBreakdown?.skills || 0}), Kinh nghiệm (+${app.matchBreakdown?.experience || 0}), Học vấn (+${app.matchBreakdown?.major || 0}), Địa điểm (+${app.matchBreakdown?.location || 0}), Dự án (+${app.matchBreakdown?.projectBonus || 0})`}
+                                                                        title={`Phân tích chi tiết:
+• Kỹ năng: ${app.matchBreakdown?.skills?.skills_reason || 'N/A'} (+${app.matchBreakdown?.skills?.contribution || 0}đ)
+• Kinh nghiệm: ${app.matchBreakdown?.experience?.experience_reason || 'N/A'} (+${app.matchBreakdown?.experience?.contribution || 0}đ)
+• Dự án: ${app.matchBreakdown?.projects?.projects_reason || 'N/A'} (+${app.matchBreakdown?.projects?.contribution || 0}đ)
+• Học vấn: ${app.matchBreakdown?.education?.education_reason || 'N/A'} (+${app.matchBreakdown?.education?.contribution || 0}đ)
+• Địa điểm: ${app.matchBreakdown?.location?.location_reason || 'N/A'} (+${app.matchBreakdown?.location?.contribution || 0}đ)`}
                                                                         style={{ 
                                                                             background: app.enhancedMatch >= 80 ? '#f0fdf4' : app.enhancedMatch >= 60 ? '#fffbeb' : '#fef2f2', 
                                                                             color: app.enhancedMatch >= 80 ? '#16a34a' : app.enhancedMatch >= 60 ? '#d97706' : '#dc2626',

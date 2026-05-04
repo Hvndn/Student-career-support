@@ -182,7 +182,7 @@ const CompanyDashboard = () => {
                                 <div className="widget-body compact-table">
                                     <div className="db-job-status-grid">
                                         {data?.jobs?.slice(0, 4).map(job => (
-                                            <Link key={job.id} to={`/company/management/jobs/${job.id}/applicants`} className="db-job-card">
+                                            <div key={job.id} className="db-job-card">
                                                 <div className="db-job-info">
                                                     <h5>{job.title}</h5>
                                                     <span>{job.applicantsCount || 0} hồ sơ</span>
@@ -190,7 +190,7 @@ const CompanyDashboard = () => {
                                                 <div className={`db-status-pill ${job.status}`}>
                                                     {job.status === 'open' ? 'Đang mở' : 'Đã đóng'}
                                                 </div>
-                                            </Link>
+                                            </div>
                                         ))}
                                     </div>
                                 </div>

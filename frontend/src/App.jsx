@@ -37,19 +37,14 @@ import CompanyDetail from './pages/student/CompanyDetail'
 // company pages
 import CompanyDashboard from './pages/company/CompanyDashboard'
 import CompanyJobManagement from './pages/company/CompanyJobManagement'
-import PostJobSelection from './pages/company/PostJobSelection'
 import PostJob from './pages/company/PostJob'
 import Applicants from './pages/company/Applicants'
 import CompanyCandidates from './pages/company/CompanyCandidates'
 import CompanyProfile from './pages/company/CompanyProfile'
-import CompanySavedCandidates from './pages/company/CompanySavedCandidates'
-import CompanyCandidateTags from './pages/company/CompanyCandidateTags'
+
 import CompanyCandidateNotifications from './pages/company/CompanyCandidateNotifications'
-// import EmployerHome from './pages/company/EmployerHome' (Đã đổi tên sang CompanyDashboard)
-import EmployerPricing from './pages/company/EmployerPricing'
 import CompanyBooking from './pages/company/CompanyBooking'
 
-import SuggestedCandidates from './pages/company/SuggestedCandidates'
 
 // admin pages
 import AdminDashboard from './pages/admin/AdminDashboard'
@@ -119,6 +114,7 @@ const AppContent = () => {
         position="top-right"
         reverseOrder={false}
         gutter={8}
+        containerStyle={{ zIndex: 10001 }}
         toastOptions={{
           duration: 3500,
           style: {
@@ -160,9 +156,8 @@ const AppContent = () => {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/cv/view/:appId" element={<PublicCvView />} />
 
-        {/* Nhà tuyển dụng (Landing & Pricing) */}
+        {/* Nhà tuyển dụng (Landing) */}
         <Route path="/employer" element={<CompanyDashboard />} />
-        <Route path="/employer/pricing" element={<EmployerPricing />} />
 
         {/* Bảo vệ cho Sinh viên */}
         <Route path="/student/*" element={
@@ -195,15 +190,12 @@ const AppContent = () => {
             <Routes>
               <Route path="dashboard" element={<CompanyDashboard />} />
               <Route path="management" element={<CompanyJobManagement />} />
-              <Route path="jobs/post" element={<PostJobSelection />} />
               <Route path="jobs/create" element={<PostJob />} />
               <Route path="jobs/edit/:id" element={<PostJob />} />
               <Route path="management/jobs/:jobId/applicants" element={<Applicants />} />
               <Route path="management/candidates" element={<CompanyCandidates />} />
-              <Route path="candidates/saved" element={<CompanySavedCandidates />} />
-              <Route path="candidates/tags" element={<CompanyCandidateTags />} />
+
               <Route path="candidates/notifications" element={<CompanyCandidateNotifications />} />
-              <Route path="candidates/suggested" element={<SuggestedCandidates />} />
               <Route path="booking" element={<CompanyBooking />} />
               <Route path="chat" element={<Chat />} />
               <Route path="profile" element={<CompanyProfile />} />

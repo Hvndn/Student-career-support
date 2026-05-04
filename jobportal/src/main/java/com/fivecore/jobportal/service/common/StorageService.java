@@ -18,6 +18,7 @@ import java.util.UUID;
 public class StorageService {
 
     private final String baseUploadDir = "uploads";
+    private final String physicalUploadDir = "frontend/src/assets/images";
     private final List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "webp", "pdf", "doc", "docx", "gif", "bmp", "svg", "tiff", "jfif", "ico");
     private final List<String> allowedMimeTypes = Arrays.asList(
         "image/jpeg", "image/png", "image/webp", "application/pdf",
@@ -58,7 +59,7 @@ public class StorageService {
 
         try {
             // Tạo thư mục nếu chưa tồn tại
-            Path root = Paths.get(baseUploadDir, subDir);
+            Path root = Paths.get(physicalUploadDir, subDir);
             if (!Files.exists(root)) {
                 Files.createDirectories(root);
             }
@@ -70,7 +71,7 @@ public class StorageService {
             // Lưu file
             Files.copy(file.getInputStream(), filePath);
 
-            log.info("Đã lưu file an toàn: {}/{}", subDir, fileName);
+            log.info("Đã lưu file an toàn: {}/{}", physicalUploadDir + "/" + subDir, fileName);
 
             // Trả về đường dẫn để truy cập qua web
             return "/" + baseUploadDir + "/" + subDir + "/" + fileName;

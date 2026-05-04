@@ -166,11 +166,6 @@
   min-width: 0 !important;
 }
 
-.db-job-card:hover {
-  background: #eff6ff !important;
-  border-color: #dbeafe !important;
-}
-
 .db-job-info {
   display: flex !important;
   flex-direction: column !important;

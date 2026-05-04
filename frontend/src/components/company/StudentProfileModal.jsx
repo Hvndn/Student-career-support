@@ -20,7 +20,7 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
             <div className="spm-container" onClick={e => e.stopPropagation()}>
                 
                 {/* Close Button */}
-                <button className="spm-close-btn" onClick={onClose}>✕</button>
+                <button className="spm-close-btn" onClick={onClose} title="Đóng">✕</button>
 
                 <div className="spm-scroll">
                     {/* ── PREMIUM BANNER ── */}
@@ -35,7 +35,7 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
 
                     {/* ── MODERN HEADER ── */}
                     <div className="spm-modern-header">
-                        <div className="spm-header-left">
+                        <div className="spm-header-top">
                             <div className="spm-avatar-box">
                                 {candidate.avatarUrl ? (
                                     <img src={getImageUrl(candidate.avatarUrl)} alt={candidate.fullName} className="spm-avatar-img" />
@@ -43,45 +43,49 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                     <div className="spm-avatar-placeholder">{initials}</div>
                                 )}
                             </div>
-                            <div className="spm-user-info">
-                                <span className="spm-major-tag">{candidate.major || 'Chưa cập nhật'}</span>
+                            <div className="spm-user-title">
+                                <span className={`spm-status-tag ${candidate.major ? 'updated' : 'pending'}`}>
+                                    {candidate.major ? candidate.major : 'CHƯA CẬP NHẬT'}
+                                </span>
                                 <h2>{candidate.fullName}</h2>
-                                <div className="spm-sub-info">
-                                    Lớp: {candidate.academicYear || 'n/a'} &nbsp; - &nbsp; MSSV: {candidate.studentIdStr || 'n/a'}
-                                </div>
                             </div>
                         </div>
 
-                        <div className="spm-header-center">
-                            <h4>Thông tin liên hệ</h4>
-                            <div className="spm-contact-grid">
-                                <div className="spm-contact-item">
-                                    <div className="spm-contact-icon"><span className="material-symbols-outlined">mail</span></div>
-                                    <span className="spm-contact-text">{candidate.email || 'n/a'}</span>
-                                </div>
-                                <div className="spm-contact-item">
-                                    <div className="spm-contact-icon"><span className="material-symbols-outlined">call</span></div>
-                                    <span className="spm-contact-text">{candidate.phone || 'n/a'}</span>
-                                </div>
-                                <div className="spm-contact-item">
-                                    <div className="spm-contact-icon"><span className="material-symbols-outlined">location_on</span></div>
-                                    <span className="spm-contact-text">{candidate.address || 'Chưa cập nhật'}</span>
+                        <div className="spm-header-cards">
+                            {/* Contact Info Card */}
+                            <div className="spm-info-card">
+                                <div className="spm-contact-grid">
+                                    <div className="spm-contact-item">
+                                        <div className="spm-contact-icon"><span className="material-symbols-outlined">mail</span></div>
+                                        <span>{candidate.email || 'n/a'}</span>
+                                    </div>
+                                    <div className="spm-contact-item">
+                                        <div className="spm-contact-icon"><span className="material-symbols-outlined">call</span></div>
+                                        <span>{candidate.phone || 'n/a'}</span>
+                                    </div>
+                                    <div className="spm-contact-item" style={{ gridColumn: '1 / -1' }}>
+                                        <div className="spm-contact-icon"><span className="material-symbols-outlined">school</span></div>
+                                        <span>Lớp: {candidate.academicYear || 'n/a'} • MSSV: {candidate.studentIdStr || 'n/a'}</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="spm-header-right">
-                            <div className="spm-stat-box">
-                                <span className="spm-stat-val">{gpa}</span>
-                                <span className="spm-stat-lbl">GPA</span>
-                            </div>
-                            <div className="spm-stat-box">
-                                <span className="spm-stat-val">{candidate.projects?.length || 0}</span>
-                                <span className="spm-stat-lbl">DỰ ÁN</span>
-                            </div>
-                            <div className="spm-stat-box">
-                                <span className="spm-stat-val">{candidate.cvData ? 1 : 0}</span>
-                                <span className="spm-stat-lbl">HỒ SƠ</span>
+                            {/* Stats Card */}
+                            <div className="spm-info-card">
+                                <div className="spm-stats-container">
+                                    <div className="spm-stat-box">
+                                        <span className="spm-stat-val">{gpa}</span>
+                                        <span className="spm-stat-lbl">GPA</span>
+                                    </div>
+                                    <div className="spm-stat-box">
+                                        <span className="spm-stat-val">{candidate.projects?.length || 0}</span>
+                                        <span className="spm-stat-lbl">Dự án</span>
+                                    </div>
+                                    <div className="spm-stat-box">
+                                        <span className="spm-stat-val">{candidate.cvData ? 1 : 0}</span>
+                                        <span className="spm-stat-lbl">Hồ sơ</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -102,7 +106,7 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                     {candidate.bio ? (
                                         <div dangerouslySetInnerHTML={{ __html: candidate.bio }} />
                                     ) : (
-                                        <p className="spm-text-muted">Sinh viên chưa cập nhật phần giới thiệu.</p>
+                                        <p className="spm-text-muted">Sinh viên chưa cập nhật phần giới thiệu bản thân.</p>
                                     )}
                                 </div>
                             </div>
@@ -120,7 +124,10 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                                 <div className="spm-timeline-dot" />
                                                 <p className="spm-tl-title">{edu.schoolName}</p>
                                                 <p className="spm-tl-sub">{edu.degree} – {edu.major}</p>
-                                                <p className="spm-tl-date">{edu.startDate} – {edu.endDate || 'Hiện tại'}</p>
+                                                <p className="spm-tl-date">
+                                                    <span className="material-symbols-outlined" style={{fontSize: '14px'}}>calendar_month</span>
+                                                    {edu.startDate} – {edu.endDate || 'Hiện tại'}
+                                                </p>
                                                 {edu.description && <div className="spm-tl-desc">{edu.description}</div>}
                                             </div>
                                         ))}
@@ -143,7 +150,10 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                                 <div className="spm-timeline-dot" />
                                                 <p className="spm-tl-title">{exp.jobTitle}</p>
                                                 <p className="spm-tl-sub">{exp.companyName}</p>
-                                                <p className="spm-tl-date">{exp.startDate} – {exp.endDate || 'Hiện tại'}</p>
+                                                <p className="spm-tl-date">
+                                                    <span className="material-symbols-outlined" style={{fontSize: '14px'}}>calendar_month</span>
+                                                    {exp.startDate} – {exp.endDate || 'Hiện tại'}
+                                                </p>
                                                 {exp.description && (
                                                     <div className="spm-tl-desc" dangerouslySetInnerHTML={{ __html: exp.description }} />
                                                 )}
@@ -194,13 +204,13 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
 
                                                     <div className="spm-project-links">
                                                         {pj.repositoryUrl && (
-                                                            <a href={pj.repositoryUrl} target="_blank" rel="noreferrer">
+                                                            <a href={pj.repositoryUrl} target="_blank" rel="noreferrer" className="spm-btn-outline">
                                                                 <span className="material-symbols-outlined">code</span> Source Code
                                                             </a>
                                                         )}
                                                         {pj.demoUrl && (
                                                             <a href={pj.demoUrl} target="_blank" rel="noreferrer">
-                                                                <span className="material-symbols-outlined">rocket</span> Live Demo
+                                                                <span className="material-symbols-outlined">open_in_new</span> Live Demo
                                                             </a>
                                                         )}
                                                     </div>
@@ -218,7 +228,7 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                         <aside className="spm-sidebar-col">
                             
                             {/* Video Introduction */}
-                            <div className="spm-card">
+                            <div className="spm-card spm-video-card">
                                 <h3 className="spm-card-title">
                                     <span className="material-symbols-outlined">videocam</span>
                                     Video giới thiệu
@@ -227,11 +237,35 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                     {candidate.videoUrl ? (
                                         <video src={candidate.videoUrl} controls className="spm-video-obj" />
                                     ) : (
-                                        <div className="spm-video-obj" style={{display:'flex', alignItems:'center', justifyContent:'center', background:'#1e293b', color:'#64748b'}}>
-                                            <span className="material-symbols-outlined" style={{fontSize:'48px'}}>play_circle</span>
+                                        <div className="spm-video-empty">
+                                            <div className="spm-video-icon-wrapper">
+                                                <span className="material-symbols-outlined">play_circle</span>
+                                            </div>
+                                            <span className="spm-video-empty-text">Sinh viên chưa cập nhật video</span>
                                         </div>
                                     )}
                                 </div>
+                            </div>
+
+                            {/* CV / Resume */}
+                            <div className="spm-card">
+                                <h3 className="spm-card-title">
+                                    <span className="material-symbols-outlined">description</span>
+                                    Hồ sơ năng lực (CV)
+                                </h3>
+                                {candidate.cvData ? (
+                                    <div className="spm-cv-box">
+                                        <div className="spm-cv-info">
+                                            <span className="material-symbols-outlined spm-cv-icon">picture_as_pdf</span>
+                                            <span className="spm-cv-name">Hồ sơ đính kèm.pdf</span>
+                                        </div>
+                                        <a href={getImageUrl(candidate.cvData)} target="_blank" rel="noreferrer" className="spm-cv-link" title="Tải xuống">
+                                            <span className="material-symbols-outlined" style={{fontSize: '18px'}}>download</span>
+                                        </a>
+                                    </div>
+                                ) : (
+                                    <p className="spm-text-muted" style={{fontSize:'0.85rem'}}>Sinh viên chưa đính kèm CV.</p>
+                                )}
                             </div>
 
                             {/* Skills */}
@@ -253,26 +287,39 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                 )}
                             </div>
 
-                            {/* CV / Resume */}
-                            <div className="spm-card">
-                                <h3 className="spm-card-title">
-                                    <span className="material-symbols-outlined">description</span>
-                                    Hồ sơ năng lực (CV)
-                                </h3>
-                                {candidate.cvData ? (
-                                    <div className="spm-cv-box">
-                                        <div className="spm-cv-info">
-                                            <span className="material-symbols-outlined spm-cv-icon">picture_as_pdf</span>
-                                            <span className="spm-cv-name">Hồ sơ đính kèm.pdf</span>
-                                        </div>
-                                        <a href={getImageUrl(candidate.cvData)} target="_blank" rel="noreferrer" className="spm-cv-link">
-                                            <span className="material-symbols-outlined">download</span>
-                                        </a>
+                            {/* Match Analysis Breakdown (If available) */}
+                            {candidate.matchDetails?.breakdown && (
+                                <div className="spm-card">
+                                    <h3 className="spm-card-title">
+                                        <span className="material-symbols-outlined">analytics</span>
+                                        Phân tích độ phù hợp
+                                    </h3>
+                                    <div className="match-analysis" style={{ padding: 0, background: 'transparent', border: 'none' }}>
+                                        {Object.entries(candidate.matchDetails.breakdown).map(([key, data]) => (
+                                            <div key={key} className="analysis-item" title={data.experience_reason || data.skills_reason || data.projects_reason || data.education_reason || data.location_reason}>
+                                                <div className="analysis-label">
+                                                    <span>{key === 'skills' ? 'Kỹ năng' : key === 'experience' ? 'Kinh nghiệm' : key === 'projects' ? 'Dự án' : key === 'education' ? 'Học vấn' : 'Địa điểm'}</span>
+                                                    <span className="score-val" style={{ color: '#6366f1' }}>{data.score}%</span>
+                                                </div>
+                                                <div className="analysis-bar-bg" style={{ height: '4px', background: '#e2e8f0' }}>
+                                                    <div 
+                                                        className="analysis-bar-fill" 
+                                                        style={{ 
+                                                            width: `${data.score}%`,
+                                                            height: '100%',
+                                                            backgroundColor: data.score >= 80 ? '#10b981' : data.score >= 50 ? '#f59e0b' : '#ef4444'
+                                                        }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
-                                ) : (
-                                    <p className="spm-text-muted" style={{fontSize:'0.8rem'}}>Chưa có file CV đính kèm.</p>
-                                )}
-                            </div>
+                                    <p style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '1rem', fontStyle: 'italic' }}>
+                                        * Di chuột vào từng thanh để xem lý do chấm điểm
+                                    </p>
+                                </div>
+                            )}
+
 
                         </aside>
                     </div>
