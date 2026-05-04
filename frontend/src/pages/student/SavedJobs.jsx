@@ -112,7 +112,9 @@ const SavedJobs = () => {
                                         </div>
                                         <div className="job-detail-box" style={{ background: '#f8fafc', border: 'none' }}>
                                             <span className="material-symbols-outlined" style={{ color: '#10b981', fontSize: '20px' }}>payments</span>
-                                            <span className="detail-text" style={{ fontWeight: '600' }}>{job.salary || 'Thương lượng'}</span>
+                                            <span className="detail-text" style={{ fontWeight: '600' }}>
+                                                {job.salary || (job.minSalary ? `${job.minSalary/1000000} - ${job.maxSalary/1000000} triệu` : 'Thỏa thuận')}
+                                            </span>
                                         </div>
                                         <div className="job-detail-box" style={{ background: '#f8fafc', border: 'none' }}>
                                             <span className="material-symbols-outlined" style={{ color: '#f59e0b', fontSize: '20px' }}>location_on</span>

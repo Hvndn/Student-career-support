@@ -57,7 +57,7 @@ const Applications = () => {
             {/* Breadcrumb - Cleaned up */}
             <div className="job-list-top-bar" style={{ padding: '24px 0 8px' }}>
                 <div className="breadcrumb-premium">
-                    <Link to="/student/dashboard" className="breadcrumb-prev">DAU Connect</Link>
+                    <Link to="/student/dashboard" className="breadcrumb-prev">Fivecore</Link>
                     <span className="material-symbols-outlined breadcrumb-sep">chevron_right</span>
                     <span className="breadcrumb-current">Đơn ứng tuyển</span>
                 </div>
@@ -130,7 +130,7 @@ const Applications = () => {
                                         </td>
                                         <td>
                                             <div className="salary-cell">
-                                                $ {app.salaryRange || '20 - 30 triệu'}
+                                                {app.salaryRange || 'Thỏa thuận'}
                                             </div>
                                         </td>
                                         <td>
@@ -167,6 +167,7 @@ const Applications = () => {
             <ApplicationDetailDrawer 
                 application={selectedApp} 
                 onClose={() => setSelectedApp(null)} 
+                onRefresh={loadApps}
             />
         )}
         </>
