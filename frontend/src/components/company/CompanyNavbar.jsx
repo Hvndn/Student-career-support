@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { companyApi } from '../../api';
+import { companyApi, recruitmentApi } from '../../api';
 import { getImageUrl } from '../../utils/urlUtils';
 import { FiUsers, FiCalendar, FiBriefcase } from 'react-icons/fi';
 import '../../assets/css/company/CompanyTopbar.css';
@@ -38,22 +38,34 @@ const CompanyTopbar = () => {
   const fetchNotifications = async () => {
     setLoadingNotif(true);
     try {
-      const response = await companyApi.getDashboard(7);
+      const response = await recruitmentApi.getNotifications();
       if (response.data.status === 'success' || response.data.success) {
-        const recent = response.data.data.recentCandidates || [];
+        const data = response.data.data || [];
         
-        // Lấy danh sách ID đã đọc từ localStorage
-        const readIds = JSON.parse(localStorage.getItem('company_read_notifs') || '[]');
+        // Transform system notifications into UI format
+        const notifs = data.map(n => {
+          const t = (n.title || '').toLowerCase();
+          let type = 'system';
+          let icon = 'purple';
+          
+          if (t.includes('ứng tuyển') || t.includes('hồ sơ')) {
+            type = 'application';
+            icon = 'blue';
+          } else if (t.includes('xác nhận') || t.includes('phỏng vấn')) {
+            type = 'interview';
+            icon = 'green';
+          }
 
-        // Transform recent applications into notifications
-        const notifs = recent.map(app => ({
-          id: app.id,
-          type: 'application',
-          content: `Ứng viên <b>${app.studentName}</b> vừa ứng tuyển vào vị trí <b>${app.jobTitle}</b>`,
-          time: app.appliedAt ? formatDate(app.appliedAt) : 'Gần đây',
-          unread: !readIds.includes(app.id), // Chỉ unread nếu chưa có trong list đã đọc
-          icon: 'blue'
-        }));
+          return {
+            id: n.id,
+            type: type,
+            title: n.title,
+            content: n.message,
+            time: n.createdAt ? formatDate(n.createdAt) : 'Gần đây',
+            unread: !n.isRead,
+            icon: icon
+          };
+        });
         setNotifications(notifs);
       }
     } catch (error) {
@@ -76,9 +88,14 @@ const CompanyTopbar = () => {
   useEffect(() => {
     fetchCompanyProfile();
     fetchNotifications();
+    
+    // Refresh notifications every 60 seconds
+    const interval = setInterval(fetchNotifications, 60000);
+    
     window.addEventListener('companyProfileUpdated', fetchCompanyProfile);
     return () => {
       window.removeEventListener('companyProfileUpdated', fetchCompanyProfile);
+      clearInterval(interval);
     };
   }, []);
 
@@ -96,21 +113,23 @@ const CompanyTopbar = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const markAllRead = () => {
-    const allIds = notifications.map(n => n.id);
-    const readIds = JSON.parse(localStorage.getItem('company_read_notifs') || '[]');
-    const newReadIds = Array.from(new Set([...readIds, ...allIds]));
-    localStorage.setItem('company_read_notifs', JSON.stringify(newReadIds));
-    setNotifications(notifications.map(n => ({ ...n, unread: false })));
+  const markAllRead = async () => {
+    try {
+      const unreadNotifs = notifications.filter(n => n.unread);
+      await Promise.all(unreadNotifs.map(n => recruitmentApi.markNotificationAsRead(n.id)));
+      setNotifications(notifications.map(n => ({ ...n, unread: false })));
+    } catch (error) {
+      console.error('Error marking all notifications as read:', error);
+    }
   };
 
-  const markAsRead = (id) => {
-    const readIds = JSON.parse(localStorage.getItem('company_read_notifs') || '[]');
-    if (!readIds.includes(id)) {
-      readIds.push(id);
-      localStorage.setItem('company_read_notifs', JSON.stringify(readIds));
+  const markAsRead = async (id) => {
+    try {
+      await recruitmentApi.markNotificationAsRead(id);
+      setNotifications(notifications.map(n => n.id === id ? { ...n, unread: false } : n));
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
     }
-    setNotifications(notifications.map(n => n.id === id ? { ...n, unread: false } : n));
   };
 
   // Breadcrumb mapping
@@ -179,6 +198,9 @@ const CompanyTopbar = () => {
                         {n.type === 'system' && <FiBriefcase size={20} />}
                       </div>
                       <div className="notif-content">
+                        <div className="notif-item-title-row">
+                          <span className="notif-item-title-text">{n.title}</span>
+                        </div>
                         <div className="notif-text" dangerouslySetInnerHTML={{ __html: n.content }}></div>
                         <div className="notif-time">{n.time}</div>
                       </div>

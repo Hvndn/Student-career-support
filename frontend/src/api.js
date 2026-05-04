@@ -108,7 +108,9 @@ export const studentApi = {
     getMyApplications: () => api.get('/student/applications'),
     // Notifications & Interviews
     getNotifications: () => api.get('/student/notifications'),
+    markNotificationAsRead: (id) => api.patch(`/student/notifications/${id}/read`),
     getInterviews: () => api.get('/student/interviews'),
+    confirmInterview: (id) => api.post(`/student/interviews/${id}/confirm`),
     // AI & Recommendations
     getRecommendations: () => api.get('/student/recommendations'),
     analyzeAiMatch: (jobId) => api.get(`/student/ai/analyze-match/${jobId}`),
@@ -164,6 +166,8 @@ export const recruitmentApi = {
     updateInterview: (id, data) => api.put('/company/management/interviews/' + id, data),
     getCandidateDetail: (id) => api.get('/company/management/candidates/' + id),
     getRecommendations: (jobId) => api.get('/company/management/jobs/' + jobId + '/recommendations'),
+    getNotifications: () => api.get('/company/management/notifications'),
+    markNotificationAsRead: (id) => api.patch(`/company/management/notifications/${id}/read`),
 };
 
 // ── Admin ─────────────────────────────────────────────────────────────────

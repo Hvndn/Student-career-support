@@ -128,14 +128,21 @@ const InterviewDetailModal = ({ isOpen, onClose, interview, onEdit }) => {
                         </div>
                     </div>
 
-                    {/* Section 3: Nội dung phỏng vấn */}
+                    {/* Section 3: Nội dung & Ghi chú */}
                     <div className="pjm-section">
                         <div className="pjm-section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span className="material-symbols-outlined">assignment</span> Nội dung phỏng vấn
+                            <span className="material-symbols-outlined">assignment</span> Nội dung & Ghi chú
                         </div>
-                        <div className="pjm-field">
+                        <div className="pjm-field" style={{ marginBottom: '1rem' }}>
+                            <label>Nội dung buổi phỏng vấn</label>
                             <div className="detail-value-box multiline">
                                 {interview.preliminaryContent || 'Chưa có nội dung sơ bộ'}
+                            </div>
+                        </div>
+                        <div className="pjm-field">
+                            <label>Ghi chú cho ứng viên</label>
+                            <div className="detail-value-box multiline" style={{ background: '#fffbeb', borderColor: '#fde68a' }}>
+                                {interview.notes || 'Không có ghi chú nào'}
                             </div>
                         </div>
                     </div>

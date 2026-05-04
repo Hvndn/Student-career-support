@@ -9,19 +9,32 @@ const Interviews = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
 
-    useEffect(() => {
-        const fetchInterviews = async () => {
-            try {
-                const response = await studentApi.getInterviews();
-                setInterviews(response.data.data || []);
-            } catch (error) {
-                console.error('Error fetching interviews:', error);
-                toast.error('Không thể tải lịch phỏng vấn');
-            } finally {
-                setLoading(false);
-            }
-        };
+    const fetchInterviews = async () => {
+        try {
+            const response = await studentApi.getInterviews();
+            setInterviews(response.data.data || []);
+        } catch (error) {
+            console.error('Error fetching interviews:', error);
+            toast.error('Không thể tải lịch phỏng vấn');
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    const handleConfirm = async (id) => {
+        if (!window.confirm('Bạn có chắc chắn muốn xác nhận tham gia buổi phỏng vấn này?')) return;
+        
+        try {
+            await studentApi.confirmInterview(id);
+            toast.success('Đã xác nhận tham gia thành công');
+            fetchInterviews();
+        } catch (error) {
+            console.error('Error confirming interview:', error);
+            toast.error('Có lỗi xảy ra khi xác nhận lịch phỏng vấn');
+        }
+    };
+
+    useEffect(() => {
         fetchInterviews();
     }, []);
 
@@ -102,8 +115,28 @@ const Interviews = () => {
                     {filteredInterviews.length > 0 ? (
                         filteredInterviews.map((interview, idx) => {
                             const dateInfo = formatDate(interview.interviewDate);
-                            const companyName = interview.application?.job?.company?.name || 'Công ty ẩn danh';
-                            const companyLogo = interview.application?.job?.company?.logo || `https://ui-avatars.com/api/?name=${companyName}&background=random`;
+                            const companyName = interview.companyName || 'Công ty ẩn danh';
+                            const companyLogo = interview.companyLogo || `https://ui-avatars.com/api/?name=${companyName}&background=random`;
+                            const isOnline = interview.location?.toLowerCase().includes('http') || interview.interviewFormat === 'Trực tuyến';
+                            
+                            // Map status for better UI display
+                            const getStatusDisplay = (status) => {
+                                switch(status?.toLowerCase()) {
+                                    case 'confirmed':
+                                    case 'scheduled':
+                                        return { label: 'Sắp diễn ra', class: 'scheduled' };
+                                    case 'completed':
+                                        return { label: 'Hoàn thành', class: 'completed' };
+                                    case 'cancelled':
+                                        return { label: 'Đã hủy', class: 'cancelled' };
+                                    case 'pending':
+                                        return { label: 'Chờ xác nhận', class: 'pending' };
+                                    default:
+                                        return { label: status || 'Chờ xác nhận', class: 'pending' };
+                                }
+                            };
+
+                            const statusInfo = getStatusDisplay(interview.status);
                             
                             return (
                                 <div 
@@ -132,28 +165,75 @@ const Interviews = () => {
                                             />
                                             <div className="c-text">
                                                 <h4>{companyName}</h4>
-                                                <p className="c-job">Vị trí: <strong>{interview.application?.job?.title || 'Chưa xác định'}</strong></p>
+                                                <p className="c-job">Vị trí: <strong>{interview.jobTitle || 'Chưa xác định'}</strong></p>
+                                                <p className="c-email" style={{ fontSize: '0.8rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
+                                                    <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>mail</span>
+                                                    {interview.companyEmail || 'Chưa có email'}
+                                                </p>
                                             </div>
                                         </div>
 
                                         <div className="interview-details">
                                             <div className="detail-item">
-                                                <span className="material-symbols-outlined">location_on</span>
-                                                <span className="text">{interview.location || 'Địa điểm chưa xác định'}</span>
+                                                <span className="material-symbols-outlined" style={{ color: isOnline ? '#2563eb' : '#64748b' }}>
+                                                    {isOnline ? 'videocam' : 'location_on'}
+                                                </span>
+                                                <span className="text">
+                                                    {isOnline ? (
+                                                        <a href={interview.location} target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb', textDecoration: 'underline', fontWeight: '600' }}>
+                                                            Phòng họp Online
+                                                        </a>
+                                                    ) : (
+                                                        interview.location || 'Địa điểm chưa xác định'
+                                                    )}
+                                                </span>
                                             </div>
-                                            <div className="detail-item">
-                                                <span className="material-symbols-outlined">mail</span>
-                                                <span className="text">{interview.application?.job?.company?.email || 'Chưa có email'}</span>
-                                            </div>
+                                            
+                                            {interview.interviewerInfo && (
+                                                <div className="detail-item">
+                                                    <span className="material-symbols-outlined">person</span>
+                                                    <span className="text">Interviewer: <strong>{interview.interviewerInfo}</strong></span>
+                                                </div>
+                                            )}
+
+                                            {interview.preliminaryContent && (
+                                                <div className="detail-item">
+                                                    <span className="material-symbols-outlined">assignment</span>
+                                                    <span className="text">Nội dung: <strong>{interview.preliminaryContent}</strong></span>
+                                                </div>
+                                            )}
+
+                                            {interview.requiredDocuments && (
+                                                <div className="detail-item">
+                                                    <span className="material-symbols-outlined">article</span>
+                                                    <span className="text">Yêu cầu: <span className="doc-tag">{interview.requiredDocuments}</span></span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
                                     <div className="booking-status-side">
-                                        <span className={`status-pill status-${interview.status?.toLowerCase() || 'pending'}`}>
-                                            {interview.status === 'scheduled' ? 'Sắp diễn ra' : 
-                                             interview.status === 'completed' ? 'Hoàn thành' : 
-                                             interview.status === 'cancelled' ? 'Đã hủy' : (interview.status || 'Chờ xác nhận')}
+                                        <span className={`status-pill status-${statusInfo.class}`}>
+                                            {statusInfo.label}
                                         </span>
+                                        
+                                        {interview.status === 'scheduled' && (
+                                            <button 
+                                                className="btn-confirm-interview"
+                                                onClick={() => handleConfirm(interview.id)}
+                                            >
+                                                <span className="material-symbols-outlined">check_circle</span>
+                                                Xác nhận tham gia
+                                            </button>
+                                        )}
+
+                                        {interview.notes && (
+                                            <div className="notes-tooltip-trigger">
+                                                <span className="material-symbols-outlined">info</span>
+                                                Ghi chú
+                                                <div className="notes-tooltip">{interview.notes}</div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             );
