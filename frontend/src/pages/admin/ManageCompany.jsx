@@ -170,9 +170,6 @@ const ManageCompany = () => {
                 <AdminNavbar title="Quản lý doanh nghiệp" />
                 <main className="admin-management-container">
                     <div className="management-header">
-                        <div className="breadcrumb-dau">
-                            Fivecore <span className="separator">›</span> Quản lý doanh nghiệp
-                        </div>
                         <h2 className="management-title">Danh sách Doanh nghiệp</h2>
                     </div>
 
@@ -294,7 +291,7 @@ const ManageCompany = () => {
             {/* CRUD Modal */}
             {isModalOpen && (
                 <div className="modal-overlay" onClick={closeModal}>
-                    <div className="premium-modal" style={{ maxWidth: modalMode === 'delete' ? '450px' : '750px' }} onClick={e => e.stopPropagation()}>
+                    <div className={`premium-modal ${modalMode === 'view' ? 'large' : ''}`} style={{ maxWidth: modalMode === 'delete' ? '450px' : '' }} onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
                             <h3>
                                 {modalMode === 'view' ? 'Hồ sơ doanh nghiệp' : 
@@ -308,113 +305,231 @@ const ManageCompany = () => {
                         </div>
                         <div className="modal-body">
                             {modalMode === 'view' ? (
-                                <div className="detail-view">
-                                    <div className="form-grid">
-                                        <div className="detail-item">
-                                            <div className="detail-label">Tên hiển thị</div>
-                                            <div className="detail-value">{selectedCompany?.fullName}</div>
-                                        </div>
-                                        <div className="detail-item">
-                                            <div className="detail-label">Tên doanh nghiệp (Hợp đồng)</div>
-                                            <div className="detail-value">{selectedCompany?.companyProfile?.name || 'N/A'}</div>
-                                        </div>
-                                        <div className="detail-item">
-                                            <div className="detail-label">Email hệ thống</div>
-                                            <div className="detail-value">{selectedCompany?.email}</div>
-                                        </div>
-                                        <div className="detail-item">
-                                            <div className="detail-label">Số điện thoại</div>
-                                            <div className="detail-value">{selectedCompany?.companyProfile?.phone || 'N/A'}</div>
-                                        </div>
-                                        <div className="detail-item">
-                                            <div className="detail-label">Lĩnh vực</div>
-                                            <div className="detail-value">{selectedCompany?.companyProfile?.industry || 'N/A'}</div>
-                                        </div>
-                                        <div className="detail-item">
-                                            <div className="detail-label">Website</div>
-                                            <div className="detail-value">
-                                                {selectedCompany?.companyProfile?.website ? (
-                                                    <a href={selectedCompany.companyProfile.website} target="_blank" rel="noreferrer" style={{color: '#a31919'}}>
-                                                        {selectedCompany.companyProfile.website}
+                                <div className="premium-detail-view">
+                                    {/* Profile Header */}
+                                    <div className="detail-profile-header">
+                                        <div className="profile-banner"></div>
+                                        <div className="profile-main-info">
+                                            <div className="profile-left-col">
+                                                <div className="profile-avatar-wrapper">
+                                                    <div className="profile-avatar-large">
+                                                        {selectedCompany?.companyProfile?.logoUrl ? (
+                                                            <img src={selectedCompany.companyProfile.logoUrl} alt="Logo" className="avatar-img-premium" />
+                                                        ) : (
+                                                            <span className="material-symbols-outlined" style={{fontSize: '3rem'}}>business</span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className={`status-badge-under ${selectedCompany?.active ? 'active' : 'inactive'}`}>
+                                                    {selectedCompany?.active ? 'ĐANG HOẠT ĐỘNG' : 'ĐÃ KHÓA'}
+                                                </div>
+                                            </div>
+                                            <div className="profile-text-info-premium">
+                                                <h2 className="profile-name">{selectedCompany?.fullName}</h2>
+                                                <p className="profile-email">
+                                                    <span className="material-symbols-outlined">mail</span>
+                                                    {selectedCompany?.email}
+                                                </p>
+                                                {selectedCompany?.companyProfile?.website && (
+                                                    <a href={selectedCompany.companyProfile.website} target="_blank" rel="noreferrer" className="profile-mssv-badge-premium">
+                                                        <span className="material-symbols-outlined" style={{fontSize: '18px', verticalAlign: 'middle', marginRight: '6px'}}>language</span>
+                                                        Xem Website
                                                     </a>
-                                                ) : 'N/A'}
+                                                )}
                                             </div>
                                         </div>
-                                        <div className="detail-item">
-                                            <div className="detail-label">Quy mô</div>
-                                            <div className="detail-value">{selectedCompany?.companyProfile?.companySize || 'N/A'}</div>
+                                    </div>
+
+                                    <div className="detail-content-grid">
+                                        <div className="detail-column">
+                                            <div className="detail-section">
+                                                <h4 className="detail-section-title">Thông tin doanh nghiệp</h4>
+                                                <div className="detail-info-list">
+                                                    {selectedCompany?.companyProfile?.name && (
+                                                        <div className="info-row">
+                                                            <span className="info-icon material-symbols-outlined">domain</span>
+                                                            <div className="info-content">
+                                                                <span className="info-label">Tên chính thức</span>
+                                                                <span className="info-value">{selectedCompany.companyProfile.name}</span>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    {selectedCompany?.companyProfile?.industry && (
+                                                        <div className="info-row">
+                                                            <span className="info-icon material-symbols-outlined">category</span>
+                                                            <div className="info-content">
+                                                                <span className="info-label">Lĩnh vực</span>
+                                                                <span className="info-value">{selectedCompany.companyProfile.industry}</span>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    {selectedCompany?.companyProfile?.companySize && (
+                                                        <div className="info-row">
+                                                            <span className="info-icon material-symbols-outlined">groups</span>
+                                                            <div className="info-content">
+                                                                <span className="info-label">Quy mô</span>
+                                                                <span className="info-value">{selectedCompany.companyProfile.companySize}</span>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    {selectedCompany?.companyProfile?.foundingYear && (
+                                                        <div className="info-row">
+                                                            <span className="info-icon material-symbols-outlined">event</span>
+                                                            <div className="info-content">
+                                                                <span className="info-label">Năm thành lập</span>
+                                                                <span className="info-value">{selectedCompany.companyProfile.foundingYear}</span>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    {selectedCompany?.companyProfile?.phone && (
+                                                        <div className="info-row">
+                                                            <span className="info-icon material-symbols-outlined">call</span>
+                                                            <div className="info-content">
+                                                                <span className="info-label">Số điện thoại</span>
+                                                                <span className="info-value">{selectedCompany.companyProfile.phone}</span>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="detail-item">
-                                            <div className="detail-label">Năm thành lập</div>
-                                            <div className="detail-value">{selectedCompany?.companyProfile?.foundingYear || 'N/A'}</div>
-                                        </div>
-                                        <div className="detail-item full-width">
-                                            <div className="detail-label">Địa chỉ trụ sở</div>
-                                            <div className="detail-value">{selectedCompany?.companyProfile?.address || 'N/A'}</div>
-                                        </div>
-                                        <div className="detail-item full-width">
-                                            <div className="detail-label">Mô tả doanh nghiệp</div>
-                                            <div className="detail-value" style={{lineHeight: 1.6}}>{selectedCompany?.companyProfile?.description || 'Chưa có mô tả'}</div>
+
+                                        <div className="detail-column">
+                                            <div className="detail-section">
+                                                <h4 className="detail-section-title">Địa chỉ trụ sở</h4>
+                                                <div className="info-row" style={{alignItems: 'flex-start'}}>
+                                                    <span className="info-icon material-symbols-outlined">location_on</span>
+                                                    <div className="info-content">
+                                                        <span className="info-value" style={{fontWeight: 500, lineHeight: 1.5}}>
+                                                            {selectedCompany?.companyProfile?.address || 'Chưa cập nhật địa chỉ'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="detail-section">
+                                                <h4 className="detail-section-title">Giới thiệu doanh nghiệp</h4>
+                                                <p className="detail-bio-text">
+                                                    {selectedCompany?.companyProfile?.description || 'Chưa có thông tin mô tả chi tiết cho doanh nghiệp này.'}
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             ) : (modalMode === 'edit' || modalMode === 'add') ? (
-                                <form id="company-form" onSubmit={modalMode === 'edit' ? handleUpdateSubmit : handleAddSubmit}>
-                                    <div className="form-grid">
+                                <form id="company-form" className="premium-form-view" onSubmit={modalMode === 'edit' ? handleUpdateSubmit : handleAddSubmit}>
+                                    <div className="form-premium-grid">
                                         {modalMode === 'add' && (
                                             <>
-                                                <div className="form-group">
-                                                    <label>Email đăng nhập <span style={{color: 'red'}}>*</span></label>
-                                                    <input type="email" className="form-control" name="email" value={formData.email} onChange={handleFormChange} required />
+                                                <div className="form-group-premium">
+                                                    <label>
+                                                        <span className="material-symbols-outlined">mail</span>
+                                                        Email đăng nhập <span className="required">*</span>
+                                                    </label>
+                                                    <div className="input-with-icon">
+                                                        <input type="email" className="premium-input" name="email" value={formData.email} onChange={handleFormChange} placeholder="Vd: contact@company.com" required />
+                                                    </div>
                                                 </div>
-                                                <div className="form-group">
-                                                    <label>Mật khẩu <span style={{color: 'red'}}>*</span></label>
-                                                    <input type="password" className="form-control" name="password" value={formData.password} onChange={handleFormChange} required />
+                                                <div className="form-group-premium">
+                                                    <label>
+                                                        <span className="material-symbols-outlined">lock</span>
+                                                        Mật khẩu <span className="required">*</span>
+                                                    </label>
+                                                    <div className="input-with-icon">
+                                                        <input type="password" className="premium-input" name="password" value={formData.password} onChange={handleFormChange} placeholder="Nhập mật khẩu" required />
+                                                    </div>
                                                 </div>
                                             </>
                                         )}
-                                        <div className="form-group">
-                                            <label>Tên hiển thị (Tài khoản) <span style={{color: 'red'}}>*</span></label>
-                                            <input type="text" className="form-control" name="fullName" value={formData.fullName} onChange={handleFormChange} required />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Tên doanh nghiệp chính thức</label>
-                                            <input type="text" className="form-control" name="name" value={formData.name} onChange={handleFormChange} />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Lĩnh vực</label>
-                                            <input type="text" className="form-control" name="industry" value={formData.industry} onChange={handleFormChange} />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Website</label>
-                                            <input type="text" className="form-control" name="website" value={formData.website} onChange={handleFormChange} />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>SĐT Liên hệ</label>
-                                            <input type="text" className="form-control" name="phone" value={formData.phone} onChange={handleFormChange} />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Quy mô</label>
-                                            <input type="text" className="form-control" name="companySize" value={formData.companySize} onChange={handleFormChange} placeholder="Vd: 50-100 nhân viên" />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Năm thành lập</label>
-                                            <input type="number" className="form-control" name="foundingYear" value={formData.foundingYear} onChange={handleFormChange} />
-                                        </div>
-                                        <div className="form-group full-width">
-                                            <label>Địa chỉ</label>
-                                            <input type="text" className="form-control" name="address" value={formData.address} onChange={handleFormChange} />
-                                        </div>
-                                        <div className="form-group full-width">
-                                            <label>Mô tả ngắn</label>
-                                            <textarea className="form-control" name="description" value={formData.description} onChange={handleFormChange} rows="3"></textarea>
-                                        </div>
-                                        {modalMode === 'edit' && (
-                                            <div className="form-group" style={{ flexDirection: 'row', alignItems: 'center', gap: '10px' }}>
-                                                <input type="checkbox" id="active-status-comp" name="active" checked={formData.active} onChange={handleFormChange} />
-                                                <label htmlFor="active-status-comp">Tài khoản đang hoạt động</label>
+                                        <div className="form-group-premium">
+                                            <label>
+                                                <span className="material-symbols-outlined">person</span>
+                                                Tên hiển thị <span className="required">*</span>
+                                            </label>
+                                            <div className="input-with-icon">
+                                                <input type="text" className="premium-input" name="fullName" value={formData.fullName} onChange={handleFormChange} placeholder="Tên hiển thị trên hệ thống" required />
                                             </div>
-                                        )}
+                                        </div>
+                                        <div className="form-group-premium">
+                                            <label>
+                                                <span className="material-symbols-outlined">domain</span>
+                                                Tên doanh nghiệp chính thức
+                                            </label>
+                                            <div className="input-with-icon">
+                                                <input type="text" className="premium-input" name="name" value={formData.name} onChange={handleFormChange} placeholder="Tên pháp lý công ty" />
+                                            </div>
+                                        </div>
+                                        <div className="form-group-premium">
+                                            <label>
+                                                <span className="material-symbols-outlined">category</span>
+                                                Lĩnh vực hoạt động
+                                            </label>
+                                            <div className="input-with-icon">
+                                                <input type="text" className="premium-input" name="industry" value={formData.industry} onChange={handleFormChange} placeholder="Vd: Công nghệ thông tin" />
+                                            </div>
+                                        </div>
+                                        <div className="form-group-premium">
+                                            <label>
+                                                <span className="material-symbols-outlined">language</span>
+                                                Website
+                                            </label>
+                                            <div className="input-with-icon">
+                                                <input type="text" className="premium-input" name="website" value={formData.website} onChange={handleFormChange} placeholder="https://example.com" />
+                                            </div>
+                                        </div>
+                                        <div className="form-group-premium">
+                                            <label>
+                                                <span className="material-symbols-outlined">call</span>
+                                                SĐT Liên hệ
+                                            </label>
+                                            <div className="input-with-icon">
+                                                <input type="text" className="premium-input" name="phone" value={formData.phone} onChange={handleFormChange} placeholder="Nhập số điện thoại" />
+                                            </div>
+                                        </div>
+                                        <div className="form-group-premium">
+                                            <label>
+                                                <span className="material-symbols-outlined">groups</span>
+                                                Quy mô nhân sự
+                                            </label>
+                                            <div className="input-with-icon">
+                                                <input type="text" className="premium-input" name="companySize" value={formData.companySize} onChange={handleFormChange} placeholder="Vd: 50-150 nhân viên" />
+                                            </div>
+                                        </div>
+                                        <div className="form-group-premium">
+                                            <label>
+                                                <span className="material-symbols-outlined">event</span>
+                                                Năm thành lập
+                                            </label>
+                                            <div className="input-with-icon">
+                                                <input type="number" className="premium-input" name="foundingYear" value={formData.foundingYear} onChange={handleFormChange} placeholder="Vd: 2010" />
+                                            </div>
+                                        </div>
+                                        <div className="form-group-premium full-width">
+                                            <label>
+                                                <span className="material-symbols-outlined">location_on</span>
+                                                Địa chỉ trụ sở
+                                            </label>
+                                            <div className="input-with-icon">
+                                                <input type="text" className="premium-input" name="address" value={formData.address} onChange={handleFormChange} placeholder="Nhập địa chỉ chi tiết" />
+                                            </div>
+                                        </div>
+                                        <div className="form-group-premium full-width">
+                                            <label>
+                                                <span className="material-symbols-outlined">description</span>
+                                                Mô tả doanh nghiệp
+                                            </label>
+                                            <textarea className="premium-input" name="description" value={formData.description} onChange={handleFormChange} rows="4" placeholder="Giới thiệu ngắn gọn về doanh nghiệp..."></textarea>
+                                        </div>
+                                        <div className="form-group-premium full-width">
+                                            <label className="checkbox-label-premium">
+                                                <input type="checkbox" name="active" checked={formData.active} onChange={handleFormChange} />
+                                                <span className="checkbox-custom"></span>
+                                                <div className="checkbox-text">
+                                                    <span className="main-text">Tài khoản đang hoạt động</span>
+                                                    <span className="sub-text">Cho phép doanh nghiệp này đăng tuyển dụng và tìm kiếm ứng viên</span>
+                                                </div>
+                                            </label>
+                                        </div>
                                     </div>
                                 </form>
                             ) : (
