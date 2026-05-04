@@ -5,13 +5,27 @@ import '../../assets/css/admin/AdminSidebar.css';
 const AdminSidebar = () => {
     const location = useLocation();
 
+    // Đọc cấu hình từ localStorage
+    const getConfig = () => {
+        try {
+            const saved = localStorage.getItem('websiteConfig');
+            return saved ? JSON.parse(saved) : {};
+        } catch { return {}; }
+    };
+    const siteConfig = getConfig();
+    const isChatEnabled = siteConfig.enableChat !== false; // mặc định bật
+
     const [openMenus, setOpenMenus] = useState({
-        doanhNghiep: location.pathname.startsWith('/admin/appointments') || location.pathname.startsWith('/admin/companies'),
+        doanhNghiep: location.pathname.startsWith('/admin/appointments') || 
+                     location.pathname.startsWith('/admin/companies') || 
+                     location.pathname.startsWith('/admin/jobs'),
         website: location.pathname.startsWith('/admin/website')
     });
 
     React.useEffect(() => {
-        if (location.pathname.startsWith('/admin/appointments') || location.pathname.startsWith('/admin/companies')) {
+        if (location.pathname.startsWith('/admin/appointments') || 
+            location.pathname.startsWith('/admin/companies') || 
+            location.pathname.startsWith('/admin/jobs')) {
             setOpenMenus(prev => ({ ...prev, doanhNghiep: true }));
         }
         if (location.pathname.startsWith('/admin/website')) {
@@ -36,7 +50,9 @@ const AdminSidebar = () => {
                         </div>
                     </div>
                     <div className="admin-logo-text">
-                        <span className="logo-main">Fivecore</span>
+                        <span className="logo-main">
+                            {(() => { try { const c = localStorage.getItem('websiteConfig'); return c ? JSON.parse(c).systemName || 'Fivecore' : 'Fivecore'; } catch { return 'Fivecore'; } })()} 
+                        </span>
                     </div>
                 </div>
             </div>
@@ -67,6 +83,10 @@ const AdminSidebar = () => {
                             <span className="material-symbols-outlined">view_list</span>
                             <span className="item-label">Danh sách</span>
                         </Link>
+                        <Link to="/admin/jobs" className={`admin-nav-item child-item ${location.pathname === '/admin/jobs' ? 'active' : ''}`}>
+                            <span className="material-symbols-outlined">work</span>
+                            <span className="item-label">Quản lý việc làm</span>
+                        </Link>
                     </div>
                 </div>
 
@@ -77,10 +97,12 @@ const AdminSidebar = () => {
                     <span className="item-label">Quản lý CV mẫu</span>
                 </Link>
 
-                <Link to="/admin/chat" className={`admin-nav-item ${location.pathname === '/admin/chat' ? 'active' : ''}`}>
-                    <span className="material-symbols-outlined">chat_bubble_outline</span>
-                    <span className="item-label">Trò chuyện</span>
-                </Link>
+                {isChatEnabled && (
+                    <Link to="/admin/chat" className={`admin-nav-item ${location.pathname === '/admin/chat' ? 'active' : ''}`}>
+                        <span className="material-symbols-outlined">chat_bubble_outline</span>
+                        <span className="item-label">Trò chuyện</span>
+                    </Link>
+                )}
 
                 <Link to="/admin/password-requests" className={`admin-nav-item ${location.pathname === '/admin/password-requests' ? 'active' : ''}`}>
                     <span className="material-symbols-outlined">lock_reset</span>
@@ -94,18 +116,6 @@ const AdminSidebar = () => {
                         <span className="material-symbols-outlined chevron">expand_more</span>
                     </div>
                     <div className="nav-submenu">
-                        <Link to="/admin/website/slider" className={`admin-nav-item child-item ${location.pathname === '/admin/website/slider' ? 'active' : ''}`}>
-                            <span className="material-symbols-outlined">image</span>
-                            <span className="item-label">Slide trang chủ</span>
-                        </Link>
-                        <Link to="/admin/website/about" className={`admin-nav-item child-item ${location.pathname === '/admin/website/about' ? 'active' : ''}`}>
-                            <span className="material-symbols-outlined">web_asset</span>
-                            <span className="item-label">Giới thiệu chung</span>
-                        </Link>
-                        <Link to="/admin/website/testimonials" className={`admin-nav-item child-item ${location.pathname === '/admin/website/testimonials' ? 'active' : ''}`}>
-                            <span className="material-symbols-outlined">format_quote</span>
-                            <span className="item-label">Quản lý cảm nhận</span>
-                        </Link>
                         <Link to="/admin/website/categories" className={`admin-nav-item child-item ${location.pathname === '/admin/website/categories' ? 'active' : ''}`}>
                             <span className="material-symbols-outlined">category</span>
                             <span className="item-label">Quản lý lĩnh vực</span>

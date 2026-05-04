@@ -332,4 +332,27 @@ public class AdminRestController {
         categoryRepository.deleteById(id);
         return ResponseEntity.ok(ApiResponse.success("Xóa danh mục thành công", null));
     }
+
+    /**
+     * API Cập nhật tài khoản quản trị.
+     */
+    @PutMapping("/users/{id}/admin")
+    public ResponseEntity<ApiResponse<Object>> updateAdminFromAdmin(@PathVariable Integer id, @RequestBody AdminCreateRequest request) {
+        try {
+            adminService.updateAdmin(id, request);
+            return ResponseEntity.ok(ApiResponse.success("Cập nhật quản trị viên thành công", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi cập nhật: " + e.getMessage(), "UPDATE_ERROR"));
+        }
+    }
+
+    @DeleteMapping("/interviews/{id}")
+    public ResponseEntity<ApiResponse<Object>> deleteInterview(@PathVariable Integer id) {
+        try {
+            adminService.deleteInterview(id);
+            return ResponseEntity.ok(ApiResponse.success("Xóa lịch hẹn thành công", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi xóa lịch hẹn: " + e.getMessage(), "DELETE_ERROR"));
+        }
+    }
 }

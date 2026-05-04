@@ -40,7 +40,7 @@ public class InterviewService {
                 .requiredDocuments(request.getRequiredDocuments())
                 .interviewFormat(request.getInterviewFormat())
                 .preliminaryContent(request.getPreliminaryContent())
-                .status("scheduled")
+                .status("pending")
                 .build();
 
         Interview savedInterview = interviewRepository.save(interview);

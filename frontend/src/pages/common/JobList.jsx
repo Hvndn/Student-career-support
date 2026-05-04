@@ -77,6 +77,8 @@ const JobList = () => {
                 params.maxSalary = 10000000;
             } else if (salaryFilter === 'high') {
                 params.minSalary = 10000000;
+            } else if (salaryFilter === 'agreement') {
+                params.negotiable = true;
             }
 
             const res = await jobApi.getJobs(params);

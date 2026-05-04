@@ -188,6 +188,7 @@ export const adminApi = {
     getPendingCompanies: () => api.get('/admin/companies/pending'),
     approveCompany: (id) => api.post(`/admin/companies/${id}/approve`),
     deleteUser: (id) => api.delete(`/admin/users/${id}`),
+    updateAdmin: (id, data) => api.put(`/admin/users/${id}/admin`, data),
     getReports: () => api.get('/admin/reports'),
     getPasswordRequests: () => api.get('/admin/password-requests'),
     getPasswordRequestStats: () => api.get('/admin/password-requests/stats'),
@@ -207,6 +208,7 @@ export const adminApi = {
     addCategory: (data) => api.post('/admin/categories', data),
     updateCategory: (id, data) => api.put(`/admin/categories/${id}`, data),
     deleteCategory: (id) => api.delete(`/admin/categories/${id}`),
+    deleteInterview: (id) => api.delete(`/admin/interviews/${id}`),
 };
 
 // ── Chat ──────────────────────────────────────────────────────────────────

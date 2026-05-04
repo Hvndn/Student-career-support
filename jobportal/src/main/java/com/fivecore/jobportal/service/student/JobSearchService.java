@@ -36,7 +36,7 @@ public class JobSearchService {
      */
     @Transactional(readOnly = true)
     public List<JobResponse> searchJobs(String keyword, String location, String industry, String jobType, 
-                                       java.math.BigDecimal minSalary, java.math.BigDecimal maxSalary, Integer studentId) {
+                                       java.math.BigDecimal minSalary, java.math.BigDecimal maxSalary, Boolean negotiable, Integer studentId) {
         // Sử dụng conjunction để tránh lỗi ambiguous call Specification.where(null)
         Specification<Job> spec = (root, query, cb) -> cb.conjunction();
 
@@ -50,12 +50,18 @@ public class JobSearchService {
             spec = spec.and((root, query, cb) -> cb.like(cb.lower(root.get("industry")), "%" + industry.toLowerCase() + "%"));
         }
 
-        if (minSalary != null) {
-            spec = spec.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("minSalary"), minSalary));
-        }
-
-        if (maxSalary != null) {
-            spec = spec.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("maxSalary"), maxSalary));
+        if (Boolean.TRUE.equals(negotiable)) {
+            spec = spec.and((root, query, cb) -> cb.and(cb.isNull(root.get("minSalary")), cb.isNull(root.get("maxSalary"))));
+        } else if (minSalary != null && maxSalary != null) {
+            // Logic giao thoa: dải lương của job gối lên khoảng lọc của người dùng
+            spec = spec.and((root, query, cb) -> cb.and(
+                    cb.lessThanOrEqualTo(root.get("minSalary"), maxSalary),
+                    cb.greaterThanOrEqualTo(root.get("maxSalary"), minSalary)
+            ));
+        } else if (minSalary != null) {
+            spec = spec.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("maxSalary"), minSalary));
+        } else if (maxSalary != null) {
+            spec = spec.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("minSalary"), maxSalary));
         }
 
         if (location != null && !location.isEmpty()) {
@@ -119,7 +125,9 @@ public class JobSearchService {
                 .companyName(job.getCompany() != null ? job.getCompany().getName() : "DAU Partner")
                 .companyId(job.getCompany() != null ? job.getCompany().getId() : null)
                 .location(job.getLocation())
-                .salary(job.getMaxSalary() != null ? job.getMinSalary() + " - " + job.getMaxSalary() : (job.getMinSalary() != null ? job.getMinSalary().toString() : "Thỏa thuận"))
+                .salary(job.getMinSalary() != null && job.getMaxSalary() != null ? 
+                    String.format("%.0f - %.0f triệu", job.getMinSalary().doubleValue() / 1000000, job.getMaxSalary().doubleValue() / 1000000) : 
+                    (job.getMinSalary() != null ? String.format("> %.0f triệu", job.getMinSalary().doubleValue() / 1000000) : "Thỏa thuận"))
                 .jobType(job.getJobType().name())
                 .status(job.getStatus().name())
                 .description(job.getDescription())

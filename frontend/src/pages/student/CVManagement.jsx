@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { studentApi } from '../../api';
+import ConfirmModal from '../../components/common/ConfirmModal';
+import toast from 'react-hot-toast';
 import '../../assets/css/student/CVManagement.css';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -40,10 +42,7 @@ const CVCard = ({ cv, onDelete }) => {
 
   const handleDelete = (e) => {
     e.stopPropagation();
-    if (window.confirm(`Xóa CV "${cv.title}"? Hành động này không thể hoàn tác.`)) {
-      localStorage.removeItem(`dau_cv_${cv.id}`);
-      onDelete(cv.id);
-    }
+    onDelete(cv);
   };
 
   const handleDownload = async (e) => {
@@ -217,6 +216,8 @@ const CVManagement = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [cvToDelete, setCvToDelete] = useState(null);
 
   useEffect(() => {
     // Load từ localStorage (CV lưu local)
@@ -224,9 +225,19 @@ const CVManagement = () => {
     setLoading(false);
   }, []);
 
-  const handleDelete = useCallback((id) => {
-    setCvList(prev => prev.filter(cv => cv.id !== id));
+  const handleDeleteRequest = useCallback((cv) => {
+    setCvToDelete(cv);
+    setShowDeleteModal(true);
   }, []);
+
+  const confirmDelete = async () => {
+    if (!cvToDelete) return;
+    localStorage.removeItem(`dau_cv_${cvToDelete.id}`);
+    setCvList(prev => prev.filter(cv => cv.id !== cvToDelete.id));
+    setShowDeleteModal(false);
+    setCvToDelete(null);
+    toast.success("Đã xóa CV thành công");
+  };
 
   const filteredCVs = cvList.filter(cv =>
     cv.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -286,7 +297,7 @@ const CVManagement = () => {
         ) : (
           <div className="dau-cv-grid">
             {filteredCVs.map(cv => (
-              <CVCard key={cv.id} cv={cv} onDelete={handleDelete} />
+              <CVCard key={cv.id} cv={cv} onDelete={handleDeleteRequest} />
             ))}
           </div>
         )}
@@ -295,6 +306,17 @@ const CVManagement = () => {
       <TemplateSelectorModal
         isOpen={showTemplateSelector}
         onClose={() => setShowTemplateSelector(false)}
+      />
+
+      <ConfirmModal
+        show={showDeleteModal}
+        title="Xác nhận xóa CV"
+        message={`Bạn có chắc chắn muốn xóa CV "${cvToDelete?.title}" không? Hành động này không thể hoàn tác.`}
+        onConfirm={confirmDelete}
+        onCancel={() => setShowDeleteModal(false)}
+        confirmText="Xác nhận xóa"
+        cancelText="Hủy"
+        type="danger"
       />
     </div>
   );
