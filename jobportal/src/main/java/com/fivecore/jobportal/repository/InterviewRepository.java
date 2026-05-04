@@ -15,6 +15,14 @@ public interface InterviewRepository extends JpaRepository<Interview, Integer> {
 
     List<Interview> findByApplication_Job_Company_Id(Integer companyId);
 
+    @Query("SELECT i FROM Interview i " +
+           "LEFT JOIN FETCH i.application a " +
+           "LEFT JOIN FETCH a.job j " +
+           "LEFT JOIN FETCH j.company c " +
+           "LEFT JOIN FETCH a.student s " +
+           "LEFT JOIN FETCH s.user u")
+    List<Interview> findAllWithDetails();
+
     @Modifying
     @Query("DELETE FROM Interview i WHERE i.application.id = :applicationId")
     void deleteByApplicationId(@Param("applicationId") Integer applicationId);

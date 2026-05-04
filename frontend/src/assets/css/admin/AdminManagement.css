@@ -152,7 +152,7 @@
 
 /* Header Grid for Appointments */
 .appointment-grid {
-    grid-template-columns: 80px 2fr 1.2fr 1.2fr 1.5fr 1.2fr 120px;
+    grid-template-columns: 2.2fr 2fr 1.5fr 1.5fr 1fr 140px;
     align-items: center;
 }
 
@@ -297,8 +297,15 @@
 }
 
 @keyframes modalFadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .modal-header {
