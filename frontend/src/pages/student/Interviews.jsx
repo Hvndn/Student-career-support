@@ -229,7 +229,7 @@ const Interviews = () => {
                                             {statusInfo.label}
                                         </span>
                                         
-                                        {interview.status === 'scheduled' && (
+                                        {interview.status === 'pending' && (
                                             <button 
                                                 className="btn-confirm-interview"
                                                 onClick={() => handleConfirm(interview.id)}
