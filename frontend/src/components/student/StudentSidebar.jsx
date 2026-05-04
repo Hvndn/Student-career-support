@@ -17,6 +17,7 @@ const NAV_ITEMS = [
     ]
   },
   { icon: 'building', label: 'Danh sách công ty', to: '/companies' },
+  { icon: 'calendar', label: 'Lịch phỏng vấn', to: '/student/interviews' },
   { icon: 'message-square', label: 'Trò chuyện', to: '/student/chat' },
   { icon: 'file-text', label: 'Quản lý CV', to: '/student/cv-management' },
   { icon: 'user', label: 'Hồ sơ & Portfolio', to: '/student/profile' },
@@ -74,6 +75,9 @@ const StudentSidebar = ({ isOpen, onClose }) => {
       case 'user': return (
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
       );
+      case 'calendar': return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+      );
       default: return null;
     }
   };
@@ -89,7 +93,7 @@ const StudentSidebar = ({ isOpen, onClose }) => {
           <div className="ss-logo-box">
              <img src="/favicon.svg" alt="DAU" className="ss-logo-img" />
           </div>
-          <span className="ss-brand-name">FiveCore</span>
+          <span className="ss-brand-name">Fivecore</span>
         </Link>
         <button className="ss-mobile-close" onClick={onClose}>
           <span className="material-symbols-outlined">close</span>

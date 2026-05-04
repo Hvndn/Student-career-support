@@ -36,7 +36,7 @@ const AdminSidebar = () => {
                         </div>
                     </div>
                     <div className="admin-logo-text">
-                        <span className="logo-main">FiveCore</span>
+                        <span className="logo-main">Fivecore</span>
                     </div>
                 </div>
             </div>
