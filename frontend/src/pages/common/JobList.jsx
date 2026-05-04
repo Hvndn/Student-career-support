@@ -75,14 +75,8 @@ const JobList = () => {
             } else if (salaryFilter === 'mid') {
                 params.minSalary = 5000000;
                 params.maxSalary = 10000000;
-            } else if (salaryFilter === 'high-mid') {
-                params.minSalary = 10000000;
-                params.maxSalary = 15000000;
             } else if (salaryFilter === 'high') {
-                params.minSalary = 15000000;
-                params.maxSalary = 20000000;
-            } else if (salaryFilter === 'very-high') {
-                params.minSalary = 20000000;
+                params.minSalary = 10000000;
             } else if (salaryFilter === 'agreement') {
                 params.negotiable = true;
             }
@@ -197,9 +191,7 @@ const JobList = () => {
                     <option value="all">Mức lương</option>
                     <option value="low">Dưới 5 triệu</option>
                     <option value="mid">5 - 10 triệu</option>
-                    <option value="high-mid">10 - 15 triệu</option>
-                    <option value="high">15 - 20 triệu</option>
-                    <option value="very-high">Trên 20 triệu</option>
+                    <option value="high">Trên 10 triệu</option>
                     <option value="agreement">Thỏa thuận</option>
                 </select>
 

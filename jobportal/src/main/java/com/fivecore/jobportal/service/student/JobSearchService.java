@@ -51,19 +51,16 @@ public class JobSearchService {
         }
 
         if (Boolean.TRUE.equals(negotiable)) {
-            spec = spec.and((root, query, cb) -> cb.and(
-                    cb.isNull(root.get("minSalary")),
-                    cb.isNull(root.get("maxSalary"))
-            ));
+            spec = spec.and((root, query, cb) -> cb.and(cb.isNull(root.get("minSalary")), cb.isNull(root.get("maxSalary"))));
         } else if (minSalary != null && maxSalary != null) {
             spec = spec.and((root, query, cb) -> cb.and(
-                    cb.greaterThanOrEqualTo(root.get("maxSalary"), minSalary),
-                    cb.lessThanOrEqualTo(root.get("minSalary"), maxSalary)
+                    cb.greaterThanOrEqualTo(root.get("minSalary"), minSalary),
+                    cb.lessThanOrEqualTo(root.get("maxSalary"), maxSalary)
             ));
         } else if (minSalary != null) {
-            spec = spec.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("maxSalary"), minSalary));
+            spec = spec.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("minSalary"), minSalary));
         } else if (maxSalary != null) {
-            spec = spec.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("minSalary"), maxSalary));
+            spec = spec.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("maxSalary"), maxSalary));
         }
 
         if (location != null && !location.isEmpty()) {
