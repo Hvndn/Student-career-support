@@ -42,7 +42,6 @@ import PostJob from './pages/company/PostJob'
 import Applicants from './pages/company/Applicants'
 import CompanyCandidates from './pages/company/CompanyCandidates'
 import CompanyProfile from './pages/company/CompanyProfile'
-import CompanySearchCandidates from './pages/company/CompanySearchCandidates'
 import CompanySavedCandidates from './pages/company/CompanySavedCandidates'
 import CompanyCandidateTags from './pages/company/CompanyCandidateTags'
 import CompanyCandidateNotifications from './pages/company/CompanyCandidateNotifications'
@@ -202,7 +201,6 @@ const AppContent = () => {
               <Route path="management/jobs/:jobId/applicants" element={<Applicants />} />
               <Route path="management/candidates" element={<CompanyCandidates />} />
               <Route path="candidates/saved" element={<CompanySavedCandidates />} />
-              <Route path="candidates/search" element={<CompanySearchCandidates />} />
               <Route path="candidates/tags" element={<CompanyCandidateTags />} />
               <Route path="candidates/notifications" element={<CompanyCandidateNotifications />} />
               <Route path="candidates/suggested" element={<SuggestedCandidates />} />

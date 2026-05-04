@@ -5,7 +5,7 @@ import CompanyNavbar from '../../components/company/CompanyNavbar';
 import { companyApi } from '../../api';
 import '../../assets/css/company/CompanyDashboard.css';
 import {
-    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
+    LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Dot
 } from 'recharts';
 import { FiUsers, FiCalendar, FiBriefcase } from 'react-icons/fi';
 
@@ -106,8 +106,8 @@ const CompanyDashboard = () => {
                             <section className="db-widget trend-widget intro-y delay-2">
                                 <div className="widget-header">
                                     <div className="header-left">
-                                        <h4>Xu hướng ứng tuyển</h4>
-                                        <p className="widget-subtitle">Thống kê số lượng hồ sơ mới</p>
+                                        <h4>Xu hướng tăng trưởng truy cập</h4>
+                                        <p className="widget-subtitle">Lượt đăng nhập theo ngày</p>
                                     </div>
                                     <div className="range-pill-selector">
                                         <button 
@@ -125,34 +125,50 @@ const CompanyDashboard = () => {
                                     </div>
                                 </div>
                                 <div className="widget-body">
-                                    <ResponsiveContainer width="100%" height={320}>
-                                        <BarChart data={trendData}>
+                                    <ResponsiveContainer width="100%" height={300}>
+                                        <LineChart data={trendData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
                                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                             <XAxis 
                                                 dataKey="date" 
                                                 axisLine={false} 
                                                 tickLine={false} 
-                                                tick={{fill: '#94a3b8', fontSize: 12}}
+                                                tick={{ fill: '#94a3b8', fontSize: 11 }}
                                                 dy={10}
                                                 tickFormatter={(val) => {
                                                     if (timeRange === 1) return val;
-                                                    // Only show month/day if it looks like a date
-                                                    if (val.includes('-')) return val.split('-').slice(1).join('/');
+                                                    if (val && val.includes('-')) return val.split('-').slice(1).join('-');
                                                     return val;
                                                 }}
                                             />
-                                            <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8', fontSize: 12}} />
+                                            <YAxis 
+                                                axisLine={false} 
+                                                tickLine={false} 
+                                                tick={{ fill: '#94a3b8', fontSize: 11 }}
+                                                tickCount={6}
+                                                allowDecimals={false}
+                                            />
                                             <Tooltip 
-                                                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
-                                                cursor={{fill: '#f8fafc'}}
+                                                contentStyle={{ borderRadius: '12px', border: '1px solid #f1f5f9', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', fontSize: '13px' }}
+                                                labelStyle={{ color: '#64748b', fontWeight: 600 }}
+                                                formatter={(value) => [value, 'Lượt ứng tuyển']}
                                             />
-                                            <Bar 
+                                            <Legend 
+                                                verticalAlign="top"
+                                                align="left"
+                                                iconType="circle"
+                                                iconSize={10}
+                                                wrapperStyle={{ paddingBottom: '20px', fontSize: '13px', color: '#1e293b', fontWeight: 500 }}
+                                                formatter={() => 'Lượt truy cập'}
+                                            />
+                                            <Line 
+                                                type="monotone"
                                                 dataKey="count" 
-                                                fill="#3b82f6" 
-                                                radius={[6, 6, 0, 0]} 
-                                                barSize={timeRange === 30 ? 15 : 35}
+                                                stroke="#A31D1D" 
+                                                strokeWidth={3}
+                                                dot={{ r: 6, fill: '#A31D1D', stroke: '#A31D1D', strokeWidth: 2 }}
+                                                activeDot={{ r: 8, fill: '#A31D1D', stroke: '#fff', strokeWidth: 2 }}
                                             />
-                                        </BarChart>
+                                        </LineChart>
                                     </ResponsiveContainer>
                                 </div>
                             </section>

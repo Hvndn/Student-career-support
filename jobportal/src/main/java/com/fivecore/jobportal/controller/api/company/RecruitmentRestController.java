@@ -147,7 +147,7 @@ public class RecruitmentRestController {
             return ResponseEntity.status(403).body(ApiResponse.error("Bạn không có quyền đặt lịch cho ứng viên này!", "FORBIDDEN"));
         }
 
-        interviewService.scheduleInterview(appEntity, request.getInterviewDate(), request.getLocation());
+        interviewService.scheduleInterview(appEntity, request);
         return ResponseEntity.ok(ApiResponse.success("Đặt lịch phỏng vấn thành công", null));
     }
 
@@ -166,6 +166,10 @@ public class RecruitmentRestController {
                 .interviewDate(i.getInterviewDate())
                 .location(i.getLocation())
                 .notes(i.getNotes())
+                .interviewerInfo(i.getInterviewerInfo())
+                .requiredDocuments(i.getRequiredDocuments())
+                .interviewFormat(i.getInterviewFormat())
+                .preliminaryContent(i.getPreliminaryContent())
                 .status(i.getStatus())
                 .result(i.getResult())
                 .applicationId(app.getId())
@@ -197,6 +201,64 @@ public class RecruitmentRestController {
 
         interviewService.cancelInterview(id);
         return ResponseEntity.ok(ApiResponse.success("Đã hủy lịch phỏng vấn thành công", null));
+    }
+
+    /**
+     * API Cập nhật lịch phỏng vấn.
+     */
+    @PutMapping("/interviews/{id}")
+    public ResponseEntity<ApiResponse<Object>> updateInterview(@PathVariable Integer id, 
+            @RequestBody com.fivecore.jobportal.dto.InterviewRequest request,
+            Authentication authentication) {
+        Integer companyId = getCurrentCompanyId(authentication);
+        if (companyId == null)
+            return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+
+        // Kiểm tra quyền sở hữu
+        Interview interview = interviewRepository.findById(id).orElse(null);
+        if (interview == null || !interview.getApplication().getJob().getCompany().getId().equals(companyId)) {
+            return ResponseEntity.status(404).body(ApiResponse.error("Không tìm thấy lịch phỏng vấn hoặc không có quyền", "NOT_FOUND"));
+        }
+
+        interviewService.updateInterview(id, request);
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật lịch phỏng vấn thành công", null));
+    }
+
+    /**
+     * API Lấy chi tiết lịch phỏng vấn.
+     */
+    @GetMapping("/interviews/{id}")
+    public ResponseEntity<ApiResponse<Object>> getInterview(@PathVariable Integer id, Authentication authentication) {
+        Integer companyId = getCurrentCompanyId(authentication);
+        if (companyId == null)
+            return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+
+        Interview interview = interviewService.getInterview(id);
+        if (!interview.getApplication().getJob().getCompany().getId().equals(companyId)) {
+            return ResponseEntity.status(403).body(ApiResponse.error("Bạn không có quyền xem lịch phỏng vấn này", "FORBIDDEN"));
+        }
+
+        Application app = interview.getApplication();
+        InterviewResponse response = InterviewResponse.builder()
+            .id(interview.getId())
+            .interviewDate(interview.getInterviewDate())
+            .location(interview.getLocation())
+            .notes(interview.getNotes())
+            .interviewerInfo(interview.getInterviewerInfo())
+            .requiredDocuments(interview.getRequiredDocuments())
+            .interviewFormat(interview.getInterviewFormat())
+            .preliminaryContent(interview.getPreliminaryContent())
+            .status(interview.getStatus())
+            .result(interview.getResult())
+            .applicationId(app.getId())
+            .studentId(app.getStudent() != null ? app.getStudent().getId() : null)
+            .studentName(app.getStudent() != null && app.getStudent().getUser() != null ? app.getStudent().getUser().getFullName() : app.getFullName())
+            .studentEmail(app.getStudent() != null && app.getStudent().getUser() != null ? app.getStudent().getUser().getEmail() : app.getEmail())
+            .studentAvatar(app.getStudent() != null ? app.getStudent().getAvatarUrl() : null)
+            .jobTitle(app.getJob() != null ? app.getJob().getTitle() : "N/A")
+            .build();
+
+        return ResponseEntity.ok(ApiResponse.success("Lấy chi tiết lịch phỏng vấn thành công", response));
     }
 
     /**

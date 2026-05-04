@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import SearchableSelect from '../common/SearchableSelect';
 import toast from 'react-hot-toast';
 import RichTextEditor from '../common/RichTextEditor';
-import { companyApi } from '../../api';
+import { companyApi, jobApi } from '../../api';
 import { vietnamLocations } from '../../utils/vietnamLocations';
 import { getImageUrl } from '../../utils/urlUtils';
 
-const INDUSTRIES = ['Công nghệ thông tin', 'Marketing', 'Tài chính', 'Thiết kế', 'Kế toán/Kiểm toán', 'Giáo dục/Đào tạo', 'Y tế/Dược', 'Kinh doanh/Bán hàng', 'Hành chính/Nhân sự', 'Xây dựng', 'Kiến trúc/Nội thất', 'Du lịch/Nhà hàng', 'Sản xuất/Vận hành'];
 const LEVELS = ['Thực tập sinh', 'Nhân viên', 'Trưởng nhóm', 'Phó phòng', 'Trưởng phòng', 'Giám đốc', 'Tổng giám đốc/Điều hành'];
 const EXPERIENCES = ['Chưa có kinh nghiệm', 'Dưới 1 năm', '1 năm', '2 năm', '3 năm', '4 năm', '5 năm', 'Trên 5 năm'];
 const QUALIFICATIONS = ['Không yêu cầu', 'Trung học', 'Trung cấp', 'Cao đẳng', 'Đại học', 'Sau đại học'];
@@ -18,12 +18,19 @@ const JOB_TYPES = [
 ];
 
 const SUGGESTED_SKILLS = {
-    'Công nghệ thông tin': ['Java', 'Python', 'ReactJS', 'NodeJS', 'SQL', 'Git', 'AWS', 'Docker', 'Spring Boot', 'TypeScript', 'C++', 'PHP'],
-    'Marketing': ['SEO', 'Content Marketing', 'Google Ads', 'Facebook Ads', 'Social Media', 'Data Analysis', 'Email Marketing', 'Copywriting'],
-    'Thiết kế': ['Photoshop', 'Illustrator', 'Figma', 'UI/UX', 'After Effects', 'Design Thinking', 'InDesign'],
-    'Tài chính': ['Excel', 'Data Analysis', 'Accounting', 'Risk Management', 'Financial Planning', 'ERP'],
-    'Kinh doanh/Bán hàng': ['CRM', 'Negotiation', 'Communication', 'Presentation', 'Sales Strategy', 'Market Research'],
-    'Hành chính/Nhân sự': ['HRM', 'Recruitment', 'Payroll', 'MS Office', 'Employee Relations', 'Training']
+    'Công nghệ thông tin': ['Java', 'Python', 'ReactJS', 'NodeJS', 'SQL', 'Git', 'AWS', 'Docker', 'Spring Boot', 'TypeScript', 'C++', 'PHP', 'Kubernetes', 'MongoDB', 'Redis'],
+    'Marketing': ['SEO', 'Content Marketing', 'Google Ads', 'Facebook Ads', 'Social Media', 'Data Analysis', 'Email Marketing', 'Copywriting', 'TikTok Ads', 'Zalo Ads'],
+    'Thiết kế': ['Photoshop', 'Illustrator', 'Figma', 'UI/UX', 'After Effects', 'Design Thinking', 'InDesign', 'Canva', 'Sketch', 'Blender'],
+    'Tài chính': ['Excel', 'Data Analysis', 'Accounting', 'Risk Management', 'Financial Planning', 'ERP', 'SAP', 'Power BI', 'Bloomberg'],
+    'Kế toán/Kiểm toán': ['MISA', 'Fast Accounting', 'Excel', 'Kế toán thuế', 'IFRS', 'VAS', 'Kiểm toán nội bộ', 'SAP'],
+    'Kinh doanh/Bán hàng': ['CRM', 'Negotiation', 'Communication', 'Presentation', 'Sales Strategy', 'Market Research', 'KPI', 'B2B', 'B2C'],
+    'Hành chính/Nhân sự': ['HRM', 'Recruitment', 'Payroll', 'MS Office', 'Employee Relations', 'Training', 'C&B', 'HRIS', 'Labor Law'],
+    'Giáo dục/Đào tạo': ['Curriculum Design', 'E-learning', 'LMS', 'Presentation', 'Communication', 'MS Office'],
+    'Y tế/Dược': ['Dược lý', 'Chăm sóc sức khỏe', 'EHR', 'GMP', 'GDP', 'Tiếng Anh Y khoa'],
+    'Xây dựng': ['AutoCAD', 'Revit', 'SketchUp', 'MS Project', 'Quản lý dự án', 'Dự toán công trình'],
+    'Kiến trúc/Nội thất': ['AutoCAD', '3ds Max', 'SketchUp', 'Revit', 'Lumion', 'Photoshop'],
+    'Du lịch/Nhà hàng': ['OPERA', 'Hospitality', 'Customer Service', 'Tiếng Anh', 'Tiếng Trung', 'Bartending'],
+    'Sản xuất/Vận hành': ['Lean Manufacturing', 'Kaizen', '5S', 'ISO', 'PLC', 'Quản lý chất lượng', 'SCM'],
 };
 
 const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
@@ -31,6 +38,7 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
     const [submitting, setSubmitting] = useState(false);
     const [bannerPreview, setBannerPreview] = useState(null);
     const [selectedBannerFile, setSelectedBannerFile] = useState(null);
+    const [categories, setCategories] = useState([]);
     
     const [form, setForm] = useState({
         title: '',
@@ -51,13 +59,31 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
         benefits: '',
         deadline: '',
         bannerUrl: '',
-        status: 'open'
+        status: 'open',
+        specificAddress: '',
+        contactName: '',
+        contactPhone: '',
+        contactEmail: ''
     });
 
     const [selectedSkills, setSelectedSkills] = useState([]);
     const [skillInput, setSkillInput] = useState('');
-    const [districts, setDistricts] = useState([]);
-    const [selectedDistrict, setSelectedDistrict] = useState('');
+    const [wards, setWards] = useState([]);
+    const [selectedWard, setSelectedWard] = useState('');
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const res = await jobApi.getCategories();
+                if (res.data.status === 'success') {
+                    setCategories(res.data.data);
+                }
+            } catch (err) {
+                console.error('Lỗi khi lấy danh sách lĩnh vực:', err);
+            }
+        };
+        fetchCategories();
+    }, []);
 
     useEffect(() => {
         if (jobData) {
@@ -89,11 +115,11 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
             if (jobData.region) {
                 const foundProv = vietnamLocations.find(p => p.name === jobData.region);
                 if (foundProv) {
-                    setDistricts(foundProv.districts);
+                    setWards(foundProv.wards || []);
                     if (jobData.location && jobData.location.includes(',')) {
-                        const districtPart = jobData.location.split(',')[0].trim();
-                        const foundDist = foundProv.districts.find(d => d.name === districtPart);
-                        if (foundDist) setSelectedDistrict(foundDist.name);
+                        const wardPart = jobData.location.split(',')[0].trim();
+                        const foundWard = (foundProv.wards || []).find(d => d.name === wardPart);
+                        if (foundWard) setSelectedWard(foundWard.name);
                     }
                 }
             }
@@ -104,14 +130,14 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
 
     const handleRegionChange = (regionName) => {
         setForm(f => ({ ...f, region: regionName, location: '' }));
-        setSelectedDistrict('');
+        setSelectedWard('');
         const foundProv = vietnamLocations.find(p => p.name === regionName);
-        setDistricts(foundProv ? foundProv.districts : []);
+        setWards(foundProv ? (foundProv.wards || []) : []);
     };
 
-    const handleDistrictChange = (districtName) => {
-        setSelectedDistrict(districtName);
-        setForm(f => ({ ...f, location: districtName ? `${districtName}, ${f.region}` : '' }));
+    const handleWardChange = (wardName) => {
+        setSelectedWard(wardName);
+        setForm(f => ({ ...f, location: wardName ? `${wardName}, ${f.region}` : '' }));
     };
 
     const handleFileChange = (e) => {
@@ -216,7 +242,11 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
                         <label>Lĩnh vực *</label>
                         <select className="pjm-select" value={form.industry} onChange={e => handleChange('industry', e.target.value)}>
                             <option value="">Chọn lĩnh vực...</option>
-                            {INDUSTRIES.map(i => <option key={i} value={i}>{i}</option>)}
+                            {categories.map(cat => (
+                                <option key={cat.id || cat.name} value={cat.name}>
+                                    {cat.name}
+                                </option>
+                            ))}
                         </select>
                     </div>
                     <div className="pjm-field">
@@ -241,22 +271,37 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
                 <div className="pjm-row">
                     <div className="pjm-field">
                         <label>Tỉnh/Thành phố *</label>
-                        <select className="pjm-select" value={form.region} onChange={e => handleRegionChange(e.target.value)}>
-                            <option value="">Chọn Tỉnh/Thành</option>
-                            {vietnamLocations.map(p => <option key={p.id} value={p.name}>{p.name}</option>)}
-                        </select>
+                        <SearchableSelect
+                            options={vietnamLocations.map(p => p.name)}
+                            value={form.region}
+                            onChange={handleRegionChange}
+                            placeholder="Tìm hoặc chọn Tỉnh/Thành phố..."
+                        />
                     </div>
                     <div className="pjm-field">
-                        <label>Quận/Huyện</label>
-                        <select className="pjm-select" value={selectedDistrict} onChange={e => handleDistrictChange(e.target.value)} disabled={districts.length === 0}>
-                            <option value="">Chọn Quận/Huyện</option>
-                            {districts.map(d => <option key={d.id} value={d.name}>{d.name}</option>)}
-                        </select>
+                        <label>Xã/Phường *</label>
+                        <SearchableSelect
+                            options={wards.map(d => d.name)}
+                            value={selectedWard}
+                            onChange={handleWardChange}
+                            placeholder={wards.length === 0 ? 'Chọn Tỉnh/Thành trước...' : 'Tìm hoặc chọn Xã/Phường...'}
+                            disabled={wards.length === 0}
+                        />
                     </div>
                     <div className="pjm-field">
                         <label>Hạn chót nộp hồ sơ</label>
                         <input type="date" className="pjm-input" value={form.deadline} onChange={e => handleChange('deadline', e.target.value)} />
                     </div>
+                </div>
+
+                <div className="pjm-field" style={{ marginTop: '1rem' }}>
+                    <label>Địa chỉ cụ thể (Số nhà, tên đường...)</label>
+                    <input 
+                        className="pjm-input" 
+                        placeholder="Ví dụ: 123 Nguyễn Văn Linh, P. Thạch Thang..." 
+                        value={form.specificAddress} 
+                        onChange={e => handleChange('specificAddress', e.target.value)} 
+                    />
                 </div>
 
                 <div className="pjm-row">
@@ -279,6 +324,40 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
                             </div>
                         </>
                     )}
+                </div>
+            </div>
+
+            {/* Contact Person */}
+            <div className="pjm-section">
+                <div className="pjm-section-title"><i className="fa-solid fa-user-tie"></i> Thông tin người liên hệ</div>
+                <div className="pjm-row">
+                    <div className="pjm-field">
+                        <label>Họ tên người liên hệ</label>
+                        <input 
+                            className="pjm-input" 
+                            placeholder="Ví dụ: Nguyễn Văn A" 
+                            value={form.contactName} 
+                            onChange={e => handleChange('contactName', e.target.value)} 
+                        />
+                    </div>
+                    <div className="pjm-field">
+                        <label>Số điện thoại</label>
+                        <input 
+                            className="pjm-input" 
+                            placeholder="Ví dụ: 0912345678" 
+                            value={form.contactPhone} 
+                            onChange={e => handleChange('contactPhone', e.target.value)} 
+                        />
+                    </div>
+                    <div className="pjm-field">
+                        <label>Email liên hệ</label>
+                        <input 
+                            className="pjm-input" 
+                            placeholder="Ví dụ: contact@company.com" 
+                            value={form.contactEmail} 
+                            onChange={e => handleChange('contactEmail', e.target.value)} 
+                        />
+                    </div>
                 </div>
             </div>
 

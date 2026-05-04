@@ -21,17 +21,13 @@ const NAV_ITEMS = [
     children: [
       { label: 'Ứng viên đã ứng tuyển', to: '/company/management/candidates' },
       { label: 'Ứng viên đã lưu', to: '/company/candidates/saved' },
-      { label: 'Tìm ứng viên', to: '/company/candidates/search' },
     ]
   },
   { 
     icon: <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>, 
     label: 'Hồ sơ công ty', to: '/company/profile' 
   },
-  { 
-    icon: <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>, 
-    label: 'Thử thách dự án', to: '#' 
-  },
+
   { 
     icon: <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>, 
     label: 'Trò chuyện', to: '/company/chat' 

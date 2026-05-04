@@ -41,4 +41,16 @@ public class Interview {
 
     @Column(length = 50)
     private String result;
+
+    @Column(name = "interviewer_info", length = 255)
+    private String interviewerInfo;
+
+    @Column(name = "required_documents", length = 255)
+    private String requiredDocuments;
+
+    @Column(name = "interview_format", length = 50)
+    private String interviewFormat;
+
+    @Column(name = "preliminary_content", columnDefinition = "TEXT")
+    private String preliminaryContent;
 }

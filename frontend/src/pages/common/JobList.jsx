@@ -4,6 +4,7 @@ import { jobApi, studentApi } from '../../api';
 import { getImageUrl } from '../../utils/urlUtils';
 import { toast } from 'react-hot-toast';
 import '../../assets/css/common/JobList.css';
+import SearchableLocationDropdown from '../../components/common/SearchableLocationDropdown';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -157,12 +158,12 @@ const JobList = () => {
                     />
                 </div>
 
-                <select className="filter-select-premium" value={locationSearch} onChange={(e) => setLocationSearch(e.target.value)}>
-                    <option value="">Địa điểm</option>
-                    <option value="Hà Nội">Hà Nội</option>
-                    <option value="Đà Nẵng">Đà Nẵng</option>
-                    <option value="Hồ Chí Minh">Hồ Chí Minh</option>
-                </select>
+                <div style={{ width: '250px' }}>
+                    <SearchableLocationDropdown 
+                        onLocationSelect={(loc) => setLocationSearch(loc)} 
+                        initialValue={locationSearch}
+                    />
+                </div>
 
                 <select className="filter-select-premium" value={industryFilter} onChange={(e) => setIndustryFilter(e.target.value)}>
                     <option value="all">Ngành nghề</option>

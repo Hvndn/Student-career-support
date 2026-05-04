@@ -63,23 +63,7 @@ const AdminSidebar = () => {
                     </div>
                 </div>
 
-                <div className={`nav-group ${openMenus.thuThach ? 'open' : ''}`}>
-                    <div className="admin-nav-item parent-item" onClick={() => toggleMenu('thuThach')}>
-                        <span className="material-symbols-outlined">emoji_events</span>
-                        <span className="item-label">Thử thách dự án</span>
-                        <span className="material-symbols-outlined chevron">expand_more</span>
-                    </div>
-                    <div className="nav-submenu">
-                        <Link to="/admin/projects" className={`admin-nav-item child-item ${location.pathname === '/admin/projects' ? 'active' : ''}`}>
-                            <span className="material-symbols-outlined">view_list</span>
-                            <span className="item-label">Danh sách dự án</span>
-                        </Link>
-                        <Link to="/admin/project-students" className={`admin-nav-item child-item ${location.pathname === '/admin/project-students' ? 'active' : ''}`}>
-                            <span className="material-symbols-outlined">group</span>
-                            <span className="item-label">Sinh viên tham gia</span>
-                        </Link>
-                    </div>
-                </div>
+
 
                 <div className={`nav-group ${openMenus.coVan ? 'open' : ''}`}>
                     <div className="admin-nav-item parent-item" onClick={() => toggleMenu('coVan')}>

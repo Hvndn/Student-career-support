@@ -30,11 +30,16 @@ public class InterviewService {
      * Sắp xếp lịch phỏng vấn và gửi email (US-017).
      */
     @Transactional
-    public Interview scheduleInterview(Application application, LocalDateTime time, String location) {
+    public Interview scheduleInterview(Application application, com.fivecore.jobportal.dto.InterviewRequest request) {
         Interview interview = Interview.builder()
                 .application(application)
-                .interviewDate(time)
-                .location(location)
+                .interviewDate(request.getInterviewDate())
+                .location(request.getLocation())
+                .notes(request.getNotes())
+                .interviewerInfo(request.getInterviewerInfo())
+                .requiredDocuments(request.getRequiredDocuments())
+                .interviewFormat(request.getInterviewFormat())
+                .preliminaryContent(request.getPreliminaryContent())
                 .status("scheduled")
                 .build();
 
@@ -47,8 +52,8 @@ public class InterviewService {
         String studentEmail = application.getStudent().getUser().getEmail();
         String content = "Chào " + application.getStudent().getUser().getFullName() + ",\n\n" +
                 "Bạn có một lịch phỏng vấn cho vị trí: " + application.getJob().getTitle() + "\n" +
-                "Thời gian: " + time.toString() + "\n" +
-                "Địa điểm: " + location + "\n\n" +
+                "Thời gian: " + request.getInterviewDate().toString() + "\n" +
+                "Địa điểm: " + request.getLocation() + "\n\n" +
                 "Chúc bạn có một buổi phỏng vấn thành công!";
 
         emailService.sendSimpleEmail(studentEmail, "[Student Career] Thông báo lịch phỏng vấn", content);
@@ -96,5 +101,36 @@ public class InterviewService {
             "Thông báo hủy lịch phỏng vấn", content);
         
         log.info("Đã hủy lịch phỏng vấn ID: {}", interviewId);
+    }
+
+    /**
+     * Cập nhật lịch phỏng vấn.
+     */
+    @Transactional
+    public void updateInterview(Integer id, com.fivecore.jobportal.dto.InterviewRequest request) {
+        Interview interview = interviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch phỏng vấn"));
+
+        interview.setInterviewDate(request.getInterviewDate());
+        interview.setLocation(request.getLocation());
+        interview.setNotes(request.getNotes());
+        interview.setInterviewerInfo(request.getInterviewerInfo());
+        interview.setRequiredDocuments(request.getRequiredDocuments());
+        interview.setInterviewFormat(request.getInterviewFormat());
+        interview.setPreliminaryContent(request.getPreliminaryContent());
+        if (request.getStatus() != null) {
+            interview.setStatus(request.getStatus());
+        }
+        
+        interviewRepository.save(interview);
+        log.info("Đã cập nhật lịch phỏng vấn ID: {}", id);
+    }
+
+    /**
+     * Lấy chi tiết lịch phỏng vấn.
+     */
+    public Interview getInterview(Integer id) {
+        return interviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch phỏng vấn"));
     }
 }

@@ -1,50 +1,85 @@
 import React, { useState, useEffect } from 'react';
 import CompanySidebar from '../../components/company/CompanySidebar';
 import CompanyNavbar from '../../components/company/CompanyNavbar';
-import { recruitmentApi } from '../../api';
+import { recruitmentApi, companyApi } from '../../api';
 import toast from 'react-hot-toast';
 import CreateBookingModal from '../../components/company/CreateBookingModal';
+import InterviewDetailModal from '../../components/company/InterviewDetailModal';
 import StudentProfileModal from '../../components/company/StudentProfileModal';
 import '../../assets/css/company/CompanyBooking.css';
 
 const CompanyBooking = () => {
     const [interviews, setInterviews] = useState([]);
+    const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
+    const [jobFilter, setJobFilter] = useState('all');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
+    const [showDetail, setShowDetail] = useState(false);
     const [selectedCandidate, setSelectedCandidate] = useState(null);
+    const [selectedInterview, setSelectedInterview] = useState(null);
 
-    const fetchInterviews = async () => {
+    const fetchData = async () => {
         setLoading(true);
         try {
-            const response = await recruitmentApi.getInterviews();
-            if (response.data.status === 'success') {
-                setInterviews(response.data.data || []);
+            const [interviewsRes, jobsRes] = await Promise.all([
+                recruitmentApi.getInterviews(),
+                companyApi.getJobs()
+            ]);
+            
+            if (interviewsRes.data.status === 'success') {
+                setInterviews(interviewsRes.data.data || []);
+            }
+            if (jobsRes.data.status === 'success') {
+                setJobs(jobsRes.data.data || []);
             }
         } catch (error) {
-            console.error('Error fetching interviews:', error);
-            toast.error('Không thể tải danh sách lịch hẹn');
+            console.error('Error fetching data:', error);
+            toast.error('Không thể tải dữ liệu');
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchInterviews();
+        fetchData();
     }, []);
 
-    const handleCancelInterview = async (id) => {
-        if (!window.confirm('Bạn có chắc chắn muốn hủy lịch phỏng vấn này?')) return;
+    const handleDeleteInterview = async (id) => {
+        if (!id) {
+            toast.error('Không tìm thấy mã lịch hẹn');
+            return;
+        }
+
+        if (!window.confirm('Bạn có chắc chắn muốn XÓA VĨNH VIỄN lịch phỏng vấn này?')) return;
 
         try {
-            await recruitmentApi.cancelInterview(id);
-            toast.success('Đã hủy lịch phỏng vấn');
-            fetchInterviews();
+            const response = await recruitmentApi.deleteInterview(id);
+            if (response.data.status === 'success') {
+                toast.success('Đã xóa lịch phỏng vấn thành công');
+                fetchData();
+            }
         } catch (error) {
-            console.error('Lỗi khi hủy lịch:', error);
+            console.error('Lỗi khi xóa lịch:', error);
+            toast.error('Không thể xóa lịch hẹn. Vui lòng thử lại sau.');
         }
+    };
+
+    const handleEditInterview = (interview) => {
+        setSelectedInterview(interview);
+        setIsModalOpen(true);
+    };
+
+    const handleCreateNew = () => {
+        setSelectedInterview(null);
+        setIsModalOpen(true);
+    };
+
+    const handleViewDetail = (interview) => {
+        setSelectedInterview(interview);
+        setShowDetail(true);
     };
 
     const handleViewProfile = async (studentId) => {
@@ -79,7 +114,8 @@ const CompanyBooking = () => {
             item.studentName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.jobTitle?.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
-        return matchesSearch && matchesStatus;
+        const matchesJob = jobFilter === 'all' || item.jobTitle === jobFilter;
+        return matchesSearch && matchesStatus && matchesJob;
     });
 
     if (loading) return (
@@ -109,7 +145,7 @@ const CompanyBooking = () => {
                         <div className="header-actions">
                             <button 
                                 className="btn-respond primary"
-                                onClick={() => setIsModalOpen(true)}
+                                onClick={handleCreateNew}
                             >
                                 <span className="material-symbols-outlined">add</span>
                                 Tạo lịch mới
@@ -139,9 +175,22 @@ const CompanyBooking = () => {
                                     onChange={(e) => setStatusFilter(e.target.value)}
                                 >
                                     <option value="all">Tất cả trạng thái</option>
-                                    <option value="scheduled">Đã lên lịch</option>
+                                    <option value="scheduled">Sắp diễn ra</option>
                                     <option value="completed">Đã hoàn thành</option>
                                     <option value="cancelled">Đã hủy</option>
+                                </select>
+                            </div>
+                            <div className="filter-group">
+                                <label>Theo công việc</label>
+                                <select 
+                                    className="filter-control"
+                                    value={jobFilter}
+                                    onChange={(e) => setJobFilter(e.target.value)}
+                                >
+                                    <option value="all">Tất cả công việc</option>
+                                    {jobs.map(job => (
+                                        <option key={job.id} value={job.title}>{job.title}</option>
+                                    ))}
                                 </select>
                             </div>
                         </div>
@@ -150,12 +199,11 @@ const CompanyBooking = () => {
                             {filteredInterviews.length > 0 ? (
                                 filteredInterviews.map((interview, idx) => {
                                     const dateInfo = formatDate(interview.interviewDate);
-
                                     return (
                                         <div 
                                             key={interview.id} 
-                                            className="booking-card glass intro-y hover-lift"
-                                            style={{ animationDelay: `${(idx + 2) * 0.1}s` }}
+                                            className="booking-card glass hover-lift intro-y"
+                                            style={{ animationDelay: `${(idx + 1) * 0.05}s` }}
                                         >
                                             <div className="booking-date-side">
                                                 <div className="date-badge">
@@ -178,19 +226,27 @@ const CompanyBooking = () => {
                                                     />
                                                     <div className="c-text">
                                                         <h4>{interview.studentName}</h4>
-                                                        <p className="c-job">Ứng tuyển: <strong>{interview.jobTitle}</strong></p>
+                                                        <p className="c-email">{interview.studentEmail}</p>
                                                     </div>
                                                 </div>
 
                                                 <div className="interview-details">
+                                                    <div className="detail-item job-tag-detail">
+                                                        <span className="material-symbols-outlined">work</span>
+                                                        <span className="text fw-bold" style={{ color: 'var(--primary-color)' }}>{interview.jobTitle}</span>
+                                                    </div>
                                                     <div className="detail-item">
                                                         <span className="material-symbols-outlined">location_on</span>
                                                         <span className="text">{interview.location || 'Địa điểm chưa xác định'}</span>
                                                     </div>
-                                                    <div className="detail-item">
-                                                        <span className="material-symbols-outlined">mail</span>
-                                                        <span className="text">{interview.studentEmail}</span>
-                                                    </div>
+                                                    {interview.interviewFormat && (
+                                                        <div className="detail-item">
+                                                            <span className="material-symbols-outlined">
+                                                                {interview.interviewFormat === 'Trực tuyến' ? 'videocam' : 'meeting_room'}
+                                                            </span>
+                                                            <span className="text">{interview.interviewFormat}</span>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
 
@@ -201,19 +257,14 @@ const CompanyBooking = () => {
                                                      interview.status === 'cancelled' ? 'Đã hủy' : interview.status}
                                                 </span>
                                                 <div className="card-actions">
-                                                    <button 
-                                                        className="icon-btn" 
-                                                        title="Xem chi tiết"
-                                                        onClick={() => handleViewProfile(interview.studentId)}
-                                                    >
+                                                    <button className="icon-btn" onClick={() => handleViewDetail(interview)} title="Chi tiết lịch hẹn">
                                                         <span className="material-symbols-outlined">visibility</span>
                                                     </button>
-                                                    <button 
-                                                        className="icon-btn delete" 
-                                                        title="Hủy lịch"
-                                                        onClick={() => handleCancelInterview(interview.id)}
-                                                    >
-                                                        <span className="material-symbols-outlined">close</span>
+                                                    <button className="icon-btn" onClick={() => handleEditInterview(interview)} title="Sửa">
+                                                        <span className="material-symbols-outlined">edit</span>
+                                                    </button>
+                                                    <button className="icon-btn delete" onClick={() => handleDeleteInterview(interview.id)} title="Xóa">
+                                                        <span className="material-symbols-outlined">delete</span>
                                                     </button>
                                                 </div>
                                             </div>
@@ -221,10 +272,10 @@ const CompanyBooking = () => {
                                     );
                                 })
                             ) : (
-                                <div className="no-data-card glass">
+                                <div className="no-data-card glass intro-y">
                                     <div className="no-data-icon">📅</div>
-                                    <h3>Chưa có lịch hẹn nào</h3>
-                                    <p>Các buổi phỏng vấn bạn đã lên lịch sẽ xuất hiện tại đây.</p>
+                                    <h3>Không tìm thấy lịch hẹn nào</h3>
+                                    <p>Hãy thử thay đổi tiêu chí lọc hoặc tạo lịch phỏng vấn mới.</p>
                                 </div>
                             )}
                         </div>
@@ -235,7 +286,15 @@ const CompanyBooking = () => {
             <CreateBookingModal 
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onSuccess={fetchInterviews}
+                onSuccess={fetchData}
+                initialData={selectedInterview}
+            />
+
+            <InterviewDetailModal 
+                isOpen={showDetail}
+                onClose={() => setShowDetail(false)}
+                interview={selectedInterview}
+                onEdit={handleEditInterview}
             />
 
             <StudentProfileModal 

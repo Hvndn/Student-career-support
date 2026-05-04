@@ -15,4 +15,9 @@ public class InterviewRequest {
     private LocalDateTime interviewDate;
     private String location;
     private String notes;
+    private String status;
+    private String interviewerInfo;
+    private String requiredDocuments;
+    private String interviewFormat;
+    private String preliminaryContent;
 }

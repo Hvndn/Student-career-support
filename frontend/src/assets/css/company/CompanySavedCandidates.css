@@ -1,8 +1,7 @@
 /* ─── Company Saved Candidates Page - Navy Blue Premium ─── */
 .saved-candidates-page {
-    padding: 2rem 3.5rem;
-    max-width: 1600px;
-    margin: 0 auto;
+    padding: 1.5rem 0;
+    width: 100%;
 }
 
 .header-flex {
@@ -13,10 +12,11 @@
 }
 
 .title-with-count {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     font-weight: 900;
     color: #0f172a;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.05em;
+    margin-bottom: 0.5rem;
 }
 
 .policy-banner {
@@ -105,15 +105,15 @@
 /* Candidate Grid Layout */
 .candidates-grid-premium {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 30px;
 }
 
 .candidate-premium-card {
     background: white;
-    border-radius: 24px;
+    border-radius: 28px;
     border: 1px solid #f1f5f9;
-    padding: 24px;
+    padding: 30px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;

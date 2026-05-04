@@ -1,0 +1,129 @@
+/* SearchableSelect.css - Custom Searchable Dropdown */
+
+.ss-container {
+    position: relative;
+    width: 100%;
+}
+
+.ss-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.ss-input {
+    width: 100%;
+    padding: 10px 72px 10px 14px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    color: #1e293b;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    cursor: text;
+}
+
+.ss-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.ss-input:disabled {
+    background: #f8fafc;
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
+.ss-clear-btn {
+    position: absolute;
+    right: 38px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    border-radius: 50%;
+    transition: color 0.2s;
+}
+
+.ss-clear-btn:hover {
+    color: #ef4444;
+}
+
+.ss-clear-btn .material-symbols-outlined {
+    font-size: 16px;
+}
+
+.ss-chevron {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 20px;
+    pointer-events: none;
+    transition: transform 0.2s;
+}
+
+/* Dropdown Panel */
+.ss-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.12), 0 4px 8px -2px rgba(0, 0, 0, 0.06);
+    z-index: 9999;
+    max-height: 240px;
+    overflow-y: auto;
+    padding: 6px;
+}
+
+/* Scrollbar styling */
+.ss-dropdown::-webkit-scrollbar {
+    width: 6px;
+}
+
+.ss-dropdown::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.ss-dropdown::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.ss-option {
+    padding: 9px 12px;
+    font-size: 0.9rem;
+    color: #1e293b;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.15s, color 0.15s;
+}
+
+.ss-option:hover {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.ss-option--selected {
+    background: #eff6ff;
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.ss-no-result {
+    padding: 12px;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    text-align: center;
+    font-style: italic;
+}

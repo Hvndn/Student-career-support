@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import CompanySidebar from '../../components/company/CompanySidebar';
 import CompanyNavbar from '../../components/company/CompanyNavbar';
 import ConfirmModal from '../../components/common/ConfirmModal';
-import CandidateDetailModal from '../../components/company/CandidateDetailModal';
+import StudentProfileModal from '../../components/company/StudentProfileModal';
 import { companyApi } from '../../api';
 import '../../assets/css/company/CompanySavedCandidates.css';
 
@@ -17,7 +17,7 @@ const CompanySavedCandidates = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [candidateToDelete, setCandidateToDelete] = useState(null);
     const [showDetailModal, setShowDetailModal] = useState(false);
-    const [selectedStudentId, setSelectedStudentId] = useState(null);
+    const [selectedCandidate, setSelectedCandidate] = useState(null);
 
     // Filter states
     const [universityFilter, setUniversityFilter] = useState('');
@@ -68,9 +68,22 @@ const CompanySavedCandidates = () => {
         }
     };
 
-    const handleViewCV = (studentId) => {
-        setSelectedStudentId(studentId);
-        setShowDetailModal(true);
+    const handleViewCV = async (studentId) => {
+        try {
+            setLoading(true);
+            const res = await companyApi.getCandidateDetail(studentId);
+            if (res.data.status === 'success') {
+                setSelectedCandidate(res.data.data);
+                setShowDetailModal(true);
+            } else {
+                toast.error("Không thể lấy thông tin chi tiết ứng viên");
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy chi tiết:", error);
+            toast.error("Lỗi khi lấy thông tin chi tiết ứng viên");
+        } finally {
+            setLoading(false);
+        }
     };
 
     const formatSavedTime = (dateString) => {
@@ -260,9 +273,9 @@ const CompanySavedCandidates = () => {
                 onCancel={() => setShowDeleteModal(false)}
             />
 
-            <CandidateDetailModal 
+            <StudentProfileModal 
                 show={showDetailModal}
-                studentId={selectedStudentId}
+                candidate={selectedCandidate}
                 onClose={() => setShowDetailModal(false)}
             />
         </div>

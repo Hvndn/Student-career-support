@@ -136,7 +136,6 @@ const Navbar = () => {
                             <>
                                 <Link to="/company/dashboard" style={linkStyle} className="nav-link navbar-link">Trang chủ</Link>
                                 <Link to="/company/jobs/post" style={linkStyle} className="nav-link navbar-link">Đăng tin</Link>
-                                <Link to="/company/candidates/search" style={linkStyle} className="nav-link navbar-link">Tìm ứng viên</Link>
                             </>
                         )}
                         {user.role === 'ROLE_ADMIN' && (

@@ -1,80 +1,94 @@
-// Dữ liệu mẫu Tỉnh/Thành phố và Quận/Huyện cho Modal Đăng tin
+// Danh sách 34 Tỉnh/Thành phố Việt Nam sau sáp nhập 2025 (Cập nhật Xã/Phường)
 export const vietnamLocations = [
-  {
-    id: "01",
-    name: "Hà Nội",
-    districts: [
-      { id: "001", name: "Quận Ba Đình" },
-      { id: "002", name: "Quận Hoàn Kiếm" },
-      { id: "003", name: "Quận Tây Hồ" },
-      { id: "004", name: "Quận Long Biên" },
-      { id: "005", name: "Quận Cầu Giấy" },
-      { id: "006", name: "Quận Đống Đa" },
-      { id: "007", name: "Quận Hai Bà Trưng" },
-      { id: "008", name: "Quận Hoàng Mai" },
-      { id: "009", name: "Quận Thanh Xuân" },
-    ]
-  },
-  {
-    id: "79",
-    name: "Thành phố Hồ Chí Minh",
-    districts: [
-      { id: "760", name: "Quận 1" },
-      { id: "761", name: "Quận 12" },
-      { id: "764", name: "Quận Gò Vấp" },
-      { id: "765", name: "Quận Bình Thạnh" },
-      { id: "766", name: "Quận Tân Bình" },
-      { id: "767", name: "Quận Tân Phú" },
-      { id: "768", name: "Quận Phú Nhuận" },
-      { id: "769", name: "Thành phố Thủ Đức" },
-      { id: "770", name: "Quận 3" },
-      { id: "771", name: "Quận 10" },
-      { id: "772", name: "Quận 11" },
-      { id: "773", name: "Quận 4" },
-      { id: "774", name: "Quận 5" },
-      { id: "775", name: "Quận 6" },
-      { id: "776", name: "Quận 8" },
-      { id: "777", name: "Quận Bình Tân" },
-      { id: "778", name: "Quận 7" },
-    ]
-  },
-  {
-    id: "48",
-    name: "Đà Nẵng",
-    districts: [
-      { id: "490", name: "Quận Liên Chiểu" },
-      { id: "491", name: "Quận Thanh Khê" },
-      { id: "492", name: "Quận Hải Châu" },
-      { id: "493", name: "Quận Sơn Trà" },
-      { id: "494", name: "Quận Ngũ Hành Sơn" },
-      { id: "495", name: "Quận Cẩm Lệ" },
-    ]
-  },
-  {
-    id: "31",
-    name: "Hải Phòng",
-    districts: [
-      { id: "303", name: "Quận Hồng Bàng" },
-      { id: "304", name: "Quận Ngô Quyền" },
-      { id: "305", name: "Quận Lê Chân" },
-      { id: "306", name: "Quận Hải An" },
-      { id: "307", name: "Quận Kiến An" },
-      { id: "308", name: "Quận Đồ Sơn" },
-      { id: "309", name: "Quận Dương Kinh" },
-    ]
-  },
-  {
-    id: "92",
-    name: "Cần Thơ",
-    districts: [
-      { id: "916", name: "Quận Ninh Kiều" },
-      { id: "917", name: "Quận Ô Môn" },
-      { id: "918", name: "Quận Bình Thuỷ" },
-      { id: "919", name: "Quận Cái Răng" },
-      { id: "923", name: "Quận Thốt Nốt" },
-    ]
-  }
+  { id: "01", name: "Hà Nội", wards: [
+    { id: "01", name: "Phường Tràng Tiền" }, { id: "02", name: "Phường Hàng Đào" },
+    { id: "03", name: "Phường Hàng Bạc" }, { id: "04", name: "Phường Đồng Xuân" },
+    { id: "05", name: "Phường Cống Vị" }, { id: "06", name: "Phường Kim Mã" },
+    { id: "07", name: "Phường Giảng Võ" }, { id: "08", name: "Phường Thành Công" },
+    { id: "09", name: "Phường Mỹ Đình 1" }, { id: "10", name: "Phường Mỹ Đình 2" }
+  ]},
+  { id: "79", name: "Thành phố Hồ Chí Minh", wards: [
+    { id: "01", name: "Phường Bến Nghé" }, { id: "02", name: "Phường Bến Thành" },
+    { id: "03", name: "Phường Đa Kao" }, { id: "04", name: "Phường Tân Định" },
+    { id: "05", name: "Phường Võ Thị Sáu" }, { id: "06", name: "Phường Thảo Điền" },
+    { id: "07", name: "Phường An Phú" }, { id: "08", name: "Phường Thủ Thiêm" }
+  ]},
+  { id: "48", name: "Đà Nẵng", wards: [
+    { id: "01", name: "Phường Thạch Thang" }, { id: "02", name: "Phường Hải Châu I" },
+    { id: "03", name: "Phường Hải Châu II" }, { id: "04", name: "Phường Phước Ninh" },
+    { id: "05", name: "Phường Hòa Cường Bắc" }, { id: "06", name: "Phường Hòa Cường Nam" },
+    { id: "07", name: "Phường Mỹ An" }, { id: "08", name: "Phường Khuê Mỹ" }
+  ]},
+  { id: "31", name: "Hải Phòng", wards: [
+    { id: "01", name: "Phường Minh Khai" }, { id: "02", name: "Phường Phan Bội Châu" },
+    { id: "03", name: "Phường Hoàng Văn Thụ" }, { id: "04", name: "Phường Cầu Đất" }
+  ]},
+  { id: "92", name: "Cần Thơ", wards: [
+    { id: "01", name: "Phường Tân An" }, { id: "02", name: "Phường An Lạc" },
+    { id: "03", name: "Phường An Hội" }, { id: "04", name: "Phường An Phú" }
+  ]},
+  { id: "46", name: "Thành phố Huế", wards: [
+    { id: "01", name: "Phường Vĩnh Ninh" }, { id: "02", name: "Phường Phú Hội" },
+    { id: "03", name: "Phường Xuân Phú" }, { id: "04", name: "Phường Vỹ Dạ" }
+  ]},
+  { id: "40", name: "Nghệ An", wards: [
+    { id: "01", name: "Phường Quang Trung" }, { id: "02", name: "Phường Lê Mao" },
+    { id: "03", name: "Phường Lê Lợi" }, { id: "04", name: "Phường Hưng Dũng" },
+    { id: "05", name: "Xã Nghi Phú" }, { id: "06", name: "Xã Hưng Lộc" }
+  ]},
+  { id: "38", name: "Thanh Hóa", wards: [
+    { id: "01", name: "Phường Điện Biên" }, { id: "02", name: "Phường Lam Sơn" },
+    { id: "03", name: "Phường Ngọc Trạo" }, { id: "04", name: "Phường Đông Thọ" }
+  ]},
+  { id: "22", name: "Quảng Ninh", wards: [
+    { id: "01", name: "Phường Bạch Đằng" }, { id: "02", name: "Phường Hồng Gai" },
+    { id: "03", name: "Phường Bãi Cháy" }, { id: "04", name: "Phường Giếng Đáy" }
+  ]},
+  { id: "20", name: "Lạng Sơn", wards: [{ id: "01", name: "Phường Tam Thanh" }, { id: "02", name: "Phường Vĩnh Trại" }] },
+  { id: "14", name: "Sơn La", wards: [{ id: "01", name: "Phường Chiềng Lề" }, { id: "02", name: "Phường Quyết Thắng" }] },
+  { id: "11", name: "Điện Biên", wards: [{ id: "01", name: "Phường Mường Thanh" }, { id: "02", name: "Phường Tân Thanh" }] },
+  { id: "12", name: "Lai Châu", wards: [{ id: "01", name: "Phường Quyết Thắng" }, { id: "02", name: "Phường Tân Phong" }] },
+  { id: "04", name: "Cao Bằng", wards: [{ id: "01", name: "Phường Hợp Giang" }, { id: "02", name: "Phường Sông Hiến" }] },
+  { id: "42", name: "Hà Tĩnh", wards: [{ id: "01", name: "Phường Bắc Hà" }, { id: "02", name: "Phường Nam Hà" }] },
+  { id: "19", name: "Thái Nguyên", wards: [{ id: "01", name: "Phường Phan Đình Phùng" }, { id: "02", name: "Phường Túc Duyên" }] },
+  { id: "37", name: "Ninh Bình", wards: [{ id: "01", name: "Phường Vân Giang" }, { id: "02", name: "Phường Thanh Bình" }] },
+  { id: "25", name: "Phú Thọ", wards: [{ id: "01", name: "Phường Tiên Cát" }, { id: "02", name: "Phường Gia Cẩm" }] },
+  { id: "08", name: "Tuyên Quang", wards: [{ id: "01", name: "Phường Minh Xuân" }, { id: "02", name: "Phường Phan Thiết" }] },
+  { id: "10", name: "Lào Cai", wards: [{ id: "01", name: "Phường Cốc Lếu" }, { id: "02", name: "Phường Lào Cai" }] },
+  { id: "27", name: "Bắc Ninh", wards: [{ id: "01", name: "Phường Tiền An" }, { id: "02", name: "Phường Vệ An" }] },
+  { id: "33", name: "Hưng Yên", wards: [{ id: "01", name: "Phường Lê Lợi" }, { id: "02", name: "Phường Hiến Nam" }] },
+  { id: "30", name: "Hải Dương", wards: [{ id: "01", name: "Phường Trần Hưng Đạo" }, { id: "02", name: "Phường Quang Trung" }] },
+  { id: "49", name: "Quảng Nam", wards: [{ id: "01", name: "Phường An Mỹ" }, { id: "02", name: "Phường Tân Thạnh" }] },
+  { id: "52", name: "Bình Định", wards: [{ id: "01", name: "Phường Lê Lợi" }, { id: "02", name: "Phường Trần Hưng Đạo" }] },
+  { id: "56", name: "Khánh Hòa", wards: [{ id: "01", name: "Phường Lộc Thọ" }, { id: "02", name: "Phường Tân Lập" }] },
+  { id: "68", name: "Lâm Đồng", wards: [{ id: "01", name: "Phường 1" }, { id: "02", name: "Phường 2" }] },
+  { id: "74", name: "Bình Dương", wards: [{ id: "01", name: "Phường Phú Cường" }, { id: "02", name: "Phường Hiệp Thành" }] },
+  { id: "75", name: "Đồng Nai", wards: [{ id: "01", name: "Phường Thanh Bình" }, { id: "02", name: "Phường Quyết Thắng" }] },
+  { id: "77", name: "Bà Rịa - Vũng Tàu", wards: [{ id: "01", name: "Phường 1" }, { id: "02", name: "Phường 2" }] },
+  { id: "89", name: "An Giang", wards: [{ id: "01", name: "Phường Mỹ Bình" }, { id: "02", name: "Phường Mỹ Long" }] },
+  { id: "96", name: "Cà Mau", wards: [{ id: "01", name: "Phường 1" }, { id: "02", name: "Phường 2" }] },
+  { id: "66", name: "Đắk Lắk", wards: [{ id: "01", name: "Phường Tân Lợi" }, { id: "02", name: "Phường Thắng Lợi" }] },
+  { id: "72", name: "Tây Ninh", wards: [{ id: "01", name: "Phường 1" }, { id: "02", name: "Phường 2" }] },
 ];
 
-// Fallback list of provinces if flat structure is needed
 export const PROVINCES_LIST = vietnamLocations.map(loc => loc.name);
+
+// Hàm loại bỏ dấu tiếng Việt để tìm kiếm
+export const normalizeString = (str) => {
+  if (!str) return '';
+  return str.toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[đĐ]/g, 'd')
+    .trim();
+};
+
+// Hàm tìm kiếm tỉnh thành hỗ trợ fuzzy
+export const findProvinceFuzzy = (query) => {
+  if (!query) return [];
+  const normalizedQuery = normalizeString(query);
+  return vietnamLocations.filter(loc => {
+    const normalizedName = normalizeString(loc.name);
+    return normalizedName.includes(normalizedQuery);
+  });
+};

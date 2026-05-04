@@ -63,6 +63,7 @@ export const jobApi = {
     getJobDetail: (id) => api.get(`/jobs/${id}`),
     getCompanies: () => api.get('/companies'),
     getCompanyDetail: (id) => api.get(`/companies/${id}`),
+    getCategories: () => api.get('/admin/categories'),
 };
 
 // ── Student ───────────────────────────────────────────────────────────────
@@ -158,7 +159,9 @@ export const recruitmentApi = {
     searchCandidates: (params) => api.get('/company/management/candidates/search', { params }),
     scheduleInterview: (data) => api.post('/company/management/applications/schedule', data),
     getInterviews: () => api.get('/company/management/interviews'),
-    cancelInterview: (id) => api.delete('/company/management/interviews/' + id),
+    deleteInterview: (id) => api.delete('/company/management/interviews/' + id),
+    getInterviewDetail: (id) => api.get('/company/management/interviews/' + id),
+    updateInterview: (id, data) => api.put('/company/management/interviews/' + id, data),
     getCandidateDetail: (id) => api.get('/company/management/candidates/' + id),
     getRecommendations: (jobId) => api.get('/company/management/jobs/' + jobId + '/recommendations'),
 };
