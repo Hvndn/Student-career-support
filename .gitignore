@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-### STS ###
-=======
 # Dependencies
 node_modules/
 target/
@@ -22,7 +13,6 @@ target/
 .vscode/
 *.swp
 *.swo
->>>>>>> 0cc9f64bf3016784293ee6a729353de484beaea1
 .apt_generated
 .classpath
 .factorypath
@@ -31,9 +21,7 @@ target/
 .springBeans
 .sts4-cache
 
-<<<<<<< HEAD
 ### IntelliJ IDEA ###
-.idea
 *.iws
 *.iml
 *.ipr
@@ -48,9 +36,6 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
-.vscode/
-=======
 # OS files
 .DS_Store
 Thumbs.db
@@ -74,8 +59,6 @@ yarn-error.log*
 *.log
 
 # Project specific
-
 HELP.md
 GEMINI.md
 .agent/
->>>>>>> 0cc9f64bf3016784293ee6a729353de484beaea1
