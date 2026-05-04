@@ -6,9 +6,19 @@ import { companyApi, jobApi, studentApi } from '../../api';
 import { vietnamLocations } from '../../utils/vietnamLocations';
 import { getImageUrl } from '../../utils/urlUtils';
 
-const LEVELS = ['Thực tập sinh', 'Nhân viên', 'Trưởng nhóm', 'Phó phòng', 'Trưởng phòng', 'Giám đốc', 'Tổng giám đốc/Điều hành'];
+const LEVELS = [
+    { label: 'Intern', desc: '' },
+    { label: 'Fresher', desc: '' },
+    { label: 'Junior', desc: '0–2 năm' },
+    { label: 'Mid-level', desc: '2–4 năm' },
+    { label: 'Senior', desc: '4+ năm' },
+    { label: 'Tech Lead', desc: 'Dẫn dắt team' },
+    { label: 'Manager', desc: 'Quản lý' },
+    { label: 'Director', desc: 'Giám đốc' },
+    { label: 'Head/VP', desc: 'Lãnh đạo cấp cao' }
+];
 const EXPERIENCES = ['Chưa có kinh nghiệm', 'Dưới 1 năm', '1 năm', '2 năm', '3 năm', '4 năm', '5 năm', 'Trên 5 năm'];
-const QUALIFICATIONS = ['Không yêu cầu', 'Trung học', 'Trung cấp', 'Cao đẳng', 'Đại học', 'Sau đại học'];
+const QUALIFICATIONS = ['Không yêu cầu bằng cấp', 'THPT', 'Cao đẳng', 'Đại học', 'Thạc sĩ', 'Tiến sĩ'];
 const JOB_TYPES = [
     { value: 'fulltime', label: 'Toàn thời gian' },
     { value: 'parttime', label: 'Bán thời gian' },
@@ -19,6 +29,14 @@ const JOB_TYPES = [
 
 const SUGGESTED_SKILLS = {
     'Công nghệ thông tin': ['Java', 'Python', 'ReactJS', 'NodeJS', 'SQL', 'Git', 'AWS', 'Docker', 'Spring Boot', 'TypeScript', 'C++', 'PHP', 'Kubernetes', 'MongoDB', 'Redis'],
+    'Lập trình Web': ['HTML', 'CSS', 'JavaScript', 'ReactJS', 'VueJS', 'Next.js', 'NodeJS', 'PHP', 'Laravel', 'Bootstrap', 'Tailwind CSS', 'SQL'],
+    'Lập trình Di động': ['React Native', 'Flutter', 'Swift', 'Kotlin', 'Objective-C', 'Java', 'Dart', 'Firebase', 'SQLite'],
+    'Trí tuệ nhân tạo': ['Python', 'Machine Learning', 'Deep Learning', 'PyTorch', 'TensorFlow', 'Data Science', 'Natural Language Processing', 'OpenCV'],
+    'An ninh mạng': ['Ethical Hacking', 'Network Security', 'Penetration Testing', 'Cryptography', 'Linux', 'Firewall', 'Wireshark'],
+    'Điện toán đám mây': ['AWS', 'Azure', 'Google Cloud', 'Docker', 'Kubernetes', 'Terraform', 'CI/CD', 'Serverless'],
+    'Tester / QA QC': ['Manual Testing', 'Automation Testing', 'Selenium', 'JMeter', 'Postman', 'Unit Testing', 'Regression Testing'],
+    'Quản trị cơ sở dữ liệu': ['MySQL', 'PostgreSQL', 'Oracle', 'SQL Server', 'MongoDB', 'Redis', 'Database Design', 'Query Optimization'],
+    'UI-UX Design': ['Figma', 'Adobe XD', 'Sketch', 'Photoshop', 'User Research', 'Wireframing', 'Prototyping', 'UI Design', 'UX Writing'],
     'Marketing': ['SEO', 'Content Marketing', 'Google Ads', 'Facebook Ads', 'Social Media', 'Data Analysis', 'Email Marketing', 'Copywriting', 'TikTok Ads', 'Zalo Ads'],
     'Thiết kế': ['Photoshop', 'Illustrator', 'Figma', 'UI/UX', 'After Effects', 'Design Thinking', 'InDesign', 'Canva', 'Sketch', 'Blender'],
     'Tài chính': ['Excel', 'Data Analysis', 'Accounting', 'Risk Management', 'Financial Planning', 'ERP', 'SAP', 'Power BI', 'Bloomberg'],
@@ -71,6 +89,9 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
     const [skillInput, setSkillInput] = useState('');
     const [wards, setWards] = useState([]);
     const [selectedWard, setSelectedWard] = useState('');
+    const [addressSuggestions, setAddressSuggestions] = useState([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const suggestionRef = useRef(null);
 
     useEffect(() => {
         const fetchMetadata = async () => {
@@ -133,6 +154,45 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
         }
     }, [jobData]);
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (suggestionRef.current && !suggestionRef.current.contains(event.target)) {
+                setShowSuggestions(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    useEffect(() => {
+        const timer = setTimeout(async () => {
+            if (form.specificAddress && form.specificAddress.length > 2 && form.region) {
+                try {
+                    // Tạo query thông minh hơn: bỏ qua các trường trống và ghép nối bằng dấu phẩy
+                    const parts = [form.specificAddress, selectedWard, form.region, 'Vietnam'].filter(Boolean);
+                    const query = parts.join(', ');
+                    
+                    console.log('Đang tìm kiếm địa chỉ:', query);
+                    
+                    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=8&addressdetails=1&countrycodes=vn`);
+                    const data = await response.json();
+                    
+                    console.log('Kết quả từ OSM:', data);
+                    
+                    setAddressSuggestions(data);
+                    setShowSuggestions(data.length > 0);
+                } catch (err) {
+                    console.error('Lỗi lấy gợi ý địa chỉ:', err);
+                }
+            } else {
+                setAddressSuggestions([]);
+                setShowSuggestions(false);
+            }
+        }, 800);
+
+        return () => clearTimeout(timer);
+    }, [form.specificAddress, form.region, selectedWard]);
+
     const handleChange = (key, val) => setForm(f => ({ ...f, [key]: val }));
 
     const handleRegionChange = (regionName) => {
@@ -177,31 +237,44 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
     const getSkillSuggestions = () => {
         if (!form.industry) return [];
         
-        // 1. Lấy từ database (đã fetch về)
+        const industryLower = form.industry.toLowerCase();
+
+        // 1. Lấy từ database (đã fetch về) - Thêm fuzzy match cho category
         const dbSuggestions = allSkills
-            .filter(s => s.category === form.industry && !selectedSkills.includes(s.name))
+            .filter(s => {
+                const catLower = (s.category || '').toLowerCase();
+                const isMatch = catLower && (catLower.includes(industryLower) || industryLower.includes(catLower));
+                return isMatch && !selectedSkills.includes(s.name);
+            })
             .map(s => s.name);
 
         // 2. Lấy từ hardcoded (nếu db ít quá hoặc không khớp tên category hoàn toàn)
         // Cố gắng tìm key gần đúng nhất
         const hardcodedKey = Object.keys(SUGGESTED_SKILLS).find(k => 
-            k.toLowerCase().includes(form.industry.toLowerCase()) || 
-            form.industry.toLowerCase().includes(k.toLowerCase())
+            k.toLowerCase().includes(industryLower) || 
+            industryLower.includes(k.toLowerCase())
         );
         
         const hardcodedSuggestions = hardcodedKey ? SUGGESTED_SKILLS[hardcodedKey] : [];
         
-        // Gộp lại và loại bỏ trùng, lấy tối đa 12 cái
+        // Gộp lại và loại bỏ trùng, lấy tối đa 15 cái
         const combined = Array.from(new Set([...dbSuggestions, ...hardcodedSuggestions]))
             .filter(s => !selectedSkills.includes(s));
             
-        return combined.slice(0, 12);
+        return combined.slice(0, 15);
     };
 
     const handleSubmit = async (isDraft = false) => {
-        // Final check before sending
-        if (!form.title || !form.industry || !form.region || !form.description) {
-            toast.error('Vui lòng điền đủ: Tiêu đề, Lĩnh vực, Địa điểm, Mô tả');
+        // Kiểm tra các trường bắt buộc
+        const missingFields = [];
+        if (!form.title) missingFields.push('Tiêu đề');
+        if (!form.industry) missingFields.push('Lĩnh vực');
+        if (!form.region) missingFields.push('Tỉnh/Thành phố');
+        if (!selectedWard) missingFields.push('Xã/Phường');
+        if (!form.description || form.description === '<p><br></p>') missingFields.push('Mô tả công việc');
+
+        if (missingFields.length > 0 && !isDraft) {
+            toast.error(`Vui lòng nhập đầy đủ: ${missingFields.join(', ')}`);
             return;
         }
 
@@ -262,7 +335,7 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
             </div>
 
             {/* Basic Info */}
-            <div className="pjm-section">
+            <div className="pjm-section" style={{ position: 'relative', zIndex: 100 }}>
                 <div className="pjm-section-title"><i className="fa-solid fa-circle-info"></i> Thông tin cơ bản</div>
                 <div className="pjm-field">
                     <label>Tiêu đề công việc *</label>
@@ -284,7 +357,11 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
                         <label>Cấp bậc</label>
                         <select className="pjm-select" value={form.level} onChange={e => handleChange('level', e.target.value)}>
                             <option value="">Chọn cấp bậc...</option>
-                            {LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
+                            {LEVELS.map(l => (
+                                <option key={l.label} value={l.label}>
+                                    {l.label} {l.desc ? `(${l.desc})` : ''}
+                                </option>
+                            ))}
                         </select>
                     </div>
                     <div className="pjm-field">
@@ -294,10 +371,22 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
                         </select>
                     </div>
                 </div>
+                <div className="pjm-row" style={{ marginTop: '1rem' }}>
+                    <div className="pjm-field">
+                        <label>Số lượng tuyển</label>
+                        <input type="number" min="1" className="pjm-input" placeholder="Ví dụ: 5" value={form.quantity} onChange={e => handleChange('quantity', e.target.value)} />
+                    </div>
+                    <div className="pjm-field">
+                        <label>Bằng cấp</label>
+                        <select className="pjm-select" value={form.qualification} onChange={e => handleChange('qualification', e.target.value)}>
+                            {QUALIFICATIONS.map(q => <option key={q} value={q}>{q}</option>)}
+                        </select>
+                    </div>
+                </div>
             </div>
 
             {/* Location & Salary */}
-            <div className="pjm-section">
+            <div className="pjm-section" style={{ position: 'relative', zIndex: 10000 }}>
                 <div className="pjm-section-title"><i className="fa-solid fa-money-bill-wave"></i> Chế độ & Địa điểm</div>
                 <div className="pjm-row">
                     <div className="pjm-field">
@@ -319,20 +408,66 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
                             disabled={wards.length === 0}
                         />
                     </div>
-                    <div className="pjm-field">
-                        <label>Hạn chót nộp hồ sơ</label>
-                        <input type="date" className="pjm-input" value={form.deadline} onChange={e => handleChange('deadline', e.target.value)} />
-                    </div>
                 </div>
 
-                <div className="pjm-field" style={{ marginTop: '1rem' }}>
+                <div className="pjm-field" style={{ marginTop: '1rem', position: 'relative' }}>
                     <label>Địa chỉ cụ thể (Số nhà, tên đường...)</label>
                     <input 
                         className="pjm-input" 
-                        placeholder="Ví dụ: 123 Nguyễn Văn Linh, P. Thạch Thang..." 
+                        placeholder="Nhập địa chỉ cụ thể" 
                         value={form.specificAddress} 
-                        onChange={e => handleChange('specificAddress', e.target.value)} 
+                        onChange={e => handleChange('specificAddress', e.target.value)}
+                        onFocus={() => addressSuggestions.length > 0 && setShowSuggestions(true)}
                     />
+                    
+                    {/* Gợi ý địa chỉ từ OpenStreetMap */}
+                    {showSuggestions && addressSuggestions.length > 0 && (
+                        <div className="address-suggestions-dropdown" ref={suggestionRef} style={{
+                            position: 'absolute',
+                            top: '100%',
+                            left: 0,
+                            right: 0,
+                            backgroundColor: '#fff',
+                            border: '1px solid #e2e8f0',
+                            borderRadius: '8px',
+                            boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+                            zIndex: 9999,
+                            marginTop: '4px',
+                            maxHeight: '200px',
+                            overflowY: 'auto'
+                        }}>
+                            {addressSuggestions.map((sug, idx) => (
+                                <div 
+                                    key={idx} 
+                                    className="suggestion-item"
+                                    onClick={() => {
+                                        // Chỉ lấy phần tên đường/số nhà từ gợi ý để điền vào ô specificAddress
+                                        // Hoặc lấy toàn bộ address string
+                                        handleChange('specificAddress', sug.display_name.split(',')[0]);
+                                        setShowSuggestions(false);
+                                    }}
+                                    style={{
+                                        padding: '10px 15px',
+                                        fontSize: '14px',
+                                        color: '#334155',
+                                        cursor: 'pointer',
+                                        borderBottom: idx < addressSuggestions.length - 1 ? '1px solid #f1f5f9' : 'none',
+                                        transition: 'background 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => e.target.style.background = '#f8fafc'}
+                                    onMouseLeave={(e) => e.target.style.background = 'transparent'}
+                                >
+                                    <i className="fa-solid fa-location-dot" style={{ marginRight: '8px', color: '#64748b' }}></i>
+                                    {sug.display_name}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                <div className="pjm-field" style={{ marginTop: '1rem' }}>
+                    <label>Hạn chót nộp hồ sơ</label>
+                    <input type="date" className="pjm-input" value={form.deadline} onChange={e => handleChange('deadline', e.target.value)} />
                 </div>
 
                 <div className="pjm-row">
@@ -347,11 +482,11 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
                         <>
                             <div className="pjm-field">
                                 <label>Lương tối thiểu (VNĐ)</label>
-                                <input type="number" className="pjm-input" placeholder="Ví dụ: 10000000" value={form.minSalary} onChange={e => handleChange('minSalary', e.target.value)} />
+                                <input type="number" className="pjm-input" placeholder="Nhập lương tối thiểu" value={form.minSalary} onChange={e => handleChange('minSalary', e.target.value)} />
                             </div>
                             <div className="pjm-field">
                                 <label>Lương tối đa (VNĐ)</label>
-                                <input type="number" className="pjm-input" placeholder="Ví dụ: 20000000" value={form.maxSalary} onChange={e => handleChange('maxSalary', e.target.value)} />
+                                <input type="number" className="pjm-input" placeholder="Nhập lương tối đa" value={form.maxSalary} onChange={e => handleChange('maxSalary', e.target.value)} />
                             </div>
                         </>
                     )}
@@ -359,7 +494,7 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
             </div>
 
             {/* Contact Person */}
-            <div className="pjm-section">
+            <div className="pjm-section" style={{ position: 'relative', zIndex: 80 }}>
                 <div className="pjm-section-title"><i className="fa-solid fa-user-tie"></i> Thông tin người liên hệ</div>
                 <div className="pjm-row">
                     <div className="pjm-field">
@@ -393,7 +528,7 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
             </div>
 
             {/* Content Section */}
-            <div className="pjm-section">
+            <div className="pjm-section" style={{ position: 'relative', zIndex: 70 }}>
                 <div className="pjm-section-title"><i className="fa-solid fa-file-lines"></i> Nội dung chi tiết</div>
                 <div className="pjm-field">
                     <label>Mô tả công việc *</label>
@@ -406,11 +541,11 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
             </div>
 
             {/* Skills */}
-            <div className="pjm-section">
+            <div className="pjm-section" style={{ position: 'relative', zIndex: 60 }}>
                 <div className="pjm-section-title">
                     <i className="fa-solid fa-tags"></i> 
                     Kỹ năng yêu cầu
-                    <span className="pjm-title-hint">(Dùng để AI so khớp ứng viên)</span>
+                   
                 </div>
                 
                 <div className="pjm-skills-wrapper">

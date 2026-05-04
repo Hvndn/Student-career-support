@@ -339,11 +339,11 @@ const CompanyCandidates = () => {
                                         <option value="custom">Tùy chọn...</option>
                                     </select>
 
-                                    {/* MỤC SẮP XẾP RIÊNG BIỆT - Nổi bật hơn */}
-                                    <div className="sort-section" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '4px 12px', background: '#eff6ff', borderRadius: '10px', border: '1px solid #dbeafe' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#1e3a8a' }}>
+                                    {/* MỤC SẮP XẾP RIÊNG BIỆT - Đồng bộ màu sắc */}
+                                    <div className="sort-section" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0 12px', background: '#fff', borderRadius: '8px', border: '1px solid #e2e8f0', height: '42px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b' }}>
                                             <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><path d="M3 6h18M6 12h12m-9 6h6"></path></svg>
-                                            <span style={{ fontSize: '13px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Sắp xếp</span>
+                                            <span style={{ fontSize: '13px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Sắp xếp</span>
                                         </div>
                                         <select 
                                             className="dau-select filter-control"
@@ -352,7 +352,7 @@ const CompanyCandidates = () => {
                                                 const [key, direction] = e.target.value.split('-');
                                                 setSortConfig({ key, direction });
                                             }}
-                                            style={{ minWidth: '140px', border: 'none', background: 'transparent', color: '#1e3a8a', fontSize: '14px', fontWeight: '700', cursor: 'pointer', outline: 'none' }}
+                                            style={{ minWidth: '120px', border: 'none', background: 'transparent', color: '#64748b', fontSize: '14px', fontWeight: '500', cursor: 'pointer', outline: 'none', paddingRight: '4px' }}
                                         >
                                             <option value="matchPercentage-desc">Phù hợp nhất ↑</option>
                                             <option value="appliedAt-desc">Mới nhất ↑</option>

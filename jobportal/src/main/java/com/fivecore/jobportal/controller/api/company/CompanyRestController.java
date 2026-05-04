@@ -215,13 +215,19 @@ public class CompanyRestController {
      * API Cập nhật thông tin công ty.
      */
     @PutMapping("/profile")
-    public ResponseEntity<ApiResponse<Object>> updateProfile(@ModelAttribute Company company,
+    public ResponseEntity<ApiResponse<Object>> updateProfile(jakarta.servlet.http.HttpServletRequest request,
+            @ModelAttribute Company company,
             @RequestParam(value = "logoFile", required = false) MultipartFile logoFile,
             @RequestParam(value = "activityFiles", required = false) List<MultipartFile> activityFiles,
             Authentication authentication) {
         try {
             Integer companyId = getCurrentCompanyId(authentication);
-            companyService.updateCompanyInfo(companyId, company, logoFile, activityFiles);
+            List<String> existingImages = activityFiles != null ? null : new java.util.ArrayList<>(); 
+            // Lấy danh sách ảnh cũ từ request nếu có
+            String[] existing = request.getParameterValues("existingImages");
+            List<String> existingList = existing != null ? java.util.Arrays.asList(existing) : new java.util.ArrayList<>();
+            
+            companyService.updateCompanyInfo(companyId, company, logoFile, activityFiles, existingList);
             return ResponseEntity.ok(ApiResponse.success("Cập nhật thông tin thành công", null));
         } catch (RuntimeException e) {
             log.warn("Lỗi khi cập nhật profile doanh nghiệp: {}", e.getMessage());

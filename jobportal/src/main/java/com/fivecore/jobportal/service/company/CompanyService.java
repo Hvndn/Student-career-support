@@ -48,7 +48,7 @@ public class CompanyService {
      * Cập nhật thông tin doanh nghiệp (US-013).
      */
     @Transactional
-    public void updateCompanyInfo(Integer companyId, Company updatedData, MultipartFile logoFile, List<MultipartFile> activityFiles) {
+    public void updateCompanyInfo(Integer companyId, Company updatedData, MultipartFile logoFile, List<MultipartFile> activityFiles, List<String> existingActivityImages) {
         Company company = companyRepository.findById(companyId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy doanh nghiệp"));
 
@@ -69,6 +69,11 @@ public class CompanyService {
         if (logoFile != null && !logoFile.isEmpty()) {
             String logoUrl = storageService.saveFile(logoFile, "logos");
             company.setLogoUrl(logoUrl);
+        }
+
+        // Đồng bộ ảnh cũ (xóa những ảnh không còn trong danh sách gửi lên)
+        if (existingActivityImages != null) {
+            company.getActivityImages().removeIf(img -> !existingActivityImages.contains(img.getImageUrl()));
         }
 
         // Xử lý ảnh hoạt động mới

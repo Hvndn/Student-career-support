@@ -824,7 +824,7 @@ input:disabled + .cjm-slider {
 
 .cjm-search-box input {
   width: 100%;
-  padding: 0.6rem 1rem 0.6rem 1rem;
+  padding: 0.6rem 1.25rem 0.6rem 2.5rem;
   border: 1px solid #e2e8f0;
   border-radius: 20px;
   font-size: 0.9rem;
@@ -836,9 +836,9 @@ input:disabled + .cjm-slider {
   border-color: #2563eb;
 }
 
-.cjm-search-box .search-icon {
+.cjm-search-box .cjm-icon-search {
   position: absolute;
-  right: 12px;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
   color: #94a3b8;
@@ -956,27 +956,32 @@ input:disabled + .cjm-slider {
 }
 
 .action-btn {
-  background: none;
-  border: none;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 600;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0;
+  justify-content: center;
+  transition: all 0.2s;
 }
 
 .action-btn.edit {
   color: #64748b;
 }
 .action-btn.edit:hover {
-  color: #1e293b;
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: #dbeafe;
 }
 
 .action-btn.delete {
   color: #ef4444;
 }
 .action-btn.delete:hover {
-  color: #b91c1c;
+  background: #fef2f2;
+  color: #ef4444;
+  border-color: #fecaca;
 }
