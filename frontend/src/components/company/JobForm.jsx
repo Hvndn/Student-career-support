@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import SearchableSelect from '../common/SearchableSelect';
 import toast from 'react-hot-toast';
 import RichTextEditor from '../common/RichTextEditor';
-import { companyApi, jobApi } from '../../api';
+import { companyApi, jobApi, studentApi } from '../../api';
 import { vietnamLocations } from '../../utils/vietnamLocations';
 import { getImageUrl } from '../../utils/urlUtils';
 
@@ -39,6 +39,7 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
     const [bannerPreview, setBannerPreview] = useState(null);
     const [selectedBannerFile, setSelectedBannerFile] = useState(null);
     const [categories, setCategories] = useState([]);
+    const [allSkills, setAllSkills] = useState([]);
     
     const [form, setForm] = useState({
         title: '',
@@ -72,17 +73,23 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
     const [selectedWard, setSelectedWard] = useState('');
 
     useEffect(() => {
-        const fetchCategories = async () => {
+        const fetchMetadata = async () => {
             try {
-                const res = await jobApi.getCategories();
-                if (res.data.status === 'success') {
-                    setCategories(res.data.data);
+                const [catRes, skillRes] = await Promise.all([
+                    jobApi.getCategories(),
+                    studentApi.getSkills()
+                ]);
+                if (catRes.data.status === 'success') {
+                    setCategories(catRes.data.data);
+                }
+                if (skillRes.data.status === 'success') {
+                    setAllSkills(skillRes.data.data);
                 }
             } catch (err) {
-                console.error('Lỗi khi lấy danh sách lĩnh vực:', err);
+                console.error('Lỗi khi lấy metadata:', err);
             }
         };
-        fetchCategories();
+        fetchMetadata();
     }, []);
 
     useEffect(() => {
@@ -167,6 +174,30 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
 
     const handleSkillRemove = (skill) => setSelectedSkills(selectedSkills.filter(s => s !== skill));
 
+    const getSkillSuggestions = () => {
+        if (!form.industry) return [];
+        
+        // 1. Lấy từ database (đã fetch về)
+        const dbSuggestions = allSkills
+            .filter(s => s.category === form.industry && !selectedSkills.includes(s.name))
+            .map(s => s.name);
+
+        // 2. Lấy từ hardcoded (nếu db ít quá hoặc không khớp tên category hoàn toàn)
+        // Cố gắng tìm key gần đúng nhất
+        const hardcodedKey = Object.keys(SUGGESTED_SKILLS).find(k => 
+            k.toLowerCase().includes(form.industry.toLowerCase()) || 
+            form.industry.toLowerCase().includes(k.toLowerCase())
+        );
+        
+        const hardcodedSuggestions = hardcodedKey ? SUGGESTED_SKILLS[hardcodedKey] : [];
+        
+        // Gộp lại và loại bỏ trùng, lấy tối đa 12 cái
+        const combined = Array.from(new Set([...dbSuggestions, ...hardcodedSuggestions]))
+            .filter(s => !selectedSkills.includes(s));
+            
+        return combined.slice(0, 12);
+    };
+
     const handleSubmit = async (isDraft = false) => {
         // Final check before sending
         if (!form.title || !form.industry || !form.region || !form.description) {
@@ -227,7 +258,7 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
                         <small>Kích thước khuyến nghị: 1200x400px (16:9)</small>
                     </div>
                 )}
-                <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="pjm-upload-input" style={{ display: 'none' }} />
+                <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*,.gif,.bmp,.svg,.tiff,.jfif,.ico" className="pjm-upload-input" style={{ display: 'none' }} />
             </div>
 
             {/* Basic Info */}
@@ -409,14 +440,11 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
                     </div>
 
                     {/* Suggestions */}
-                    {form.industry && SUGGESTED_SKILLS[form.industry] && (
+                    {form.industry && getSkillSuggestions().length > 0 && (
                         <div className="pjm-skill-suggestions">
                             <span className="pjm-sug-label">Gợi ý cho {form.industry}:</span>
                             <div className="pjm-sug-list">
-                                {SUGGESTED_SKILLS[form.industry]
-                                    .filter(s => !selectedSkills.includes(s))
-                                    .slice(0, 8)
-                                    .map(s => (
+                                {getSkillSuggestions().map(s => (
                                         <button 
                                             key={s} 
                                             type="button" 

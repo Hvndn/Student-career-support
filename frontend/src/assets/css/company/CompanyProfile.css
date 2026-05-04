@@ -191,6 +191,41 @@
     transition: color 0.2s;
 }
 .cp-activity-edit:hover { color: #475569; }
+.cp-activity-edit.active {
+    background: #22c55e;
+    color: white;
+    border-radius: 50%;
+}
+
+.cp-photo-remove {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 22px;
+    height: 22px;
+    background: #ef4444;
+    border-radius: 50%;
+    border: 2px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: all 0.2s;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.cp-activity-photo:hover .cp-photo-remove {
+    opacity: 1;
+    visibility: visible;
+}
+
+.cp-photo-remove:hover {
+    background: #dc2626;
+    transform: scale(1.1);
+}
 
 .cp-activity-grid {
     display: grid;
@@ -199,9 +234,9 @@
 }
 
 .cp-activity-photo {
+    position: relative;
     aspect-ratio: 1;
     border-radius: 8px;
-    overflow: hidden;
     background: #f8fafc;
     border: 1px dashed #e2e8f0;
 }
@@ -220,6 +255,7 @@
     height: 100%;
     object-fit: cover;
     transition: transform 0.3s;
+    border-radius: 8px;
 }
 
 .cp-activity-photo:hover .cp-activity-img-obj {

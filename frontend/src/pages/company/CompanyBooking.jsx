@@ -15,6 +15,7 @@ const CompanyBooking = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [jobFilter, setJobFilter] = useState('all');
+    const [sortOrder, setSortOrder] = useState('oldest');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const [showDetail, setShowDetail] = useState(false);
@@ -109,14 +110,22 @@ const CompanyBooking = () => {
         };
     };
 
-    const filteredInterviews = interviews.filter(item => {
-        const matchesSearch = 
-            item.studentName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.jobTitle?.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
-        const matchesJob = jobFilter === 'all' || item.jobTitle === jobFilter;
-        return matchesSearch && matchesStatus && matchesJob;
-    });
+    const filteredInterviews = interviews
+        .filter(item => {
+            const matchesSearch = 
+                item.studentName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.jobTitle?.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
+            const matchesJob = jobFilter === 'all' || item.jobTitle === jobFilter;
+            return matchesSearch && matchesStatus && matchesJob;
+        })
+        .sort((a, b) => {
+            if (sortOrder === 'newest') return b.id - a.id;
+            if (sortOrder === 'oldest') return a.id - b.id;
+            if (sortOrder === 'dateAsc') return new Date(a.interviewDate) - new Date(b.interviewDate);
+            if (sortOrder === 'dateDesc') return new Date(b.interviewDate) - new Date(a.interviewDate);
+            return 0;
+        });
 
     if (loading) return (
         <div className="cd-layout">
@@ -191,6 +200,19 @@ const CompanyBooking = () => {
                                     {jobs.map(job => (
                                         <option key={job.id} value={job.title}>{job.title}</option>
                                     ))}
+                                </select>
+                            </div>
+                            <div className="filter-group">
+                                <label>Sắp xếp</label>
+                                <select 
+                                    className="filter-control"
+                                    value={sortOrder}
+                                    onChange={(e) => setSortOrder(e.target.value)}
+                                >
+                                    <option value="oldest">Cũ nhất (Ngày tạo)</option>
+                                    <option value="newest">Mới nhất (Ngày tạo)</option>
+                                    <option value="dateAsc">Sắp diễn ra nhất</option>
+                                    <option value="dateDesc">Xa nhất (Ngày hẹn)</option>
                                 </select>
                             </div>
                         </div>

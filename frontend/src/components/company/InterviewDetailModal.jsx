@@ -33,45 +33,12 @@ const InterviewDetailModal = ({ isOpen, onClose, interview, onEdit }) => {
             <div className="pjm-container" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px' }}>
                 <div className="pjm-header">
                     <h2 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span className="material-symbols-outlined" style={{ color: 'var(--primary-color)' }}>info</span> 
+                        <span className="material-symbols-outlined" style={{ color: 'var(--primary-color)' }}>event_note</span> 
                         Chi tiết lịch phỏng vấn
                     </h2>
-                    <div style={{ display: 'flex', gap: '10px' }}>
-                        <button 
-                            className="btn-edit-modal" 
-                            onClick={() => {
-                                onClose();
-                                onEdit(interview);
-                            }}
-                            title="Chỉnh sửa lịch hẹn"
-                            style={{
-                                background: '#f1f5f9',
-                                border: 'none',
-                                borderRadius: '50%',
-                                width: '36px',
-                                height: '36px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                cursor: 'pointer',
-                                color: '#475569',
-                                transition: 'all 0.2s'
-                            }}
-                        >
-                            <span className="material-symbols-outlined">edit</span>
-                        </button>
-                        <button className="btn-close-modal" onClick={onClose} style={{
-                                background: 'transparent',
-                                border: 'none',
-                                cursor: 'pointer',
-                                color: '#64748b',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                        }}>
-                            <span className="material-symbols-outlined">close</span>
-                        </button>
-                    </div>
+                    <button className="btn-close-modal" onClick={onClose} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span className="material-symbols-outlined">close</span>
+                    </button>
                 </div>
 
                 <div className="pjm-body">
@@ -80,15 +47,17 @@ const InterviewDetailModal = ({ isOpen, onClose, interview, onEdit }) => {
                         <div className="pjm-section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <span className="material-symbols-outlined">person</span> Thông tin ứng viên
                         </div>
+                        
                         <div className="pjm-field" style={{ marginBottom: '1.25rem' }}>
-                            <label>Ứng viên phỏng vấn</label>
-                            <div className="detail-value-box">{interview.studentName}</div>
-                        </div>
-                        <div className="pjm-field">
                             <label>Công việc tuyển dụng</label>
                             <div className="detail-value-box" style={{ color: 'var(--primary-color)', fontWeight: '600' }}>
                                 {interview.jobTitle}
                             </div>
+                        </div>
+
+                        <div className="pjm-field">
+                            <label>Ứng viên phỏng vấn</label>
+                            <div className="detail-value-box">{interview.studentName}</div>
                         </div>
                     </div>
 
@@ -159,6 +128,23 @@ const InterviewDetailModal = ({ isOpen, onClose, interview, onEdit }) => {
                             </span>
                         </div>
                     </div>
+                </div>
+
+                <div className="pjm-footer">
+                    <button type="button" className="pjm-btn-cancel" onClick={onClose}>
+                        Đóng
+                    </button>
+                    <button 
+                        type="button" 
+                        className="pjm-btn-submit" 
+                        onClick={() => {
+                            onClose();
+                            onEdit(interview);
+                        }}
+                    >
+                        <span className="material-symbols-outlined" style={{ fontSize: '18px', marginRight: '5px' }}>edit</span>
+                        Chỉnh sửa lịch hẹn
+                    </button>
                 </div>
             </div>
             

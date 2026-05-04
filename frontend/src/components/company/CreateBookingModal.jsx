@@ -267,7 +267,7 @@ const CreateBookingModal = ({ isOpen, onClose, onSuccess, initialData = null }) 
                         </div>
 
                         <div className="pjm-field">
-                            <label>Yêu cầu hồ sơ đính kèm</label>
+                            <label>Yêu cầu</label>
                             <input 
                                 type="text" 
                                 className="pjm-input"

@@ -49,7 +49,7 @@ const CompanyTopbar = () => {
         const notifs = recent.map(app => ({
           id: app.id,
           type: 'application',
-          content: `Ứng viên <b>${app.studentName}</b> vừa ứng tuyển vào vị trí <b>${app.jobTitle}</b>`,
+          content: `Ứng viên <b>${app.studentName}</b> vừa ứng tuyển vào công việc <b>${app.jobTitle}</b>`,
           time: app.appliedAt ? formatDate(app.appliedAt) : 'Gần đây',
           unread: !readIds.includes(app.id), // Chỉ unread nếu chưa có trong list đã đọc
           icon: 'blue'

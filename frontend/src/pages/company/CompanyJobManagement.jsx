@@ -4,6 +4,7 @@ import '../../assets/css/CompanyJobManagement.css';
 import CompanySidebar from '../../components/company/CompanySidebar';
 import CompanyNavbar from '../../components/company/CompanyNavbar';
 import { Link } from 'react-router-dom';
+import { FiPlusCircle } from 'react-icons/fi';
 import { companyApi } from '../../api';
 import PostJobModal from '../../components/company/PostJobModal';
 
@@ -376,7 +377,7 @@ const CompanyJobManagement = () => {
             <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#1e293b', marginBottom: '1.5rem' }}>Quản lý tuyển dụng</h2>
             <div className="cjm-header intro-y" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
               <button 
-                className="cjm-post-btn-maroon" 
+                className="cjm-post-btn-blue" 
                 onClick={() => { setEditingJob(null); setShowPostModal(true); }}
               >
                 Đăng tin tuyển dụng
@@ -479,7 +480,7 @@ const CompanyJobManagement = () => {
                                   <i className="fa-solid fa-pencil"></i> Sửa
                                 </button>
                                 <button className="action-btn delete" onClick={() => handleDelete(job.id)}>
-                                  <i className="fa-regular fa-trash-can"></i> Xóa
+                                  <i className="fa-solid fa-trash-can"></i> Xóa
                                 </button>
                               </div>
                             </td>

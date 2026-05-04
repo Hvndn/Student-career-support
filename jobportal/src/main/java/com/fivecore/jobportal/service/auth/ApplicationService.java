@@ -211,9 +211,8 @@ public class ApplicationService {
      * Lấy danh sách ứng tuyển mới nhất của một doanh nghiệp.
      */
     public List<ApplicationDto> getRecentApplicationsByCompany(Integer companyId) {
-        java.time.LocalDateTime startOfDay = java.time.LocalDateTime.now().with(java.time.LocalTime.MIN);
-        return applicationRepository.findByJobCompanyIdAndAppliedAtAfterOrderByAppliedAtDesc(companyId, startOfDay).stream()
-                .limit(3)
+        return applicationRepository.findByJobCompanyIdOrderByAppliedAtDesc(companyId).stream()
+                .limit(5)
                 .map(this::mapToDto)
                 .collect(java.util.stream.Collectors.toList());
     }

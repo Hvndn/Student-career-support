@@ -3,7 +3,7 @@ import CompanySidebar from '../../components/company/CompanySidebar';
 import CompanyNavbar from '../../components/company/CompanyNavbar';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
-import { companyApi } from '../../api';
+import { companyApi, jobApi } from '../../api';
 import { getImageUrl } from '../../utils/urlUtils';
 import '../../assets/css/company/CompanyProfile.css';
 
@@ -41,6 +41,8 @@ const CompanyProfile = () => {
         activityImages: []
     });
     const [selectedActivityFiles, setSelectedActivityFiles] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [isEditingActivities, setIsEditingActivities] = useState(false);
     const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
     const showToast = (message, type = 'success') => {
@@ -48,7 +50,21 @@ const CompanyProfile = () => {
         setTimeout(() => setToast({ show: false, message: '', type: 'success' }), 4000);
     };
 
-    useEffect(() => { fetchProfile(); }, []);
+    useEffect(() => { 
+        fetchProfile();
+        fetchCategories();
+    }, []);
+
+    const fetchCategories = async () => {
+        try {
+            const res = await jobApi.getCategories();
+            if (res.data.status === 'success') {
+                setCategories(res.data.data);
+            }
+        } catch (err) {
+            console.error('Error fetching categories:', err);
+        }
+    };
 
     const fetchProfile = async () => {
         try {
@@ -121,6 +137,20 @@ const CompanyProfile = () => {
         }
     };
 
+    const handleRemoveActivityImage = (index) => {
+        setFormData(prev => {
+            const newImages = [...prev.activityImages];
+            newImages.splice(index, 1);
+            return { ...prev, activityImages: newImages };
+        });
+        
+        // Nếu là file mới chọn, cũng phải xóa khỏi selectedActivityFiles
+        // Tuy nhiên index trong activityImages bao gồm cả ảnh cũ và mới
+        // Ta cần tìm xem index đó ứng với file mới nào nếu có
+        // Đơn giản hơn: khi submit ta sẽ so sánh activityImages (URL/DataURL) để biết cái nào giữ lại
+        // Nhưng backend hiện tại chỉ nhận file mới.
+        // Tạm thời xóa trên UI:
+    };
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
@@ -209,7 +239,7 @@ const CompanyProfile = () => {
                                             <circle cx="12" cy="13" r="4"/>
                                         </svg>
                                     </div>
-                                    <input type="file" ref={fileInputRef} style={{ display: 'none' }} accept="image/*" onChange={handleFileChange} />
+                                    <input type="file" ref={fileInputRef} style={{ display: 'none' }} accept="image/*,.gif,.bmp,.svg,.tiff,.jfif,.ico" onChange={handleFileChange} />
                                 </div>
 
                                 <h2 className="cp-company-name">{profile?.name || formData.name || 'Tên công ty'}</h2>
@@ -279,10 +309,21 @@ const CompanyProfile = () => {
                             <div className="cp-activity-section">
                                 <div className="cp-activity-header">
                                     <span>Hoạt động công ty</span>
-                                    <button className="cp-activity-edit" title="Chỉnh sửa ảnh">
+                                    <button 
+                                        type="button"
+                                        className={`cp-activity-edit ${isEditingActivities ? 'active' : ''}`} 
+                                        onClick={() => setIsEditingActivities(!isEditingActivities)}
+                                        title={isEditingActivities ? "Xong" : "Chỉnh sửa ảnh"}
+                                    >
                                         <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2" fill="none">
-                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                            {isEditingActivities ? (
+                                                <path d="M20 6L9 17L4 12" />
+                                            ) : (
+                                                <>
+                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                                </>
+                                            )}
                                         </svg>
                                     </button>
                                 </div>
@@ -291,6 +332,18 @@ const CompanyProfile = () => {
                                          formData.activityImages.map((img, idx) => (
                                              <div key={idx} className="cp-activity-photo">
                                                  <img src={getImageUrl(img)} alt={`Hoạt động ${idx + 1}`} className="cp-activity-img-obj" />
+                                                 {isEditingActivities && (
+                                                     <button 
+                                                        type="button"
+                                                        className="cp-photo-remove" 
+                                                        onClick={() => handleRemoveActivityImage(idx)}
+                                                     >
+                                                         <svg viewBox="0 0 24 24" width="12" height="12" stroke="white" strokeWidth="3" fill="none">
+                                                             <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                             <line x1="6" y1="6" x2="18" y2="18"></line>
+                                                         </svg>
+                                                     </button>
+                                                 )}
                                              </div>
                                          ))
                                      ) : (
@@ -307,7 +360,7 @@ const CompanyProfile = () => {
                                          ))
                                      )}
                                      <label className="cp-activity-add-card" title="Thêm ảnh hoạt động">
-                                         <input type="file" multiple accept="image/*" hidden onChange={handleActivityFileChange} />
+                                         <input type="file" multiple accept="image/*,.gif,.bmp,.svg,.tiff,.jfif,.ico" hidden onChange={handleActivityFileChange} />
                                          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none">
                                              <line x1="12" y1="5" x2="12" y2="19"></line>
                                              <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -340,7 +393,14 @@ const CompanyProfile = () => {
                                          {/* Ngành nghề */}
                                          <div className="cp-field-group">
                                              <label>Lĩnh vực <span className="cp-required">*</span></label>
-                                             <input type="text" name="industry" value={formData.industry} onChange={handleChange} placeholder="Kiến trúc, Xây dựng..." />
+                                             <select name="industry" value={formData.industry} onChange={handleChange} className="cp-select">
+                                                 <option value="">Chọn lĩnh vực...</option>
+                                                 {categories.map(cat => (
+                                                     <option key={cat.id || cat.name} value={cat.name}>
+                                                         {cat.name}
+                                                     </option>
+                                                 ))}
+                                             </select>
                                          </div>
  
                                          {/* Website */}

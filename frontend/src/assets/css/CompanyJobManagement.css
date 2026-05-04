@@ -425,8 +425,8 @@ input:disabled + .cjm-slider {
   align-items: center;
   justify-content: center;
   background: white;
-  border: 1px solid #6d28d9;
-  color: #6d28d9;
+  border: 1px solid #2563eb;
+  color: #2563eb;
   padding: 0.4rem 1.25rem;
   border-radius: 6px;
   font-weight: 700;
@@ -796,20 +796,25 @@ input:disabled + .cjm-slider {
 }
 
 /* ─── NEW MODERN TABLE STYLES (Red Theme) ─── */
-.cjm-post-btn-maroon {
-  background-color: #8b1014;
+.cjm-post-btn-blue {
+  background: linear-gradient(135deg, #1e40af, #2563eb);
   color: white;
   padding: 0.6rem 1.25rem;
-  border-radius: 6px;
+  border-radius: 12px;
   border: none;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   cursor: pointer;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
   transition: all 0.2s;
 }
 
-.cjm-post-btn-maroon:hover {
-  background-color: #a01016;
+.cjm-post-btn-blue:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
 }
 
 .cjm-search-box {
@@ -828,7 +833,7 @@ input:disabled + .cjm-slider {
 }
 
 .cjm-search-box input:focus {
-  border-color: #8b1014;
+  border-color: #2563eb;
 }
 
 .cjm-search-box .search-icon {
@@ -932,11 +937,11 @@ input:disabled + .cjm-slider {
 }
 
 .modern-applicants {
-  color: #e11d48; /* Red for applicants as in screenshot */
+  color: #2563eb; /* Blue for applicants */
 }
 
 .modern-applicants i {
-  color: #e11d48;
+  color: #2563eb;
 }
 
 .modern-status {

@@ -7,12 +7,12 @@ import '../../assets/css/company/CompanyDashboard.css';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Dot
 } from 'recharts';
-import { FiUsers, FiCalendar, FiBriefcase } from 'react-icons/fi';
+import { FiUsers, FiCalendar, FiBriefcase, FiPlusCircle } from 'react-icons/fi';
 
 const CompanyDashboard = () => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [timeRange, setTimeRange] = useState(7);
+    const [timeRange, setTimeRange] = useState(30);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -106,8 +106,8 @@ const CompanyDashboard = () => {
                             <section className="db-widget trend-widget intro-y delay-2">
                                 <div className="widget-header">
                                     <div className="header-left">
-                                        <h4>Xu hướng tăng trưởng truy cập</h4>
-                                        <p className="widget-subtitle">Lượt đăng nhập theo ngày</p>
+                                        <h4>Xu hướng tuyển dụng</h4>
+                                        <p className="widget-subtitle">Số lượng hồ sơ ứng tuyển theo thời gian</p>
                                     </div>
                                     <div className="range-pill-selector">
                                         <button 
@@ -150,7 +150,7 @@ const CompanyDashboard = () => {
                                             <Tooltip 
                                                 contentStyle={{ borderRadius: '12px', border: '1px solid #f1f5f9', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', fontSize: '13px' }}
                                                 labelStyle={{ color: '#64748b', fontWeight: 600 }}
-                                                formatter={(value) => [value, 'Lượt ứng tuyển']}
+                                                formatter={(value) => [value, 'Hồ sơ ứng tuyển']}
                                             />
                                             <Legend 
                                                 verticalAlign="top"
@@ -158,7 +158,7 @@ const CompanyDashboard = () => {
                                                 iconType="circle"
                                                 iconSize={10}
                                                 wrapperStyle={{ paddingBottom: '20px', fontSize: '13px', color: '#1e293b', fontWeight: 500 }}
-                                                formatter={() => 'Lượt truy cập'}
+                                                formatter={() => 'Hồ sơ ứng tuyển'}
                                             />
                                             <Line 
                                                 type="monotone"
@@ -205,6 +205,13 @@ const CompanyDashboard = () => {
                                 </div>
                                 <div className="widget-body">
                                     <div className="db-action-list">
+                                        <Link to="/company/management" className="db-action-card">
+                                            <div className="db-action-icon blue"><FiPlusCircle size={20} /></div>
+                                            <div className="db-action-info">
+                                                <h6>Đăng tin mới</h6>
+                                                <p>Tạo bản tin tuyển dụng</p>
+                                            </div>
+                                        </Link>
                                         <Link to="/company/management/candidates" className="db-action-card">
                                             <div className="db-action-icon orange"><FiUsers size={20} /></div>
                                             <div className="db-action-info">
@@ -212,7 +219,7 @@ const CompanyDashboard = () => {
                                                 <p>Quản lý hồ sơ ứng viên</p>
                                             </div>
                                         </Link>
-                                        <Link to="#" className="db-action-card">
+                                        <Link to="/company/booking" className="db-action-card">
                                             <div className="db-action-icon green"><FiCalendar size={20} /></div>
                                             <div className="db-action-info">
                                                 <h6>Lịch hẹn</h6>

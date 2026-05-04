@@ -204,8 +204,16 @@
   flex-shrink: 0 !important;
 }
 
-.db-status-pill.open { background: #dcfce7 !important; color: #166534 !important; }
-.db-status-pill.closed { background: #fee2e2 !important; color: #991b1b !important; }
+.db-status-pill.open { 
+  background: #f0fdf4 !important; 
+  color: #166534 !important; 
+  border: 1px solid #bbf7d0 !important;
+}
+.db-status-pill.closed { 
+  background: #fef2f2 !important; 
+  color: #991b1b !important; 
+  border: 1px solid #fecaca !important;
+}
 
 /* QUICK ACTIONS */
 .db-action-list {
@@ -245,6 +253,7 @@
 .db-action-icon.orange { background: #fff7ed !important; color: #f97316 !important; }
 .db-action-icon.green { background: #f0fdf4 !important; color: #16a34a !important; }
 .db-action-icon.purple { background: #faf5ff !important; color: #a855f7 !important; }
+.db-action-icon.blue { background: #eff6ff !important; color: #2563eb !important; }
 
 .db-action-info {
   display: flex !important;
