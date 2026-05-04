@@ -1,45 +1,63 @@
-/* --- CANDIDATE DETAIL MODAL (PREMIUM NAVY) --- */
+/* ══════════════════════════════════════════════════
+   CandidateDetailModal.css — Premium Applicant Detail
+   ══════════════════════════════════════════════════ */
 
+:root {
+  --cdm-bg: #f3f4f6;
+  --cdm-primary: #4f46e5;
+  --cdm-primary-dark: #3730a3;
+  --cdm-primary-light: #e0e7ff;
+  --cdm-accent: #7c3aed;
+  --cdm-text-main: #111827;
+  --cdm-text-muted: #6b7280;
+  --cdm-border: #e5e7eb;
+  --cdm-card-bg: #ffffff;
+  --cdm-radius-sm: 8px;
+  --cdm-radius-md: 16px;
+  --cdm-radius-lg: 24px;
+  --cdm-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  --cdm-card-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+/* ── OVERLAY & MODAL ── */
 .cdm-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(15, 23, 42, 0.75);
+    inset: 0;
+    background: rgba(17, 24, 39, 0.75);
     backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
-    animation: cdmFadeIn 0.3s ease;
+    z-index: 1100;
+    padding: 20px;
+    animation: cdm-fade 0.3s ease;
+}
+
+@keyframes cdm-fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 
 .cdm-container {
-    width: 90%;
-    max-width: 1000px;
-    max-height: 90vh;
-    background: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    background: var(--cdm-bg);
+    border-radius: var(--cdm-radius-lg);
+    width: 100%;
+    max-width: 1100px;
+    max-height: 92vh;
     display: flex;
     flex-direction: column;
+    box-shadow: var(--cdm-shadow);
+    animation: cdm-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     overflow: hidden;
     position: relative;
-    animation: cdmSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes cdmFadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+@keyframes cdm-up {
+    from { transform: translateY(40px) scale(0.98); opacity: 0; }
+    to   { transform: translateY(0) scale(1);   opacity: 1; }
 }
 
-@keyframes cdmSlideUp {
-    from { transform: translateY(40px) scale(0.95); opacity: 0; }
-    to { transform: translateY(0) scale(1); opacity: 1; }
-}
-
-/* --- HEADER --- */
+/* ── HEADER ── */
 .cdm-header {
     padding: 30px 40px;
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
@@ -47,19 +65,21 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 4px solid var(--cdm-primary);
 }
 
 .cdm-header-left {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 1.5rem;
 }
 
 .cdm-avatar-wrap {
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
     border-radius: 50%;
-    border: 4px solid rgba(255, 255, 255, 0.1);
+    border: 4px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     overflow: hidden;
     background: #334155;
     flex-shrink: 0;
@@ -77,260 +97,365 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 32px;
-    font-weight: bold;
-    color: #94a3b8;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: white;
+    background: linear-gradient(135deg, var(--cdm-primary), var(--cdm-accent));
+}
+
+.cdm-header-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .cdm-name {
     margin: 0;
-    font-size: 24px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
+    font-size: 1.75rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
 }
 
 .cdm-meta-row {
-    margin-top: 8px;
     display: flex;
     align-items: center;
-    gap: 12px;
-}
-
-.cdm-status-badge {
-    padding: 4px 12px;
-    border-radius: 100px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    background: rgba(255, 255, 255, 0.15);
+    gap: 1rem;
 }
 
 .cdm-applied-date {
-    font-size: 14px;
-    color: #94a3b8;
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
+
+/* Badges Header */
+.cdm-status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.cdm-status-badge.status-applied { background: #e0f2fe; color: #0369a1; }
+.cdm-status-badge.status-interviewing { background: #f5f3ff; color: #6d28d2; }
+.cdm-status-badge.status-review { background: #fef9c3; color: #854d0e; }
+.cdm-status-badge.status-accepted { background: #ecfdf5; color: #047857; }
+.cdm-status-badge.status-rejected { background: #fef2f2; color: #b91c1c; }
+
 
 .cdm-btn-view-profile {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: #3b82f6;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.2);
     color: white;
-    border: none;
     padding: 10px 20px;
-    border-radius: 10px;
-    font-weight: 600;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.9rem;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
 }
 
 .cdm-btn-view-profile:hover {
-    background: #2563eb;
+    background: white;
+    color: var(--cdm-primary);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 4px 15px rgba(255,255,255,0.2);
 }
 
-/* --- BODY --- */
+/* ── BODY ── */
 .cdm-body {
-    padding: 40px;
+    padding: 2rem 2.5rem;
     display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: 40px;
+    grid-template-columns: 360px 1fr;
+    gap: 2rem;
     overflow-y: auto;
     flex: 1;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+.cdm-body::-webkit-scrollbar { width: 8px; }
+.cdm-body::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+
+.cdm-col-left, .cdm-col-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
+/* ── CARDS ── */
 .cdm-section {
-    margin-bottom: 30px;
+    background: var(--cdm-card-bg);
+    border-radius: var(--cdm-radius-md);
+    padding: 1.5rem;
+    box-shadow: var(--cdm-card-shadow);
+    border: 1px solid rgba(0,0,0,0.02);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cdm-section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.06);
 }
 
 .cdm-section-title {
-    font-size: 14px;
-    font-weight: 700;
-    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--cdm-text-muted);
     text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 15px;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--cdm-border);
+    padding-bottom: 0.75rem;
 }
 
+/* Information List */
 .cdm-info-list {
     list-style: none;
     padding: 0;
     margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .cdm-info-list li {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
-    margin-bottom: 12px;
-    color: #1e293b;
-    font-size: 15px;
+    color: var(--cdm-text-main);
+    font-size: 0.95rem;
+    font-weight: 500;
 }
 
 .cdm-info-icon {
-    font-size: 18px;
-    width: 24px;
-    text-align: center;
-}
-
-/* Tags */
-.cdm-tag-pills {
+    font-size: 20px;
+    color: var(--cdm-primary);
+    background: var(--cdm-primary-light);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.cdm-tag-pill {
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 500;
-    background: #f1f5f9;
-    color: #475569;
-    border: 1px solid #e2e8f0;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.cdm-tag-pill:hover {
-    border-color: #cbd5e1;
-    background: #e2e8f0;
-}
-
-.cdm-tag-pill.active {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 /* Attachment */
 .cdm-attachment {
     display: flex;
     align-items: center;
-    gap: 15px;
-    padding: 15px;
+    justify-content: space-between;
+    padding: 1rem;
     background: #f8fafc;
-    border: 1px dashed #cbd5e1;
-    border-radius: 12px;
+    border: 1px solid var(--cdm-border);
+    border-radius: var(--cdm-radius-sm);
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .cdm-attachment:hover {
-    background: #f1f5f9;
-    border-color: #3b82f6;
+    border-color: var(--cdm-primary);
+    background: white;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.08);
+}
+
+.cdm-attachment-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .cdm-attachment-icon {
     font-size: 24px;
+    color: #ef4444; /* Red for PDF */
 }
 
 .cdm-attachment-info {
     display: flex;
     flex-direction: column;
+    gap: 2px;
 }
 
 .cdm-attachment-name {
-    font-weight: 600;
-    font-size: 14px;
-    color: #1e293b;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--cdm-text-main);
 }
 
 .cdm-attachment-action {
-    font-size: 12px;
-    color: #3b82f6;
-    font-weight: 600;
+    color: var(--cdm-primary);
+    background: var(--cdm-primary-light);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
 }
 
-/* Right Column */
+.cdm-attachment:hover .cdm-attachment-action {
+    background: var(--cdm-primary);
+    color: white;
+    transform: scale(1.05);
+}
+
+/* Cover Letter */
 .cdm-cover-letter {
-    padding: 20px;
+    padding: 1.25rem;
     background: #f8fafc;
-    border-radius: 12px;
-    border-left: 4px solid #e2e8f0;
-    line-height: 1.6;
-    color: #334155;
-    font-style: italic;
+    border-radius: var(--cdm-radius-sm);
+    border-left: 4px solid var(--cdm-primary);
+    line-height: 1.7;
+    color: var(--cdm-text-main);
+    font-size: 0.95rem;
 }
 
+.cdm-placeholder {
+    color: var(--cdm-text-muted);
+    font-style: italic;
+    margin: 0;
+}
+
+/* Job Position */
 .cdm-job-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: #0f172a;
-    margin-bottom: 10px;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--cdm-text-main);
+    margin-bottom: 0.75rem;
 }
 
 .cdm-job-tags {
     display: flex;
-    gap: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .cdm-job-tag {
-    background: #eff6ff;
-    color: #1d4ed8;
-    padding: 4px 10px;
+    background: #f1f5f9;
+    color: var(--cdm-text-main);
+    padding: 4px 12px;
     border-radius: 6px;
-    font-size: 12px;
+    font-size: 0.8rem;
     font-weight: 600;
+    border: 1px solid var(--cdm-border);
 }
 
-/* Status Radios */
+/* --- UPDATE STATUS (SEGMENTED CONTROL STYLE) --- */
+.cdm-status-update-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid var(--cdm-border);
+    padding-bottom: 0.75rem;
+}
+
+.cdm-status-update-header .cdm-section-title {
+    margin-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.cdm-current-badge {
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+}
+
 .cdm-status-radios {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 12px;
 }
 
 .cdm-radio-label {
-    padding: 12px 15px;
-    border: 2px solid #e2e8f0;
-    border-radius: 10px;
+    position: relative;
+    padding: 12px 10px;
+    border: 2px solid var(--cdm-border);
+    border-radius: 12px;
     cursor: pointer;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
-    font-weight: 600;
-    font-size: 14px;
-    transition: all 0.2s;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--cdm-text-muted);
+    transition: all 0.2s ease;
+    background: #fafafa;
+    text-align: center;
 }
 
 .cdm-radio-label input {
-    margin: 0;
-    width: 16px;
-    height: 16px;
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
 }
 
 .cdm-radio-label:hover {
     border-color: #cbd5e1;
-    background: #f8fafc;
-}
-
-.cdm-radio-label.interview:has(input:checked) { border-color: #7c3aed; background: #f5f3ff; color: #7c3aed; }
-.cdm-radio-label.accepted:has(input:checked) { border-color: #10b981; background: #ecfdf5; color: #10b981; }
-.cdm-radio-label.rejected:has(input:checked) { border-color: #ef4444; background: #fef2f2; color: #ef4444; }
-
-/* --- FOOTER --- */
-.cdm-footer {
-    padding: 20px 40px;
-    border-top: 1px solid #f1f5f9;
-    display: flex;
-    justify-content: flex-end;
-    background: #f8fafc;
-}
-
-.cdm-btn-close {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    padding: 10px 25px;
-    border-radius: 10px;
-    font-weight: 600;
-    color: #64748b;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.cdm-btn-close:hover {
     background: #f1f5f9;
-    color: #1e293b;
+    color: var(--cdm-text-main);
+}
+
+/* Selected States */
+.cdm-radio-label.review:has(input:checked) {
+    border-color: #f59e0b;
+    background: #fef3c7;
+    color: #b45309;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+}
+
+.cdm-radio-label.interview:has(input:checked) {
+    border-color: var(--cdm-primary);
+    background: var(--cdm-primary-light);
+    color: var(--cdm-primary-dark);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+}
+
+.cdm-radio-label.rejected:has(input:checked) {
+    border-color: #ef4444;
+    background: #fef2f2;
+    color: #b91c1c;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+}
+
+/* Thêm icon mờ phía trên chữ trong label */
+.cdm-radio-label::before {
+    font-family: 'Material Symbols Outlined';
+    font-size: 24px;
+    opacity: 0.6;
+}
+
+.cdm-radio-label.review::before { content: 'visibility'; }
+.cdm-radio-label.interview::before { content: 'event_available'; }
+.cdm-radio-label.rejected::before { content: 'cancel'; }
+
+.cdm-radio-label:has(input:checked)::before {
+    opacity: 1;
 }
 
 /* Loading State */
@@ -340,26 +465,64 @@
     align-items: center;
     justify-content: center;
     padding: 100px;
-    color: #64748b;
+    color: var(--cdm-text-muted);
 }
 
 .cdm-spinner {
     width: 40px;
     height: 40px;
-    border: 4px solid #f1f5f9;
-    border-top: 4px solid #3b82f6;
+    border: 4px solid var(--cdm-border);
+    border-top: 4px solid var(--cdm-primary);
     border-radius: 50%;
-    animation: spin 1s linear infinite;
+    animation: cdm-spin 1s linear infinite;
     margin-bottom: 20px;
 }
 
-@keyframes spin {
+@keyframes cdm-spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
-/* Badges */
-.status-applied { background: #e0f2fe; color: #0369a1; }
-.status-interviewing { background: #f5f3ff; color: #6d28d2; }
-.status-accepted { background: #ecfdf5; color: #047857; }
-.status-rejected { background: #fef2f2; color: #b91c1c; }
+/* --- FOOTER --- */
+.cdm-footer {
+    padding: 1.25rem 2.5rem;
+    border-top: 1px solid var(--cdm-border);
+    display: flex;
+    justify-content: flex-end;
+    background: #f8fafc;
+}
+
+.cdm-btn-close {
+    background: #ffffff;
+    border: 1px solid var(--cdm-border);
+    padding: 10px 30px;
+    border-radius: 10px;
+    font-weight: 700;
+    color: var(--cdm-text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cdm-btn-close:hover {
+    background: #f1f5f9;
+    color: var(--cdm-text-main);
+    border-color: #cbd5e1;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .cdm-body {
+        grid-template-columns: 1fr;
+        padding: 1.5rem;
+    }
+    .cdm-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+        padding: 20px;
+    }
+    .cdm-btn-view-profile {
+        width: 100%;
+        justify-content: center;
+    }
+}
