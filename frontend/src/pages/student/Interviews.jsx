@@ -62,16 +62,10 @@ const Interviews = () => {
         let matchesStatus = false;
         if (statusFilter === 'all') {
             matchesStatus = true;
-        } else if (statusFilter === 'scheduled') {
-            matchesStatus = status === 'scheduled';
-        } else if (statusFilter === 'confirmed') {
-            matchesStatus = status === 'confirmed';
-        } else if (statusFilter === 'pending') {
-            matchesStatus = status === 'pending';
-        } else if (statusFilter === 'completed') {
-            matchesStatus = status === 'completed';
-        } else if (statusFilter === 'cancelled') {
-            matchesStatus = status === 'cancelled';
+        } else {
+            // Mapping UI filter values to data status values if necessary
+            // In our case, the values 'scheduled', 'confirmed', 'pending', etc. match the data
+            matchesStatus = status === statusFilter;
         }
 
         return matchesSearch && matchesStatus;
