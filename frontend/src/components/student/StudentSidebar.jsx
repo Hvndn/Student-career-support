@@ -89,7 +89,7 @@ const StudentSidebar = ({ isOpen, onClose }) => {
           <div className="ss-logo-box">
              <img src="/favicon.svg" alt="DAU" className="ss-logo-img" />
           </div>
-          <span className="ss-brand-name">DAU Connect</span>
+          <span className="ss-brand-name">FiveCore</span>
         </Link>
         <button className="ss-mobile-close" onClick={onClose}>
           <span className="material-symbols-outlined">close</span>

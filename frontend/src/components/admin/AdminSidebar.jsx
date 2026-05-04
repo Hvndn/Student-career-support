@@ -4,12 +4,20 @@ import '../../assets/css/admin/AdminSidebar.css';
 
 const AdminSidebar = () => {
     const location = useLocation();
-    
+
     const [openMenus, setOpenMenus] = useState({
-        doanhNghiep: false,
-        coVan: false,
-        website: false
+        doanhNghiep: location.pathname.startsWith('/admin/appointments') || location.pathname.startsWith('/admin/companies'),
+        website: location.pathname.startsWith('/admin/website')
     });
+
+    React.useEffect(() => {
+        if (location.pathname.startsWith('/admin/appointments') || location.pathname.startsWith('/admin/companies')) {
+            setOpenMenus(prev => ({ ...prev, doanhNghiep: true }));
+        }
+        if (location.pathname.startsWith('/admin/website')) {
+            setOpenMenus(prev => ({ ...prev, website: true }));
+        }
+    }, [location.pathname]);
 
     const toggleMenu = (menu) => {
         setOpenMenus(prev => ({
@@ -28,7 +36,7 @@ const AdminSidebar = () => {
                         </div>
                     </div>
                     <div className="admin-logo-text">
-                        <span className="logo-main">DAU Connect</span>
+                        <span className="logo-main">FiveCore</span>
                     </div>
                 </div>
             </div>
@@ -38,7 +46,7 @@ const AdminSidebar = () => {
                     <span className="material-symbols-outlined">dashboard</span>
                     <span className="item-label">Tổng quan</span>
                 </Link>
-                
+
                 <Link to="/admin/students" className={`admin-nav-item ${location.pathname === '/admin/students' ? 'active' : ''}`}>
                     <span className="material-symbols-outlined">group</span>
                     <span className="item-label">Sinh viên</span>
@@ -63,23 +71,6 @@ const AdminSidebar = () => {
                 </div>
 
 
-                <div className={`nav-group ${openMenus.coVan ? 'open' : ''}`}>
-                    <div className="admin-nav-item parent-item" onClick={() => toggleMenu('coVan')}>
-                        <span className="material-symbols-outlined">explore</span>
-                        <span className="item-label">Cố vấn</span>
-                        <span className="material-symbols-outlined chevron">expand_more</span>
-                    </div>
-                    <div className="nav-submenu">
-                        <Link to="/admin/mentors" className={`admin-nav-item child-item ${location.pathname === '/admin/mentors' ? 'active' : ''}`}>
-                            <span className="material-symbols-outlined">group</span>
-                            <span className="item-label">Danh sách cố vấn</span>
-                        </Link>
-                        <Link to="/admin/mentor-students" className={`admin-nav-item child-item ${location.pathname === '/admin/mentor-students' ? 'active' : ''}`}>
-                            <span className="material-symbols-outlined">how_to_reg</span>
-                            <span className="item-label">Sinh viên đăng ký</span>
-                        </Link>
-                    </div>
-                </div>
 
                 <Link to="/admin/cv-templates" className={`admin-nav-item ${location.pathname === '/admin/cv-templates' ? 'active' : ''}`}>
                     <span className="material-symbols-outlined">grid_view</span>
@@ -110,10 +101,6 @@ const AdminSidebar = () => {
                         <Link to="/admin/website/about" className={`admin-nav-item child-item ${location.pathname === '/admin/website/about' ? 'active' : ''}`}>
                             <span className="material-symbols-outlined">web_asset</span>
                             <span className="item-label">Giới thiệu chung</span>
-                        </Link>
-                        <Link to="/admin/website/news" className={`admin-nav-item child-item ${location.pathname === '/admin/website/news' ? 'active' : ''}`}>
-                            <span className="material-symbols-outlined">article</span>
-                            <span className="item-label">Quản lý tin tức</span>
                         </Link>
                         <Link to="/admin/website/testimonials" className={`admin-nav-item child-item ${location.pathname === '/admin/website/testimonials' ? 'active' : ''}`}>
                             <span className="material-symbols-outlined">format_quote</span>

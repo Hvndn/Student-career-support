@@ -50,9 +50,9 @@ const JobApproval = () => {
             <AdminSidebar />
             <div className="admin-main-content">
                 <AdminNavbar title="Kiểm duyệt việc làm" />
-                <main className="admin-body">
-                    <div className="page-header" style={{ marginBottom: '2.5rem', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                        <h1 style={{ fontSize: '2rem', fontWeight: '700', color: '#111827', margin: 0 }}>Kiểm duyệt việc làm</h1>
+                <main className="admin-management-container">
+                    <div className="management-header">
+                        <h2 className="management-title">Kiểm duyệt việc làm</h2>
                         <p style={{ color: '#4b5563', fontSize: '1rem', margin: '0.5rem 0 0', maxWidth: '600px', lineHeight: 1.5 }}>
                             Xem xét và phê duyệt các tin đăng tuyển dụng mới từ doanh nghiệp để đảm bảo chất lượng nội dung.
                         </p>

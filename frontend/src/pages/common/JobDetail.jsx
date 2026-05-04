@@ -281,13 +281,24 @@ const JobDetail = () => {
 
                     {/* Apply Action */}
                     <div className="jd-action-group">
-                        <button 
-                            className={`jd-btn-apply-full ${job.isApplied ? '' : 'active'}`}
-                            onClick={!job.isApplied ? handleApplyClick : null}
-                            disabled={job.isApplied}
-                        >
-                            {job.isApplied ? 'Đã ứng tuyển' : 'Ứng tuyển ngay'}
-                        </button>
+                        {(!user || user.role === 'ROLE_STUDENT') ? (
+                            <button 
+                                className={`jd-btn-apply-full ${job.isApplied ? '' : 'active'}`}
+                                onClick={!job.isApplied ? handleApplyClick : null}
+                                disabled={job.isApplied}
+                            >
+                                {job.isApplied ? 'Đã ứng tuyển' : 'Ứng tuyển ngay'}
+                            </button>
+                        ) : (
+                            <button 
+                                className="jd-btn-apply-full"
+                                style={{ backgroundColor: '#94a3b8', cursor: 'not-allowed' }}
+                                disabled
+                                title="Chỉ sinh viên mới có thể ứng tuyển"
+                            >
+                                Dành cho ứng viên
+                            </button>
+                        )}
 
                         <button 
                             className="jd-btn-chat-full"
@@ -304,12 +315,12 @@ const JobDetail = () => {
                             <div className="jd-ai-icon-box">
                                 <span className="material-symbols-outlined">smart_toy</span>
                             </div>
-                            <span className="jd-ai-title">AI DAU Connect - Phân tích hồ sơ</span>
+                            <span className="jd-ai-title">AI FiveCore - Phân tích hồ sơ</span>
                         </div>
 
                         {aiState === 'idle' && (
                             <>
-                                <p className="jd-ai-intro">Hãy để AI DAU Connect phân tích mức độ phù hợp giữa Portfolio của bạn và yêu cầu của công việc này.</p>
+                                <p className="jd-ai-intro">Hãy để AI FiveCore phân tích mức độ phù hợp giữa Portfolio của bạn và yêu cầu của công việc này.</p>
                                 <button className="jd-btn-ai" onClick={handleAnalyze}>Phân tích ngay</button>
                             </>
                         )}

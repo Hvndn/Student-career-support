@@ -67,7 +67,7 @@ const Login = () => {
             {/* Left Panel */}
             <div className="auth-left">
                 <Link to="/" style={{ textDecoration: 'none' }}>
-                    <h1 className="brand-title">Five core</h1>
+                    <h1 className="brand-title">FiveCore</h1>
                 </Link>
                 <p className="brand-desc">
                     Nơi tri thức gặp gỡ cơ hội. Khởi đầu hành trình nghề nghiệp của bạn cùng mạng lưới chuyên gia hàng đầu.
@@ -100,7 +100,7 @@ const Login = () => {
                 </div>
 
                 <div className="copyright">
-                    &copy; 2025 Fivecore. Nền tảng kết nối tri thức và sự nghiệp.
+                    &copy; 2025 FiveCore. Nền tảng kết nối tri thức và sự nghiệp.
                 </div>
             </div>
 

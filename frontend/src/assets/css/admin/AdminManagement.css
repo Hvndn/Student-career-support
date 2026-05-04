@@ -1,9 +1,10 @@
 /* Admin Management Pages (Students, Companies) */
 
 .admin-management-container {
-    padding: 2rem;
+    padding: 2rem 20px;
     background-color: #f8fafc;
     min-height: calc(100vh - 80px);
+    max-width: 100%;
 }
 
 .management-header {

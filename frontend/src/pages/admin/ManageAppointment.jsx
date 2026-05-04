@@ -49,18 +49,18 @@ const ManageAppointment = () => {
 
     const filteredAppointments = appointments.filter(apt => {
         // Lọc theo trạng thái
-        const matchesStatus = statusFilter === 'all' || 
+        const matchesStatus = statusFilter === 'all' ||
             (statusFilter === 'confirmed' && (apt.status === 'confirmed' || !apt.status)) ||
             (statusFilter === 'pending' && apt.status === 'pending');
-            
+
         // Lọc theo từ khóa (Công ty hoặc Sinh viên)
         const searchLower = searchTerm.toLowerCase();
-        const matchesSearch = searchTerm === '' || 
+        const matchesSearch = searchTerm === '' ||
             (apt.companyName && apt.companyName.toLowerCase().includes(searchLower)) ||
             (apt.studentName && apt.studentName.toLowerCase().includes(searchLower)) ||
             (apt.studentEmail && apt.studentEmail.toLowerCase().includes(searchLower)) ||
             (apt.studentIdStr && apt.studentIdStr.toLowerCase().includes(searchLower));
-            
+
         return matchesStatus && matchesSearch;
     });
 
@@ -71,22 +71,16 @@ const ManageAppointment = () => {
                 <AdminNavbar title="Quản lý lịch hẹn" />
                 <main className="admin-management-container">
                     <div className="management-header">
-                        <div className="breadcrumb-dau">
-                            DAU Connect <span className="separator">›</span> Quản lý lịch hẹn
-                        </div>
                         <h2 className="management-title">Quản lý Lịch hẹn</h2>
                     </div>
 
                     <div className="management-controls">
                         <div className="controls-left">
-                            <button className="btn-add-main" style={{ backgroundColor: '#800000' }}>
-                                <span className="material-symbols-outlined">menu</span>
-                                QL Đơn vị
-                            </button>
+                            {/* Nút QL Đơn vị đã được gỡ bỏ theo yêu cầu */}
                         </div>
                         <div className="controls-right">
                             <div className="filter-group">
-                                <select 
+                                <select
                                     className="management-select"
                                     value={statusFilter}
                                     onChange={(e) => setStatusFilter(e.target.value)}
@@ -97,10 +91,10 @@ const ManageAppointment = () => {
                                 </select>
                             </div>
                             <div className="search-wrapper-premium">
-                                <input 
-                                    type="text" 
-                                    className="search-input-premium" 
-                                    placeholder="Tìm doanh nghiệp, sinh viên..." 
+                                <input
+                                    type="text"
+                                    className="search-input-premium"
+                                    placeholder="Tìm doanh nghiệp, sinh viên..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
@@ -121,7 +115,7 @@ const ManageAppointment = () => {
 
                         {loading ? (
                             <div style={{ textAlign: 'center', padding: '3rem' }}>
-                                <div className="loader" style={{margin: '0 auto'}}></div>
+                                <div className="loader" style={{ margin: '0 auto' }}></div>
                             </div>
                         ) : filteredAppointments.length > 0 ? (
                             filteredAppointments.map((apt) => (
@@ -129,7 +123,7 @@ const ManageAppointment = () => {
                                     <div className="info-cell" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                         <div className="circle-avatar" style={{ backgroundColor: '#f1f5f9', color: '#64748b', flexShrink: 0 }}>
                                             {apt.companyLogo ? (
-                                                <img src={apt.companyLogo} alt="Logo" style={{width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover'}} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(apt.companyName || 'C')}&background=e2e8f0&color=64748b`; }} />
+                                                <img src={apt.companyLogo} alt="Logo" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(apt.companyName || 'C')}&background=e2e8f0&color=64748b`; }} />
                                             ) : (
                                                 <span className="material-symbols-outlined">business</span>
                                             )}
@@ -142,7 +136,7 @@ const ManageAppointment = () => {
                                     <div className="info-cell" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                         <div className="circle-avatar" style={{ backgroundColor: '#e0f2fe', color: '#0284c7', flexShrink: 0, width: '32px', height: '32px' }}>
                                             {apt.studentAvatar ? (
-                                                <img src={apt.studentAvatar} alt="Avatar" style={{width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover'}} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(apt.studentName || 'S')}&background=e0f2fe&color=0284c7`; }} />
+                                                <img src={apt.studentAvatar} alt="Avatar" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(apt.studentName || 'S')}&background=e0f2fe&color=0284c7`; }} />
                                             ) : (
                                                 <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>person</span>
                                             )}
@@ -208,7 +202,7 @@ const ManageAppointment = () => {
                             <div className="detail-card" style={{ marginBottom: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
                                 <div className="circle-avatar" style={{ width: '60px', height: '60px', backgroundColor: '#f1f5f9', color: '#64748b' }}>
                                     {selectedApt.companyLogo ? (
-                                        <img src={selectedApt.companyLogo} alt="Logo" style={{width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover'}} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedApt.companyName || 'C')}&background=e2e8f0&color=64748b`; }} />
+                                        <img src={selectedApt.companyLogo} alt="Logo" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedApt.companyName || 'C')}&background=e2e8f0&color=64748b`; }} />
                                     ) : (
                                         <span className="material-symbols-outlined" style={{ fontSize: '30px' }}>business</span>
                                     )}
@@ -227,7 +221,7 @@ const ManageAppointment = () => {
                                 <div className="detail-card" style={{ display: 'flex', gap: '1rem', alignItems: 'center', padding: '0.75rem 1rem' }}>
                                     <div className="circle-avatar" style={{ width: '45px', height: '45px', backgroundColor: '#e0f2fe', color: '#0284c7' }}>
                                         {selectedApt.studentAvatar ? (
-                                            <img src={selectedApt.studentAvatar} alt="Avatar" style={{width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover'}} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedApt.studentName || 'S')}&background=e0f2fe&color=0284c7`; }} />
+                                            <img src={selectedApt.studentAvatar} alt="Avatar" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} onError={(e) => { e.target.onerror = null; e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedApt.studentName || 'S')}&background=e0f2fe&color=0284c7`; }} />
                                         ) : (
                                             <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>person</span>
                                         )}
@@ -265,7 +259,7 @@ const ManageAppointment = () => {
                                 </div>
                                 <div className="detail-item">
                                     <div className="detail-label">THỜI GIAN</div>
-                                    <div className="detail-value">{formatTime(selectedApt.interviewDate)} - {formatTime(new Date(new Date(selectedApt.interviewDate).getTime() + 2*60*60*1000).toISOString())}</div>
+                                    <div className="detail-value">{formatTime(selectedApt.interviewDate)} - {formatTime(new Date(new Date(selectedApt.interviewDate).getTime() + 2 * 60 * 60 * 1000).toISOString())}</div>
                                 </div>
                             </div>
 

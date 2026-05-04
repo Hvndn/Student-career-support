@@ -371,14 +371,14 @@ public class AdminService {
             Company company = (job != null) ? job.getCompany() : null;
             Student student = (app != null) ? app.getStudent() : null;
             User studentUser = (student != null) ? student.getUser() : null;
-            
+
             // Ưu tiên lấy tên từ đơn ứng tuyển (nếu có), nếu không lấy từ Profile
-            String studentName = (app != null && app.getFullName() != null && !app.getFullName().isEmpty()) 
-                    ? app.getFullName() 
+            String studentName = (app != null && app.getFullName() != null && !app.getFullName().isEmpty())
+                    ? app.getFullName()
                     : (studentUser != null ? studentUser.getFullName() : "N/A");
-            
-            String studentEmail = (app != null && app.getEmail() != null && !app.getEmail().isEmpty()) 
-                    ? app.getEmail() 
+
+            String studentEmail = (app != null && app.getEmail() != null && !app.getEmail().isEmpty())
+                    ? app.getEmail()
                     : (studentUser != null ? studentUser.getEmail() : "N/A");
 
             return AdminInterviewResponse.builder()
@@ -390,9 +390,11 @@ public class AdminService {
                     .studentName(studentName)
                     .studentEmail(studentEmail)
                     .studentAvatar(student != null ? student.getAvatarUrl() : null)
-                    .studentIdStr(student != null && student.getStudentIdStr() != null ? student.getStudentIdStr() : "N/A")
+                    .studentIdStr(
+                            student != null && student.getStudentIdStr() != null ? student.getStudentIdStr() : "N/A")
                     .major(student != null && student.getMajor() != null ? student.getMajor() : "N/A")
-                    .phone(app != null && app.getPhone() != null ? app.getPhone() : (student != null && student.getPhone() != null ? student.getPhone() : "N/A"))
+                    .phone(app != null && app.getPhone() != null ? app.getPhone()
+                            : (student != null && student.getPhone() != null ? student.getPhone() : "N/A"))
                     .interviewDate(i.getInterviewDate())
                     .location(i.getLocation() != null ? i.getLocation() : "N/A")
                     .notes(i.getNotes() != null ? i.getNotes() : "Không có ghi chú")
