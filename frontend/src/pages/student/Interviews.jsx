@@ -51,14 +51,29 @@ const Interviews = () => {
     };
 
     const filteredInterviews = interviews.filter(item => {
-        const companyName = item.application?.job?.company?.name || '';
-        const jobTitle = item.application?.job?.title || '';
+        const companyName = item.companyName || '';
+        const jobTitle = item.jobTitle || '';
+        const status = (item.status || '').toLowerCase();
         
         const matchesSearch = 
             companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             jobTitle.toLowerCase().includes(searchTerm.toLowerCase());
             
-        const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
+        let matchesStatus = false;
+        if (statusFilter === 'all') {
+            matchesStatus = true;
+        } else if (statusFilter === 'scheduled') {
+            matchesStatus = status === 'scheduled';
+        } else if (statusFilter === 'confirmed') {
+            matchesStatus = status === 'confirmed';
+        } else if (statusFilter === 'pending') {
+            matchesStatus = status === 'pending';
+        } else if (statusFilter === 'completed') {
+            matchesStatus = status === 'completed';
+        } else if (statusFilter === 'cancelled') {
+            matchesStatus = status === 'cancelled';
+        }
+
         return matchesSearch && matchesStatus;
     });
 
@@ -104,7 +119,9 @@ const Interviews = () => {
                             onChange={(e) => setStatusFilter(e.target.value)}
                         >
                             <option value="all">Tất cả trạng thái</option>
+                            <option value="pending">Chờ xác nhận</option>
                             <option value="scheduled">Sắp diễn ra</option>
+                            <option value="confirmed">Đã xác nhận</option>
                             <option value="completed">Đã hoàn thành</option>
                             <option value="cancelled">Đã hủy</option>
                         </select>
