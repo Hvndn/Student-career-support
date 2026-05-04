@@ -17,8 +17,8 @@ body.sidebar-pinned .pjs-main {
 }
 
 .pjs-content-wrapper {
-  max-width: 900px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
   padding: 80px 20px;
   display: flex;
   flex-direction: column;

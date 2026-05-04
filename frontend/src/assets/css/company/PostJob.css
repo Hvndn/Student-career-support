@@ -57,9 +57,9 @@
   display: grid;
   grid-template-columns: 1fr 340px;
   gap: 2rem;
-  padding: 0 2.5rem 4rem;
-  max-width: 1600px;
-  margin: 0 auto;
+  padding: 0 1.5rem 4rem 1rem;
+  width: 100%;
+  margin: 0;
 }
 
 /* Card Styling */

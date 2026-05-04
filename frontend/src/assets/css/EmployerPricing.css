@@ -87,8 +87,8 @@
 
 /* Sections */
 .pricing-sections-wrapper {
-  max-width: 1200px;
-  margin: 3rem auto;
+  width: 100%;
+  margin: 3rem 0;
   padding: 0 2rem;
   display: flex;
   flex-direction: column;

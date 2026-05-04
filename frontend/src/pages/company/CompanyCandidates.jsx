@@ -246,7 +246,7 @@ const CompanyCandidates = () => {
 
     const getStatusLabel = (status) => {
         const labels = {
-            'pending': 'Chờ duyệt',
+    
             'review': 'Theo dõi thêm',
             'interview': 'Phỏng vấn',
             'rejected': 'Từ chối'

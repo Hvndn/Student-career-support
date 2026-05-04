@@ -57,15 +57,15 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                             <div className="spm-contact-grid">
                                 <div className="spm-contact-item">
                                     <div className="spm-contact-icon"><span className="material-symbols-outlined">mail</span></div>
-                                    <span>{candidate.email || 'n/a'}</span>
+                                    <span className="spm-contact-text">{candidate.email || 'n/a'}</span>
                                 </div>
                                 <div className="spm-contact-item">
                                     <div className="spm-contact-icon"><span className="material-symbols-outlined">call</span></div>
-                                    <span>{candidate.phone || 'n/a'}</span>
+                                    <span className="spm-contact-text">{candidate.phone || 'n/a'}</span>
                                 </div>
                                 <div className="spm-contact-item">
                                     <div className="spm-contact-icon"><span className="material-symbols-outlined">location_on</span></div>
-                                    <span>{candidate.address || 'Chưa cập nhật'}</span>
+                                    <span className="spm-contact-text">{candidate.address || 'Chưa cập nhật'}</span>
                                 </div>
                             </div>
                         </div>
@@ -81,7 +81,7 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                             </div>
                             <div className="spm-stat-box">
                                 <span className="spm-stat-val">{candidate.cvData ? 1 : 0}</span>
-                                <span className="spm-stat-lbl">CVS</span>
+                                <span className="spm-stat-lbl">HỒ SƠ</span>
                             </div>
                         </div>
                     </div>
@@ -91,52 +91,6 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                         
                         {/* MAIN COLUMN (LEFT) */}
                         <div className="spm-main-col">
-                            
-                            {/* ── MATCHING ANALYSIS (AI Recommendation Only) ── */}
-                            {candidate.matchScore && (
-                                <div className="spm-card spm-matching-card">
-                                    <div className="spm-match-header">
-                                        <h3 className="spm-card-title">
-                                            <span className="material-symbols-outlined">analytics</span>
-                                            Phân tích độ phù hợp (AI)
-                                        </h3>
-                                        <div className="spm-match-score-big">
-                                            {Math.round(candidate.matchScore)}%
-                                        </div>
-                                    </div>
-                                    
-                                    <div className="spm-match-grid">
-                                        <div className="spm-match-item">
-                                            <span className="spm-mi-label">Kỹ năng</span>
-                                            <span className="spm-mi-value">{candidate.matchDetails?.skillsMatch || 'N/A'}</span>
-                                            <span className={`spm-match-pill ${candidate.matchDetails?.skillsScore > 15 ? 'success' : 'warning'}`}>
-                                                {candidate.matchDetails?.skillsScore || 0}đ
-                                            </span>
-                                        </div>
-                                        <div className="spm-match-item">
-                                            <span className="spm-mi-label">Kinh nghiệm</span>
-                                            <span className="spm-mi-value">{candidate.matchDetails?.experienceYears || 0} năm</span>
-                                            <span className={`spm-match-pill ${candidate.matchDetails?.experienceScore > 10 ? 'success' : 'warning'}`}>
-                                                {candidate.matchDetails?.experienceScore || 0}đ
-                                            </span>
-                                        </div>
-                                        <div className="spm-match-item">
-                                            <span className="spm-mi-label">Dự án</span>
-                                            <span className="spm-mi-value">{candidate.matchDetails?.projectScore > 7 ? 'Tốt' : 'Trung bình'}</span>
-                                            <span className={`spm-match-pill ${candidate.matchDetails?.projectScore > 7 ? 'success' : 'warning'}`}>
-                                                {candidate.matchDetails?.projectScore || 0}đ
-                                            </span>
-                                        </div>
-                                        <div className="spm-match-item">
-                                            <span className="spm-mi-label">Địa điểm</span>
-                                            <span className="spm-mi-value">{candidate.matchDetails?.locationScore >= 5 ? 'Khớp' : 'Khác'}</span>
-                                            <span className={`spm-match-pill ${candidate.matchDetails?.locationScore >= 5 ? 'success' : 'warning'}`}>
-                                                {candidate.matchDetails?.locationScore || 0}đ
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
 
                             {/* Bio */}
                             <div className="spm-card">
@@ -197,7 +151,65 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                         ))}
                                     </div>
                                 ) : (
-                                    <p className="spm-text-muted" style={{fontStyle:'italic', fontSize:'0.9rem'}}>Sinh viên chưa cập nhật kinh nghiệm làm việc.</p>
+                                    <p className="spm-text-muted" style={{ fontStyle: 'italic', fontSize: '0.9rem' }}>Sinh viên chưa cập nhật kinh nghiệm làm việc.</p>
+                                )}
+                            </div>
+
+                            {/* Projects - Detailed View */}
+                            <div className="spm-card">
+                                <h3 className="spm-card-title">
+                                    <span className="material-symbols-outlined">rocket_launch</span>
+                                    Dự án tiêu biểu
+                                </h3>
+                                {candidate.projects?.length > 0 ? (
+                                    <div className="spm-projects-list">
+                                        {candidate.projects.map((pj, i) => (
+                                            <div key={i} className="spm-project-item">
+                                                <div className="spm-project-info">
+                                                    <h4>{pj.name}</h4>
+                                                    <div className="spm-pj-meta">
+                                                        {pj.role && <span><strong>Vai trò:</strong> {pj.role}</span>}
+                                                        {pj.duration && <span><strong>Thời gian:</strong> {pj.duration}</span>}
+                                                    </div>
+                                                    <p>{pj.description}</p>
+                                                    
+                                                    {pj.technologies && (
+                                                        <div className="spm-pj-techs">
+                                                            {pj.technologies.split(',').map((t, idx) => (
+                                                                <span key={idx} className="spm-pj-tech-tag">{t.trim()}</span>
+                                                            ))}
+                                                        </div>
+                                                    )}
+
+                                                    {pj.responsibilities && (
+                                                        <div className="spm-pj-resp">
+                                                            <strong>Nhiệm vụ chính:</strong>
+                                                            <ul>
+                                                                {pj.responsibilities.split('\n').filter(r => r.trim()).map((r, idx) => (
+                                                                    <li key={idx}>{r.replace(/^- /, '')}</li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                    )}
+
+                                                    <div className="spm-project-links">
+                                                        {pj.repositoryUrl && (
+                                                            <a href={pj.repositoryUrl} target="_blank" rel="noreferrer">
+                                                                <span className="material-symbols-outlined">code</span> Source Code
+                                                            </a>
+                                                        )}
+                                                        {pj.demoUrl && (
+                                                            <a href={pj.demoUrl} target="_blank" rel="noreferrer">
+                                                                <span className="material-symbols-outlined">rocket</span> Live Demo
+                                                            </a>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="spm-text-muted" style={{ fontStyle: 'italic', fontSize: '0.9rem' }}>Sinh viên chưa cập nhật dự án tiêu biểu.</p>
                                 )}
                             </div>
                         </div>
@@ -262,27 +274,6 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                 )}
                             </div>
 
-                            {/* Projects */}
-                            <div className="spm-card">
-                                <h3 className="spm-card-title">
-                                    <span className="material-symbols-outlined">rocket_launch</span>
-                                    Dự án nổi bật
-                                </h3>
-                                {candidate.projects?.length > 0 ? (
-                                    candidate.projects.map((pj, i) => (
-                                        <div key={i} className="spm-project-item">
-                                            <p className="spm-pj-name">{pj.name}</p>
-                                            <p className="spm-pj-desc">{pj.description}</p>
-                                            <div className="spm-pj-links">
-                                                {pj.repositoryUrl && <a href={pj.repositoryUrl} target="_blank" rel="noreferrer">Repo</a>}
-                                                {pj.demoUrl && <a href={pj.demoUrl} target="_blank" rel="noreferrer">Demo</a>}
-                                            </div>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <p className="spm-text-muted" style={{fontSize:'0.85rem', fontStyle:'italic'}}>Sinh viên chưa cập nhật dự án nổi bật.</p>
-                                )}
-                            </div>
                         </aside>
                     </div>
                 </div>

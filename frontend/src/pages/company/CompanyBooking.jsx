@@ -98,7 +98,7 @@ const CompanyBooking = () => {
         <div className="cd-layout">
             <CompanySidebar />
             <div className="cd-main">
-                <CompanyNavbar activeTab="Đặt lịch làm việc" />
+                <CompanyNavbar activeTab="Đặt lịch phỏng vấn" />
 
                 <div className="booking-page">
                     <div className="section-header intro-y">

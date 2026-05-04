@@ -10,13 +10,13 @@
 
 .cd-main {
   flex: 1;
-  padding: 70px 2rem 2rem; /* Account for fixed topbar height */
+  padding: 70px 1.5rem 2rem 1rem; /* Khớp với Sidebar.css: 1rem left để thẳng hàng breadcrumb */
   overflow-x: hidden;
 }
 
 .dashboard-v2 {
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
 }
 
 /* Header */

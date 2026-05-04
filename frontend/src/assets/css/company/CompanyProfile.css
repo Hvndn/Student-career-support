@@ -4,9 +4,10 @@
    ==================================================== */
 
 .cp-page {
-    padding: 20px 28px;
+    padding: 20px 1rem;
     background: #f1f5f9;
     min-height: calc(100vh - 60px);
+    width: 100%;
 }
 
 /* Breadcrumb */

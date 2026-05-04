@@ -14,7 +14,7 @@ const JOB_TYPES = [
     { value: 'parttime', label: 'Bán thời gian' },
     { value: 'intern', label: 'Thực tập' },
     { value: 'remote', label: 'Từ xa' },
-    { value: 'freelance', label: 'Hợp đồng' }
+    { value: 'contract', label: 'Hợp đồng' }
 ];
 
 const SUGGESTED_SKILLS = {

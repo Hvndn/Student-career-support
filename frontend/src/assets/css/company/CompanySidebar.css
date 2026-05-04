@@ -176,12 +176,25 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   margin-left: 260px;
   padding-top: 70px;
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
+  padding-left: 1rem;
+  padding-right: 1.5rem;
+}
+
+/* Ensure containers inside company main layout are full width */
+.cd-main .container {
+  max-width: 100% !important;
+  width: 100%;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 body.sidebar-pinned .cd-main {
   margin-left: 260px;
+}
+
+/* Ensure no extra padding on common content wrappers */
+.cd-content {
+  padding: 0 !important;
 }
 
 /* Bottom Actions */

@@ -1,5 +1,5 @@
 .booking-page {
-    padding: 1.5rem 2rem 1.5rem 1.5rem;
+    padding: 1.5rem 0;
     animation: fadeIn 0.5s ease-out;
     min-height: calc(100vh - 70px);
     background: #f8fafc;
