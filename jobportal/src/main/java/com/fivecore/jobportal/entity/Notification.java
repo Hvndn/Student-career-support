@@ -2,6 +2,8 @@ package com.fivecore.jobportal.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 

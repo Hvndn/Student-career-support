@@ -2,6 +2,8 @@ package com.fivecore.jobportal.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.math.BigDecimal;
