@@ -67,7 +67,7 @@ const WebsiteConfig = () => {
                 <main className="admin-management-container">
                     <div className="management-header">
                         <div className="breadcrumb-dau">
-                            DAU Connect <span className="separator">›</span> Quản lý Website
+                            Fivecore <span className="separator">›</span> Quản lý Website
                         </div>
                         <h2 className="management-title">Quản lý Website</h2>
                     </div>

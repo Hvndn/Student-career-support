@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { studentApi } from '../../api';
+import toast from 'react-hot-toast';
 import '../../assets/css/student/ApplicationDetailDrawer.css';
 
 /**
  * Premium side drawer showing detailed application progress and submitted documents.
  */
-const ApplicationDetailDrawer = ({ application, onClose }) => {
+const ApplicationDetailDrawer = ({ application, onClose, onRefresh }) => {
     const navigate = useNavigate();
+    const [isCanceling, setIsCanceling] = useState(false);
+
     if (!application) return null;
 
     const formatDate = (dt) => {
@@ -48,6 +52,21 @@ const ApplicationDetailDrawer = ({ application, onClose }) => {
         navigate(`/jobs/${application.jobId}`);
     };
 
+    const handleCancel = async () => {
+        if (!window.confirm("Bạn có chắc chắn muốn hủy ứng tuyển công việc này không?")) return;
+        setIsCanceling(true);
+        try {
+            await studentApi.cancelApplication(application.jobId);
+            toast.success("Đã hủy ứng tuyển thành công!");
+            if (onRefresh) onRefresh();
+            onClose();
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Lỗi khi hủy ứng tuyển");
+        } finally {
+            setIsCanceling(false);
+        }
+    };
+
     return (
         <div className="drawer-overlay" onClick={onClose}>
             <div className="drawer-container" onClick={(e) => e.stopPropagation()}>
@@ -63,6 +82,12 @@ const ApplicationDetailDrawer = ({ application, onClose }) => {
                     <p className="drawer-applied-date">Đã nộp: {formatDate(application.appliedAt)}</p>
 
                     <div className="drawer-header-actions">
+                        {status === 'pending' && (
+                            <button className="btn-drawer-action btn-cancel" onClick={handleCancel} disabled={isCanceling} style={{ background: '#fef2f2', color: '#ef4444', borderColor: '#fca5a5' }}>
+                                <span className="material-symbols-outlined">cancel</span>
+                                {isCanceling ? 'Đang hủy...' : 'Hủy ứng tuyển'}
+                            </button>
+                        )}
                         <button className="btn-drawer-action btn-chat" onClick={handleChat}>
                             <span className="material-symbols-outlined">forum</span>
                             Nhắn tin

@@ -42,7 +42,7 @@ const PostJob = () => {
                 <main className="pj-wrapper">
                     <div className="pj-header-container intro-y">
                         <div className="pj-breadcrumb">
-                            <Link to="/company/dashboard">DAU CONNECT</Link>
+                            <Link to="/company/dashboard">Fivecore</Link>
                             <span className="separator">/</span>
                             <Link to="/company/management">TIN TUYỂN DỤNG</Link>
                             <span className="separator">/</span>

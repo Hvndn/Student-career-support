@@ -107,7 +107,7 @@ const ManageProjects = () => {
                 <main className="admin-management-container">
                     <div className="management-header">
                         <div className="breadcrumb-dau">
-                            DAU Connect <span className="separator">›</span> Thử thách dự án
+                            Fivecore <span className="separator">›</span> Thử thách dự án
                         </div>
                         <h2 className="management-title">Quản lý Thử thách Dự án</h2>
                     </div>

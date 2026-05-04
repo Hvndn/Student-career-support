@@ -1,4 +1,4 @@
-/* --- Company Candidates Page - DAU Connect Maroon Theme --- */
+/* --- Company Candidates Page - Fivecore Maroon Theme --- */
 
 .candidates-container {
   padding: 0;
@@ -305,7 +305,7 @@
   text-transform: uppercase;
 }
 
-/* Badge màu DAU Connect theo bảng */
+/* Badge màu Fivecore theo bảng */
 .status-pending { background: #fff7ed; color: #ea580c; border: 1px solid #ffedd5; }
 .status-suitable { background: #f0fdf4; color: #16a34a; border: 1px solid #dcfce7; }
 .status-interview { background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; }
