@@ -3,8 +3,18 @@ import { Link, useNavigate } from 'react-router-dom';
 import { jobApi, studentApi } from '../../api';
 import { getImageUrl } from '../../utils/urlUtils';
 import { toast } from 'react-hot-toast';
+import { vietnamLocations } from '../../utils/vietnamLocations';
 import '../../assets/css/common/JobList.css';
 import SearchableLocationDropdown from '../../components/common/SearchableLocationDropdown';
+
+const INDUSTRIES = ['Công nghệ thông tin', 'Marketing', 'Tài chính', 'Thiết kế', 'Kế toán/Kiểm toán', 'Giáo dục/Đào tạo', 'Y tế/Dược', 'Kinh doanh/Bán hàng', 'Hành chính/Nhân sự', 'Xây dựng', 'Kiến trúc/Nội thất', 'Du lịch/Nhà hàng', 'Sản xuất/Vận hành'];
+const JOB_TYPES = [
+    { value: 'fulltime', label: 'Toàn thời gian' },
+    { value: 'parttime', label: 'Bán thời gian' },
+    { value: 'intern', label: 'Thực tập (Internship)' },
+    { value: 'remote', label: 'Từ xa' },
+    { value: 'contract', label: 'Hợp đồng' }
+];
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -167,15 +177,12 @@ const JobList = () => {
 
                 <select className="filter-select-premium" value={industryFilter} onChange={(e) => setIndustryFilter(e.target.value)}>
                     <option value="all">Ngành nghề</option>
-                    <option value="IT">Công nghệ thông tin</option>
-                    <option value="Marketing">Marketing</option>
-                    <option value="Design">Thiết kế</option>
+                    {INDUSTRIES.map(i => <option key={i} value={i}>{i}</option>)}
                 </select>
 
                 <select className="filter-select-premium" value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
-                    <option value="all">Thực tập (Internship)</option>
-                    <option value="Full-time">Full-time</option>
-                    <option value="Part-time">Part-time</option>
+                    <option value="all">Hình thức làm việc</option>
+                    {JOB_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
 
                 <select className="filter-select-premium" value={salaryFilter} onChange={(e) => setSalaryFilter(e.target.value)}>
@@ -183,6 +190,7 @@ const JobList = () => {
                     <option value="low">Dưới 5 triệu</option>
                     <option value="mid">5 - 10 triệu</option>
                     <option value="high">Trên 10 triệu</option>
+                    <option value="agreement">Thỏa thuận</option>
                 </select>
 
                 <div className="view-toggle-premium">
@@ -265,7 +273,9 @@ const JobList = () => {
                                     </div>
                                     <div className="job-detail-box" style={{ background: '#f8fafc', border: 'none' }}>
                                         <span className="material-symbols-outlined" style={{ color: '#10b981', fontSize: '20px' }}>payments</span>
-                                        <span className="detail-text" style={{ fontWeight: '600' }}>{job.salary || '3 - 5 triệu'}</span>
+                                        <span className="detail-text" style={{ fontWeight: '600' }}>
+                                            {job.salary || (job.minSalary ? `${job.minSalary/1000000} - ${job.maxSalary/1000000} triệu` : 'Thỏa thuận')}
+                                        </span>
                                     </div>
                                     <div className="job-detail-box" style={{ background: '#f8fafc', border: 'none' }}>
                                         <span className="material-symbols-outlined" style={{ color: '#f59e0b', fontSize: '20px' }}>location_on</span>

@@ -213,7 +213,7 @@ const CompanyProfile = () => {
                 <div className="cp-page">
                     {/* Breadcrumb */}
                     <div className="cp-breadcrumb">
-                        <span className="cp-bc-item">DAU Connect</span>
+                        <span className="cp-bc-item">Fivecore</span>
                         <span className="cp-bc-sep">›</span>
                         <span className="cp-bc-active">Hồ sơ công ty</span>
                     </div>

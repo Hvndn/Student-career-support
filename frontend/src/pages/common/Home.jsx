@@ -128,7 +128,7 @@ const Home = () => {
                   <Link to={`/companies/${job.companyId}`} className="mr-job-company" style={{ textDecoration: 'none', display: 'block' }}>{job.companyName}</Link>
                   <div className="mr-job-footer">
                     <span>📍 {job.location}</span>
-                    <span className="mr-job-salary">{job.salaryRange}</span>
+                    <span className="mr-job-salary">{job.salaryRange || (job.minSalary ? `${job.minSalary/1000000} - ${job.maxSalary/1000000} triệu` : 'Thỏa thuận')}</span>
                   </div>
                 </div>
               ))}

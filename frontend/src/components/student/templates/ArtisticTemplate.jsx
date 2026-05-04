@@ -530,16 +530,50 @@ const ArtisticTemplate = ({ cvData, onSectionClick, onUpdate, onAvatarClick, the
               <h3 className="art-main-title">DỰ ÁN</h3>
             </div>
             <div className="art-item-list">
-              {projects.map((p, idx) => (
-                <div key={idx} className="art-item">
-                  <div className="art-item-header">
-                    <div className="art-item-org">{p.name}</div>
-                    <div className="art-item-time">{p.year}</div>
+              {projects.map((p, idx) => {
+                const timeRange = p.startDate
+                  ? `${p.startDate}${p.endDate ? ` – ${p.endDate}` : ''}`
+                  : (p.year || '');
+                const tech = p.technologies || p.techStack || '';
+                return (
+                  <div key={idx} className="art-item">
+                    <div className="art-item-header">
+                      <div className="art-item-org">{p.name || p.title}</div>
+                      <div className="art-item-time">{timeRange}</div>
+                    </div>
+                    <div className="art-item-sub">
+                      {p.role}{tech ? ` | ${tech}` : ''}
+                    </div>
+                    {(p.repositoryUrl || p.demoUrl) && (
+                      <div style={{ display:'flex', flexDirection:'column', gap:'3px', marginTop:'4px' }}>
+                        {p.repositoryUrl && (
+                          <div style={{ fontSize:'0.8rem', color:'#475569' }}>
+                            <span style={{ fontWeight:600 }}>GitHub: </span>
+                            <a href={p.repositoryUrl} target="_blank" rel="noreferrer"
+                              style={{ color:'#0f409f', textDecoration:'underline', wordBreak:'break-all' }}
+                              onClick={e => e.stopPropagation()}>
+                              {p.repositoryUrl}
+                            </a>
+                          </div>
+                        )}
+                        {p.demoUrl && (
+                          <div style={{ fontSize:'0.8rem', color:'#475569' }}>
+                            <span style={{ fontWeight:600 }}>Demo: </span>
+                            <a href={p.demoUrl} target="_blank" rel="noreferrer"
+                              style={{ color:'#16a34a', textDecoration:'underline', wordBreak:'break-all' }}
+                              onClick={e => e.stopPropagation()}>
+                              {p.demoUrl}
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {(p.description || p.responsibilities) && (
+                      <div className="art-item-desc">{p.description || p.responsibilities}</div>
+                    )}
                   </div>
-                  <div className="art-item-sub">{p.role} {p.techStack ? ` | ${p.techStack}` : ''}</div>
-                  {p.description && <div className="art-item-desc">{p.description}</div>}
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

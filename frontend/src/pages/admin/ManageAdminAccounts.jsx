@@ -70,7 +70,7 @@ const ManageAdminAccounts = () => {
                 <AdminNavbar />
                 <main className="admin-accounts-container">
                     <div className="breadcrumb">
-                        <Link to="/admin/dashboard">DAU Connect</Link>
+                        <Link to="/admin/dashboard">Fivecore</Link>
                         <span className="material-symbols-outlined">chevron_right</span>
                         <span>Trang chủ</span>
                     </div>

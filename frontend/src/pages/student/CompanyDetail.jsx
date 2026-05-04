@@ -45,7 +45,7 @@ const CompanyDetail = () => {
         <div className="cd-detail-wrapper">
             <header className="cd-top-header">
                 <div className="cd-breadcrumb">
-                    <Link to="/student/dashboard" className="cd-breadcrumb-link">DAU Connect</Link>
+                    <Link to="/student/dashboard" className="cd-breadcrumb-link">Fivecore</Link>
                     <span className="cd-breadcrumb-sep">›</span>
                     <span className="cd-breadcrumb-current">Danh sách công ty</span>
                 </div>
@@ -164,7 +164,7 @@ const CompanyDetail = () => {
                                             <div className="cd-job-info-premium">
                                                 <h4 className="cd-job-title-premium">{job.title}</h4>
                                                 <div className="cd-job-meta-premium">
-                                                    <span><span className="material-symbols-outlined">payments</span> {job.salary}</span>
+                                                    <span><span className="material-symbols-outlined">payments</span> {job.salary || (job.minSalary ? `${job.minSalary/1000000} - ${job.maxSalary/1000000} triệu` : 'Thỏa thuận')}</span>
                                                     <span><span className="material-symbols-outlined">location_on</span> {job.location}</span>
                                                     <span><span className="material-symbols-outlined">schedule</span> {job.jobType}</span>
                                                 </div>

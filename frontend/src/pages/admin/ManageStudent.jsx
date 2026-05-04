@@ -170,6 +170,9 @@ const ManageStudent = () => {
                 <AdminNavbar title="Quản lý Sinh viên" />
                 <main className="admin-management-container">
                     <div className="management-header">
+                        <div className="breadcrumb-dau">
+                            Fivecore <span className="separator">›</span> Quản lý sinh viên
+                        </div>
                         <h2 className="management-title">Danh sách Sinh viên</h2>
                     </div>
 
@@ -278,7 +281,7 @@ const ManageStudent = () => {
             {/* CRUD Modal */}
             {isModalOpen && (
                 <div className="modal-overlay" onClick={closeModal}>
-                    <div className="premium-modal" onClick={e => e.stopPropagation()}>
+                    <div className={`premium-modal ${modalMode === 'view' ? 'large' : ''}`} onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
                             <h3>
                                 {modalMode === 'view' ? 'Chi tiết sinh viên' : 
@@ -292,113 +295,171 @@ const ManageStudent = () => {
                         </div>
                         <div className="modal-body">
                             {modalMode === 'view' ? (
-                                <div className="detail-view">
-                                    <div className="form-grid">
-                                        <div className="detail-item">
-                                            <div className="detail-label">Họ và tên</div>
-                                            <div className="detail-value">{selectedStudent?.fullName}</div>
-                                        </div>
-                                        <div className="detail-item">
-                                            <div className="detail-label">MSSV</div>
-                                            <div className="detail-value">{selectedStudent?.studentProfile?.studentIdStr || 'N/A'}</div>
-                                        </div>
-                                        <div className="detail-item">
-                                            <div className="detail-label">Email</div>
-                                            <div className="detail-value">{selectedStudent?.email}</div>
-                                        </div>
-                                        <div className="detail-item">
-                                            <div className="detail-label">SĐT</div>
-                                            <div className="detail-value">{selectedStudent?.studentProfile?.phone || 'N/A'}</div>
-                                        </div>
-                                        <div className="detail-item">
-                                            <div className="detail-label">Chuyên ngành</div>
-                                            <div className="detail-value">{selectedStudent?.studentProfile?.major || 'N/A'}</div>
-                                        </div>
-                                        <div className="detail-item">
-                                            <div className="detail-label">Niên khóa</div>
-                                            <div className="detail-value">{selectedStudent?.studentProfile?.academicYear || 'N/A'}</div>
-                                        </div>
-                                        <div className="detail-item">
-                                            <div className="detail-label">GPA</div>
-                                            <div className="detail-value">
-                                                {selectedStudent?.studentProfile?.gpa || '---'}
+                                <div className="premium-detail-view">
+                                    {/* Profile Header */}
+                                    <div className="detail-profile-header">
+                                        <div className="profile-banner"></div>
+                                        <div className="profile-main-info">
+                                            <div className="profile-left-col">
+                                                <div className="profile-avatar-wrapper">
+                                                    <div className="profile-avatar-large" style={{ backgroundColor: selectedStudent?.active ? '#a31919' : '#94a3b8' }}>
+                                                        {selectedStudent?.studentProfile?.avatarUrl ? (
+                                                            <img src={selectedStudent.studentProfile.avatarUrl} alt={selectedStudent.fullName} className="avatar-img-premium" />
+                                                        ) : (
+                                                            selectedStudent?.fullName?.charAt(0)
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className={`status-badge-under ${selectedStudent?.active ? 'active' : 'inactive'}`}>
+                                                    {selectedStudent?.active ? 'ĐANG HOẠT ĐỘNG' : 'ĐÃ KHÓA'}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="detail-item">
-                                            <div className="detail-label">Mạng xã hội</div>
-                                            <div className="social-links-row">
-                                                {selectedStudent?.studentProfile?.linkedinUrl && (
-                                                    <a href={selectedStudent.studentProfile.linkedinUrl} target="_blank" rel="noreferrer" className="social-btn linkedin">
-                                                        LinkedIn
-                                                    </a>
-                                                )}
-                                                {selectedStudent?.studentProfile?.githubUrl && (
-                                                    <a href={selectedStudent.studentProfile.githubUrl} target="_blank" rel="noreferrer" className="social-btn github">
-                                                        Github
-                                                    </a>
+                                            <div className="profile-text-info-premium">
+                                                <h2 className="profile-name">{selectedStudent?.fullName}</h2>
+                                                <p className="profile-email">
+                                                    <span className="material-symbols-outlined">mail</span>
+                                                    {selectedStudent?.email}
+                                                </p>
+                                                {selectedStudent?.studentProfile?.studentIdStr && (
+                                                    <div className="profile-mssv-badge-premium">
+                                                        MSSV: {selectedStudent.studentProfile.studentIdStr}
+                                                    </div>
                                                 )}
                                             </div>
-                                        </div>
-                                        <div className="detail-item full-width">
-                                            <div className="detail-label">Giới thiệu</div>
-                                            <div className="detail-value" style={{ lineHeight: 1.6 }}>{selectedStudent?.studentProfile?.bio || 'Chưa có thông tin'}</div>
                                         </div>
                                     </div>
 
-                                    {/* Skills Section */}
-                                    {selectedStudent?.studentProfile?.skills?.length > 0 && (
-                                        <div className="modal-detail-section">
-                                            <div className="section-title">
-                                                <span className="material-symbols-outlined">psychology</span>
-                                                Kỹ năng chuyên môn
+                                    <div className="detail-content-grid">
+                                        {/* Main Info Column */}
+                                        <div className="detail-column">
+                                            <div className="detail-section">
+                                                <h4 className="detail-section-title">Thông tin cơ bản</h4>
+                                                <div className="detail-info-list">
+                                                    {selectedStudent?.studentProfile?.major && (
+                                                        <div className="info-row">
+                                                            <span className="info-icon material-symbols-outlined">school</span>
+                                                            <div className="info-content">
+                                                                <span className="info-label">Chuyên ngành</span>
+                                                                <span className="info-value">{selectedStudent.studentProfile.major}</span>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    {selectedStudent?.studentProfile?.academicYear && (
+                                                        <div className="info-row">
+                                                            <span className="info-icon material-symbols-outlined">calendar_today</span>
+                                                            <div className="info-content">
+                                                                <span className="info-label">Niên khóa</span>
+                                                                <span className="info-value">{selectedStudent.studentProfile.academicYear}</span>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    {selectedStudent?.studentProfile?.phone && (
+                                                        <div className="info-row">
+                                                            <span className="info-icon material-symbols-outlined">phone_iphone</span>
+                                                            <div className="info-content">
+                                                                <span className="info-label">Số điện thoại</span>
+                                                                <span className="info-value">{selectedStudent.studentProfile.phone}</span>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    {selectedStudent?.studentProfile?.university && (
+                                                        <div className="info-row">
+                                                            <span className="info-icon material-symbols-outlined">apartment</span>
+                                                            <div className="info-content">
+                                                                <span className="info-label">Trường đại học</span>
+                                                                <span className="info-value">{selectedStudent.studentProfile.university}</span>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    {selectedStudent?.studentProfile?.gpa && (
+                                                        <div className="info-row">
+                                                            <span className="info-icon material-symbols-outlined">grade</span>
+                                                            <div className="info-content">
+                                                                <span className="info-label">Điểm GPA</span>
+                                                                <span className="info-value-badge">{selectedStudent.studentProfile.gpa}</span>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
-                                            <div className="tags-container">
-                                                {selectedStudent.studentProfile.skills.map(s => (
-                                                    <span key={s.id} className="pill-tag skill-tag">
-                                                        {s.name} <span className="level">({s.level})</span>
-                                                    </span>
-                                                ))}
-                                            </div>
+
+                                            {/* Social Links */}
+                                            {(selectedStudent?.studentProfile?.linkedinUrl || selectedStudent?.studentProfile?.githubUrl) && (
+                                                <div className="detail-section">
+                                                    <h4 className="detail-section-title">Mạng xã hội</h4>
+                                                    <div className="social-pills">
+                                                        {selectedStudent.studentProfile.linkedinUrl && (
+                                                            <a href={selectedStudent.studentProfile.linkedinUrl} target="_blank" rel="noreferrer" className="social-pill linkedin">
+                                                                <i className="fa-brands fa-linkedin"></i> LinkedIn
+                                                            </a>
+                                                        )}
+                                                        {selectedStudent.studentProfile.githubUrl && (
+                                                            <a href={selectedStudent.studentProfile.githubUrl} target="_blank" rel="noreferrer" className="social-pill github">
+                                                                <i className="fa-brands fa-github"></i> Github
+                                                            </a>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
+
+                                        {/* Additional Info Column */}
+                                        <div className="detail-column">
+                                            {selectedStudent?.studentProfile?.bio && (
+                                                <div className="detail-section">
+                                                    <h4 className="detail-section-title">Giới thiệu bản thân</h4>
+                                                    <p className="detail-bio-text">{selectedStudent.studentProfile.bio}</p>
+                                                </div>
+                                            )}
+
+                                            {selectedStudent?.studentProfile?.skills?.length > 0 && (
+                                                <div className="detail-section">
+                                                    <h4 className="detail-section-title">Kỹ năng</h4>
+                                                    <div className="skill-tags-grid">
+                                                        {selectedStudent.studentProfile.skills.map(s => (
+                                                            <span key={s.id} className="skill-tag-premium">
+                                                                {s.name} <small>({s.level})</small>
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
 
                                     {/* Education section */}
                                     {selectedStudent?.studentProfile?.educations?.length > 0 && (
-                                        <div className="modal-detail-section">
-                                            <div className="section-title">
-                                                <span className="material-symbols-outlined">school</span>
-                                                Lịch sử Học vấn
-                                            </div>
-                                            <div className="detail-list">
+                                        <div className="full-width-section">
+                                            <h4 className="detail-section-title">Học vấn</h4>
+                                            <div className="detail-timeline">
                                                 {selectedStudent.studentProfile.educations.map(e => (
-                                                    <div key={e.id} className="detail-card">
-                                                        <h5>{e.schoolName}</h5>
-                                                        <div className="sub-info">
-                                                            <span className="timeline-date">{formatDate(e.startDate)} - {e.endDate ? formatDate(e.endDate) : 'Hiện tại'}</span>
-                                                            <span>{e.major} ({e.degree})</span>
+                                                    <div key={e.id} className="timeline-item">
+                                                        <div className="timeline-dot"></div>
+                                                        <div className="timeline-content">
+                                                            <div className="timeline-header">
+                                                                <h5>{e.schoolName}</h5>
+                                                                <span className="timeline-date">{formatDate(e.startDate)} - {e.endDate ? formatDate(e.endDate) : 'Hiện tại'}</span>
+                                                            </div>
+                                                            <p className="timeline-sub">{e.major} • {e.degree}</p>
+                                                            {e.description && <p className="timeline-desc">{e.description}</p>}
                                                         </div>
-                                                        {e.description && <p className="description">{e.description}</p>}
                                                     </div>
                                                 ))}
                                             </div>
                                         </div>
                                     )}
 
-
-                                    
+                                    {/* Certifications section */}
                                     {selectedStudent?.studentProfile?.certifications?.length > 0 && (
-                                        <div className="modal-detail-section">
-                                            <div className="section-title">
-                                                <span className="material-symbols-outlined">verified</span>
-                                                Chứng chỉ & Giải thưởng
-                                            </div>
-                                            <div className="detail-list">
+                                        <div className="full-width-section">
+                                            <h4 className="detail-section-title">Chứng chỉ & Giải thưởng</h4>
+                                            <div className="cert-grid">
                                                 {selectedStudent.studentProfile.certifications.map(c => (
-                                                    <div key={c.id} className="detail-card">
-                                                        <h5>{c.name}</h5>
-                                                        <div className="sub-info">
-                                                            <span>Hãng: {c.issuer}</span>
-                                                            <span>Ngày cấp: {c.issueDate}</span>
+                                                    <div key={c.id} className="cert-card-premium">
+                                                        <span className="material-symbols-outlined cert-icon">verified</span>
+                                                        <div className="cert-info">
+                                                            <h5>{c.name}</h5>
+                                                            <p>{c.issuer} • {c.issueDate}</p>
                                                         </div>
                                                     </div>
                                                 ))}
@@ -407,101 +468,142 @@ const ManageStudent = () => {
                                     )}
                                 </div>
                             ) : (modalMode === 'edit' || modalMode === 'add') ? (
-                                <form id="student-form" onSubmit={modalMode === 'add' ? handleAddSubmit : handleUpdateSubmit}>
-                                    <div className="form-grid">
+                                <form id="student-form" className="premium-form-view" onSubmit={modalMode === 'add' ? handleAddSubmit : handleUpdateSubmit}>
+                                    <div className="form-premium-grid">
                                         {modalMode === 'add' && (
                                             <>
-                                                <div className="form-group">
-                                                    <label>Email đăng nhập <span style={{color: 'red'}}>*</span></label>
-                                                    <input 
-                                                        type="email" 
-                                                        className="form-control" 
-                                                        name="email"
-                                                        value={formData.email}
-                                                        onChange={handleFormChange}
-                                                        placeholder="Vd: student@dau.edu.vn"
-                                                        required
-                                                    />
+                                                <div className="form-group-premium">
+                                                    <label>
+                                                        <span className="material-symbols-outlined">mail</span>
+                                                        Email đăng nhập <span className="required">*</span>
+                                                    </label>
+                                                    <div className="input-with-icon">
+                                                        <input 
+                                                            type="email" 
+                                                            className="premium-input" 
+                                                            name="email"
+                                                            value={formData.email}
+                                                            onChange={handleFormChange}
+                                                            placeholder="Vd: student@dau.edu.vn"
+                                                            required
+                                                        />
+                                                    </div>
                                                 </div>
-                                                <div className="form-group">
-                                                    <label>Mật khẩu <span style={{color: 'red'}}>*</span></label>
-                                                    <input 
-                                                        type="password" 
-                                                        className="form-control" 
-                                                        name="password"
-                                                        value={formData.password}
-                                                        onChange={handleFormChange}
-                                                        placeholder="Tối thiểu 6 ký tự"
-                                                        required
-                                                    />
-                                                </div>
-                                            </>
-                                        )}
-                                        <div className="form-group">
-                                            <label>Họ và tên <span style={{color: 'red'}}>*</span></label>
-                                            <input 
-                                                type="text" 
-                                                className="form-control" 
-                                                name="fullName"
-                                                value={formData.fullName}
-                                                onChange={handleFormChange}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>MSSV</label>
-                                            <input 
-                                                type="text" 
-                                                className="form-control" 
-                                                name="studentIdStr"
-                                                value={formData.studentIdStr}
-                                                onChange={handleFormChange}
-                                            />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Chuyên ngành</label>
-                                            <input 
-                                                type="text" 
-                                                className="form-control" 
-                                                name="major"
-                                                value={formData.major}
-                                                onChange={handleFormChange}
-                                            />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>Niên khóa</label>
-                                            <input 
-                                                type="text" 
-                                                className="form-control" 
-                                                name="academicYear"
-                                                value={formData.academicYear}
-                                                onChange={handleFormChange}
-                                            />
-                                        </div>
-                                        {modalMode === 'edit' && (
-                                            <>
-                                                <div className="form-group">
-                                                    <label>SĐT</label>
-                                                    <input 
-                                                        type="text" 
-                                                        className="form-control" 
-                                                        name="phone"
-                                                        value={formData.phone}
-                                                        onChange={handleFormChange}
-                                                    />
-                                                </div>
-                                                <div className="form-group" style={{ flexDirection: 'row', alignItems: 'center', gap: '10px' }}>
-                                                    <input 
-                                                        type="checkbox" 
-                                                        id="active-status"
-                                                        name="active"
-                                                        checked={formData.active}
-                                                        onChange={handleFormChange}
-                                                    />
-                                                    <label htmlFor="active-status">Đang hoạt động</label>
+                                                <div className="form-group-premium">
+                                                    <label>
+                                                        <span className="material-symbols-outlined">lock</span>
+                                                        Mật khẩu <span className="required">*</span>
+                                                    </label>
+                                                    <div className="input-with-icon">
+                                                        <input 
+                                                            type="password" 
+                                                            className="premium-input" 
+                                                            name="password"
+                                                            value={formData.password}
+                                                            onChange={handleFormChange}
+                                                            placeholder="Tối thiểu 6 ký tự"
+                                                            required
+                                                        />
+                                                    </div>
                                                 </div>
                                             </>
                                         )}
+                                        <div className="form-group-premium">
+                                            <label>
+                                                <span className="material-symbols-outlined">person</span>
+                                                Họ và tên <span className="required">*</span>
+                                            </label>
+                                            <div className="input-with-icon">
+                                                <input 
+                                                    type="text" 
+                                                    className="premium-input" 
+                                                    name="fullName"
+                                                    value={formData.fullName}
+                                                    onChange={handleFormChange}
+                                                    placeholder="Nhập họ và tên đầy đủ"
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="form-group-premium">
+                                            <label>
+                                                <span className="material-symbols-outlined">badge</span>
+                                                Mã số sinh viên (MSSV)
+                                            </label>
+                                            <div className="input-with-icon">
+                                                <input 
+                                                    type="text" 
+                                                    className="premium-input" 
+                                                    name="studentIdStr"
+                                                    value={formData.studentIdStr}
+                                                    onChange={handleFormChange}
+                                                    placeholder="Vd: SV823765"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="form-group-premium">
+                                            <label>
+                                                <span className="material-symbols-outlined">school</span>
+                                                Chuyên ngành
+                                            </label>
+                                            <div className="input-with-icon">
+                                                <input 
+                                                    type="text" 
+                                                    className="premium-input" 
+                                                    name="major"
+                                                    value={formData.major}
+                                                    onChange={handleFormChange}
+                                                    placeholder="Vd: Công nghệ thông tin"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="form-group-premium">
+                                            <label>
+                                                <span className="material-symbols-outlined">calendar_today</span>
+                                                Niên khóa
+                                            </label>
+                                            <div className="input-with-icon">
+                                                <input 
+                                                    type="text" 
+                                                    className="premium-input" 
+                                                    name="academicYear"
+                                                    value={formData.academicYear}
+                                                    onChange={handleFormChange}
+                                                    placeholder="Vd: 2021 - 2025"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="form-group-premium">
+                                            <label>
+                                                <span className="material-symbols-outlined">phone_iphone</span>
+                                                Số điện thoại
+                                            </label>
+                                            <div className="input-with-icon">
+                                                <input 
+                                                    type="text" 
+                                                    className="premium-input" 
+                                                    name="phone"
+                                                    value={formData.phone}
+                                                    onChange={handleFormChange}
+                                                    placeholder="Vd: 0912345678"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="form-group-premium full-width">
+                                            <label className="checkbox-label-premium">
+                                                <input 
+                                                    type="checkbox" 
+                                                    name="active"
+                                                    checked={formData.active}
+                                                    onChange={handleFormChange}
+                                                />
+                                                <span className="checkbox-custom"></span>
+                                                <div className="checkbox-text">
+                                                    <span className="main-text">Tài khoản đang hoạt động</span>
+                                                    <span className="sub-text">Cho phép sinh viên này đăng nhập và sử dụng hệ thống</span>
+                                                </div>
+                                            </label>
+                                        </div>
                                     </div>
                                 </form>
                             ) : (

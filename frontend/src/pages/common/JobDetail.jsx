@@ -121,7 +121,7 @@ const JobDetail = () => {
                     <h1 className="jd-banner-title">{job.title}</h1>
                     <div className="jd-banner-meta">
                         <span><span className="material-symbols-outlined">location_on</span> {job.location}</span>
-                        <span><span className="material-symbols-outlined">payments</span> {job.salary}</span>
+                        <span><span className="material-symbols-outlined">payments</span> {job.salary || (job.minSalary ? `${job.minSalary/1000000} - ${job.maxSalary/1000000} triệu` : 'Thỏa thuận')}</span>
                     </div>
                 </div>
             </div>
@@ -315,19 +315,19 @@ const JobDetail = () => {
                             <div className="jd-ai-icon-box">
                                 <span className="material-symbols-outlined">smart_toy</span>
                             </div>
-                            <span className="jd-ai-title">AI FiveCore - Phân tích hồ sơ</span>
+                            <span className="jd-ai-title">AI Fivecore - Phân tích hồ sơ</span>
                         </div>
 
                         {aiState === 'idle' && (
                             <>
-                                <p className="jd-ai-intro">Hãy để AI FiveCore phân tích mức độ phù hợp giữa Portfolio của bạn và yêu cầu của công việc này.</p>
+                                <p className="jd-ai-intro">Hãy để AI Fivecore phân tích mức độ phù hợp giữa Portfolio của bạn và yêu cầu của công việc này.</p>
                                 <button className="jd-btn-ai" onClick={handleAnalyze}>Phân tích ngay</button>
                             </>
                         )}
 
                         {aiState === 'loading' && (
                             <>
-                                <p className="jd-ai-intro">Hãy để AI DAU Connect phân tích mức độ phù hợp giữa Portfolio của bạn và yêu cầu của công việc này.</p>
+                                <p className="jd-ai-intro">Hãy để AI Fivecore phân tích mức độ phù hợp giữa Portfolio của bạn và yêu cầu của công việc này.</p>
                                 <button className="jd-btn-ai loading" disabled>
                                     <span className="material-symbols-outlined spinner" style={{animation: 'spin 1s linear infinite'}}>refresh</span>
                                     Đang phân tích...
