@@ -9,7 +9,7 @@ const ManageStudent = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
-    
+
     // Modal states
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMode, setModalMode] = useState('view'); // 'view' or 'edit'
@@ -47,7 +47,7 @@ const ManageStudent = () => {
                 size: 50 // Get more for management
             };
             if (statusFilter !== 'all') params.active = statusFilter === 'active';
-            
+
             const res = await adminApi.getUsers(params);
             if (res.data && res.data.data) {
                 setStudents(res.data.data.content || []);
@@ -158,8 +158,8 @@ const ManageStudent = () => {
         }
     };
 
-    const filteredStudents = students.filter(s => 
-        s.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    const filteredStudents = students.filter(s =>
+        s.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (s.student?.studentIdStr && s.student.studentIdStr.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
@@ -185,7 +185,7 @@ const ManageStudent = () => {
                         </div>
                         <div className="controls-right">
                             <div className="filter-group">
-                                <select 
+                                <select
                                     className="management-select"
                                     value={statusFilter}
                                     onChange={(e) => setStatusFilter(e.target.value)}
@@ -196,10 +196,10 @@ const ManageStudent = () => {
                                 </select>
                             </div>
                             <div className="search-wrapper-premium">
-                                <input 
-                                    type="text" 
-                                    className="search-input-premium" 
-                                    placeholder="Tìm theo tên, MSSV..." 
+                                <input
+                                    type="text"
+                                    className="search-input-premium"
+                                    placeholder="Tìm theo tên, MSSV..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
@@ -221,7 +221,7 @@ const ManageStudent = () => {
 
                         {loading ? (
                             <div style={{ textAlign: 'center', padding: '3rem' }}>
-                                <div className="loader" style={{margin: '0 auto'}}></div>
+                                <div className="loader" style={{ margin: '0 auto' }}></div>
                             </div>
                         ) : filteredStudents.length > 0 ? (
                             filteredStudents.map((s) => (
@@ -281,10 +281,10 @@ const ManageStudent = () => {
                     <div className={`premium-modal ${modalMode === 'view' ? 'large' : ''}`} onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
                             <h3>
-                                {modalMode === 'view' ? 'Chi tiết sinh viên' : 
-                                 modalMode === 'edit' ? 'Chỉnh sửa sinh viên' : 
-                                 modalMode === 'add' ? 'Thêm sinh viên mới' :
-                                 'Xác nhận xóa'}
+                                {modalMode === 'view' ? 'Chi tiết sinh viên' :
+                                    modalMode === 'edit' ? 'Chỉnh sửa sinh viên' :
+                                        modalMode === 'add' ? 'Thêm sinh viên mới' :
+                                            'Xác nhận xóa'}
                             </h3>
                             <button className="close-btn" onClick={closeModal}>
                                 <span className="material-symbols-outlined">close</span>
@@ -475,9 +475,9 @@ const ManageStudent = () => {
                                                         Email đăng nhập <span className="required">*</span>
                                                     </label>
                                                     <div className="input-with-icon">
-                                                        <input 
-                                                            type="email" 
-                                                            className="premium-input" 
+                                                        <input
+                                                            type="email"
+                                                            className="premium-input"
                                                             name="email"
                                                             value={formData.email}
                                                             onChange={handleFormChange}
@@ -492,9 +492,9 @@ const ManageStudent = () => {
                                                         Mật khẩu <span className="required">*</span>
                                                     </label>
                                                     <div className="input-with-icon">
-                                                        <input 
-                                                            type="password" 
-                                                            className="premium-input" 
+                                                        <input
+                                                            type="password"
+                                                            className="premium-input"
                                                             name="password"
                                                             value={formData.password}
                                                             onChange={handleFormChange}
@@ -511,9 +511,9 @@ const ManageStudent = () => {
                                                 Họ và tên <span className="required">*</span>
                                             </label>
                                             <div className="input-with-icon">
-                                                <input 
-                                                    type="text" 
-                                                    className="premium-input" 
+                                                <input
+                                                    type="text"
+                                                    className="premium-input"
                                                     name="fullName"
                                                     value={formData.fullName}
                                                     onChange={handleFormChange}
@@ -528,9 +528,9 @@ const ManageStudent = () => {
                                                 Mã số sinh viên (MSSV)
                                             </label>
                                             <div className="input-with-icon">
-                                                <input 
-                                                    type="text" 
-                                                    className="premium-input" 
+                                                <input
+                                                    type="text"
+                                                    className="premium-input"
                                                     name="studentIdStr"
                                                     value={formData.studentIdStr}
                                                     onChange={handleFormChange}
@@ -544,9 +544,9 @@ const ManageStudent = () => {
                                                 Chuyên ngành
                                             </label>
                                             <div className="input-with-icon">
-                                                <input 
-                                                    type="text" 
-                                                    className="premium-input" 
+                                                <input
+                                                    type="text"
+                                                    className="premium-input"
                                                     name="major"
                                                     value={formData.major}
                                                     onChange={handleFormChange}
@@ -560,9 +560,9 @@ const ManageStudent = () => {
                                                 Niên khóa
                                             </label>
                                             <div className="input-with-icon">
-                                                <input 
-                                                    type="text" 
-                                                    className="premium-input" 
+                                                <input
+                                                    type="text"
+                                                    className="premium-input"
                                                     name="academicYear"
                                                     value={formData.academicYear}
                                                     onChange={handleFormChange}
@@ -576,9 +576,9 @@ const ManageStudent = () => {
                                                 Số điện thoại
                                             </label>
                                             <div className="input-with-icon">
-                                                <input 
-                                                    type="text" 
-                                                    className="premium-input" 
+                                                <input
+                                                    type="text"
+                                                    className="premium-input"
                                                     name="phone"
                                                     value={formData.phone}
                                                     onChange={handleFormChange}
@@ -588,8 +588,8 @@ const ManageStudent = () => {
                                         </div>
                                         <div className="form-group-premium full-width">
                                             <label className="checkbox-label-premium">
-                                                <input 
-                                                    type="checkbox" 
+                                                <input
+                                                    type="checkbox"
                                                     name="active"
                                                     checked={formData.active}
                                                     onChange={handleFormChange}
@@ -605,14 +605,14 @@ const ManageStudent = () => {
                                 </form>
                             ) : (
                                 <div style={{ textAlign: 'center', padding: '1rem 0' }}>
-                                    <div style={{ 
-                                        width: '64px', 
-                                        height: '64px', 
-                                        backgroundColor: '#fee2e2', 
-                                        color: '#ef4444', 
-                                        borderRadius: '50%', 
-                                        display: 'flex', 
-                                        alignItems: 'center', 
+                                    <div style={{
+                                        width: '64px',
+                                        height: '64px',
+                                        backgroundColor: '#fee2e2',
+                                        color: '#ef4444',
+                                        borderRadius: '50%',
+                                        display: 'flex',
+                                        alignItems: 'center',
                                         justifyContent: 'center',
                                         margin: '0 auto 1.5rem'
                                     }}>
@@ -620,7 +620,7 @@ const ManageStudent = () => {
                                     </div>
                                     <h4 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', color: '#1e293b' }}>Xác nhận xóa sinh viên</h4>
                                     <p style={{ color: '#64748b', fontSize: '0.9rem' }}>
-                                        Bạn có chắc chắn muốn xóa sinh viên <strong>{selectedStudent?.fullName}</strong> vĩnh viễn? 
+                                        Bạn có chắc chắn muốn xóa sinh viên <strong>{selectedStudent?.fullName}</strong> vĩnh viễn?
                                         Hành động này không thể hoàn tác.
                                     </p>
                                 </div>

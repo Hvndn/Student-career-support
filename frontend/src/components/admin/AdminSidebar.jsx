@@ -6,12 +6,16 @@ const AdminSidebar = () => {
     const location = useLocation();
 
     const [openMenus, setOpenMenus] = useState({
-        doanhNghiep: location.pathname.startsWith('/admin/appointments') || location.pathname.startsWith('/admin/companies'),
+        doanhNghiep: location.pathname.startsWith('/admin/appointments') || 
+                     location.pathname.startsWith('/admin/companies') || 
+                     location.pathname.startsWith('/admin/jobs'),
         website: location.pathname.startsWith('/admin/website')
     });
 
     React.useEffect(() => {
-        if (location.pathname.startsWith('/admin/appointments') || location.pathname.startsWith('/admin/companies')) {
+        if (location.pathname.startsWith('/admin/appointments') || 
+            location.pathname.startsWith('/admin/companies') || 
+            location.pathname.startsWith('/admin/jobs')) {
             setOpenMenus(prev => ({ ...prev, doanhNghiep: true }));
         }
         if (location.pathname.startsWith('/admin/website')) {
@@ -67,6 +71,10 @@ const AdminSidebar = () => {
                             <span className="material-symbols-outlined">view_list</span>
                             <span className="item-label">Danh sách</span>
                         </Link>
+                        <Link to="/admin/jobs" className={`admin-nav-item child-item ${location.pathname === '/admin/jobs' ? 'active' : ''}`}>
+                            <span className="material-symbols-outlined">work</span>
+                            <span className="item-label">Quản lý việc làm</span>
+                        </Link>
                     </div>
                 </div>
 
@@ -94,18 +102,6 @@ const AdminSidebar = () => {
                         <span className="material-symbols-outlined chevron">expand_more</span>
                     </div>
                     <div className="nav-submenu">
-                        <Link to="/admin/website/slider" className={`admin-nav-item child-item ${location.pathname === '/admin/website/slider' ? 'active' : ''}`}>
-                            <span className="material-symbols-outlined">image</span>
-                            <span className="item-label">Slide trang chủ</span>
-                        </Link>
-                        <Link to="/admin/website/about" className={`admin-nav-item child-item ${location.pathname === '/admin/website/about' ? 'active' : ''}`}>
-                            <span className="material-symbols-outlined">web_asset</span>
-                            <span className="item-label">Giới thiệu chung</span>
-                        </Link>
-                        <Link to="/admin/website/testimonials" className={`admin-nav-item child-item ${location.pathname === '/admin/website/testimonials' ? 'active' : ''}`}>
-                            <span className="material-symbols-outlined">format_quote</span>
-                            <span className="item-label">Quản lý cảm nhận</span>
-                        </Link>
                         <Link to="/admin/website/categories" className={`admin-nav-item child-item ${location.pathname === '/admin/website/categories' ? 'active' : ''}`}>
                             <span className="material-symbols-outlined">category</span>
                             <span className="item-label">Quản lý lĩnh vực</span>

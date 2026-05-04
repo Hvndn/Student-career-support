@@ -15,4 +15,10 @@ public class AdminJobResponse {
     private BigDecimal minSalary;
     private BigDecimal maxSalary;
     private String status;
+    private String description;
+    private String requirements;
+    private String benefits;
+    private String jobType;
+    private String location;
+    private String industry;
 }
