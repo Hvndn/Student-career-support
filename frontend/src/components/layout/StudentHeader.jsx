@@ -54,6 +54,7 @@ const StudentHeader = ({ onMenuClick }) => {
         if (pathname.includes('/student/saved')) return 'Việc làm yêu thích';
         if (pathname.includes('/student/internships')) return 'Thực tập tốt nghiệp';
         if (pathname.includes('/student/chat')) return 'Trò chuyện';
+        if (pathname.includes('/student/interviews')) return 'Lịch phỏng vấn';
         if (pathname.includes('/jobs')) return 'Tìm việc làm';
         if (pathname.includes('/companies')) return 'Danh sách công ty';
         return 'Trang chủ';
@@ -70,7 +71,7 @@ const StudentHeader = ({ onMenuClick }) => {
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
                     </button>
                     <div className="dau-breadcrumb">
-                        <Link to="/student/dashboard" className="dau-breadcrumb-prev">FiveCore</Link>
+                        <Link to="/student/dashboard" className="dau-breadcrumb-prev">Fivecore</Link>
                         <span className="dau-breadcrumb-sep">›</span>
                         <span className="dau-breadcrumb-current">{currentLabel}</span>
                     </div>

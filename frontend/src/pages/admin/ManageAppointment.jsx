@@ -71,6 +71,9 @@ const ManageAppointment = () => {
                 <AdminNavbar title="Quản lý lịch hẹn" />
                 <main className="admin-management-container">
                     <div className="management-header">
+                        <div className="breadcrumb-dau">
+                            Fivecore <span className="separator">›</span> Quản lý lịch hẹn
+                        </div>
                         <h2 className="management-title">Quản lý Lịch hẹn</h2>
                     </div>
 

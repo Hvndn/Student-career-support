@@ -170,6 +170,9 @@ const ManageCompany = () => {
                 <AdminNavbar title="Quản lý doanh nghiệp" />
                 <main className="admin-management-container">
                     <div className="management-header">
+                        <div className="breadcrumb-dau">
+                            Fivecore <span className="separator">›</span> Quản lý doanh nghiệp
+                        </div>
                         <h2 className="management-title">Danh sách Doanh nghiệp</h2>
                     </div>
 

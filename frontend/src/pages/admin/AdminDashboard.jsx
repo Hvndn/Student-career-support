@@ -73,7 +73,7 @@ const AdminDashboard = () => {
 
     const handleExportReport = async () => {
         const workbook = new ExcelJS.Workbook();
-        workbook.creator = 'FiveCore';
+        workbook.creator = 'Fivecore';
         workbook.created = new Date();
 
         const styleHeader = (worksheet, headers, width = 25) => {
@@ -168,7 +168,7 @@ const AdminDashboard = () => {
                     <section className="dau-header-section">
                         <div className="dau-header-left">
                             <h1>Chào buổi tối, <span className="text-red">Admin</span> 👋</h1>
-                            <p>Tổng quan hệ thống FiveCore hôm nay</p>
+                            <p>Tổng quan hệ thống Fivecore hôm nay</p>
                         </div>
                         <div className="dau-header-right" style={{ display: 'flex', gap: '10px' }}>
                             <button onClick={handleExportReport} style={{ background: '#10b981', color: '#fff', border: 'none', padding: '0 1rem', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontWeight: '500', fontSize: '0.9rem', boxShadow: '0 2px 4px rgba(16,185,129,0.2)' }}>
