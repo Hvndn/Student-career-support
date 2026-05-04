@@ -12,6 +12,7 @@ const StudentHeader = ({ onMenuClick }) => {
     const menuRef = useRef(null);
     const location = useLocation();
     const navigate = useNavigate();
+    const [unreadCount, setUnreadCount] = useState(0);
 
     const handleLogout = () => {
         localStorage.removeItem('user');
@@ -41,7 +42,23 @@ const StudentHeader = ({ onMenuClick }) => {
                 console.error('Error fetching profile for header:', error);
             }
         };
+
+        const fetchNotifications = async () => {
+            try {
+                const res = await studentApi.getNotifications();
+                const unread = res.data.data.filter(n => !n.isRead).length;
+                setUnreadCount(unread);
+            } catch (error) {
+                console.error('Error fetching notifications for header:', error);
+            }
+        };
+
         fetchProfile();
+        fetchNotifications();
+        
+        // Refresh notifications every 60 seconds
+        const interval = setInterval(fetchNotifications, 60000);
+        return () => clearInterval(interval);
     }, []);
 
     // Breadcrumb Label Mapping
@@ -78,9 +95,22 @@ const StudentHeader = ({ onMenuClick }) => {
                 </div>
 
                 <div className="dau-header-actions">
-                    <button className="dau-notif-btn">
+                    <button 
+                        className="dau-notif-btn" 
+                        onClick={() => navigate('/student/chat')}
+                        title="Trò chuyện"
+                        style={{ marginRight: '8px' }}
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    </button>
+                    
+                    <button 
+                        className="dau-notif-btn" 
+                        onClick={() => navigate('/student/notifications')}
+                        title="Thông báo"
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-                        <span className="dau-notif-dot"></span>
+                        {unreadCount > 0 && <span className="dau-notif-dot"></span>}
                     </button>
                     
                     <div className="dau-user-menu-container" ref={menuRef}>

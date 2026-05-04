@@ -108,7 +108,7 @@ const AdminSidebar = () => {
                         </Link>
                         <Link to="/admin/website/categories" className={`admin-nav-item child-item ${location.pathname === '/admin/website/categories' ? 'active' : ''}`}>
                             <span className="material-symbols-outlined">category</span>
-                            <span className="item-label">Quản lý danh mục</span>
+                            <span className="item-label">Quản lý lĩnh vực</span>
                         </Link>
                         <Link to="/admin/website/config" className={`admin-nav-item child-item ${location.pathname === '/admin/website/config' ? 'active' : ''}`}>
                             <span className="material-symbols-outlined">language</span>

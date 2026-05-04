@@ -33,6 +33,6 @@ build/
 .vscode/
 
 ### Uploads ###
-uploads/
+# uploads/
 GEMINI.md
 .agent/

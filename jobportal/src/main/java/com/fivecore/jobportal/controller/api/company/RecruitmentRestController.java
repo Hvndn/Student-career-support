@@ -10,6 +10,7 @@ import com.fivecore.jobportal.service.company.CandidateSearchService;
 import com.fivecore.jobportal.service.company.InterviewService;
 import com.fivecore.jobportal.repository.InterviewRepository;
 import com.fivecore.jobportal.repository.UserRepository;
+import com.fivecore.jobportal.service.interaction.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -31,6 +32,7 @@ public class RecruitmentRestController {
     private final InterviewService interviewService;
     private final InterviewRepository interviewRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     /**
      * API Gợi ý ứng viên phù hợp cho một công việc.
@@ -178,6 +180,9 @@ public class RecruitmentRestController {
                 .studentEmail(app.getStudent() != null && app.getStudent().getUser() != null ? app.getStudent().getUser().getEmail() : app.getEmail())
                 .studentAvatar(app.getStudent() != null ? app.getStudent().getAvatarUrl() : null)
                 .jobTitle(app.getJob() != null ? app.getJob().getTitle() : "N/A")
+                .companyName(app.getJob() != null && app.getJob().getCompany() != null ? app.getJob().getCompany().getName() : "N/A")
+                .companyLogo(app.getJob() != null && app.getJob().getCompany() != null ? app.getJob().getCompany().getLogoUrl() : null)
+                .companyEmail(app.getJob() != null && app.getJob().getCompany() != null ? app.getJob().getCompany().getEmail() : "N/A")
                 .build();
         }).collect(java.util.stream.Collectors.toList());
 
@@ -256,6 +261,9 @@ public class RecruitmentRestController {
             .studentEmail(app.getStudent() != null && app.getStudent().getUser() != null ? app.getStudent().getUser().getEmail() : app.getEmail())
             .studentAvatar(app.getStudent() != null ? app.getStudent().getAvatarUrl() : null)
             .jobTitle(app.getJob() != null ? app.getJob().getTitle() : "N/A")
+            .companyName(app.getJob() != null && app.getJob().getCompany() != null ? app.getJob().getCompany().getName() : "N/A")
+            .companyLogo(app.getJob() != null && app.getJob().getCompany() != null ? app.getJob().getCompany().getLogoUrl() : null)
+            .companyEmail(app.getJob() != null && app.getJob().getCompany() != null ? app.getJob().getCompany().getEmail() : "N/A")
             .build();
 
         return ResponseEntity.ok(ApiResponse.success("Lấy chi tiết lịch phỏng vấn thành công", response));
@@ -276,5 +284,27 @@ public class RecruitmentRestController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body(ApiResponse.error(e.getMessage(), "NOT_FOUND"));
         }
+    }
+
+    /**
+     * API Lấy danh sách thông báo.
+     */
+    @GetMapping("/notifications")
+    public ResponseEntity<ApiResponse<Object>> getNotifications(Authentication authentication) {
+        com.fivecore.jobportal.entity.User user = userRepository.findByEmail(authentication.getName()).orElse(null);
+        if (user == null)
+            return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+            
+        return ResponseEntity.ok(
+                ApiResponse.success("Lấy thông báo thành công", notificationService.getNotificationsByUser(user.getId())));
+    }
+
+    /**
+     * API Đánh dấu thông báo đã đọc.
+     */
+    @PatchMapping("/notifications/{id}/read")
+    public ResponseEntity<ApiResponse<Object>> markNotificationAsRead(@PathVariable Integer id, Authentication authentication) {
+        notificationService.markAsRead(id);
+        return ResponseEntity.ok(ApiResponse.success("Đã đánh dấu đã đọc", null));
     }
 }

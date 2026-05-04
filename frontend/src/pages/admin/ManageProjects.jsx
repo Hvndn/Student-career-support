@@ -106,9 +106,7 @@ const ManageProjects = () => {
                 <AdminNavbar title="Quản lý Thử thách Dự án" />
                 <main className="admin-management-container">
                     <div className="management-header">
-                        <div className="breadcrumb-dau">
-                            Fivecore <span className="separator">›</span> Thử thách dự án
-                        </div>
+                        
                         <h2 className="management-title">Quản lý Thử thách Dự án</h2>
                     </div>
 
@@ -320,3 +318,4 @@ const ManageProjects = () => {
 };
 
 export default ManageProjects;
+

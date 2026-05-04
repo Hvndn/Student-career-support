@@ -64,9 +64,7 @@ const ManageProjectStudents = () => {
                 <AdminNavbar title="Sinh viên tham gia dự án" />
                 <main className="admin-management-container">
                     <div className="management-header">
-                        <div className="breadcrumb-dau">
-                            Fivecore <span className="separator">›</span> Thử thách dự án
-                        </div>
+                        
                         <h2 className="management-title">Sinh viên tham gia dự án</h2>
                     </div>
 
@@ -237,3 +235,4 @@ const ManageProjectStudents = () => {
 };
 
 export default ManageProjectStudents;
+

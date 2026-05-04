@@ -11,9 +11,23 @@ import java.util.List;
 
 @Repository
 public interface InterviewRepository extends JpaRepository<Interview, Integer> {
-    List<Interview> findByApplication_Student_Id(Integer studentId);
+    @Query("SELECT i FROM Interview i " +
+           "JOIN FETCH i.application a " +
+           "JOIN FETCH a.job j " +
+           "JOIN FETCH j.company c " +
+           "JOIN FETCH a.student s " +
+           "JOIN FETCH s.user u " +
+           "WHERE s.id = :studentId")
+    List<Interview> findByStudentIdWithDetails(@Param("studentId") Integer studentId);
 
-    List<Interview> findByApplication_Job_Company_Id(Integer companyId);
+    @Query("SELECT i FROM Interview i " +
+           "JOIN FETCH i.application a " +
+           "JOIN FETCH a.job j " +
+           "JOIN FETCH j.company c " +
+           "JOIN FETCH a.student s " +
+           "JOIN FETCH s.user u " +
+           "WHERE c.id = :companyId")
+    List<Interview> findByCompanyIdWithDetails(@Param("companyId") Integer companyId);
 
     @Query("SELECT i FROM Interview i " +
            "LEFT JOIN FETCH i.application a " +
