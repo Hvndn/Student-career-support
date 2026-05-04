@@ -280,15 +280,26 @@ const CreateBookingModal = ({ isOpen, onClose, onSuccess, initialData = null }) 
 
                     <div className="pjm-section">
                         <div className="pjm-section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span className="material-symbols-outlined">assignment</span> Nội dung phỏng vấn
+                            <span className="material-symbols-outlined">assignment</span> Nội dung & Ghi chú
                         </div>
-                        <div className="pjm-field">
+                        <div className="pjm-field" style={{ marginBottom: '1rem' }}>
+                            <label>Nội dung buổi phỏng vấn</label>
                             <textarea 
                                 className="pjm-input"
-                                rows="3"
-                                placeholder="Nội dung sơ bộ (VD: Phỏng vấn kỹ thuật 30p, Trao đổi văn hóa 15p...)"
+                                rows="2"
+                                placeholder="VD: Phỏng vấn kỹ thuật 30p, Trao đổi văn hóa 15p..."
                                 value={formData.preliminaryContent}
                                 onChange={(e) => handleChange('preliminaryContent', e.target.value)}
+                            ></textarea>
+                        </div>
+                        <div className="pjm-field">
+                            <label>Ghi chú cho ứng viên</label>
+                            <textarea 
+                                className="pjm-input"
+                                rows="2"
+                                placeholder="Dặn dò ứng viên (VD: Trang phục lịch sự, đến sớm 5-10 phút...)"
+                                value={formData.notes}
+                                onChange={(e) => handleChange('notes', e.target.value)}
                             ></textarea>
                         </div>
                     </div>

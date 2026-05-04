@@ -23,6 +23,9 @@ public class InterviewResponse {
     private String studentEmail;
     private String studentAvatar;
     private String jobTitle;
+    private String companyName;
+    private String companyLogo;
+    private String companyEmail;
     private String interviewerInfo;
     private String requiredDocuments;
     private String interviewFormat;

@@ -1,6 +1,9 @@
 package com.fivecore.jobportal.controller.api.student;
 
 import com.fivecore.jobportal.dto.ApiResponse;
+import com.fivecore.jobportal.dto.InterviewResponse;
+import com.fivecore.jobportal.entity.Application;
+import com.fivecore.jobportal.entity.Interview;
 import com.fivecore.jobportal.repository.UserRepository;
 import com.fivecore.jobportal.service.auth.ApplicationService;
 import com.fivecore.jobportal.service.interaction.NotificationService;
@@ -151,7 +154,62 @@ public class StudentActionRestController {
     @GetMapping("/interviews")
     public ResponseEntity<ApiResponse<Object>> getInterviews(Authentication authentication) {
         Integer studentId = getCurrentStudentId(authentication);
-        return ResponseEntity.ok(ApiResponse.success("Lấy lịch phỏng vấn thành công",
-                interviewService.getInterviewsByStudent(studentId)));
+        if (studentId == null)
+            return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+
+        java.util.List<Interview> interviews = interviewService.getInterviewsByStudent(studentId);
+        
+        java.util.List<InterviewResponse> response = interviews.stream().map(i -> {
+            Application app = i.getApplication();
+            return InterviewResponse.builder()
+                .id(i.getId())
+                .interviewDate(i.getInterviewDate())
+                .location(i.getLocation())
+                .notes(i.getNotes())
+                .interviewerInfo(i.getInterviewerInfo())
+                .requiredDocuments(i.getRequiredDocuments())
+                .interviewFormat(i.getInterviewFormat())
+                .preliminaryContent(i.getPreliminaryContent())
+                .status(i.getStatus())
+                .result(i.getResult())
+                .applicationId(app.getId())
+                .studentId(studentId)
+                .studentName(app.getStudent() != null && app.getStudent().getUser() != null ? app.getStudent().getUser().getFullName() : app.getFullName())
+                .studentEmail(app.getStudent() != null && app.getStudent().getUser() != null ? app.getStudent().getUser().getEmail() : app.getEmail())
+                .studentAvatar(app.getStudent() != null ? app.getStudent().getAvatarUrl() : null)
+                .jobTitle(app.getJob() != null ? app.getJob().getTitle() : "N/A")
+                .companyName(app.getJob() != null && app.getJob().getCompany() != null ? app.getJob().getCompany().getName() : "Công ty ẩn danh")
+                .companyLogo(app.getJob() != null && app.getJob().getCompany() != null ? app.getJob().getCompany().getLogoUrl() : null)
+                .companyEmail(app.getJob() != null && app.getJob().getCompany() != null ? app.getJob().getCompany().getEmail() : null)
+                .build();
+        }).collect(java.util.stream.Collectors.toList());
+
+        return ResponseEntity.ok(ApiResponse.success("Lấy lịch phỏng vấn thành công", response));
+    }
+
+    /**
+     * API Xác nhận tham gia phỏng vấn.
+     */
+    @PostMapping("/interviews/{id}/confirm")
+    public ResponseEntity<ApiResponse<Object>> confirmInterview(@PathVariable Integer id, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        if (studentId == null)
+            return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+
+        try {
+            interviewService.confirmInterview(id, studentId);
+            return ResponseEntity.ok(ApiResponse.success("Đã xác nhận tham gia phỏng vấn", null));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage(), "CONFIRM_ERROR"));
+        }
+    }
+
+    /**
+     * API Đánh dấu thông báo đã đọc.
+     */
+    @PatchMapping("/notifications/{id}/read")
+    public ResponseEntity<ApiResponse<Object>> markNotificationAsRead(@PathVariable Integer id, Authentication authentication) {
+        notificationService.markAsRead(id);
+        return ResponseEntity.ok(ApiResponse.success("Đã đánh dấu đã đọc", null));
     }
 }
