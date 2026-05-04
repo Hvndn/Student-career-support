@@ -5,6 +5,16 @@ import '../../assets/css/admin/AdminSidebar.css';
 const AdminSidebar = () => {
     const location = useLocation();
 
+    // Đọc cấu hình từ localStorage
+    const getConfig = () => {
+        try {
+            const saved = localStorage.getItem('websiteConfig');
+            return saved ? JSON.parse(saved) : {};
+        } catch { return {}; }
+    };
+    const siteConfig = getConfig();
+    const isChatEnabled = siteConfig.enableChat !== false; // mặc định bật
+
     const [openMenus, setOpenMenus] = useState({
         doanhNghiep: location.pathname.startsWith('/admin/appointments') || 
                      location.pathname.startsWith('/admin/companies') || 
@@ -40,7 +50,9 @@ const AdminSidebar = () => {
                         </div>
                     </div>
                     <div className="admin-logo-text">
-                        <span className="logo-main">Fivecore</span>
+                        <span className="logo-main">
+                            {(() => { try { const c = localStorage.getItem('websiteConfig'); return c ? JSON.parse(c).systemName || 'Fivecore' : 'Fivecore'; } catch { return 'Fivecore'; } })()} 
+                        </span>
                     </div>
                 </div>
             </div>
@@ -85,10 +97,12 @@ const AdminSidebar = () => {
                     <span className="item-label">Quản lý CV mẫu</span>
                 </Link>
 
-                <Link to="/admin/chat" className={`admin-nav-item ${location.pathname === '/admin/chat' ? 'active' : ''}`}>
-                    <span className="material-symbols-outlined">chat_bubble_outline</span>
-                    <span className="item-label">Trò chuyện</span>
-                </Link>
+                {isChatEnabled && (
+                    <Link to="/admin/chat" className={`admin-nav-item ${location.pathname === '/admin/chat' ? 'active' : ''}`}>
+                        <span className="material-symbols-outlined">chat_bubble_outline</span>
+                        <span className="item-label">Trò chuyện</span>
+                    </Link>
+                )}
 
                 <Link to="/admin/password-requests" className={`admin-nav-item ${location.pathname === '/admin/password-requests' ? 'active' : ''}`}>
                     <span className="material-symbols-outlined">lock_reset</span>
