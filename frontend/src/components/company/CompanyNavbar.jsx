@@ -229,7 +229,6 @@ const CompanyTopbar = () => {
               </div>
             </div>
           </div>
-        </div>
 
         <div className="divider"></div>
         
