@@ -534,19 +534,19 @@ const CompanyJobManagement = () => {
                                 Kỹ năng: {Array.isArray(job.skills) ? job.skills.join(', ') : (job.skills || 'Không yêu cầu')}
                               </div>
                             </td>
-                            <td className="modern-industry">
+                            <td data-label="NGÀNH NGHỀ" className="modern-industry">
                                {job.industry || 'Chưa cập nhật'}
                             </td>
-                            <td className="text-center modern-stats">
+                            <td data-label="NGÀY TẠO" className="text-center modern-stats">
                               {formatDate(job.postedAt)}
                             </td>
-                            <td className="text-center modern-applicants">
+                            <td data-label="ỨNG TUYỂN" className="text-center modern-stats">
                               <i className="fa-solid fa-user-group"></i> {job.applicantsCount || 0}
                             </td>
-                            <td className="text-center modern-status" style={{ color: statusColor }}>
+                            <td data-label="TRẠNG THÁI" className="text-center modern-status" style={{ color: statusColor }}>
                               <i className="fa-regular fa-circle-check"></i> {statusText}
                             </td>
-                            <td className="text-center">
+                            <td data-label="HÀNH ĐỘNG" className="text-center">
                               <div className="modern-actions">
                                 <button className="action-btn edit" onClick={() => handleEdit(job.id)} title="Chỉnh sửa">
                                   <i className="fa-solid fa-pencil"></i>
@@ -623,14 +623,13 @@ const CompanyJobManagement = () => {
               </div>
             )}
 
-          <div className="cjm-footer-note">
-             ⓘ Để đảm bảo tin đăng hợp lệ, tham khảo <a href="#">Quy định duyệt tin tuyển dụng</a> tại đây
+            <div className="cjm-footer-note">
+              ⓘ Để đảm bảo tin đăng hợp lệ, tham khảo <a href="#">Quy định duyệt tin tuyển dụng</a> tại đây
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-      {/* Post Job Modal */}
       <PostJobModal 
         isOpen={showPostModal} 
         onClose={() => setShowPostModal(false)}

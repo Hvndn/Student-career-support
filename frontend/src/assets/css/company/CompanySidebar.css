@@ -14,6 +14,27 @@
   overflow: hidden;
 }
 
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.sidebar-overlay.show {
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
+}
+
 /* Brand Section */
 .sidebar-brand {
   padding: 2rem 1.5rem;
@@ -229,4 +250,27 @@ body.sidebar-pinned .cd-main {
 .cs-bottom-link:hover {
   background: #f1f5f9;
   color: #2563eb;
+}
+
+/* Mobile Responsive */
+@media (max-width: 1024px) {
+  .company-sidebar.persistent {
+    left: -260px;
+    box-shadow: none;
+  }
+
+  .company-sidebar.persistent.mobile-open {
+    left: 0;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .cd-main {
+    margin-left: 0 !important;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  body.sidebar-pinned .cd-main {
+    margin-left: 0;
+  }
 }

@@ -639,3 +639,33 @@
     }
 }
 
+@media (max-width: 640px) {
+    .spm-container {
+        max-height: 100vh;
+        border-radius: 0;
+    }
+    .spm-premium-banner {
+        height: 150px;
+    }
+    .spm-avatar-box {
+        width: 100px;
+        height: 100px;
+    }
+    .spm-stat-val {
+        font-size: 1.25rem;
+    }
+    .spm-stat-lbl {
+        font-size: 0.6rem;
+    }
+    .spm-project-links {
+        flex-direction: column;
+    }
+    .spm-project-links a {
+        width: 100%;
+        justify-content: center;
+    }
+    .spm-contact-grid {
+        grid-template-columns: 1fr;
+    }
+}
+

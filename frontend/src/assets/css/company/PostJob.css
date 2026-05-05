@@ -481,3 +481,5 @@
   .pj-row-2, .pj-row-3 { grid-template-columns: 1fr; }
   .pj-card { padding: 1.5rem; }
 }
+
+@media (max-width: 640px) { .pj-title { font-size: 1.5rem; } .pj-breadcrumb { display: none; } .pj-bottom-actions { flex-direction: column-reverse; } .pj-bottom-actions button { width: 100%; } .pj-body { padding: 0 1rem 3rem; } }

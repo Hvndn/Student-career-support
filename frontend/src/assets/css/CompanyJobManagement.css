@@ -985,3 +985,103 @@ input:disabled + .cjm-slider {
   color: #ef4444;
   border-color: #fecaca;
 }
+
+/* Mobile Responsive */
+@media (max-width: 1024px) {
+  .cjm-header {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 1rem;
+  }
+
+  .cjm-search-box {
+    width: 100%;
+  }
+
+  .cjm-post-btn-blue {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .cjm-toolbar {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .cjm-toolbar > div {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .dau-select.filter-control {
+    flex: 1;
+    min-width: calc(50% - 6px) !important;
+  }
+
+  .sort-section {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 768px) {
+  .cjm-table-modern thead {
+    display: none; /* Hide table headers on mobile */
+  }
+
+  .cjm-table-modern, .cjm-table-modern tbody, .cjm-table-modern tr, .cjm-table-modern td {
+    display: block;
+    width: 100%;
+  }
+
+  .cjm-table-modern tr {
+    margin-bottom: 1.5rem;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  }
+
+  .modern-row td {
+    border: none !important;
+    padding: 0.5rem 0 !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: right;
+  }
+
+  .modern-row td:first-child {
+    justify-content: center;
+    padding-bottom: 1rem !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    margin-bottom: 0.5rem;
+  }
+
+  .modern-row td:nth-child(2) {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .modern-row td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: #64748b;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    float: left;
+    text-align: left;
+  }
+
+  /* Specific adjustments for non-labeled cells */
+  .modern-row td:first-child::before,
+  .modern-row td:nth-child(2)::before {
+    display: none;
+  }
+
+  .modern-actions {
+    justify-content: flex-end;
+  }
+}

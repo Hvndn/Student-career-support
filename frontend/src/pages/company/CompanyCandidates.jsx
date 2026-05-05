@@ -465,18 +465,18 @@ const CompanyCandidates = () => {
                                                 </td>
 
                                                 {/* Cột 2: Vị trí */}
-                                                <td style={{ padding: '16px 20px' }}>
+                                                <td data-label="VỊ TRÍ" style={{ padding: '16px 20px' }}>
                                                     <div style={{ fontWeight: '600', color: '#0f172a', fontSize: '14.5px' }}>{app.jobTitle}</div>
                                                     <div style={{ fontSize: '13px', color: '#94a3b8', marginTop: '2px' }}>Full-time - Vị trí ứng tuyển</div>
                                                 </td>
 
                                                 {/* Cột 3: Ngày nộp */}
-                                                <td style={{ padding: '16px 20px', color: '#0f172a', fontSize: '14px', fontWeight: '500' }}>
+                                                <td data-label="NGÀY NỘP" style={{ padding: '16px 20px', color: '#0f172a', fontSize: '14px', fontWeight: '500' }}>
                                                     {new Date(app.appliedAt).toLocaleDateString('vi-VN')}
                                                 </td>
 
                                                 {/* Cột 4: Trạng thái */}
-                                                <td style={{ padding: '16px 20px', textAlign: 'center' }}>
+                                                <td data-label="TRẠNG THÁI" style={{ padding: '16px 20px', textAlign: 'center' }}>
                                                     <span style={{ 
                                                         display: 'inline-flex', alignItems: 'center', gap: '6px', 
                                                         color: app.status === 'pending' ? '#ea580c' : app.status === 'review' ? '#7c3aed' : app.status === 'rejected' ? '#dc2626' : app.status === 'interview' ? '#2563eb' : '#64748b', 
@@ -494,7 +494,7 @@ const CompanyCandidates = () => {
                                                 </td>
 
                                                 {/* Cột 5: Hành động */}
-                                                <td style={{ padding: '16px 20px', textAlign: 'right' }}>
+                                                <td data-label="HÀNH ĐỘNG" style={{ padding: '16px 20px', textAlign: 'right' }}>
                                                     <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', alignItems: 'center' }}>
                                                         <button 
                                                             style={{ background: '#f8fafc', border: '1px solid #e2e8f0', color: '#64748b', height: '32px', padding: '0 12px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: '600' }}

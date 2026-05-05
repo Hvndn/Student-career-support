@@ -4,6 +4,7 @@ import { recruitmentApi } from '../../api';
 import toast from 'react-hot-toast';
 import CompanySidebar from '../../components/company/CompanySidebar';
 import CompanyNavbar from '../../components/company/CompanyNavbar';
+import '../../assets/css/company/Applicants.css';
 
 const Applicants = () => {
     const { jobId } = useParams();
@@ -80,7 +81,7 @@ const Applicants = () => {
                             <span style={{ color: '#ef4444' }}> {rejectedCount} từ chối</span>
                         </p>
 
-                        <div className="glass" style={{ padding: '2rem' }}>
+                        <div className="glass applicants-table-container" style={{ padding: '2rem' }}>
                             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                                 <thead>
                                     <tr style={{ color: 'var(--text-muted)', borderBottom: '1px solid var(--border)' }}>
@@ -97,7 +98,7 @@ const Applicants = () => {
                                         const isDecided = ['accepted', 'rejected'].includes((app.status || '').toLowerCase());
                                         return (
                                             <tr key={app.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                                                <td style={{ padding: '1.5rem 1rem' }}>
+                                                <td data-label="ỨNG VIÊN" style={{ padding: '1.5rem 1rem' }}>
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                                                         <div style={{
                                                             width: '36px', height: '36px', borderRadius: '50%',
@@ -120,8 +121,8 @@ const Applicants = () => {
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td style={{ padding: '1.5rem 1rem' }}>{formatDate(app.appliedAt)}</td>
-                                                <td style={{ padding: '1.5rem 1rem' }}>
+                                                <td data-label="NGÀY NỘP" style={{ padding: '1.5rem 1rem' }}>{formatDate(app.appliedAt)}</td>
+                                                <td data-label="HỒ SƠ" style={{ padding: '1.5rem 1rem' }}>
                                                     {app.cvData ? (
                                                         <Link 
                                                             to={`/cv/view/${app.id}`} 
@@ -159,7 +160,7 @@ const Applicants = () => {
                                                         <span style={{ color: '#ccc', fontSize: '0.85rem' }}>N/A</span>
                                                     )}
                                                 </td>
-                                                <td style={{ padding: '1.5rem 1rem' }}>
+                                                <td data-label="TRẠNG THÁI" style={{ padding: '1.5rem 1rem' }}>
                                                     <span style={{
                                                         padding: '0.35rem 0.75rem',
                                                         borderRadius: '20px',
@@ -175,7 +176,7 @@ const Applicants = () => {
                                                         {statusCfg.label}
                                                     </span>
                                                 </td>
-                                                <td style={{ padding: '1.5rem 1rem', textAlign: 'center' }}>
+                                                <td data-label="THAO TÁC" style={{ padding: '1.5rem 1rem', textAlign: 'center' }}>
                                                     <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
                                                         {!isDecided && (
                                                             <>

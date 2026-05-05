@@ -526,3 +526,37 @@
         justify-content: center;
     }
 }
+
+@media (max-width: 640px) {
+    .cdm-container {
+        max-height: 100vh;
+        border-radius: 0;
+    }
+    
+    .cdm-header-left {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+    }
+    
+    .cdm-avatar-wrap {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .cdm-meta-row {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .cdm-status-radios {
+        grid-template-columns: 1fr;
+    }
+
+    .cdm-status-update-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
