@@ -1,5 +1,4 @@
 /* ── MR STUDIO ULTRA MODERN ── */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Inter:wght@400;600;800&display=swap');
 
 :root {
   --primary: #4338ca;
@@ -52,7 +51,7 @@
   color: var(--text-dark);
   line-height: 1;
   margin-bottom: 3rem;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
   letter-spacing: -0.02em; /* Synchronized with index.css */
 }
 
@@ -187,7 +186,7 @@
 .mr-bg-light { background: #fcfdfe; }
 
 .mr-section-header { margin-bottom: 6rem; display: flex; justify-content: space-between; align-items: flex-end; }
-.mr-section-header h2 { font-size: clamp(2.5rem, 4vw, 4rem); font-weight: 900; font-family: 'Outfit', sans-serif; color: var(--text-dark); margin: 0; letter-spacing: -0.03em; }
+.mr-section-header h2 { font-size: clamp(2.5rem, 4vw, 4rem); font-weight: 900; font-family: 'Inter', sans-serif; color: var(--text-dark); margin: 0; letter-spacing: -0.03em; }
 .mr-section-header p { font-size: 1.4rem; color: var(--text-light); margin-top: 1.5rem; }
 
 /* ── BENTO CATEGORIES ── */
@@ -226,7 +225,7 @@
 /* ── STEPS ── */
 .mr-steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8vw; }
 .mr-step { text-align: left; }
-.mr-step-number { font-size: 10rem; font-weight: 900; color: #f1f5f9; line-height: 0.8; margin-bottom: 2rem; font-family: 'Outfit', sans-serif; transition: all 0.4s; }
+.mr-step-number { font-size: 10rem; font-weight: 900; color: #f1f5f9; line-height: 0.8; margin-bottom: 2rem; font-family: 'Inter', sans-serif; transition: all 0.4s; }
 .mr-step:hover .mr-step-number { color: var(--primary); transform: translateX(20px); opacity: 0.5; }
 .mr-step h3 { font-size: 2.2rem; font-weight: 900; margin-bottom: 1.5rem; letter-spacing: -0.03em; }
 .mr-step p { font-size: 1.3rem; color: var(--text-light); line-height: 1.8; }
@@ -242,7 +241,7 @@
   width: 50%; height: 100%; background: radial-gradient(circle, rgba(244, 63, 94, 0.15) 0%, transparent 70%);
   filter: blur(60px);
 }
-.mr-cta-box h2 { font-size: clamp(3rem, 5vw, 5rem); font-weight: 900; margin-bottom: 2rem; font-family: 'Outfit', sans-serif; position: relative; z-index: 1; letter-spacing: -0.04em; }
+.mr-cta-box h2 { font-size: clamp(3rem, 5vw, 5rem); font-weight: 900; margin-bottom: 2rem; font-family: 'Inter', sans-serif; position: relative; z-index: 1; letter-spacing: -0.04em; }
 .mr-cta-box p { font-size: 1.6rem; opacity: 0.7; margin-bottom: 5rem; position: relative; z-index: 1; max-width: 800px; margin-inline: auto; }
 .mr-cta-btns { display: flex; justify-content: center; gap: 3rem; position: relative; z-index: 1; }
 .mr-btn-primary { background: var(--primary); color: white; padding: 1.5rem 4rem; border-radius: 28px; font-weight: 800; font-size: 1.4rem; text-decoration: none; transition: all 0.4s; box-shadow: 0 20px 40px rgba(67, 56, 202, 0.3); }
@@ -272,7 +271,7 @@
 .mr-footer-logo {
   font-size: 2.5rem;
   font-weight: 900;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
   background: linear-gradient(135deg, #4338ca, #7c3aed);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -356,7 +355,7 @@
   font-size: 1.3rem;
   font-weight: 800;
   margin-bottom: 2.5rem;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Inter', sans-serif;
   position: relative;
 }
 
