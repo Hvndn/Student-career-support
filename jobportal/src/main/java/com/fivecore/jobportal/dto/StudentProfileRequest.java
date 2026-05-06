@@ -11,6 +11,8 @@ import lombok.*;
 @Builder
 public class StudentProfileRequest {
     private String fullName;
+    private String studentIdStr;
+    private String studentClass;
     private String phone;
     private String bio;
     private String university;

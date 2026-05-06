@@ -18,7 +18,7 @@ const ManageStudent = () => {
         fullName: '',
         studentIdStr: '',
         major: '',
-        academicYear: '',
+        studentClass: '',
         phone: '',
         active: true
     });
@@ -96,7 +96,7 @@ const ManageStudent = () => {
                 fullName: detail.fullName || '',
                 studentIdStr: detail.student?.studentIdStr || '',
                 major: detail.student?.major || '',
-                academicYear: detail.student?.academicYear || '',
+                studentClass: detail.student?.studentClass || '',
                 phone: detail.student?.phone || '',
                 active: detail.active
             });
@@ -127,7 +127,7 @@ const ManageStudent = () => {
             fullName: '',
             studentIdStr: '',
             major: '',
-            academicYear: '',
+            studentClass: '',
             phone: '',
             active: true
         });
@@ -213,7 +213,7 @@ const ManageStudent = () => {
                             <div>MSSV</div>
                             <div>HỌ VÀ TÊN</div>
                             <div>CHUYÊN NGÀNH</div>
-                            <div>NĂM HỌC</div>
+                            <div>LỚP</div>
                             <div>EMAIL</div>
                             <div>TRẠNG THÁI</div>
                             <div style={{ textAlign: 'right' }}>THAO TÁC</div>
@@ -239,7 +239,7 @@ const ManageStudent = () => {
                                         </div>
                                     </div>
                                     <div className="text-cell">{s.student?.major || 'Chưa cập nhật'}</div>
-                                    <div className="text-cell">{s.student?.academicYear || 'N/A'}</div>
+                                    <div className="text-cell">{s.student?.studentClass || 'N/A'}</div>
                                     <div className="contact-cell">
                                         <p>{s.email}</p>
                                         <span>{s.student?.phone || 'Chưa có SĐT'}</span>
@@ -341,12 +341,12 @@ const ManageStudent = () => {
                                                             </div>
                                                         </div>
                                                     )}
-                                                    {selectedStudent?.studentProfile?.academicYear && (
+                                                    {selectedStudent?.studentProfile?.studentClass && (
                                                         <div className="info-row">
-                                                            <span className="info-icon material-symbols-outlined">calendar_today</span>
+                                                            <span className="info-icon material-symbols-outlined">groups</span>
                                                             <div className="info-content">
-                                                                <span className="info-label">Niên khóa</span>
-                                                                <span className="info-value">{selectedStudent.studentProfile.academicYear}</span>
+                                                                <span className="info-label">Lớp</span>
+                                                                <span className="info-value">{selectedStudent.studentProfile.studentClass}</span>
                                                             </div>
                                                         </div>
                                                     )}
@@ -556,17 +556,17 @@ const ManageStudent = () => {
                                         </div>
                                         <div className="form-group-premium">
                                             <label>
-                                                <span className="material-symbols-outlined">calendar_today</span>
-                                                Niên khóa
+                                                <span className="material-symbols-outlined">groups</span>
+                                                Lớp
                                             </label>
                                             <div className="input-with-icon">
                                                 <input
                                                     type="text"
                                                     className="premium-input"
-                                                    name="academicYear"
-                                                    value={formData.academicYear}
+                                                    name="studentClass"
+                                                    value={formData.studentClass}
                                                     onChange={handleFormChange}
-                                                    placeholder="Vd: 2021 - 2025"
+                                                    placeholder="Vd: 26KT6"
                                                 />
                                             </div>
                                         </div>

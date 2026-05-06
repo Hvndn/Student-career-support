@@ -47,6 +47,8 @@ public class ProfileService {
         }
 
         // Cập nhật thông tin trong Student entity
+        if (request.getStudentIdStr() != null) student.setStudentIdStr(request.getStudentIdStr());
+        if (request.getStudentClass() != null) student.setStudentClass(request.getStudentClass());
         if (request.getUniversity() != null) student.setUniversity(request.getUniversity());
         if (request.getMajor() != null) student.setMajor(request.getMajor());
         if (request.getGraduationYear() != null) student.setGraduationYear(request.getGraduationYear());

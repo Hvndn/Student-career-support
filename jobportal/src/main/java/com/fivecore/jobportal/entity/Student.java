@@ -32,6 +32,8 @@ public class Student {
 
     @Column(name = "student_code", length = 20, unique = true)
     private String studentIdStr;
+    @Column(name = "class_name", length = 50)
+    private String studentClass;
 
     @Column(length = 255)
     private String university;

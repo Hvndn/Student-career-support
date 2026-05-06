@@ -18,13 +18,13 @@ import java.util.UUID;
 public class StorageService {
 
     private final String baseUploadDir = "uploads";
-    private final String physicalUploadDir = "frontend/src/assets/images";
-    private final List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "webp", "pdf", "doc", "docx", "gif", "bmp", "svg", "tiff", "jfif", "ico");
+    private final String physicalUploadDir = "../frontend/src/assets/images";
+    private final List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "webp", "pdf", "doc", "docx",
+            "gif", "bmp", "svg", "tiff", "jfif", "ico");
     private final List<String> allowedMimeTypes = Arrays.asList(
-        "image/jpeg", "image/png", "image/webp", "application/pdf",
-        "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "image/gif", "image/bmp", "image/svg+xml", "image/tiff", "image/x-icon"
-    );
+            "image/jpeg", "image/png", "image/webp", "application/pdf",
+            "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "image/gif", "image/bmp", "image/svg+xml", "image/tiff", "image/x-icon");
 
     /**
      * Lưu file an toàn theo các bước:

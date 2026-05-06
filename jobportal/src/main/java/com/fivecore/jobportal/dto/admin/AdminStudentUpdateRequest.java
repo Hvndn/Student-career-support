@@ -13,7 +13,7 @@ public class AdminStudentUpdateRequest {
     private String fullName;
     private String studentIdStr;
     private String major;
-    private String academicYear;
+    private String studentClass;
     private String phone;
     private boolean active;
 }

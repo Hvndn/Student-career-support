@@ -29,6 +29,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addResourceHandlers(@org.springframework.lang.NonNull org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
         // Ánh xạ URL /uploads/** tới thư mục vật lý frontend/src/assets/images/
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:" + System.getProperty("user.dir") + "/frontend/src/assets/images/");
+                .addResourceLocations("file:" + System.getProperty("user.dir") + "/../frontend/src/assets/images/");
     }
 }

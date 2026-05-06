@@ -78,7 +78,7 @@ const Profile = () => {
         setForm({ 
             fullName: profile.fullName || '', 
             studentIdStr: profile.studentIdStr || '',
-            academicYear: profile.academicYear || '',
+            studentClass: profile.studentClass || '',
             major: profile.major || '', 
             bio: profile.bio || '',
             phone: profile.phone || '',
@@ -250,7 +250,7 @@ const Profile = () => {
                             <span className="pf-major-tag">{profile.major || 'Kiến Trúc'}</span>
                             <h2>{profile.fullName}</h2>
                             <div className="pf-class-info">
-                                Lớp: {profile.academicYear || '26kt6'} &nbsp; - &nbsp; MSSV: {profile.studentIdStr || '19KT123'}
+                                Lớp: {profile.studentClass || '26kt6'} &nbsp; - &nbsp; MSSV: {profile.studentIdStr || '19KT123'}
                             </div>
                         </div>
                     </div>
@@ -518,7 +518,7 @@ const Profile = () => {
                                     </div>
                                     <div className="pf-modal-field">
                                         <label>Lớp</label>
-                                        <input type="text" value={form.academicYear} onChange={e => setForm({...form, academicYear: e.target.value})} placeholder="26kt6" />
+                                        <input type="text" value={form.studentClass} onChange={e => setForm({...form, studentClass: e.target.value})} placeholder="26kt6" />
                                     </div>
                                     <div className="pf-modal-field">
                                         <label>Chuyên ngành</label>

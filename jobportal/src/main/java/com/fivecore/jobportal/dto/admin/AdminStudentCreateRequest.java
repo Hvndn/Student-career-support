@@ -14,5 +14,6 @@ public class AdminStudentCreateRequest {
     private String password;
     private String fullName;
     private String studentIdStr;
+    private String studentClass;
     private String major;
 }
