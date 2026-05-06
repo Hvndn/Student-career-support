@@ -191,22 +191,23 @@ const ApplicationDetailDrawer = ({ application, onClose, onRefresh }) => {
                                 className="drawer-cv-item" 
                                 onClick={() => {
                                     if (application.cvUrl) {
-                                        // Mở file từ server (Vite proxy handles /uploads)
                                         window.open(application.cvUrl, '_blank');
+                                    } else if (application.cvData) {
+                                        // Mở bản Snapshot mà sinh viên đã nộp
+                                        window.open(`/cv/view/${application.id}`, '_blank');
                                     } else {
-                                        // Nếu là hồ sơ hệ thống, chuyển về trang quản lý CV
-                                        navigate('/student/cv-template');
+                                        navigate('/student/cv-management');
                                     }
                                 }}
-                                title={application.cvUrl ? 'Bấm để xem file đã nộp' : 'Bấm để quản lý hồ sơ hệ thống'}
+                                title={application.cvUrl || application.cvData ? 'Bấm để xem hồ sơ đã nộp' : 'Bấm để quản lý hồ sơ'}
                             >
                                 <div className="cv-icon-wrap">
                                     <span className="material-symbols-outlined">
-                                        {application.cvUrl ? 'picture_as_pdf' : 'account_circle'}
+                                        {application.cvUrl ? 'picture_as_pdf' : (application.cvData ? 'history_edu' : 'account_circle')}
                                     </span>
                                 </div>
                                 <span className="cv-name">
-                                    {application.cvUrl ? 'Xem CV/Hồ sơ đính kèm' : 'Hồ sơ hệ thống (Xem trong quản lý CV)'}
+                                    {application.cvUrl ? (application.cvName || 'Xem CV/Hồ sơ đính kèm') : (application.cvData ? (application.cvName || 'Xem bản Snapshot Online đã nộp') : 'Hồ sơ hệ thống')}
                                 </span>
                                 <span className="material-symbols-outlined cv-arrow">chevron_right</span>
                             </div>

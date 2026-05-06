@@ -54,7 +54,7 @@ export const MessagingProvider = ({ children }) => {
         setIsLoadingDirectory(true);
         try {
             const res = await chatApi.getDirectory();
-            if (res.data.success) {
+            if (res.data?.status === 'success' || res.data?.success) {
                 setDirectory(res.data.data);
             }
         } catch (err) {
@@ -83,7 +83,7 @@ export const MessagingProvider = ({ children }) => {
         if (!localStorage.getItem('token')) return;
         try {
             const res = await chatApi.getConversations();
-            if (res.data?.success) {
+            if (res.data?.status === 'success' || res.data?.success) {
                 setConversations(res.data.data);
                 const totalUnread = res.data.data.filter(c => c.isUnread).length;
                 setUnreadCount(totalUnread);
@@ -159,7 +159,7 @@ export const MessagingProvider = ({ children }) => {
         if (!content.trim()) return false;
         try {
             const res = await chatApi.sendMessage(partnerId, { content });
-            if (res.data?.success) {
+            if (res.data?.status === 'success' || res.data?.success) {
                 const sentMsg = res.data.data;
                 setMessages((prev) => [...prev, sentMsg]);
                 refreshConversations();
@@ -176,7 +176,7 @@ export const MessagingProvider = ({ children }) => {
         setActiveChat(partnerId);
         try {
             const res = await chatApi.getMessages(partnerId);
-            if (res.data?.success) {
+            if (res.data?.status === 'success' || res.data?.success) {
                 setMessages(res.data.data);
                 refreshConversations();
             }

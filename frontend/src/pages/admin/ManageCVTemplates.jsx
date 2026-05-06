@@ -122,8 +122,8 @@ const ManageCVTemplates = () => {
         try {
             setLoading(true);
             const res = await adminApi.getCvTemplates();
-            if (res.data && res.data.success) {
-                setTemplates(res.data.data);
+            if (res.data && (res.data.status === 'success' || res.data.success)) {
+                setTemplates(res.data.data || []);
             }
         } catch (error) {
             console.error("Lỗi lấy danh sách mẫu CV:", error);

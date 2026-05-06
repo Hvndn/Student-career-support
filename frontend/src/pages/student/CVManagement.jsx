@@ -124,8 +124,8 @@ const TemplateSelectorModal = ({ isOpen, onClose }) => {
     if (!isOpen) return;
     setLoading(true);
     studentApi.getCvTemplates()
-      .then(res => { if (res.data?.success) setTemplates(res.data.data || []); })
-      .catch(console.error)
+      .then(res => { if (res.data?.status === 'success' || res.data?.success) setTemplates(res.data.data || []); })
+      .catch(err => console.error("Error loading templates:", err))
       .finally(() => setLoading(false));
   }, [isOpen]);
 

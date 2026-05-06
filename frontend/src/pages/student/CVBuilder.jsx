@@ -282,7 +282,7 @@ const Editor = ({ section, cv, setCV, onAvatarClick }) => {
 };
 
 // ─── main component ────────────────────────────────────────────────────────
-const CVBuilder = () => {
+const CVBuilder = ({ initialData = null, readOnly = false }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -309,8 +309,7 @@ const CVBuilder = () => {
     const loadingToast = toast.loading('Đang gửi ảnh lên...');
     try {
       const res = await studentApi.updateAvatar(formData);
-      console.log("Upload result:", res.data);
-      if (res.data?.success) {
+      if (res.data?.status === 'success' || res.data?.success) {
         let newUrl = res.data.data;
         // Nếu là đường dẫn tương đối, đảm bảo có thể hiển thị được
         if (newUrl && newUrl.startsWith('/') && !newUrl.startsWith('http')) {
@@ -351,6 +350,13 @@ const CVBuilder = () => {
   }, [id, searchParams, loading, cv]);
 
   useEffect(() => {
+    if (initialData) {
+      setCV(initialData);
+      if (initialData._name) setCvName(initialData._name);
+      setLoading(false);
+      return;
+    }
+
     studentApi.getProfile()
       .then(res => {
         const d = res.data?.data || {};
@@ -503,7 +509,8 @@ const CVBuilder = () => {
     <div className="cvb-wrap">
 
       {/* ── HEADER ── */}
-      <header className="cvb-header">
+      {!readOnly && (
+        <header className="cvb-header">
         <div className="cvb-header-l">
           <button className="cvb-back" onClick={()=>navigate(-1)}><IcoBk/></button>
           <div>
@@ -528,11 +535,13 @@ const CVBuilder = () => {
           </button>
         </div>
       </header>
+      )}
 
-      <div className="cvb-body">
+      <div className={`cvb-body ${readOnly ? 'cvb-readonly' : ''}`}>
 
         {/* ── LEFT SIDEBAR ── */}
-        <aside className="cvb-left">
+        {!readOnly && (
+          <aside className="cvb-left">
           <div className="cvb-sv-label">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
             CẤU TRÚC CV
@@ -579,6 +588,7 @@ const CVBuilder = () => {
             </div>
           </div>
         </aside>
+        )}
 
         {/* ── CENTER CANVAS ── */}
         <main className="cvb-canvas">
@@ -587,11 +597,11 @@ const CVBuilder = () => {
               {/* //hiển thị cv */}
               <Template
                 profile={cv} cvData={cv}
-                isEditMode={true}
-                onUpdate={(d)=>setCV(d)}
+                isEditMode={!readOnly}
+                onUpdate={(d)=>!readOnly && setCV(d)}
                 themeColor={cv.themeColor||'#0f409f'}
-                onSectionClick={setActiveSection}
-                onAvatarClick={() => avatarInputRef.current?.click()}
+                onSectionClick={!readOnly ? setActiveSection : undefined}
+                onAvatarClick={() => !readOnly && avatarInputRef.current?.click()}
               />
             </div>
           </div>
@@ -612,18 +622,20 @@ const CVBuilder = () => {
         </main>
 
         {/* ── RIGHT EDITOR ── */}
-        <aside className="cvb-right">
-          <div className="cvb-right-hd">
-            <span className="cvb-right-icon"><IcoGear/></span>
-            <div>
-              <div className="cvb-right-label">TRÌNH CHỈNH SỬA</div>
-              <div className="cvb-right-sec">{SECTIONS.find(s=>s.key===activeSection)?.label}</div>
+        {!readOnly && (
+          <aside className="cvb-right">
+            <div className="cvb-right-hd">
+              <span className="cvb-right-icon"><IcoGear/></span>
+              <div>
+                <div className="cvb-right-label">TRÌNH CHỈNH SỬA</div>
+                <div className="cvb-right-sec">{SECTIONS.find(s=>s.key===activeSection)?.label}</div>
+              </div>
             </div>
-          </div>
-          <div className="cvb-right-body">
-            <Editor section={activeSection} cv={cv} setCV={setCV} onAvatarClick={() => avatarInputRef.current?.click()}/>
-          </div>
-        </aside>
+            <div className="cvb-right-body">
+              <Editor section={activeSection} cv={cv} setCV={setCV} onAvatarClick={() => avatarInputRef.current?.click()}/>
+            </div>
+          </aside>
+        )}
 
       </div>
       

@@ -14,7 +14,7 @@ const PublicCvView = () => {
     useEffect(() => {
         recruitmentApi.getApplicationDetail(appId)
             .then(res => {
-                if (res.data?.success && res.data.data.cvData) {
+                if ((res.data?.status === 'success' || res.data?.success) && res.data.data?.cvData) {
                     setCvData(JSON.parse(res.data.data.cvData));
                 } else {
                     setError("Không tìm thấy dữ liệu CV Online cho hồ sơ này.");

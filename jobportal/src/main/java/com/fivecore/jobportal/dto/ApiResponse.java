@@ -33,4 +33,8 @@ public class ApiResponse<T> {
                 .errorCode(errorCode)
                 .build();
     }
+
+    public boolean isSuccess() {
+        return "success".equals(status);
+    }
 }
