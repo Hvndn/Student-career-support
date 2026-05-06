@@ -295,22 +295,22 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                         Phân tích độ phù hợp
                                     </h3>
                                     <div className="match-analysis" style={{ padding: 0, background: 'transparent', border: 'none' }}>
-                                        {Object.entries(candidate.matchDetails.breakdown).map(([key, data]) => (
-                                            <div key={key} className="analysis-item" title={data.experience_reason || data.skills_reason || data.projects_reason || data.education_reason || data.location_reason}>
+                                        {Object.entries(candidate.matchDetails.breakdown).map(([key, factorData]) => (
+                                            <div key={key} className="analysis-item" title={factorData.experience_reason || factorData.skills_reason || factorData.projects_reason || factorData.education_reason || factorData.location_reason}>
                                                 <div className="analysis-label">
                                                     <span>{key === 'skills' ? 'Kỹ năng' : key === 'experience' ? 'Kinh nghiệm' : key === 'projects' ? 'Dự án' : key === 'education' ? 'Học vấn' : 'Địa điểm'}</span>
-                                                    {data.is_missing_data ? (
+                                                    {factorData.is_missing_data ? (
                                                         <span className="score-val missing">Chưa cập nhật</span>
                                                     ) : (
-                                                        <span className="score-val">{data.score}%</span>
+                                                        <span className="score-val">{factorData.score}%</span>
                                                     )}
                                                 </div>
                                                 <div className="analysis-bar-bg">
                                                     <div 
-                                                        className={`analysis-bar-fill ${data.is_missing_data ? 'missing' : ''}`} 
+                                                        className={`analysis-bar-fill ${factorData.is_missing_data ? 'missing' : ''}`} 
                                                         style={{ 
-                                                            width: data.is_missing_data ? '100%' : `${data.score}%`,
-                                                            backgroundColor: data.is_missing_data ? '#e2e8f0' : (data.score >= 80 ? '#10b981' : data.score >= 50 ? '#f59e0b' : '#ef4444')
+                                                            width: factorData.is_missing_data ? '100%' : `${factorData.score}%`,
+                                                            backgroundColor: factorData.is_missing_data ? '#e2e8f0' : (factorData.score >= 80 ? '#10b981' : factorData.score >= 50 ? '#f59e0b' : '#ef4444')
                                                         }}
                                                     ></div>
                                                 </div>

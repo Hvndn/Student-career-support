@@ -259,7 +259,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 280px;
+    max-width: 200px; /* Giảm mạnh để an toàn cho mobile hẹp */
 }
 
 /* Nội dung phỏng vấn dài - cho phép wrap */
@@ -549,6 +549,8 @@
     margin-bottom: 0.5rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px dashed rgba(0, 0, 0, 0.05);
+    flex-wrap: wrap;
+    height: auto;
 }
 
 .detail-item.job-tag-detail .material-symbols-outlined {
@@ -782,4 +784,31 @@
 .pjm-range::-webkit-slider-thumb:hover {
     transform: scale(1.2);
     box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.1);
+}
+
+@media (max-width: 480px) {
+    .booking-main-content {
+        padding: 1rem;
+    }
+    
+    .candidate-info {
+        gap: 0.75rem;
+    }
+    
+    .c-avatar {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .c-text h4 {
+        font-size: 1rem;
+    }
+    
+    .detail-item .text {
+        max-width: 140px;
+    }
+    
+    .booking-status-side {
+        padding: 1rem;
+    }
 }
