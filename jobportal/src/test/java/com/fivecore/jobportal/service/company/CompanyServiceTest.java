@@ -64,7 +64,7 @@ public class CompanyServiceTest {
         when(logo.isEmpty()).thenReturn(false);
         when(storageService.saveFile(any(), anyString())).thenReturn("new_logo.png");
 
-        companyService.updateCompanyInfo(1, updatedData, logo, new ArrayList<>());
+        companyService.updateCompanyInfo(1, updatedData, logo, new ArrayList<>(), new ArrayList<>());
 
         assertEquals("New Name", testCompany.getName());
         assertEquals("new_logo.png", testCompany.getLogoUrl());

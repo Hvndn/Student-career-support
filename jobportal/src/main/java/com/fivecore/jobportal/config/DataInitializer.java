@@ -169,6 +169,9 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeSampleCvTemplates() {
+        // FORCE UPDATE: Clear existing templates
+        log.info("🧹 Đang làm sạch mẫu CV cũ để cập nhật...");
+        cvTemplateRepository.deleteAll();
 
         log.info("🌱 Khởi tạo danh sách mẫu CV...");
 
@@ -189,17 +192,19 @@ public class DataInitializer implements CommandLineRunner {
         createCvTemplate("ATS Friendly", "ATS", "ATS_1", "/uploads/cv-templates/ats_1.png",
                 "Tối ưu cho hệ thống ATS, không hình ảnh trang trí.");
 
-        // Bổ sung các mẫu cho ngành Công nghệ thông tin
+        // Bổ sung các mẫu cho đa dạng ngành nghề
         createCvTemplate("Kỹ sư Phần mềm Pro", "Công nghệ thông tin", "PRO_1", "/uploads/cv-templates/it_pro_1.png",
                 "Mẫu chuyên sâu cho Developer, tập trung vào Tech Stack.");
-        createCvTemplate("Lập trình viên Web", "Công nghệ thông tin", "MODERN_1", "/uploads/cv-templates/it_web.png",
-                "Thiết kế hiện đại, làm nổi bật các dự án cá nhân.");
-        createCvTemplate("Data Scientist", "Công nghệ thông tin", "HARVARD_1", "/uploads/cv-templates/it_data.png",
-                "Format học thuật chuyên sâu cho nghiên cứu dữ liệu.");
-        createCvTemplate("Mobile App Dev", "Công nghệ thông tin", "CREATIVE_1", "/uploads/cv-templates/it_mobile.png",
-                "Năng động, nhấn mạnh vào các sản phẩm trên Store.");
-        createCvTemplate("UI/UX Designer", "Sáng tạo", "ARTISTIC_1", "/uploads/cv-templates/uiux.png",
-                "Màu sắc hài hòa, tập trung vào tư duy thiết kế.");
+        createCvTemplate("Chuyên viên Marketing", "Kinh doanh / Marketing", "MODERN_1", "/uploads/cv-templates/marketing_pro.png",
+                "Thiết kế năng động, làm nổi bật các chiến dịch và kết quả.");
+        createCvTemplate("Phân tích Tài chính", "Tài chính / Ngân hàng", "HARVARD_1", "/uploads/cv-templates/finance_pro.png",
+                "Sạch sẽ, chuyên nghiệp, tập trung vào số liệu và chứng chỉ.");
+        createCvTemplate("Kỹ sư Cơ khí", "Kỹ thuật / Công nghệ", "PRO_2", "/uploads/cv-templates/engineering_pro.png",
+                "Cấu trúc rõ ràng, nhấn mạnh vào kinh nghiệm dự án và kỹ năng kỹ thuật.");
+        createCvTemplate("Quản trị Nhân sự", "Quản trị nhân sự", "CLASSIC_1", "/uploads/cv-templates/hr_pro.png",
+                "Thanh lịch, dễ đọc, tập trung vào kỹ năng giao tiếp và quản lý.");
+        createCvTemplate("UI/UX Designer", "Thiết kế / Sáng tạo", "ARTISTIC_1", "/uploads/cv-templates/uiux.png",
+                "Màu sắc hài hòa, tập trung vào tư duy thiết kế và Portfolio.");
     }
 
     private void createCvTemplate(String name, String category, String key, String thumb, String description) {
@@ -216,23 +221,22 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initializeCategories() {
-        if (categoryRepository.count() > 0)
-            return;
+        // FORCE UPDATE: Clear existing categories to ensure multi-disciplinary data
+        log.info("🧹 Đang làm sạch danh mục cũ để cập nhật dữ liệu đa ngành...");
+        categoryRepository.deleteAll();
 
-        log.info("🌱 Khởi tạo danh mục Công nghệ thông tin mẫu...");
+        log.info("🌱 Khởi tạo danh mục nghề nghiệp đa ngành...");
 
-        createCategory("Lập trình Web", "web-development", "window", "Phát triển các ứng dụng web chuyên nghiệp.");
-        createCategory("Lập trình Di động", "mobile-development", "smartphone",
-                "Xây dựng ứng dụng đa nền tảng iOS & Android.");
-        createCategory("Trí tuệ nhân tạo", "ai-ml", "psychology",
-                "Nghiên cứu và triển khai các mô hình AI/Machine Learning.");
-        createCategory("An ninh mạng", "cyber-security", "security", "Bảo mật hệ thống và an toàn thông tin.");
-        createCategory("Điện toán đám mây", "cloud-computing", "cloud",
-                "Triển khai hạ tầng trên AWS, Azure, Google Cloud.");
-        createCategory("Tester / QA QC", "tester-qa-qc", "verified", "Đảm bảo chất lượng sản phẩm phần mềm.");
-        createCategory("Quản trị cơ sở dữ liệu", "database-administration", "database",
-                "Thiết kế và tối ưu hóa hệ quản trị dữ liệu.");
-        createCategory("UI-UX Design", "ui-ux-design", "palette", "Thiết kế trải nghiệm và giao diện người dùng.");
+        createCategory("Công nghệ thông tin", "it-software", "computer", "Phát triển phần mềm, mạng, bảo mật và giải pháp công nghệ.");
+        createCategory("Kinh doanh / Marketing", "business-marketing", "trending_up", "Quản trị kinh doanh, truyền thông và nghiên cứu thị trường.");
+        createCategory("Tài chính / Ngân hàng", "finance-accounting", "account_balance", "Dịch vụ tài chính, kế toán, kiểm toán và ngân hàng.");
+        createCategory("Kỹ thuật / Công nghệ", "engineering", "engineering", "Cơ khí, điện tử, sản xuất và quy trình kỹ thuật.");
+        createCategory("Ngôn ngữ / Biên dịch", "languages-translation", "translate", "Dịch thuật, giảng dạy ngôn ngữ và quan hệ quốc tế.");
+        createCategory("Y tế / Dược phẩm", "healthcare-medical", "medical_services", "Dịch vụ chăm sóc sức khỏe, y khoa và dược phẩm.");
+        createCategory("Quản trị nhân sự", "hr-administration", "groups", "Quản lý nguồn nhân lực, tuyển dụng và đào tạo.");
+        createCategory("Du lịch / Khách sạn", "tourism-hospitality", "hotel", "Dịch vụ lữ hành, quản lý nhà hàng và khách sạn.");
+        createCategory("Thiết kế / Sáng tạo", "design-creative", "palette", "Thiết kế đồ họa, thời trang, nội thất và nghệ thuật.");
+        createCategory("Kiến trúc / Xây dựng", "architecture-construction", "construction", "Quy hoạch kiến trúc, thi công và quản lý dự án xây dựng.");
     }
 
     private void createCategory(String name, String slug, String icon, String desc) {
