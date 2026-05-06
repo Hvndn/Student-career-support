@@ -299,15 +299,18 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                             <div key={key} className="analysis-item" title={data.experience_reason || data.skills_reason || data.projects_reason || data.education_reason || data.location_reason}>
                                                 <div className="analysis-label">
                                                     <span>{key === 'skills' ? 'Kỹ năng' : key === 'experience' ? 'Kinh nghiệm' : key === 'projects' ? 'Dự án' : key === 'education' ? 'Học vấn' : 'Địa điểm'}</span>
-                                                    <span className="score-val" style={{ color: '#6366f1' }}>{data.score}%</span>
+                                                    {data.is_missing_data ? (
+                                                        <span className="score-val missing">Chưa cập nhật</span>
+                                                    ) : (
+                                                        <span className="score-val">{data.score}%</span>
+                                                    )}
                                                 </div>
-                                                <div className="analysis-bar-bg" style={{ height: '4px', background: '#e2e8f0' }}>
+                                                <div className="analysis-bar-bg">
                                                     <div 
-                                                        className="analysis-bar-fill" 
+                                                        className={`analysis-bar-fill ${data.is_missing_data ? 'missing' : ''}`} 
                                                         style={{ 
-                                                            width: `${data.score}%`,
-                                                            height: '100%',
-                                                            backgroundColor: data.score >= 80 ? '#10b981' : data.score >= 50 ? '#f59e0b' : '#ef4444'
+                                                            width: data.is_missing_data ? '100%' : `${data.score}%`,
+                                                            backgroundColor: data.is_missing_data ? '#e2e8f0' : (data.score >= 80 ? '#10b981' : data.score >= 50 ? '#f59e0b' : '#ef4444')
                                                         }}
                                                     ></div>
                                                 </div>

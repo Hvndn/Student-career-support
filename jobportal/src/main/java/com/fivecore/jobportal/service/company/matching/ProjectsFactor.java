@@ -19,6 +19,11 @@ public class ProjectsFactor implements ScoringFactor {
         double score = 0;
         int projectCount = student.getProjects() != null ? student.getProjects().size() : 0;
         boolean hasGithub = student.getGithubUrl() != null && !student.getGithubUrl().isBlank();
+        if (projectCount == 0 && !hasGithub) {
+            details.put("is_missing_data", true);
+            details.put("projects_reason", "Ứng viên chưa cập nhật dự án và GitHub");
+            return 0.0;
+        }
 
         if (hasGithub) score += 0.4; // 40% điểm factor này cho GitHub
         

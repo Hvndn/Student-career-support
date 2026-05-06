@@ -348,6 +348,8 @@
     line-height: 1.7;
     color: var(--spm-text-main);
     white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 /* Timeline (Study & work) */
@@ -615,6 +617,54 @@
 }
 .spm-project-links a.spm-btn-outline:hover {
     background: #f1f5f9;
+}
+
+/* Match Analysis Enhancements */
+.match-analysis {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.analysis-item {
+    cursor: help;
+}
+
+.analysis-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.score-val {
+    color: var(--spm-primary);
+    font-weight: 800;
+}
+
+.score-val.missing {
+    color: var(--spm-text-muted);
+    font-weight: 500;
+    font-size: 0.75rem;
+}
+
+.analysis-bar-bg {
+    height: 6px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.analysis-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.analysis-bar-fill.missing {
+    opacity: 0.5;
 }
 
 /* ── RESPONSIVE ── */
