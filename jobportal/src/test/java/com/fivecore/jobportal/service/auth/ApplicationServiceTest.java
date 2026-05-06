@@ -6,6 +6,7 @@ import com.fivecore.jobportal.repository.ApplicationRepository;
 import com.fivecore.jobportal.repository.JobRepository;
 import com.fivecore.jobportal.repository.StudentRepository;
 import com.fivecore.jobportal.service.interaction.NotificationService;
+import com.fivecore.jobportal.service.company.CandidateMatchingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,8 @@ public class ApplicationServiceTest {
     private JobRepository jobRepository;
     @Mock
     private NotificationService notificationService;
+    @Mock
+    private CandidateMatchingService candidateMatchingService;
 
     @InjectMocks
     private ApplicationService applicationService;
@@ -77,11 +80,11 @@ public class ApplicationServiceTest {
             return a;
         });
 
-        ApplicationDto result = applicationService.applyForJob(1, 1, "Name", "email@com", "123", "Letter", "cv.pdf", null);
+        ApplicationDto result = applicationService.applyForJob(1, 1, "Name", "email@com", "123", "Letter", "cv.pdf", null, null);
 
         assertNotNull(result);
         assertEquals("Java Dev", result.getJobTitle());
-        verify(notificationService).sendNotification(any(), anyString(), anyString());
+        verify(notificationService, times(2)).sendNotification(any(), anyString(), anyString());
     }
 
     @Test
@@ -91,7 +94,7 @@ public class ApplicationServiceTest {
         when(jobRepository.findById(1)).thenReturn(Optional.of(testJob));
         when(applicationRepository.findByStudentIdAndJobId(1, 1)).thenReturn(Optional.of(new Application()));
 
-        assertThrows(RuntimeException.class, () -> applicationService.applyForJob(1, 1, "N", "E", "P", "L", "C", null));
+        assertThrows(RuntimeException.class, () -> applicationService.applyForJob(1, 1, "N", "E", "P", "L", "C", null, null));
     }
 
     @Test
@@ -105,11 +108,11 @@ public class ApplicationServiceTest {
 
         when(applicationRepository.findById(50)).thenReturn(Optional.of(app));
 
-        applicationService.updateApplicationStatus(50, Application.ApplicationStatus.accepted, 1);
+        applicationService.updateApplicationStatus(50, Application.ApplicationStatus.accepted, 1, null);
 
         assertEquals(Application.ApplicationStatus.accepted, app.getStatus());
         verify(applicationRepository).save(app);
-        verify(notificationService).sendNotification(eq(testUser), contains("Chúc mừng"), anyString());
+        verify(notificationService).sendNotification(eq(testUser), anyString(), contains("của bạn vào vị trí"));
     }
 
     @Test
@@ -121,7 +124,7 @@ public class ApplicationServiceTest {
         when(applicationRepository.findById(50)).thenReturn(Optional.of(app));
 
         // Company ID 2 cố gắng duyệt Job của Company ID 1
-        assertThrows(RuntimeException.class, () -> applicationService.updateApplicationStatus(50, Application.ApplicationStatus.accepted, 2));
+        assertThrows(RuntimeException.class, () -> applicationService.updateApplicationStatus(50, Application.ApplicationStatus.accepted, 2, null));
     }
 
     @Test
@@ -167,7 +170,7 @@ public class ApplicationServiceTest {
         when(jobRepository.findById(1)).thenReturn(Optional.of(testJob));
         when(applicationRepository.save(any())).thenReturn(app);
 
-        ApplicationDto dto = applicationService.applyForJob(1, 1, "N", "E", "P", "L", "C", null);
+        ApplicationDto dto = applicationService.applyForJob(1, 1, "N", "E", "P", "L", "C", null, null);
         assertEquals("10 - 20 triệu", dto.getSalaryRange());
     }
 }

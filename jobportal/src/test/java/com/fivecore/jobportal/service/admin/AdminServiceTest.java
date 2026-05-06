@@ -36,6 +36,7 @@ public class AdminServiceTest {
     @Mock private InterviewRepository interviewRepository;
     @Mock private PasswordEncoder passwordEncoder;
     @Mock private DailyStatRepository dailyStatRepository;
+    @Mock private CategoryRepository categoryRepository;
 
     @InjectMocks
     private AdminService adminService;

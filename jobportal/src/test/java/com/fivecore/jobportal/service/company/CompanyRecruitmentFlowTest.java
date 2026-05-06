@@ -81,7 +81,7 @@ public class CompanyRecruitmentFlowTest {
                 .build());
         Student student = studentRepository.save(Student.builder().user(stuUser).studentIdStr("STU001").build());
 
-        applicationService.applyForJob(student.getId(), job.getId(), "Ứng viên 1", "candidate1@gmail.com", "0123", "Tôi rất muốn làm", null, null);
+        applicationService.applyForJob(student.getId(), job.getId(), "Ứng viên 1", "candidate1@gmail.com", "0123", "Tôi rất muốn làm", null, null, null);
         
         Application application = applicationRepository.findAll().stream()
                 .filter(a -> a.getStudent().getId().equals(student.getId()))
