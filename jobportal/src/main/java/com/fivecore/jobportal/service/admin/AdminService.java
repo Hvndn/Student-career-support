@@ -304,7 +304,6 @@ public class AdminService {
                     .major(student.getMajor())
                     .graduationYear(student.getGraduationYear())
                     .gpa(student.getGpa())
-                    .academicYear(student.getAcademicYear())
                     .bio(student.getBio())
                     .avatarUrl(student.getAvatarUrl())
                     .educations(student.getEducations().stream()
@@ -418,7 +417,6 @@ public class AdminService {
             Student student = user.getStudent();
             student.setStudentIdStr(request.getStudentIdStr());
             student.setMajor(request.getMajor());
-            student.setAcademicYear(request.getAcademicYear());
             student.setPhone(request.getPhone());
             studentRepository.save(student);
         }
@@ -476,7 +474,6 @@ public class AdminService {
                 .user(savedUser)
                 .studentIdStr(request.getStudentIdStr())
                 .major(request.getMajor())
-                .academicYear(request.getAcademicYear())
                 .build();
 
         studentRepository.save(student);

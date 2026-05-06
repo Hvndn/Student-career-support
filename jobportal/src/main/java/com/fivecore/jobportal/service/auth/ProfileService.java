@@ -51,12 +51,9 @@ public class ProfileService {
         if (request.getMajor() != null) student.setMajor(request.getMajor());
         if (request.getGraduationYear() != null) student.setGraduationYear(request.getGraduationYear());
         if (request.getGpa() != null) student.setGpa(request.getGpa());
-        if (request.getAcademicYear() != null) student.setAcademicYear(request.getAcademicYear());
         if (request.getBio() != null) student.setBio(request.getBio());
         if (request.getPhone() != null) student.setPhone(request.getPhone());
         if (request.getAddress() != null) student.setAddress(request.getAddress());
-        if (request.getCoverImageUrl() != null) student.setCoverImageUrl(request.getCoverImageUrl());
-        if (request.getVideoUrl() != null) student.setVideoUrl(request.getVideoUrl());
         if (request.getGithubUrl() != null) student.setGithubUrl(request.getGithubUrl());
         if (request.getLinkedinUrl() != null) student.setLinkedinUrl(request.getLinkedinUrl());
         if (request.getCvData() != null) student.setCvData(request.getCvData());
@@ -74,14 +71,6 @@ public class ProfileService {
         studentRepository.save(student);
     }
 
-    /** Cập nhật riêng Video giới thiệu. */
-    @Transactional
-    public void updateVideo(Integer studentId, String videoUrl) {
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
-        student.setVideoUrl(videoUrl);
-        studentRepository.save(student);
-    }
 
     /** Cập nhật riêng CV (PDF). */
     @Transactional

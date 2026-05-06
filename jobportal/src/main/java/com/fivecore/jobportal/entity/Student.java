@@ -48,12 +48,6 @@ public class Student {
     @Column(name = "avatar_url", length = 255)
     private String avatarUrl;
 
-    @Column(name = "cover_url", length = 255)
-    private String coverImageUrl;
-
-    @Column(name = "video_url", length = 255)
-    private String videoUrl;
-
     @Column(name = "resume_url", length = 255)
     private String resumeUrl;
 
@@ -70,9 +64,6 @@ public class Student {
 
     @Column(name = "gpa")
     private Double gpa;
-
-    @Column(name = "academic_year", length = 20)
-    private String academicYear;
 
     @Column(length = 255)
     private String address;

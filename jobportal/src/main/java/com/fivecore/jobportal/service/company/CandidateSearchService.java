@@ -114,8 +114,6 @@ public class CandidateSearchService {
             res.put("location", profile.getAddress());
             res.put("address", profile.getAddress());
             res.put("gpa", profile.getGpa());
-            res.put("academicYear", profile.getAcademicYear());
-            res.put("videoUrl", profile.getVideoUrl());
             res.put("skills", profile.getSkills());
             res.put("projects", profile.getProjects());
             res.put("educations", profile.getEducations());
@@ -123,7 +121,6 @@ public class CandidateSearchService {
             res.put("bio", profile.getBio());
             res.put("cvData", profile.getCvData());
             res.put("resumeUrl", profile.getResumeUrl());
-            res.put("coverImageUrl", profile.getCoverImageUrl());
             
             // Phân tích AI
             Map<String, Object> matchDetails = new HashMap<>();

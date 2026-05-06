@@ -17,10 +17,7 @@ public class StudentProfileRequest {
     private String major;
     private Integer graduationYear;
     private Double gpa;
-    private String academicYear;
     private String address;
-    private String coverImageUrl;
-    private String videoUrl;
     private String githubUrl;
     private String linkedinUrl;
     private String cvData;

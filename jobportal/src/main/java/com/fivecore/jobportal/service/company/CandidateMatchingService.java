@@ -160,12 +160,10 @@ public class CandidateMatchingService {
 
     private double calculateProjectScore(Student student, java.util.Map<String, Object> details) {
         double score = 0;
-        if (student.getGithubUrl() != null && !student.getGithubUrl().isBlank()) score += 7;
-        if (student.getProjects() != null && student.getProjects().size() >= 2) score += 8;
-        else if (student.getProjects() != null && !student.getProjects().isEmpty()) score += 4;
+        if (student.getProjects() != null && student.getProjects().size() >= 2) score += 15;
+        else if (student.getProjects() != null && !student.getProjects().isEmpty()) score += 8;
 
         details.put("projectScore", score);
-        details.put("hasGithub", student.getGithubUrl() != null);
         return score;
     }
 

@@ -492,7 +492,7 @@ const CVBuilder = () => {
       <div className="cvb-spin"/><p>Đang khởi tạo trình tạo CV...</p>
     </div>
   );
-
+  //lấy mẫu CV từ registry
   const Template = getTemplateComponent(cv.layoutKey||'MODERN_1');
   const hasContent = (key) => {
     if (['personal','contact','bio'].includes(key)) return !!(cv.fullName||cv.email||cv.bio);
@@ -584,6 +584,7 @@ const CVBuilder = () => {
         <main className="cvb-canvas">
           <div className="cvb-canvas-scroll">
             <div className="cvb-canvas-inner" style={{transform:`scale(${zoom/100})`,transformOrigin:'top center'}}>
+              {/* //hiển thị cv */}
               <Template
                 profile={cv} cvData={cv}
                 isEditMode={true}
