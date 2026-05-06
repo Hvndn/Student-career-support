@@ -12,8 +12,6 @@ const CompanyJobManagement = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [showPostModal, setShowPostModal] = useState(false);
@@ -28,7 +26,6 @@ const CompanyJobManagement = () => {
   const JOBS_PER_PAGE = 5;
 
   const REGIONS = ['Hà Nội', 'TP. Hồ Chí Minh', 'Đà Nẵng', 'Hải Phòng', 'Cần Thơ', 'Bình Dương', 'Đồng Nai', 'Bắc Ninh', 'Long An'];
-  const JOBS_PER_PAGE = 5;
 
   const showToast = (message, type = 'success') => {
     if (type === 'error') toast.error(message);
