@@ -16,8 +16,8 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
     const gpa = candidate.gpa ? parseFloat(candidate.gpa).toFixed(2) : '0.00';
 
     return (
-        <div className="spm-overlay" onClick={onClose}>
-            <div className="spm-container" onClick={e => e.stopPropagation()}>
+        <div className="spm-overlay">
+            <div className="spm-container">
                 
                 {/* Close Button */}
                 <button className="spm-close-btn" onClick={onClose} title="Đóng">✕</button>

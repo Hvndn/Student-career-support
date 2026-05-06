@@ -148,7 +148,8 @@
 .cdm-status-badge.status-applied { background: #e0f2fe; color: #0369a1; }
 .cdm-status-badge.status-interviewing { background: #f5f3ff; color: #6d28d2; }
 .cdm-status-badge.status-review { background: #fef9c3; color: #854d0e; }
-.cdm-status-badge.status-accepted { background: #ecfdf5; color: #047857; }
+.cdm-status-badge.status-passed { background: #f0fdf4; color: #16a34a; }
+.cdm-status-badge.status-hired { background: #ecfdf5; color: #059669; }
 .cdm-status-badge.status-rejected { background: #fef2f2; color: #b91c1c; }
 
 
@@ -384,7 +385,7 @@
 
 .cdm-status-radios {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
 }
 
@@ -422,6 +423,13 @@
 }
 
 /* Selected States */
+.cdm-radio-label.pending:has(input:checked) {
+    border-color: #0ea5e9;
+    background: #f0f9ff;
+    color: #0369a1;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
+}
+
 .cdm-radio-label.review:has(input:checked) {
     border-color: #f59e0b;
     background: #fef3c7;
@@ -434,6 +442,20 @@
     background: var(--cdm-primary-light);
     color: var(--cdm-primary-dark);
     box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+}
+
+.cdm-radio-label.passed:has(input:checked) {
+    border-color: #22c55e;
+    background: #f0fdf4;
+    color: #15803d;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.15);
+}
+
+.cdm-radio-label.hired:has(input:checked) {
+    border-color: #10b981;
+    background: #ecfdf5;
+    color: #047857;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
 }
 
 .cdm-radio-label.rejected:has(input:checked) {
@@ -450,8 +472,11 @@
     opacity: 0.6;
 }
 
+.cdm-radio-label.pending::before { content: 'schedule'; }
 .cdm-radio-label.review::before { content: 'visibility'; }
 .cdm-radio-label.interview::before { content: 'event_available'; }
+.cdm-radio-label.passed::before { content: 'verified'; }
+.cdm-radio-label.hired::before { content: 'person_add'; }
 .cdm-radio-label.rejected::before { content: 'cancel'; }
 
 .cdm-radio-label:has(input:checked)::before {

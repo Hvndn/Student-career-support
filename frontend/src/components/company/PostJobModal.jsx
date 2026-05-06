@@ -6,8 +6,8 @@ const PostJobModal = ({ isOpen, onClose, jobToEdit, onSuccess }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="pjm-overlay" onClick={onClose}>
-            <div className="pjm-container" onClick={e => e.stopPropagation()}>
+        <div className="pjm-overlay">
+            <div className="pjm-container">
                 <div className="pjm-header">
                     <h2><i className="fa-solid fa-briefcase"></i> {jobToEdit ? 'Chỉnh sửa Tin Tuyển Dụng' : 'Đăng Tin Mới'}</h2>
                     <button className="btn-close-modal" onClick={onClose}><i className="fa-solid fa-times"></i></button>

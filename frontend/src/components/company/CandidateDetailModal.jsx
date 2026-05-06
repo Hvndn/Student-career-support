@@ -89,8 +89,11 @@ const CandidateDetailModal = ({
     const getStatusConfig = (s) => {
         const lowerS = (s || '').toLowerCase();
         switch (lowerS) {
-            case 'pending': return { label: 'Chờ duyệt', className: 'status-applied' };
-            case 'interview': return { label: 'Phỏng vấn', className: 'status-interviewing' };
+            case 'pending': return { label: 'Chờ xử lý', className: 'status-applied' };
+            case 'interview': return { label: 'Lên lịch phỏng vấn', className: 'status-interviewing' };
+            case 'interviewing': return { label: 'Đang phỏng vấn', className: 'status-interviewing' };
+            case 'passed': return { label: 'Vượt phỏng vấn', className: 'status-passed' };
+            case 'hired': return { label: 'Đã tuyển', className: 'status-hired' };
             case 'review': return { label: 'Theo dõi thêm', className: 'status-review' };
             case 'rejected': return { label: 'Từ chối', className: 'status-rejected' };
             default: return { label: 'Chờ xử lý', className: 'status-applied' };
@@ -108,8 +111,8 @@ const CandidateDetailModal = ({
 
     return (
         <>
-            <div className="cdm-overlay" onClick={onClose}>
-                <div className="cdm-container" onClick={e => e.stopPropagation()}>
+            <div className="cdm-overlay">
+                <div className="cdm-container">
 
                     {/* ── HEADER ── */}
                     <div className="cdm-header">
@@ -265,9 +268,12 @@ const CandidateDetailModal = ({
                                         
                                         <div className="cdm-status-radios">
                                             {[
-                                                { key: 'review', label: 'Theo dõi thêm' },
+                                                { key: 'pending', label: 'Chờ xử lý' },
                                                 { key: 'interview', label: 'Hẹn phỏng vấn' },
+                                                { key: 'passed', label: 'Vượt phỏng vấn' },
+                                                { key: 'hired', label: 'Đã tuyển (Hired)' },
                                                 { key: 'rejected', label: 'Từ chối' },
+                                                { key: 'review', label: 'Theo dõi thêm' },
                                             ].map(opt => (
                                                 <label key={opt.key} className={`cdm-radio-label ${opt.key}`}>
                                                     <input

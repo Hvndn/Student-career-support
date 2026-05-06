@@ -50,6 +50,8 @@ const Applicants = () => {
             case 'review': return { label: 'Đang xem xét', bg: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', icon: 'hourglass_top' };
             case 'suitable': return { label: 'Phù hợp', bg: 'rgba(16, 185, 129, 0.15)', color: '#10b981', icon: 'thumb_up' };
             case 'interview': return { label: 'Phỏng vấn', bg: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6', icon: 'event' };
+            case 'offer': return { label: 'Mời nhận việc', bg: 'rgba(16, 185, 129, 0.25)', color: '#059669', icon: 'card_giftcard' };
+            case 'hired': return { label: 'Đã tuyển', bg: 'rgba(5, 150, 105, 0.3)', color: '#047857', icon: 'person_check' };
             case 'pending':
             default: return { label: 'Chờ duyệt', bg: 'rgba(99, 102, 241, 0.15)', color: '#6366f1', icon: 'hourglass_empty' };
         }
@@ -62,8 +64,8 @@ const Applicants = () => {
 
     if (loading) return <div className="container" style={{ textAlign: 'center', marginTop: '5rem' }}>Đang tải...</div>;
 
-    const pendingCount = applicants.filter(a => ['pending', 'reviewing'].includes((a.status || '').toLowerCase())).length;
-    const acceptedCount = applicants.filter(a => (a.status || '').toLowerCase() === 'accepted').length;
+    const pendingCount = applicants.filter(a => ['pending', 'review', 'suitable', 'interview'].includes((a.status || '').toLowerCase())).length;
+    const acceptedCount = applicants.filter(a => ['accepted', 'offer', 'hired'].includes((a.status || '').toLowerCase())).length;
     const rejectedCount = applicants.filter(a => (a.status || '').toLowerCase() === 'rejected').length;
 
     return (

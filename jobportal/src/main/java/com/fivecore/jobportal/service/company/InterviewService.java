@@ -37,10 +37,16 @@ public class InterviewService {
                 .location(request.getLocation())
                 .notes(request.getNotes())
                 .interviewerInfo(request.getInterviewerInfo())
+                .interviewerEmail(request.getInterviewerEmail())
+                .interviewerPhone(request.getInterviewerPhone())
                 .requiredDocuments(request.getRequiredDocuments())
                 .interviewFormat(request.getInterviewFormat())
                 .preliminaryContent(request.getPreliminaryContent())
-                .status("pending")
+                .duration(request.getDuration())
+                .meetingLink(request.getMeetingLink())
+                .round(request.getRound())
+                .stageType(request.getStageType() != null ? request.getStageType() : "Technical Interview")
+                .status("scheduled")
                 .build();
 
         Interview savedInterview = interviewRepository.save(interview);
@@ -60,7 +66,13 @@ public class InterviewService {
         messageBuilder.append("Chúc mừng! Công ty ").append(companyName).append(" đã đặt lịch phỏng vấn với bạn cho vị trí ").append(jobTitle).append(".\n\n");
         messageBuilder.append("📍 Hình thức: ").append(request.getInterviewFormat()).append("\n");
         messageBuilder.append("📅 Thời gian: ").append(interviewDateStr).append("\n");
-        messageBuilder.append("🏢 Địa điểm/Link: ").append(request.getLocation()).append("\n");
+        if (request.getDuration() != null) {
+            messageBuilder.append("⏳ Thời lượng dự kiến: ").append(request.getDuration()).append(" phút\n");
+        }
+        messageBuilder.append("🏢 Địa điểm/Link: ").append(request.getMeetingLink() != null && !request.getMeetingLink().isEmpty() ? request.getMeetingLink() : request.getLocation()).append("\n");
+        if (request.getRound() != null) {
+            messageBuilder.append("🏷 Vòng phỏng vấn: ").append(request.getRound()).append("\n");
+        }
         
         if (request.getInterviewerInfo() != null && !request.getInterviewerInfo().isEmpty()) {
             messageBuilder.append("👤 Người phỏng vấn: ").append(request.getInterviewerInfo()).append("\n");
@@ -143,12 +155,80 @@ public class InterviewService {
         interview.setRequiredDocuments(request.getRequiredDocuments());
         interview.setInterviewFormat(request.getInterviewFormat());
         interview.setPreliminaryContent(request.getPreliminaryContent());
+        interview.setDuration(request.getDuration());
+        interview.setMeetingLink(request.getMeetingLink());
+        interview.setRound(request.getRound());
+        interview.setInterviewerEmail(request.getInterviewerEmail());
+        interview.setInterviewerPhone(request.getInterviewerPhone());
+        interview.setStageType(request.getStageType());
+
         if (request.getStatus() != null) {
             interview.setStatus(request.getStatus());
         }
         
         interviewRepository.save(interview);
         log.info("Đã cập nhật lịch phỏng vấn ID: {}", id);
+    }
+
+    /**
+     * Cập nhật trạng thái phỏng vấn nhanh (US-017 mở rộng).
+     */
+    @Transactional
+    public void updateInterviewStatus(Integer id, String status) {
+        Interview interview = interviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch phỏng vấn"));
+        interview.setStatus(status);
+        interviewRepository.save(interview);
+        log.info("Đã cập nhật trạng thái phỏng vấn ID {} sang {}", id, status);
+    }
+
+    /**
+     * Ghi nhận đánh giá sau phỏng vấn và tự động cập nhật Application (US-017 MVP).
+     */
+    @Transactional
+    public void submitEvaluation(Integer id, com.fivecore.jobportal.dto.InterviewEvaluationRequest request) {
+        Interview interview = interviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch phỏng vấn"));
+
+        interview.setTechnicalScore(request.getTechnicalScore());
+        interview.setCommunicationScore(request.getCommunicationScore());
+        interview.setProblemSolvingScore(request.getProblemSolvingScore());
+        interview.setEvaluationNotes(request.getEvaluationNotes());
+        interview.setResult(request.getResult());
+        interview.setRecommendation(request.getRecommendation());
+        
+        // Luôn chuyển sang completed khi đã đánh giá
+        interview.setStatus("completed");
+
+        // Trọng số Hardcoded: Technical 50%, Communication 20%, Problem Solving 30%
+        double overall = (request.getTechnicalScore() * 0.5) + 
+                         (request.getCommunicationScore() * 0.2) + 
+                         (request.getProblemSolvingScore() * 0.3);
+        
+        interview.setOverallScore(Math.round(overall * 10) / 10.0);
+
+        interviewRepository.save(interview);
+
+        // Tự động cập nhật Application Status dựa trên Kết quả (PASS/FAIL)
+        Application app = interview.getApplication();
+        String result = request.getResult() != null ? request.getResult().toUpperCase() : "";
+        
+        String title = "Kết quả phỏng vấn - " + app.getJob().getCompany().getName();
+        String message = "";
+
+        if ("PASS".equals(result)) {
+            app.setStatus(Application.ApplicationStatus.passed);
+            message = "Chúc mừng! Bạn đã vượt qua vòng phỏng vấn cho vị trí " + app.getJob().getTitle() + ". Chúng tôi sẽ sớm gửi thông tin Offer cho bạn.";
+        } else if ("FAIL".equals(result)) {
+            app.setStatus(Application.ApplicationStatus.rejected);
+            message = "Cảm ơn bạn đã quan tâm đến vị trí " + app.getJob().getTitle() + ". Rất tiếc, chúng tôi chưa thể đồng hành cùng bạn tại thời điểm này.";
+        }
+
+        if (!message.isEmpty()) {
+            notificationService.sendNotification(app.getStudent().getUser(), title, message);
+        }
+
+        log.info("Đã đánh giá phỏng vấn ID {} với kết quả {}", id, result);
     }
 
     /**
