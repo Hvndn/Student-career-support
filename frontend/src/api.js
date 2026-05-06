@@ -97,11 +97,7 @@ export const studentApi = {
     deleteCertification: (id) => api.delete(`/student/profile/certifications/${id}`),
     // Jobs
     applyJob: (jobId) => api.post(`/student/jobs/${jobId}/apply`),
-    applyJobWithData: (jobId, formData) => api.post(`/student/jobs/${jobId}/apply`, formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    }),
+    applyJobWithData: (jobId, formData) => api.post(`/student/jobs/${jobId}/apply`, formData),
     saveJob: (jobId) => api.post(`/student/jobs/${jobId}/save`),
     getSavedJobs: () => api.get('/student/jobs/saved'),
     cancelApplication: (jobId) => api.delete(`/student/jobs/${jobId}/apply`),
@@ -157,7 +153,13 @@ export const recruitmentApi = {
     getApplications: () => api.get('/company/management/applications'),
     getApplicants: (jobId) => api.get(`/company/management/jobs/${jobId}/applicants`),
     getApplicationDetail: (appId) => api.get(`/company/management/applications/${appId}`),
-    updateStatus: (appId, status) => api.patch(`/company/management/applications/${appId}/status?status=${status}`),
+    updateStatus: (appId, status, rejectionReason) => {
+        let url = `/company/management/applications/${appId}/status?status=${status}`;
+        if (rejectionReason) {
+            url += `&rejectionReason=${encodeURIComponent(rejectionReason)}`;
+        }
+        return api.patch(url);
+    },
     searchCandidates: (params) => api.get('/company/management/candidates/search', { params }),
     scheduleInterview: (data) => api.post('/company/management/applications/schedule', data),
     getInterviews: () => api.get('/company/management/interviews'),

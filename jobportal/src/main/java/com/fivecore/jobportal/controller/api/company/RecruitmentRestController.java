@@ -105,6 +105,7 @@ public class RecruitmentRestController {
     @PatchMapping("/applications/{appId}/status")
     public ResponseEntity<ApiResponse<Object>> updateStatus(@PathVariable Integer appId,
             @RequestParam("status") String status,
+            @RequestParam(value = "rejectionReason", required = false) String rejectionReason,
             Authentication authentication) {
         try {
             Integer companyId = getCurrentCompanyId(authentication);
@@ -114,7 +115,7 @@ public class RecruitmentRestController {
 
             applicationService.updateApplicationStatus(appId,
                     Enum.valueOf(Application.ApplicationStatus.class, status.trim().toLowerCase()),
-                    companyId);
+                    companyId, rejectionReason);
             return ResponseEntity.ok(ApiResponse.success("Cập nhật trạng thái thành công", null));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(ApiResponse.error("Trạng thái không hợp lệ", "INVALID_STATUS"));

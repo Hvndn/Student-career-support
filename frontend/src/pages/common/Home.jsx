@@ -220,7 +220,6 @@ const Home = () => {
               <h2>Trung tâm Hỗ trợ</h2>
               <p>Bạn gặp khó khăn? Đội ngũ của chúng tôi luôn sẵn sàng hỗ trợ 24/7.</p>
               <div className="mr-support-options">
-                <div className="mr-sup-opt"><span>💬</span> Trò chuyện trực tiếp</div>
                 <div className="mr-sup-opt"><span>📞</span> Tổng đài: 1900 8888</div>
               </div>
             </div>

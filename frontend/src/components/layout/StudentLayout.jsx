@@ -1,22 +1,18 @@
 import React from 'react';
 import StudentSidebar from '../student/StudentSidebar';
 import StudentHeader from './StudentHeader';
-import GlobalChatSidebar from './GlobalChatSidebar';
-import { useMessaging } from '../../context/MessagingContext';
 
 const StudentLayout = ({ children }) => {
-  const { isChatOpen } = useMessaging();
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
   return (
     <div className="dau-student-layout" style={{ display: 'flex', minHeight: '100vh', background: '#f8fafd' }}>
       <StudentSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-      <GlobalChatSidebar />
       <main 
         className="dau-main-content" 
         style={{ 
           flex: 1, 
-          marginLeft: (window.innerWidth > 1024) ? (isChatOpen ? '580px' : '260px') : '0', 
+          marginLeft: (window.innerWidth > 1024) ? '260px' : '0', 
           padding: '0', 
           minHeight: '100vh', 
           display: 'flex', 

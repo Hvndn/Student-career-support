@@ -47,14 +47,21 @@ public class ApplicationService {
      * Sinh viên nộp đơn ứng tuyển (US-007).
      */
     @Transactional
-    public ApplicationDto applyForJob(Integer studentId, Integer jobId, String fullName, String email, String phone, String coverLetter, String cvUrl, String cvData) {
+    public ApplicationDto applyForJob(Integer studentId, Integer jobId, String fullName, String email, String phone, String coverLetter, String cvUrl, String cvData, String cvName) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
         Job job = jobRepository.findById(jobId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy tin tuyển dụng"));
 
-        if (applicationRepository.findByStudentIdAndJobId(studentId, jobId).isPresent()) {
-            throw new RuntimeException("Bạn đã ứng tuyển công việc này rồi");
+        java.util.Optional<Application> existingApp = applicationRepository.findByStudentIdAndJobId(studentId, jobId);
+        if (existingApp.isPresent()) {
+            if (existingApp.get().getStatus() == Application.ApplicationStatus.rejected) {
+                // Nếu đã bị từ chối, cho phép xóa đơn cũ để nộp lại
+                applicationRepository.delete(existingApp.get());
+                applicationRepository.flush(); // Đảm bảo đã xóa trước khi tạo mới
+            } else {
+                throw new RuntimeException("Bạn đã ứng tuyển công việc này rồi");
+            }
         }
 
         Application application = Application.builder()
@@ -65,6 +72,7 @@ public class ApplicationService {
                 .coverLetter(coverLetter)
                 .cvUrl(cvUrl)
                 .cvData(cvData)
+                .cvName(cvName)
                 .fullName(fullName)
                 .email(email)
                 .phone(phone)
@@ -77,6 +85,11 @@ public class ApplicationService {
         notificationService.sendNotification(student.getUser(),
                 "Ứng tuyển thành công",
                 "Hồ sơ của bạn đã được chuyển tới " + job.getCompany().getName());
+
+        // Bắn thông báo nội sinh cho Nhà tuyển dụng
+        notificationService.sendNotification(job.getCompany().getUser(),
+                "Ứng viên mới",
+                "Ứng viên " + (fullName != null ? fullName : student.getUser().getFullName()) + " vừa ứng tuyển vào vị trí " + job.getTitle());
 
         return mapToDto(savedApp);
     }
@@ -129,10 +142,12 @@ public class ApplicationService {
                 .coverLetter(app.getCoverLetter())
                 .cvUrl(app.getCvUrl())
                 .cvData(app.getCvData())
+                .cvName(app.getCvName())
                 // Snapshot Data with Fallback to current profile
                 .fullName(app.getFullName() != null ? app.getFullName() : app.getStudent().getUser().getFullName())
                 .email(app.getEmail() != null ? app.getEmail() : app.getStudent().getUser().getEmail())
                 .phone(app.getPhone() != null ? app.getPhone() : app.getStudent().getPhone())
+                .rejectionReason(app.getRejectionReason())
                 .build();
     }
 
@@ -150,7 +165,7 @@ public class ApplicationService {
      * Có kiểm tra quyền sở hữu của doanh nghiệp.
      */
     @Transactional
-    public void updateApplicationStatus(Integer applicationId, Application.ApplicationStatus status, Integer companyId) {
+    public void updateApplicationStatus(Integer applicationId, Application.ApplicationStatus status, Integer companyId, String rejectionReason) {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn ứng tuyển"));
 
@@ -160,6 +175,9 @@ public class ApplicationService {
         }
 
         application.setStatus(status);
+        if (status == Application.ApplicationStatus.rejected && rejectionReason != null) {
+            application.setRejectionReason(rejectionReason);
+        }
         applicationRepository.save(application);
         log.info("Đã cập nhật trạng thái đơn ứng tuyển ID {} sang {}", applicationId, status);
         
@@ -171,6 +189,9 @@ public class ApplicationService {
             case rejected:
                 title = "Kết quả đơn ứng tuyển";
                 message = "Cảm ơn bạn đã quan tâm. Rất tiếc, hồ sơ của bạn cho vị trí " + application.getJob().getTitle() + " chưa phù hợp tại thời điểm này.";
+                if (rejectionReason != null && !rejectionReason.isEmpty()) {
+                    message += " Lý do: " + rejectionReason;
+                }
                 break;
             case interview:
                 title = "Mời phỏng vấn";

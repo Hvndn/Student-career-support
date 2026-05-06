@@ -52,6 +52,9 @@ public class Application {
     @Column(name = "cv_data", columnDefinition = "LONGTEXT")
     private String cvData;
 
+    @Column(name = "cv_name", length = 255)
+    private String cvName;
+
     @CreationTimestamp
     @Column(name = "applied_at", nullable = false, updatable = false)
     private LocalDateTime appliedAt;
@@ -64,6 +67,9 @@ public class Application {
 
     @Column(length = 20)
     private String phone;
+    
+    @Column(name = "rejection_reason", columnDefinition = "TEXT")
+    private String rejectionReason;
 
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "application"})

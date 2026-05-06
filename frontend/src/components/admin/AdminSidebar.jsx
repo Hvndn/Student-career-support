@@ -97,12 +97,6 @@ const AdminSidebar = () => {
                     <span className="item-label">Quản lý CV mẫu</span>
                 </Link>
 
-                {isChatEnabled && (
-                    <Link to="/admin/chat" className={`admin-nav-item ${location.pathname === '/admin/chat' ? 'active' : ''}`}>
-                        <span className="material-symbols-outlined">chat_bubble_outline</span>
-                        <span className="item-label">Trò chuyện</span>
-                    </Link>
-                )}
 
                 <Link to="/admin/password-requests" className={`admin-nav-item ${location.pathname === '/admin/password-requests' ? 'active' : ''}`}>
                     <span className="material-symbols-outlined">lock_reset</span>

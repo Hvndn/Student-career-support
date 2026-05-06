@@ -8,7 +8,6 @@ import NavbarSelector from './components/common/NavbarSelector';
 
 import ProtectedRoute from './components/common/ProtectedRoute';
 import StudentLayout from './components/layout/StudentLayout';
-import { MessagingProvider } from './context/MessagingContext';
 
 // common pages
 import Home from './pages/common/Home'
@@ -30,7 +29,6 @@ import Notifications from './pages/student/Notifications'
 import Interviews from './pages/student/Interviews'
 import CVManagement from './pages/student/CVManagement'
 import CVBuilder from './pages/student/CVBuilder'
-import Chat from './pages/common/Chat'
 import CompanyList from './pages/student/CompanyList'
 import CompanyDetail from './pages/student/CompanyDetail'
 
@@ -57,7 +55,6 @@ import ManageStudent from './pages/admin/ManageStudent'
 import ManageCompany from './pages/admin/ManageCompany'
 import ManageAppointment from './pages/admin/ManageAppointment'
 import ManageCVTemplates from './pages/admin/ManageCVTemplates'
-import AdminChat from './pages/admin/AdminChat'
 import ManageProjects from './pages/admin/ManageProjects'
 import ManageProjectStudents from './pages/admin/ManageProjectStudents'
 import WebsiteConfig from './pages/admin/WebsiteConfig'
@@ -109,7 +106,7 @@ const AppContent = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   return (
-    <MessagingProvider>
+    <>
       <Toaster
         position="top-right"
         reverseOrder={false}
@@ -172,7 +169,6 @@ const AppContent = () => {
                 <Route path="interviews" element={<Interviews />} />
                 <Route path="cv-management" element={<CVManagement />} />
                 <Route path="cv-builder/:id" element={<CVBuilder />} />
-                <Route path="chat" element={<Chat />} />
               </Routes>
             </StudentLayout>
           </ProtectedRoute>
@@ -197,7 +193,6 @@ const AppContent = () => {
 
               <Route path="candidates/notifications" element={<CompanyCandidateNotifications />} />
               <Route path="booking" element={<CompanyBooking />} />
-              <Route path="chat" element={<Chat />} />
               <Route path="profile" element={<CompanyProfile />} />
             </Routes>
           </ProtectedRoute>
@@ -217,7 +212,6 @@ const AppContent = () => {
               <Route path="jobs" element={<JobApproval />} />
               <Route path="password-requests" element={<AdminPasswordRequests />} />
               <Route path="reports" element={<Reports />} />
-              <Route path="chat" element={<AdminChat />} />
               <Route path="projects" element={<ManageProjects />} />
               <Route path="project-students" element={<ManageProjectStudents />} />
               <Route path="website/config" element={<WebsiteConfig />} />
@@ -227,7 +221,7 @@ const AppContent = () => {
           </ProtectedRoute>
         } />
       </Routes>
-    </MessagingProvider>
+    </>
   );
 };
 

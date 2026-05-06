@@ -11,6 +11,7 @@ import com.fivecore.jobportal.service.company.InterviewService;
 import com.fivecore.jobportal.service.student.RecommendationService;
 import com.fivecore.jobportal.service.student.SavedJobService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/student")
 @RequiredArgsConstructor
+@Slf4j
 public class StudentActionRestController {
 
     private final ApplicationService applicationService;
@@ -55,18 +57,24 @@ public class StudentActionRestController {
             @RequestParam(value = "coverLetter", required = false) String coverLetter,
             @RequestParam(value = "cvFile", required = false) org.springframework.web.multipart.MultipartFile cvFile,
             @RequestParam(value = "cvData", required = false) String cvData,
+            @RequestParam(value = "cvName", required = false) String cvName,
             Authentication authentication) {
         Integer studentId = getCurrentStudentId(authentication);
         if (studentId == null)
             return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
 
         try {
+            log.info("Ứng tuyển Job ID: {}, cvData length: {}, hasFile: {}, cvName: {}", jobId, 
+                cvData != null ? cvData.length() : "null", 
+                cvFile != null && !cvFile.isEmpty(),
+                cvName);
+            
             String cvUrl = null;
             if (cvFile != null && !cvFile.isEmpty()) {
                 cvUrl = storageService.saveFile(cvFile, "cvs");
             }
 
-            applicationService.applyForJob(studentId, jobId, fullName, email, phone, coverLetter, cvUrl, cvData);
+            applicationService.applyForJob(studentId, jobId, fullName, email, phone, coverLetter, cvUrl, cvData, cvName);
             return ResponseEntity.ok(ApiResponse.success("Ứng tuyển thành công", null));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage(), "APPLY_ERROR"));

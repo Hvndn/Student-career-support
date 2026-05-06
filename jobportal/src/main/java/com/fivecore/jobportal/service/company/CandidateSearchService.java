@@ -121,7 +121,7 @@ public class CandidateSearchService {
             res.put("educations", profile.getEducations());
             res.put("experiences", profile.getExperiences());
             res.put("bio", profile.getBio());
-            res.put("cvData", profile.getCvData());
+            res.put("cvData", app.getCvData());
             res.put("resumeUrl", profile.getResumeUrl());
             res.put("coverImageUrl", profile.getCoverImageUrl());
             

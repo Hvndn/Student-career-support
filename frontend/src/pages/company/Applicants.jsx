@@ -5,12 +5,20 @@ import toast from 'react-hot-toast';
 import CompanySidebar from '../../components/company/CompanySidebar';
 import CompanyNavbar from '../../components/company/CompanyNavbar';
 import '../../assets/css/company/Applicants.css';
+import RejectionModal from '../../components/company/RejectionModal';
+import CandidateDetailModal from '../../components/company/CandidateDetailModal';
 
 const Applicants = () => {
     const { jobId } = useParams();
     const navigate = useNavigate();
     const [applicants, setApplicants] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showRejectionModal, setShowRejectionModal] = useState(false);
+    const [pendingRejectData, setPendingRejectData] = useState(null);
+    
+    // States cho Detail Modal
+    const [showDetailModal, setShowDetailModal] = useState(false);
+    const [selectedApp, setSelectedApp] = useState(null);
 
     useEffect(() => {
         recruitmentApi.getApplicants(jobId)
@@ -24,22 +32,41 @@ const Applicants = () => {
             });
     }, [jobId]);
 
-    const handleStatusUpdate = async (appId, status) => {
+    const handleStatusUpdate = async (appId, status, rejectionReason = null) => {
+        if (status === 'rejected' && rejectionReason === null) {
+            const app = applicants.find(a => a.id === appId);
+            setPendingRejectData({ id: appId, studentName: app?.studentName });
+            setShowRejectionModal(true);
+            return;
+        }
+
         try {
-            await recruitmentApi.updateStatus(appId, status);
-            // Backend stores lowercase, so normalize here
+            await recruitmentApi.updateStatus(appId, status, rejectionReason);
             const normalizedStatus = status.toLowerCase();
-            setApplicants(applicants.map(app =>
-                app.id === appId ? { ...app, status: normalizedStatus } : app
+            setApplicants(prev => prev.map(app =>
+                app.id === appId ? { ...app, status: normalizedStatus, rejectionReason } : app
             ));
+            
+            if (selectedApp?.id === appId) {
+                setSelectedApp(prev => ({ ...prev, status: normalizedStatus, rejectionReason }));
+            }
+
             if (normalizedStatus === 'accepted') {
                 toast.success('Đã duyệt ứng viên! Thông báo đã được gửi tới sinh viên.');
             } else if (normalizedStatus === 'rejected') {
-                toast('Đã từ chối ứng viên. Thông báo đã được gửi.', { icon: '📋' });
+                toast.success('Đã từ chối ứng viên. Lý do đã được lưu lại.');
+                setShowRejectionModal(false);
+            } else {
+                toast.success('Cập nhật trạng thái thành công!');
             }
         } catch (err) {
             toast.error('Cập nhật trạng thái thất bại!');
         }
+    };
+
+    const handleOpenDetail = (app) => {
+        setSelectedApp(app);
+        setShowDetailModal(true);
     };
 
     const getStatusConfig = (status) => {
@@ -115,8 +142,11 @@ const Applicants = () => {
                                                                 (app.studentName || 'U').charAt(0).toUpperCase()
                                                             )}
                                                         </div>
-                                                        <div>
-                                                            <div style={{ fontWeight: 'bold' }}>{app.studentName}</div>
+                                                        <div 
+                                                            style={{ cursor: 'pointer' }}
+                                                            onClick={() => handleOpenDetail(app)}
+                                                        >
+                                                            <div style={{ fontWeight: 'bold', color: 'var(--dau-primary)' }}>{app.studentName}</div>
                                                             <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                                                                 {app.matchPercentage ? `Phù hợp ${app.matchPercentage}%` : ''}
                                                             </div>
@@ -125,39 +155,24 @@ const Applicants = () => {
                                                 </td>
                                                 <td data-label="NGÀY NỘP" style={{ padding: '1.5rem 1rem' }}>{formatDate(app.appliedAt)}</td>
                                                 <td data-label="HỒ SƠ" style={{ padding: '1.5rem 1rem' }}>
-                                                    {app.cvData ? (
-                                                        <Link 
-                                                            to={`/cv/view/${app.id}`} 
-                                                            target="_blank"
+                                                    {(app.cvData || app.cvUrl) ? (
+                                                        <div 
+                                                            onClick={() => handleOpenDetail(app)}
                                                             style={{ 
-                                                                color: 'var(--dau-primary)', 
+                                                                color: app.cvData ? 'var(--dau-primary)' : '#6366f1', 
                                                                 display: 'flex', 
                                                                 alignItems: 'center', 
                                                                 gap: '0.25rem',
                                                                 fontWeight: 600,
-                                                                fontSize: '0.85rem'
+                                                                fontSize: '0.85rem',
+                                                                cursor: 'pointer'
                                                             }}
                                                         >
-                                                            <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>auto_stories</span>
-                                                            CV Online
-                                                        </Link>
-                                                    ) : app.cvUrl ? (
-                                                        <a 
-                                                            href={app.cvUrl.startsWith('http') ? app.cvUrl : `http://localhost:8080${app.cvUrl}`} 
-                                                            target="_blank" 
-                                                            rel="noopener noreferrer"
-                                                            style={{ 
-                                                                color: '#6366f1', 
-                                                                display: 'flex', 
-                                                                alignItems: 'center', 
-                                                                gap: '0.25rem',
-                                                                fontWeight: 600,
-                                                                fontSize: '0.85rem'
-                                                            }}
-                                                        >
-                                                            <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>picture_as_pdf</span>
-                                                            File PDF
-                                                        </a>
+                                                            <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>
+                                                                {app.cvData ? 'auto_stories' : 'picture_as_pdf'}
+                                                            </span>
+                                                            {app.cvName || (app.cvData ? 'CV Online' : 'File PDF')}
+                                                        </div>
                                                     ) : (
                                                         <span style={{ color: '#ccc', fontSize: '0.85rem' }}>N/A</span>
                                                     )}
@@ -183,25 +198,29 @@ const Applicants = () => {
                                                         {!isDecided && (
                                                             <>
                                                                 <button onClick={() => handleStatusUpdate(app.id, 'review')} className="btn glass" style={{ fontSize: '0.75rem', color: '#f59e0b', padding: '0.4rem 0.6rem' }}>
-                                                                    <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>hourglass_top</span>
-                                                                    Xem xét
-                                                                </button>
-                                                                <button onClick={() => handleStatusUpdate(app.id, 'suitable')} className="btn glass" style={{ fontSize: '0.75rem', color: '#10b981', padding: '0.4rem 0.6rem' }}>
-                                                                    <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>thumb_up</span>
-                                                                    Phù hợp
-                                                                </button>
-                                                                <button onClick={() => handleStatusUpdate(app.id, 'accepted')} className="btn glass" style={{ fontSize: '0.75rem', color: '#10b981', padding: '0.4rem 0.6rem', border: '1px solid #10b981' }}>
-                                                                    <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>check_circle</span>
-                                                                    Duyệt
-                                                                </button>
-                                                                <button onClick={() => navigate(`/company/chat?partnerId=${app.studentUserId}`)} className="btn glass" style={{ fontSize: '0.75rem', color: '#6366f1', padding: '0.4rem 0.6rem' }}>
-                                                                    <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>chat</span>
-                                                                    Nhắn tin
-                                                                </button>
-                                                                <button onClick={() => handleStatusUpdate(app.id, 'rejected')} className="btn glass" style={{ fontSize: '0.75rem', color: '#ef4444', padding: '0.4rem 0.6rem' }}>
-                                                                    <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>cancel</span>
-                                                                    Từ chối
-                                                                </button>
+                                                                     <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>hourglass_top</span>
+                                                                     Xem xét
+                                                                 </button>
+                                                                 <button onClick={() => handleStatusUpdate(app.id, 'interview')} className="btn glass" style={{ fontSize: '0.75rem', color: '#3b82f6', padding: '0.4rem 0.6rem' }}>
+                                                                     <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>event</span>
+                                                                     Phỏng vấn
+                                                                 </button>
+                                                                 {['interview', 'interviewing', 'suitable', 'accepted', 'passed', 'hired'].includes((app.status || '').toLowerCase()) && (
+                                                                     <>
+                                                                         <button onClick={() => handleStatusUpdate(app.id, 'suitable')} className="btn glass" style={{ fontSize: '0.75rem', color: '#10b981', padding: '0.4rem 0.6rem' }}>
+                                                                             <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>thumb_up</span>
+                                                                             Phù hợp
+                                                                         </button>
+                                                                         <button onClick={() => handleStatusUpdate(app.id, 'accepted')} className="btn glass" style={{ fontSize: '0.75rem', color: '#10b981', padding: '0.4rem 0.6rem', border: '1px solid #10b981' }}>
+                                                                             <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>check_circle</span>
+                                                                             Duyệt
+                                                                         </button>
+                                                                     </>
+                                                                 )}
+                                                                 <button onClick={() => handleStatusUpdate(app.id, 'rejected')} className="btn glass" style={{ fontSize: '0.75rem', color: '#ef4444', padding: '0.4rem 0.6rem' }}>
+                                                                     <span className="material-symbols-outlined" style={{ fontSize: '0.9rem' }}>cancel</span>
+                                                                     Từ chối
+                                                                 </button>
                                                             </>
                                                         )}
                                                         {isDecided && (
@@ -221,6 +240,33 @@ const Applicants = () => {
                     </div>
                 </main>
             </div>
+            <RejectionModal 
+                show={showRejectionModal}
+                onClose={() => setShowRejectionModal(false)}
+                onConfirm={(reason) => {
+                    if (pendingRejectData) {
+                        handleStatusUpdate(pendingRejectData.id, 'rejected', reason);
+                    }
+                }}
+                studentName={pendingRejectData?.studentName}
+            />
+
+            <CandidateDetailModal 
+                show={showDetailModal}
+                applicationId={selectedApp?.id}
+                studentId={selectedApp?.studentId}
+                initialStatus={selectedApp?.status}
+                jobTitle={selectedApp?.jobTitle}
+                appliedAt={selectedApp?.appliedAt}
+                coverLetter={selectedApp?.coverLetter}
+                cvUrl={selectedApp?.cvUrl}
+                cvData={selectedApp?.cvData}
+                cvName={selectedApp?.cvName}
+                onClose={() => setShowDetailModal(false)}
+                onStatusUpdate={(newStatus) => {
+                    handleStatusUpdate(selectedApp.id, newStatus);
+                }}
+            />
         </div>
     );
 };

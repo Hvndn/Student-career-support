@@ -35,9 +35,11 @@ public class ApplicationDto {
     private String coverLetter;
     private String cvUrl;
     private String cvData;
+    private String cvName;
 
     // Contact info submitted
     private String fullName;
     private String email;
     private String phone;
+    private String rejectionReason;
 }

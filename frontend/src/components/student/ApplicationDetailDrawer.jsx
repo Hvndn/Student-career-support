@@ -88,10 +88,6 @@ const ApplicationDetailDrawer = ({ application, onClose, onRefresh }) => {
                                 {isCanceling ? 'Đang hủy...' : 'Hủy ứng tuyển'}
                             </button>
                         )}
-                        <button className="btn-drawer-action btn-chat" onClick={handleChat}>
-                            <span className="material-symbols-outlined">forum</span>
-                            Nhắn tin
-                        </button>
                         <button className="btn-drawer-action btn-view-job" onClick={handleViewJob}>
                             <span className="material-symbols-outlined">rocket_launch</span>
                             Xem tin tuyển dụng
@@ -131,6 +127,19 @@ const ApplicationDetailDrawer = ({ application, onClose, onRefresh }) => {
                             </h3>
                             <div className="cover-letter-box">
                                 {application.coverLetter}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Rejection Reason */}
+                    {status === 'rejected' && application.rejectionReason && (
+                        <div className="drawer-card" style={{ borderLeft: '4px solid #ef4444' }}>
+                            <h3 className="drawer-section-title">
+                                <span className="material-symbols-outlined" style={{ color: '#ef4444' }}>info</span>
+                                Lý do từ chối
+                            </h3>
+                            <div className="cover-letter-box" style={{ color: '#ef4444', fontWeight: 500 }}>
+                                {application.rejectionReason}
                             </div>
                         </div>
                     )}

@@ -107,8 +107,10 @@ const ApplyModal = ({ job, profile, onClose, onApplySuccess }) => {
             
             if (useOnlineCv) {
                 submitData.append('cvData', JSON.stringify(selectedOnlineCv._raw));
+                submitData.append('cvName', selectedOnlineCv.title || 'CV Online');
             } else {
                 submitData.append('cvFile', cvFile);
+                submitData.append('cvName', cvFile.name);
             }
 
             await studentApi.applyJobWithData(job.id, submitData);

@@ -39,7 +39,8 @@ const JobDetail = () => {
                     studentApi.getMyApplications()
                         .then(appsRes => {
                             const apps = appsRes.data.data || [];
-                            const isApplied = apps.some(app => app.jobId === parseInt(id));
+                            const existingApp = apps.find(app => app.jobId === parseInt(id));
+                            const isApplied = existingApp && existingApp.status !== 'rejected';
                             if (isApplied) {
                                 setJob(prev => ({ ...prev, isApplied: true, applied: true }));
                             }
@@ -299,14 +300,6 @@ const JobDetail = () => {
                                 Dành cho ứng viên
                             </button>
                         )}
-
-                        <button 
-                            className="jd-btn-chat-full"
-                            onClick={handleChatClick}
-                        >
-                            <span className="material-symbols-outlined">chat</span>
-                            Nhắn tin
-                        </button>
                     </div>
 
                     {/* AI Analysis Card */}

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { recruitmentApi } from '../../api';
 import { getImageUrl } from '../../utils/urlUtils';
+import toast from 'react-hot-toast';
 import StudentProfileModal from './StudentProfileModal';
+import RejectionModal from './RejectionModal';
 import '../../assets/css/company/CandidateDetailModal.css';
 
 const CandidateDetailModal = ({ 
@@ -16,7 +18,9 @@ const CandidateDetailModal = ({
     appliedAt: initialAppliedAt,
     coverLetter: initialCoverLetter,
     cvFileName: initialCvFileName,
-    cvUrl: initialCvUrl
+    cvUrl: initialCvUrl,
+    cvData: initialCvData,
+    cvName: initialCvName
 }) => {
     const [candidate, setCandidate] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -24,6 +28,7 @@ const CandidateDetailModal = ({
     const [updatingStatus, setUpdatingStatus] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const [downloading, setDownloading] = useState(false);
+    const [showRejectionModal, setShowRejectionModal] = useState(false);
 
     useEffect(() => {
         if (show && applicationId) {
@@ -48,20 +53,55 @@ const CandidateDetailModal = ({
         }
     };
 
-    const handleUpdateStatus = async (newStatus) => {
+    const handleUpdateStatus = async (newStatus, rejectionReason = null) => {
         if (newStatus === status) return;
+
+        if (newStatus === 'rejected' && rejectionReason === null) {
+            setShowRejectionModal(true);
+            return;
+        }
+
         try {
             setUpdatingStatus(true);
-            const res = await recruitmentApi.updateStatus(applicationId, newStatus);
+            const res = await recruitmentApi.updateStatus(applicationId, newStatus, rejectionReason);
             if (res.data.status === 'success') {
                 setStatus(newStatus);
                 if (onStatusUpdate) onStatusUpdate(newStatus);
+                
+                if (newStatus === 'accepted' || newStatus === 'hired') {
+                    toast.success('Đã duyệt ứng viên!');
+                } else if (newStatus === 'rejected') {
+                    toast.success('Đã từ chối ứng viên.');
+                    setShowRejectionModal(false);
+                } else {
+                    toast.success('Cập nhật trạng thái thành công!');
+                }
             }
         } catch (error) {
             console.error("Error updating status:", error);
+            toast.error('Cập nhật trạng thái thất bại!');
         } finally {
             setUpdatingStatus(false);
         }
+    };
+
+    const handleViewCV = () => {
+        // 1. Ưu tiên xem CV Online nếu có dữ liệu snapshot trong ứng tuyển
+        const hasOnlineCv = initialCvData || candidate?.cvData;
+        if (hasOnlineCv) {
+            window.open(`/cv/view/${applicationId}`, '_blank');
+            return;
+        }
+
+        // 2. Nếu là file PDF, mở trong tab mới để xem trực tiếp
+        const urlToDownload = initialCvUrl || candidate?.cvUrl;
+        if (urlToDownload) {
+            window.open(getImageUrl(urlToDownload), '_blank');
+            return;
+        }
+
+        // 3. Fallback cuối cùng
+        toast.error("Không tìm thấy tệp hồ sơ để xem.");
     };
 
     const handleDownloadCV = async () => {
@@ -218,24 +258,37 @@ const CandidateDetailModal = ({
                                         <span className="material-symbols-outlined" style={{fontSize: '20px'}}>attach_file</span>
                                         Tệp đính kèm
                                     </h3>
-                                    <div className="cdm-attachment" onClick={handleDownloadCV}>
-                                        <div className="cdm-attachment-left">
-                                            <span className="material-symbols-outlined cdm-attachment-icon">picture_as_pdf</span>
-                                            <div className="cdm-attachment-info">
-                                                <span className="cdm-attachment-name">
-                                                    {initialCvFileName || `CV_${candidate.fullName}.pdf`}
+                                    {(initialCvData || candidate?.cvData || initialCvUrl || candidate?.cvUrl) ? (
+                                        <div className="cdm-attachment" onClick={handleViewCV}>
+                                            <div className="cdm-attachment-left">
+                                                <span className="material-symbols-outlined cdm-attachment-icon">
+                                                    {(initialCvData || candidate?.cvData) ? 'auto_stories' : 'picture_as_pdf'}
                                                 </span>
-                                                <span style={{fontSize: '0.75rem', color: '#94a3b8'}}>Tài liệu PDF</span>
+                                                <div className="cdm-attachment-info">
+                                                    <span className="cdm-attachment-name">
+                                                        {initialCvName || initialCvFileName || (initialCvData || candidate?.cvData 
+                                                            ? `CV Online - ${candidate?.fullName || 'Ứng viên'}`
+                                                            : (initialCvUrl || candidate?.cvUrl ? (initialCvUrl || candidate?.cvUrl).split('/').pop() : 'Hồ sơ đính kèm'))
+                                                        }
+                                                    </span>
+                                                    <span style={{fontSize: '0.75rem', color: '#94a3b8'}}>
+                                                        {(initialCvData || candidate?.cvData) ? 'Xem bản snapshot online' : 'Tài liệu PDF'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className="cdm-attachment-action" title={(initialCvData || candidate?.cvData) ? 'Xem CV Online' : 'Tải xuống CV'}>
+                                                {downloading ? (
+                                                    <span className="material-symbols-outlined" style={{fontSize: '16px', animation: 'cdm-spin 1s linear infinite'}}>sync</span>
+                                                ) : (
+                                                    <span className="material-symbols-outlined" style={{fontSize: '18px'}}>
+                                                        {(initialCvData || candidate?.cvData) ? 'visibility' : 'download'}
+                                                    </span>
+                                                )}
                                             </div>
                                         </div>
-                                        <div className="cdm-attachment-action" title="Tải xuống CV">
-                                            {downloading ? (
-                                                <span className="material-symbols-outlined" style={{fontSize: '16px', animation: 'cdm-spin 1s linear infinite'}}>sync</span>
-                                            ) : (
-                                                <span className="material-symbols-outlined" style={{fontSize: '18px'}}>download</span>
-                                            )}
-                                        </div>
-                                    </div>
+                                    ) : (
+                                        <p className="cdm-placeholder" style={{color: '#94a3b8', fontSize: '0.85rem', fontStyle: 'italic'}}>Chưa đính kèm hồ sơ.</p>
+                                    )}
                                 </div>
                             </div>
 
@@ -334,7 +387,15 @@ const CandidateDetailModal = ({
                                                 { key: 'hired', label: 'Đã tuyển (Hired)' },
                                                 { key: 'rejected', label: 'Từ chối' },
                                                 { key: 'review', label: 'Theo dõi thêm' },
-                                            ].map(opt => (
+                                            ].filter(opt => {
+                                                // Chỉ hiện "Vượt phỏng vấn" và "Đã tuyển" khi trạng thái hiện tại là phỏng vấn hoặc đã đạt các trạng thái đó
+                                                if (opt.key === 'passed' || opt.key === 'hired') {
+                                                    const currentS = (status || '').toLowerCase();
+                                                    const interviewStages = ['interview', 'interviewing', 'passed', 'hired', 'suitable', 'accepted'];
+                                                    return interviewStages.includes(currentS);
+                                                }
+                                                return true;
+                                            }).map(opt => (
                                                 <label key={opt.key} className={`cdm-radio-label ${opt.key}`}>
                                                     <input
                                                         type="radio"
@@ -366,6 +427,13 @@ const CandidateDetailModal = ({
                 show={showProfile}
                 candidate={candidate}
                 onClose={() => setShowProfile(false)}
+            />
+            {/* Rejection Reason Modal */}
+            <RejectionModal 
+                show={showRejectionModal}
+                onClose={() => setShowRejectionModal(false)}
+                onConfirm={(reason) => handleUpdateStatus('rejected', reason)}
+                studentName={candidate?.fullName}
             />
         </>
     );
