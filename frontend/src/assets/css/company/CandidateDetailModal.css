@@ -60,7 +60,7 @@
 /* ── HEADER ── */
 .cdm-header {
     padding: 30px 40px;
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    background: linear-gradient(135deg, var(--cdm-primary) 0%, var(--cdm-primary-dark) 100%);
     color: white;
     display: flex;
     justify-content: space-between;
@@ -532,6 +532,31 @@
     background: #f1f5f9;
     color: var(--cdm-text-main);
     border-color: #cbd5e1;
+}
+
+/* Timeline Mini */
+.cdm-timeline-mini {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cdm-timeline-item-mini {
+    position: relative;
+    padding-left: 20px;
+    border-left: 2px solid var(--cdm-primary-light);
+}
+
+.cdm-timeline-item-mini::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 4px;
+    width: 10px;
+    height: 10px;
+    background: white;
+    border: 2px solid var(--cdm-primary);
+    border-radius: 50%;
 }
 
 /* Responsive */

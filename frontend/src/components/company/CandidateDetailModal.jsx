@@ -191,6 +191,27 @@ const CandidateDetailModal = ({
                                     </ul>
                                 </div>
 
+                                {/* Học vấn */}
+                                <div className="cdm-section">
+                                    <h3 className="cdm-section-title">
+                                        <span className="material-symbols-outlined" style={{fontSize: '20px'}}>school</span>
+                                        Học vấn
+                                    </h3>
+                                    {candidate.educations?.length > 0 ? (
+                                        <div className="cdm-timeline-mini">
+                                            {candidate.educations.map((edu, i) => (
+                                                <div key={i} className="cdm-timeline-item-mini">
+                                                    <p style={{fontWeight: 700, margin: 0, fontSize: '0.9rem'}}>{edu.schoolName}</p>
+                                                    <p style={{margin: 0, fontSize: '0.8rem', color: 'var(--cdm-primary)'}}>{edu.degree} - {edu.major}</p>
+                                                    <p style={{margin: 0, fontSize: '0.75rem', color: 'var(--cdm-text-muted)'}}>{edu.startDate} - {edu.endDate || 'Hiện tại'}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="cdm-placeholder">Chưa cập nhật học vấn.</p>
+                                    )}
+                                </div>
+
                                 {/* Tệp đính kèm */}
                                 <div className="cdm-section">
                                     <h3 className="cdm-section-title">
@@ -234,6 +255,45 @@ const CandidateDetailModal = ({
                                         }
                                     </div>
                                 </div>
+
+                                {/* Kinh nghiệm làm việc & Dự án (Chỉ hiển thị khi có dự án) */}
+                                {candidate.projects?.length > 0 && (
+                                    <>
+                                        <div className="cdm-section">
+                                            <h3 className="cdm-section-title">
+                                                <span className="material-symbols-outlined" style={{fontSize: '20px'}}>work</span>
+                                                Kinh nghiệm làm việc
+                                            </h3>
+                                            {candidate.experiences?.length > 0 ? (
+                                                <div className="cdm-timeline-mini">
+                                                    {candidate.experiences.map((exp, i) => (
+                                                        <div key={i} className="cdm-timeline-item-mini">
+                                                            <p style={{fontWeight: 700, margin: 0, fontSize: '0.9rem'}}>{exp.jobTitle}</p>
+                                                            <p style={{margin: 0, fontSize: '0.8rem', color: 'var(--cdm-primary)'}}>{exp.companyName}</p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <p className="cdm-placeholder">Chưa cập nhật kinh nghiệm chi tiết.</p>
+                                            )}
+                                        </div>
+
+                                        <div className="cdm-section">
+                                            <h3 className="cdm-section-title">
+                                                <span className="material-symbols-outlined" style={{fontSize: '20px'}}>rocket_launch</span>
+                                                Dự án tiêu biểu
+                                            </h3>
+                                            <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+                                                {candidate.projects.map((pj, i) => (
+                                                    <div key={i} style={{padding: '10px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0'}}>
+                                                        <p style={{fontWeight: 800, margin: '0 0 4px', fontSize: '0.9rem'}}>{pj.name}</p>
+                                                        <p style={{margin: 0, fontSize: '0.8rem', color: 'var(--cdm-text-muted)'}}>{pj.description}</p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
 
                                 {/* Vị trí ứng tuyển */}
                                 <div className="cdm-section">
