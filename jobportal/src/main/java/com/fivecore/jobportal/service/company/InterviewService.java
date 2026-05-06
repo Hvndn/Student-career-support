@@ -277,6 +277,36 @@ public class InterviewService {
     }
 
     /**
+     * Sinh viên từ chối tham gia phỏng vấn.
+     */
+    @Transactional
+    public void rejectInterview(Integer id, Integer studentId, String reason) {
+        Interview interview = interviewRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy lịch phỏng vấn"));
+        
+        if (!interview.getApplication().getStudent().getId().equals(studentId)) {
+            throw new RuntimeException("Bạn không có quyền từ chối lịch phỏng vấn này");
+        }
+
+        interview.setStatus("cancelled"); // Hoặc dùng "rejected" tùy database của bạn
+        interview.setNotes(interview.getNotes() + "\n[Sinh viên từ chối]: " + (reason != null ? reason : "Không có lý do"));
+        interviewRepository.save(interview);
+
+        // Thông báo cho nhà tuyển dụng
+        Application app = interview.getApplication();
+        com.fivecore.jobportal.entity.User companyUser = app.getJob().getCompany().getUser();
+        String studentName = app.getStudent().getUser().getFullName();
+        String jobTitle = app.getJob().getTitle();
+
+        notificationService.sendNotification(companyUser, 
+            "Ứng viên từ chối phỏng vấn", 
+            "Ứng viên " + studentName + " đã từ chối buổi phỏng vấn cho vị trí " + jobTitle + 
+            (reason != null && !reason.isEmpty() ? ". Lý do: " + reason : "."));
+
+        log.info("Sinh viên ID {} đã từ chối lịch phỏng vấn ID {}", studentId, id);
+    }
+
+    /**
      * Lấy chi tiết lịch phỏng vấn.
      */
     public Interview getInterview(Integer id) {

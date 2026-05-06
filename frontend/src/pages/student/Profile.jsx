@@ -272,7 +272,7 @@ const Profile = () => {
                             </div>
                             <div className="pf-contact-item">
                                 <div className="pf-contact-icon"><span className="material-symbols-outlined">globe</span></div>
-                                <span>{profile.githubUrl || 'dau.edu.vn'}</span>
+                                <span>{profile.githubUrl || 'fivecore.edu.vn'}</span>
                             </div>
                             <div className="pf-contact-item">
                                 <div className="pf-contact-icon"><span className="material-symbols-outlined">person</span></div>
@@ -566,7 +566,7 @@ const Profile = () => {
                                     </div>
                                     <div className="pf-modal-field">
                                         <label>Website / Portfolio URL</label>
-                                        <input type="text" value={form.githubUrl} onChange={e => setForm({...form, githubUrl: e.target.value})} placeholder="dau.edu.vn" />
+                                        <input type="text" value={form.githubUrl} onChange={e => setForm({...form, githubUrl: e.target.value})} placeholder="fivecore.edu.vn" />
                                     </div>
                                     <div className="pf-modal-field">
                                         <label>Facebook / LinkedIn</label>

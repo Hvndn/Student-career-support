@@ -335,23 +335,30 @@
   line-height: 1.7;
 }
 
-.jd-sec-content ul {
-  list-style: none;
-  padding: 0;
+.jd-sec-content p {
+  margin-bottom: 12px;
+}
+
+.jd-sec-content ul, .jd-sec-content ol {
+  margin-bottom: 16px;
+  padding-left: 0;
 }
 
 .jd-sec-content li {
   position: relative;
-  padding-left: 20px;
+  padding-left: 24px;
   margin-bottom: 8px;
+  list-style: none;
 }
 
 .jd-sec-content li::before {
   content: "•";
   position: absolute;
-  left: 0;
+  left: 4px;
   color: #8b1538;
   font-weight: 800;
+  font-size: 1.2rem;
+  line-height: 1.4rem;
 }
 
 .jd-skill-tags {

@@ -8,7 +8,7 @@ const PremiumITTemplate = ({ cvData, onSectionClick, themeColor = '#2c73b3' }) =
         major = 'IT Developer',
         avatar,
         avatarUrl,
-        email = 'huy_2251220239@dau.edu.vn',
+        email = 'huy_2251220239@fivecore.edu.vn',
         phone = '0856766210',
         address = 'Hải Châu, Đà Nẵng',
         bio = 'Tôi là một lập trình viên nhiệt huyết với đam mê tạo ra những trải nghiệm người dùng tuyệt vời. Mong muốn tìm kiếm cơ hội học hỏi và đóng góp cho các dự án sáng tạo.',
@@ -19,7 +19,7 @@ const PremiumITTemplate = ({ cvData, onSectionClick, themeColor = '#2c73b3' }) =
             { name: 'Sale', level: '60%' }
         ],
         educations = [
-            { schoolName: 'ĐẠI HỌC TOPCV', major: 'Quản trị Doanh nghiệp', startDate: '10/2010', endDate: '05/2014', description: 'Tốt nghiệp loại Giỏi, điểm trung bình 8.0' }
+            { schoolName: 'ĐẠI HỌC FIVECORE', major: 'Quản trị Doanh nghiệp', startDate: '10/2010', endDate: '05/2014', description: 'Tốt nghiệp loại Giỏi, điểm trung bình 8.0' }
         ],
         experiences = [
             { companyName: 'CÔNG TY TOPCV', jobTitle: 'Nhân viên bán hàng', startDate: '03/2015', endDate: 'Hiện tại', description: '- Hỗ trợ viết bài quảng cáo sản phẩm qua kênh facebook, các forum...\n- Giới thiệu, tư vấn sản phẩm, giải đáp các vấn đề thắc mắc của khách hàng...' }

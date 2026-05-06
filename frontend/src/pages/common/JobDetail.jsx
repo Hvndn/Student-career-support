@@ -92,6 +92,27 @@ const JobDetail = () => {
         navigate(`${rolePath}/chat?partnerId=${job.userId}`);
     };
 
+    const handleToggleSave = async () => {
+        if (!user || user.role !== 'ROLE_STUDENT') {
+            toast.error("Vui lòng đăng nhập với quyền sinh viên để lưu công việc");
+            return;
+        }
+
+        try {
+            await studentApi.saveJob(id);
+            const newIsSaved = !job.isSaved;
+            setJob(prev => ({ ...prev, isSaved: newIsSaved }));
+            if (newIsSaved) {
+                toast.success("Đã lưu công việc vào danh sách yêu thích");
+            } else {
+                toast.success("Đã bỏ lưu công việc");
+            }
+        } catch (error) {
+            console.error("Save job error:", error);
+            toast.error("Có lỗi xảy ra, vui lòng thử lại");
+        }
+    };
+
     if (loading) return (
         <div className="job-detail-page flex items-center justify-center" style={{paddingTop: '100px'}}>
              <span className="material-symbols-outlined spinner" style={{fontSize: '3rem', color: '#0f409f', animation: 'spin 1s linear infinite'}}>refresh</span>
@@ -171,9 +192,7 @@ const JobDetail = () => {
                                 <span className="material-symbols-outlined">description</span>
                                 <h3>Mô tả công việc</h3>
                             </div>
-                            <div className="jd-sec-content">
-                                <p style={{ whiteSpace: 'pre-line' }}>{job.description}</p>
-                            </div>
+                            <div className="jd-sec-content" dangerouslySetInnerHTML={{ __html: job.description }}></div>
                         </section>
 
                          {/* Requirements */}
@@ -182,9 +201,7 @@ const JobDetail = () => {
                                 <span className="material-symbols-outlined">verified</span>
                                 <h3>Yêu cầu ứng viên</h3>
                             </div>
-                            <div className="jd-sec-content">
-                                <div style={{ whiteSpace: 'pre-line' }}>{job.requirements || 'Trao đổi trực tiếp khi phỏng vấn'}</div>
-                            </div>
+                            <div className="jd-sec-content" dangerouslySetInnerHTML={{ __html: job.requirements || 'Trao đổi trực tiếp khi phỏng vấn' }}></div>
                         </section>
 
                          {/* Benefits */}
@@ -193,9 +210,7 @@ const JobDetail = () => {
                                 <span className="material-symbols-outlined">card_giftcard</span>
                                 <h3>Quyền lợi được hưởng</h3>
                             </div>
-                            <div className="jd-sec-content">
-                                <div style={{ whiteSpace: 'pre-line' }}>{job.benefits || 'Chế độ đãi ngộ hấp dẫn'}</div>
-                            </div>
+                            <div className="jd-sec-content" dangerouslySetInnerHTML={{ __html: job.benefits || 'Chế độ đãi ngộ hấp dẫn' }}></div>
                         </section>
 
                         {/* Activity Gallery */}
@@ -298,6 +313,34 @@ const JobDetail = () => {
                                 title="Chỉ sinh viên mới có thể ứng tuyển"
                             >
                                 Dành cho ứng viên
+                            </button>
+                        )}
+                        {(!user || user.role === 'ROLE_STUDENT') && (
+                            <button 
+                                className={`jd-btn-save ${job.isSaved ? 'saved' : ''}`}
+                                onClick={handleToggleSave}
+                                title={job.isSaved ? "Bỏ lưu" : "Lưu tin"}
+                                style={{
+                                    width: '100%',
+                                    marginTop: '12px',
+                                    padding: '12px',
+                                    borderRadius: '12px',
+                                    border: job.isSaved ? 'none' : '2px solid #e2e8f0',
+                                    background: job.isSaved ? '#f97316' : 'white',
+                                    color: job.isSaved ? 'white' : '#64748b',
+                                    fontWeight: '600',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '8px',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s'
+                                }}
+                            >
+                                <span className="material-symbols-outlined" style={{ fontVariationSettings: job.isSaved ? "'FILL' 1" : "'FILL' 0" }}>
+                                    {job.isSaved ? 'bookmark' : 'bookmark_border'}
+                                </span>
+                                {job.isSaved ? 'Đã lưu' : 'Lưu tin tuyển dụng'}
                             </button>
                         )}
                     </div>

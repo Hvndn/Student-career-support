@@ -219,6 +219,26 @@ public class StudentActionRestController {
     }
 
     /**
+     * API Từ chối tham gia phỏng vấn.
+     */
+    @PostMapping("/interviews/{id}/reject")
+    public ResponseEntity<ApiResponse<Object>> rejectInterview(@PathVariable Integer id, 
+                                                               @RequestBody(required = false) java.util.Map<String, String> body,
+                                                               Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        if (studentId == null)
+            return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+
+        String reason = body != null ? body.get("reason") : null;
+        try {
+            interviewService.rejectInterview(id, studentId, reason);
+            return ResponseEntity.ok(ApiResponse.success("Đã từ chối tham gia phỏng vấn", null));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage(), "REJECT_ERROR"));
+        }
+    }
+
+    /**
      * API Đánh dấu thông báo đã đọc.
      */
     @PatchMapping("/notifications/{id}/read")
