@@ -107,7 +107,7 @@ export const studentApi = {
     markNotificationAsRead: (id) => api.patch(`/student/notifications/${id}/read`),
     getInterviews: () => api.get('/student/interviews'),
     confirmInterview: (id) => api.post(`/student/interviews/${id}/confirm`),
-    // AI & Recommendations
+    rejectInterview: (id, reason) => api.post(`/student/interviews/${id}/reject`, { reason }),
     getRecommendations: () => api.get('/student/recommendations'),
     analyzeAiMatch: (jobId) => api.get(`/student/ai/analyze-match/${jobId}`),
     // CV Templates (public endpoint)
