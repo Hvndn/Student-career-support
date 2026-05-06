@@ -405,7 +405,7 @@ const CompanyCandidates = () => {
                                                     style={{ padding: '16px 20px', color: '#64748b', fontSize: '13px', fontWeight: 'bold', textAlign: 'left', textTransform: 'uppercase', cursor: 'pointer' }}
                                                     onClick={() => requestSort('jobTitle')}
                                                 >
-                                                    VỊ TRÍ ỨNG TUYỂN {getSortIcon('jobTitle')}
+                                                    CÔNG VIỆC ỨNG TUYỂN {getSortIcon('jobTitle')}
                                                 </th>
                                                 <th 
                                                     style={{ padding: '16px 20px', color: '#64748b', fontSize: '13px', fontWeight: 'bold', textAlign: 'left', textTransform: 'uppercase', cursor: 'pointer' }}

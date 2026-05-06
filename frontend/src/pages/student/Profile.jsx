@@ -432,6 +432,11 @@ const Profile = () => {
                                                 </div>
                                             </div>
                                             <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                                {attachedCvName && (
+                                                    <Link to="/cv/view/live" target="_blank" className="pf-cv-btn" title="Xem bản hiện tại">
+                                                        <span className="material-symbols-outlined">visibility</span>
+                                                    </Link>
+                                                )}
                                                 <button 
                                                     className="pf-cv-btn" 
                                                     title="Chọn CV khác từ danh sách"

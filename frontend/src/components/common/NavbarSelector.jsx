@@ -16,6 +16,7 @@ const NavbarSelector = () => {
     // Bỏ qua Navbar cho các trang auth, company và admin
     if (location.pathname === '/login' || 
         location.pathname === '/register' ||
+        location.pathname.startsWith('/cv/view/') ||
         location.pathname.startsWith('/company/') || 
         location.pathname.startsWith('/admin/')) {
         return null;

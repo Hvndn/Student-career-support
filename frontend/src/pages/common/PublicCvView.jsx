@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { recruitmentApi } from '../../api';
+import { recruitmentApi, studentApi } from '../../api';
 import { getTemplateComponent } from '../../components/student/templates/TemplateRegistry.jsx';
 import '../../assets/css/student/CVBuilder.css'; // Reuse CV styles
 
@@ -12,20 +12,37 @@ const PublicCvView = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        recruitmentApi.getApplicationDetail(appId)
-            .then(res => {
-                if ((res.data?.status === 'success' || res.data?.success) && res.data.data?.cvData) {
-                    setCvData(JSON.parse(res.data.data.cvData));
-                } else {
-                    setError("Không tìm thấy dữ liệu CV Online cho hồ sơ này.");
-                }
-                setLoading(false);
-            })
-            .catch(err => {
-                console.error(err);
-                setError("Bạn không có quyền xem hồ sơ này hoặc hồ sơ không tồn tại.");
-                setLoading(false);
-            });
+        if (appId === 'live') {
+            studentApi.getProfile()
+                .then(res => {
+                    if (res.data?.status === 'success' && res.data.data?.cvData) {
+                        setCvData(JSON.parse(res.data.data.cvData));
+                    } else {
+                        setError("Bạn chưa đính kèm bản thiết kế CV nào vào hồ sơ.");
+                    }
+                    setLoading(false);
+                })
+                .catch(err => {
+                    console.error(err);
+                    setError("Không thể tải dữ liệu hồ sơ cá nhân.");
+                    setLoading(false);
+                });
+        } else {
+            recruitmentApi.getApplicationDetail(appId)
+                .then(res => {
+                    if ((res.data?.status === 'success' || res.data?.success) && res.data.data?.cvData) {
+                        setCvData(JSON.parse(res.data.data.cvData));
+                    } else {
+                        setError("Không tìm thấy dữ liệu CV Online cho hồ sơ này.");
+                    }
+                    setLoading(false);
+                })
+                .catch(err => {
+                    console.error(err);
+                    setError("Bạn không có quyền xem hồ sơ này hoặc hồ sơ không tồn tại.");
+                    setLoading(false);
+                });
+        }
     }, [appId]);
 
     if (loading) return (
@@ -50,7 +67,9 @@ const PublicCvView = () => {
                 <div className="cvb-header-l">
                     <div style={{ marginLeft: '1rem' }}>
                         <div className="cvb-title">BẢN XEM HỒ SƠ ỨNG VIÊN</div>
-                        <div className="cvb-brand">Snapshot CV tại thời điểm nộp đơn</div>
+                        <div className="cvb-brand">
+                            {appId === 'live' ? 'Bản CV đang hiển thị trên hồ sơ của bạn' : 'Snapshot CV tại thời điểm nộp đơn'}
+                        </div>
                     </div>
                 </div>
                 <div className="cvb-header-r">

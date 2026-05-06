@@ -253,19 +253,44 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                     <span className="material-symbols-outlined">description</span>
                                     Hồ sơ năng lực (CV)
                                 </h3>
-                                {candidate.cvData ? (
-                                    <div className="spm-cv-box">
-                                        <div className="spm-cv-info">
-                                            <span className="material-symbols-outlined spm-cv-icon">picture_as_pdf</span>
-                                            <span className="spm-cv-name">Hồ sơ đính kèm.pdf</span>
+                                
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                    {/* 1. CV Online (Snapshot) */}
+                                    {candidate.cvData && (
+                                        <div className="spm-cv-box" onClick={() => window.open(`/cv/view/${candidate.id}`, '_blank')}>
+                                            <div className="spm-cv-info">
+                                                <span className="material-symbols-outlined spm-cv-icon" style={{ color: '#2563eb' }}>auto_stories</span>
+                                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                    <span className="spm-cv-name">CV Online (Hệ thống)</span>
+                                                    <span style={{ fontSize: '11px', color: '#64748b' }}>Bản snapshot lúc ứng tuyển</span>
+                                                </div>
+                                            </div>
+                                            <div className="spm-cv-link" title="Xem chi tiết">
+                                                <span className="material-symbols-outlined" style={{fontSize: '18px'}}>visibility</span>
+                                            </div>
                                         </div>
-                                        <a href={getImageUrl(candidate.cvData)} target="_blank" rel="noreferrer" className="spm-cv-link" title="Tải xuống">
-                                            <span className="material-symbols-outlined" style={{fontSize: '18px'}}>download</span>
-                                        </a>
-                                    </div>
-                                ) : (
-                                    <p className="spm-text-muted" style={{fontSize:'0.85rem'}}>Sinh viên chưa đính kèm CV.</p>
-                                )}
+                                    )}
+
+                                    {/* 2. File PDF đính kèm */}
+                                    {candidate.cvUrl && (
+                                        <div className="spm-cv-box" onClick={() => window.open(getImageUrl(candidate.cvUrl), '_blank')}>
+                                            <div className="spm-cv-info">
+                                                <span className="material-symbols-outlined spm-cv-icon" style={{ color: '#dc2626' }}>picture_as_pdf</span>
+                                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                    <span className="spm-cv-name">Hồ sơ đính kèm (PDF)</span>
+                                                    <span style={{ fontSize: '11px', color: '#64748b' }}>Tài liệu đính kèm bên ngoài</span>
+                                                </div>
+                                            </div>
+                                            <div className="spm-cv-link" title="Tải xuống">
+                                                <span className="material-symbols-outlined" style={{fontSize: '18px'}}>download</span>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {!candidate.cvData && !candidate.cvUrl && (
+                                        <p className="spm-text-muted" style={{fontSize:'0.85rem', fontStyle: 'italic'}}>Ứng viên chưa đính kèm CV.</p>
+                                    )}
+                                </div>
                             </div>
 
                             {/* Skills */}
