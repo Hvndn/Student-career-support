@@ -169,9 +169,21 @@ public class RecruitmentRestController {
                 .location(i.getLocation())
                 .notes(i.getNotes())
                 .interviewerInfo(i.getInterviewerInfo())
+                .interviewerEmail(i.getInterviewerEmail())
+                .interviewerPhone(i.getInterviewerPhone())
                 .requiredDocuments(i.getRequiredDocuments())
                 .interviewFormat(i.getInterviewFormat())
                 .preliminaryContent(i.getPreliminaryContent())
+                .duration(i.getDuration())
+                .meetingLink(i.getMeetingLink())
+                .round(i.getRound())
+                .technicalScore(i.getTechnicalScore())
+                .communicationScore(i.getCommunicationScore())
+                .problemSolvingScore(i.getProblemSolvingScore())
+                .evaluationNotes(i.getEvaluationNotes())
+                .overallScore(i.getOverallScore())
+                .stageType(i.getStageType())
+                .recommendation(i.getRecommendation())
                 .status(i.getStatus())
                 .result(i.getResult())
                 .applicationId(app.getId())
@@ -230,6 +242,44 @@ public class RecruitmentRestController {
     }
 
     /**
+     * API Cập nhật trạng thái phỏng vấn (Vòng đời: upcoming, in_progress, no_show...).
+     */
+    @PatchMapping("/interviews/{id}/status")
+    public ResponseEntity<ApiResponse<Object>> updateInterviewStatus(@PathVariable Integer id,
+            @RequestParam("status") String status,
+            Authentication authentication) {
+        Integer companyId = getCurrentCompanyId(authentication);
+        if (companyId == null) return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+
+        Interview interview = interviewRepository.findById(id).orElse(null);
+        if (interview == null || !interview.getApplication().getJob().getCompany().getId().equals(companyId)) {
+            return ResponseEntity.status(404).body(ApiResponse.error("Không tìm thấy lịch phỏng vấn", "NOT_FOUND"));
+        }
+
+        interviewService.updateInterviewStatus(id, status);
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật trạng thái thành công", null));
+    }
+
+    /**
+     * API Đánh giá buổi phỏng vấn và cập nhật kết quả tuyển dụng.
+     */
+    @PostMapping("/interviews/{id}/evaluate")
+    public ResponseEntity<ApiResponse<Object>> evaluateInterview(@PathVariable Integer id,
+            @RequestBody com.fivecore.jobportal.dto.InterviewEvaluationRequest request,
+            Authentication authentication) {
+        Integer companyId = getCurrentCompanyId(authentication);
+        if (companyId == null) return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
+
+        Interview interview = interviewRepository.findById(id).orElse(null);
+        if (interview == null || !interview.getApplication().getJob().getCompany().getId().equals(companyId)) {
+            return ResponseEntity.status(404).body(ApiResponse.error("Không tìm thấy lịch phỏng vấn", "NOT_FOUND"));
+        }
+
+        interviewService.submitEvaluation(id, request);
+        return ResponseEntity.ok(ApiResponse.success("Đã ghi nhận đánh giá phỏng vấn", null));
+    }
+
+    /**
      * API Lấy chi tiết lịch phỏng vấn.
      */
     @GetMapping("/interviews/{id}")
@@ -250,9 +300,21 @@ public class RecruitmentRestController {
             .location(interview.getLocation())
             .notes(interview.getNotes())
             .interviewerInfo(interview.getInterviewerInfo())
+            .interviewerEmail(interview.getInterviewerEmail())
+            .interviewerPhone(interview.getInterviewerPhone())
             .requiredDocuments(interview.getRequiredDocuments())
             .interviewFormat(interview.getInterviewFormat())
             .preliminaryContent(interview.getPreliminaryContent())
+            .duration(interview.getDuration())
+            .meetingLink(interview.getMeetingLink())
+            .round(interview.getRound())
+            .technicalScore(interview.getTechnicalScore())
+            .communicationScore(interview.getCommunicationScore())
+            .problemSolvingScore(interview.getProblemSolvingScore())
+            .evaluationNotes(interview.getEvaluationNotes())
+            .overallScore(interview.getOverallScore())
+            .stageType(interview.getStageType())
+            .recommendation(interview.getRecommendation())
             .status(interview.getStatus())
             .result(interview.getResult())
             .applicationId(app.getId())

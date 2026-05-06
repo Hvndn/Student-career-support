@@ -1,0 +1,58 @@
+/* Applicants Responsive Table */
+@media (max-width: 1024px) {
+  .applicants-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .applicants-table-container table thead {
+    display: none;
+  }
+
+  .applicants-table-container table,
+  .applicants-table-container table tbody,
+  .applicants-table-container table tr,
+  .applicants-table-container table td {
+    display: block;
+    width: 100%;
+  }
+
+  .applicants-table-container table tr {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  .applicants-table-container table td {
+    border: none !important;
+    padding: 0.5rem 0 !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: right;
+  }
+
+  .applicants-table-container table td:first-child {
+    justify-content: center;
+    padding-bottom: 1rem !important;
+    border-bottom: 1px solid var(--border) !important;
+    margin-bottom: 0.5rem;
+  }
+
+  .applicants-table-container table td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    text-align: left;
+  }
+
+  .applicants-table-container table td:first-child::before {
+    display: none;
+  }
+}

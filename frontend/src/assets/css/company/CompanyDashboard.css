@@ -12,6 +12,7 @@
   flex: 1;
   padding: 70px 1.5rem 2rem 1.5rem; /* Căn chỉnh 1.5rem left để thẳng hàng với brand ở Sidebar */
   overflow-x: hidden;
+  transition: all 0.3s ease;
 }
 
 .dashboard-v2 {
@@ -164,11 +165,6 @@
   color: inherit !important;
   transition: all 0.2s;
   min-width: 0 !important;
-}
-
-.db-job-card:hover {
-  background: #eff6ff !important;
-  border-color: #dbeafe !important;
 }
 
 .db-job-info {
@@ -350,4 +346,75 @@
 
 @media (max-width: 1100px) {
   .db-main-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .cd-main {
+    padding: 80px 1rem 2rem 1rem;
+  }
+
+  .db-welcome-header h2 {
+    font-size: 1.4rem;
+  }
+
+  .db-stats-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .db-stat-card {
+    padding: 1rem;
+    gap: 8px !important;
+  }
+
+  .db-stat-icon-box {
+    width: 36px;
+    height: 36px;
+  }
+
+  .db-stat-icon-box svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .db-stat-info h3 {
+    font-size: 1.1rem;
+  }
+
+  .db-stat-info p {
+    font-size: 0.75rem;
+  }
+
+  .db-widget {
+    padding: 1rem;
+    border-radius: 16px;
+  }
+
+  .range-pill-selector {
+    display: none; /* Hide complex selector on very small screens or simplify */
+  }
+
+  .widget-header h4 {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .db-stats-row {
+    grid-template-columns: 1fr;
+  }
+
+  .db-welcome-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .db-job-card {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+
+  .db-status-pill {
+    margin-left: 0 !important;
+  }
 }

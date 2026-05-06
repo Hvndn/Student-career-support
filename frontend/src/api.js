@@ -168,6 +168,8 @@ export const recruitmentApi = {
     getRecommendations: (jobId) => api.get('/company/management/jobs/' + jobId + '/recommendations'),
     getNotifications: () => api.get('/company/management/notifications'),
     markNotificationAsRead: (id) => api.patch(`/company/management/notifications/${id}/read`),
+    evaluateInterview: (id, data) => api.post(`/company/management/interviews/${id}/evaluate`, data),
+    updateInterviewStatus: (id, status) => api.patch(`/company/management/interviews/${id}/status?status=${status}`),
 };
 
 // ── Admin ─────────────────────────────────────────────────────────────────
@@ -188,6 +190,7 @@ export const adminApi = {
     getPendingCompanies: () => api.get('/admin/companies/pending'),
     approveCompany: (id) => api.post(`/admin/companies/${id}/approve`),
     deleteUser: (id) => api.delete(`/admin/users/${id}`),
+    updateAdmin: (id, data) => api.put(`/admin/users/${id}/admin`, data),
     getReports: () => api.get('/admin/reports'),
     getPasswordRequests: () => api.get('/admin/password-requests'),
     getPasswordRequestStats: () => api.get('/admin/password-requests/stats'),
@@ -207,6 +210,7 @@ export const adminApi = {
     addCategory: (data) => api.post('/admin/categories', data),
     updateCategory: (id, data) => api.put(`/admin/categories/${id}`, data),
     deleteCategory: (id) => api.delete(`/admin/categories/${id}`),
+    deleteInterview: (id) => api.delete(`/admin/interviews/${id}`),
 };
 
 // ── Chat ──────────────────────────────────────────────────────────────────

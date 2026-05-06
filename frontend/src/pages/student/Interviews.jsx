@@ -128,7 +128,7 @@ const Interviews = () => {
                             const dateInfo = formatDate(interview.interviewDate);
                             const companyName = interview.companyName || 'Công ty ẩn danh';
                             const companyLogo = interview.companyLogo || `https://ui-avatars.com/api/?name=${companyName}&background=random`;
-                            const isOnline = interview.location?.toLowerCase().includes('http') || interview.interviewFormat === 'Trực tuyến';
+                            const isOnline = interview.interviewFormat === 'Trực tuyến' && interview.meetingLink;
                             
                             // Map status for better UI display
                             const getStatusDisplay = (status) => {
@@ -177,7 +177,7 @@ const Interviews = () => {
                                             />
                                             <div className="c-text">
                                                 <h4>{companyName}</h4>
-                                                <p className="c-job">Vị trí: <strong>{interview.jobTitle || 'Chưa xác định'}</strong></p>
+                                                <p className="c-job">Vị trí: <strong>{interview.jobTitle || 'Chưa xác định'}</strong> {interview.round && <span className="round-tag">{interview.round}</span>}</p>
                                                 <p className="c-email" style={{ fontSize: '0.8rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
                                                     <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>mail</span>
                                                     {interview.companyEmail || 'Chưa có email'}
@@ -192,8 +192,8 @@ const Interviews = () => {
                                                 </span>
                                                 <span className="text">
                                                     {isOnline ? (
-                                                        <a href={interview.location} target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb', textDecoration: 'underline', fontWeight: '600' }}>
-                                                            Phòng họp Online
+                                                        <a href={interview.meetingLink} target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb', textDecoration: 'underline', fontWeight: '600' }}>
+                                                            Link họp Online
                                                         </a>
                                                     ) : (
                                                         interview.location || 'Địa điểm chưa xác định'
@@ -201,10 +201,24 @@ const Interviews = () => {
                                                 </span>
                                             </div>
                                             
+                                            {interview.duration && (
+                                                <div className="detail-item">
+                                                    <span className="material-symbols-outlined">timer</span>
+                                                    <span className="text">Thời lượng dự kiến: <strong>{interview.duration} phút</strong></span>
+                                                </div>
+                                            )}
+                                            
                                             {interview.interviewerInfo && (
                                                 <div className="detail-item">
                                                     <span className="material-symbols-outlined">person</span>
-                                                    <span className="text">Interviewer: <strong>{interview.interviewerInfo}</strong></span>
+                                                    <div className="text">
+                                                        Interviewer: <strong>{interview.interviewerInfo}</strong>
+                                                        {(interview.interviewerEmail || interview.interviewerPhone) && (
+                                                            <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>
+                                                                {interview.interviewerEmail} {interview.interviewerPhone && `| ${interview.interviewerPhone}`}
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             )}
 

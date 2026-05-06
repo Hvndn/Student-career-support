@@ -9,7 +9,6 @@ const CandidateDetailModal = ({
     applicationId, 
     onClose, 
     onStatusUpdate,
-    // Các prop truyền từ list để hiển thị nhanh
     initialStatus,
     jobTitle: initialJobTitle,
     jobType: initialJobType,
@@ -38,7 +37,6 @@ const CandidateDetailModal = ({
             const res = await recruitmentApi.getCandidateDetail(applicationId);
             if (res.data.status === 'success') {
                 setCandidate(res.data.data);
-                // Nếu API trả về status mới nhất thì cập nhật
                 if (res.data.data.applicationStatus) {
                     setStatus(res.data.data.applicationStatus);
                 }
@@ -51,6 +49,7 @@ const CandidateDetailModal = ({
     };
 
     const handleUpdateStatus = async (newStatus) => {
+        if (newStatus === status) return;
         try {
             setUpdatingStatus(true);
             const res = await recruitmentApi.updateStatus(applicationId, newStatus);
@@ -64,7 +63,6 @@ const CandidateDetailModal = ({
             setUpdatingStatus(false);
         }
     };
-
 
     const handleDownloadCV = async () => {
         const urlToDownload = initialCvUrl || candidate?.cvUrl;
@@ -91,8 +89,11 @@ const CandidateDetailModal = ({
     const getStatusConfig = (s) => {
         const lowerS = (s || '').toLowerCase();
         switch (lowerS) {
-            case 'pending': return { label: 'Chờ duyệt', className: 'status-applied' };
-            case 'interview': return { label: 'Phỏng vấn', className: 'status-interviewing' };
+            case 'pending': return { label: 'Chờ xử lý', className: 'status-applied' };
+            case 'interview': return { label: 'Lên lịch phỏng vấn', className: 'status-interviewing' };
+            case 'interviewing': return { label: 'Đang phỏng vấn', className: 'status-interviewing' };
+            case 'passed': return { label: 'Vượt phỏng vấn', className: 'status-passed' };
+            case 'hired': return { label: 'Đã tuyển', className: 'status-hired' };
             case 'review': return { label: 'Theo dõi thêm', className: 'status-review' };
             case 'rejected': return { label: 'Từ chối', className: 'status-rejected' };
             default: return { label: 'Chờ xử lý', className: 'status-applied' };
@@ -110,8 +111,8 @@ const CandidateDetailModal = ({
 
     return (
         <>
-            <div className="cdm-overlay" onClick={onClose}>
-                <div className="cdm-container" onClick={e => e.stopPropagation()}>
+            <div className="cdm-overlay">
+                <div className="cdm-container">
 
                     {/* ── HEADER ── */}
                     <div className="cdm-header">
@@ -133,7 +134,10 @@ const CandidateDetailModal = ({
                                     <span className={`cdm-status-badge ${currentStatusConfig.className}`}>
                                         {currentStatusConfig.label}
                                     </span>
-                                    <span className="cdm-applied-date">{formatDate(initialAppliedAt)}</span>
+                                    <span className="cdm-applied-date">
+                                        <span className="material-symbols-outlined" style={{fontSize: '16px'}}>calendar_today</span>
+                                        {formatDate(initialAppliedAt)}
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -141,11 +145,9 @@ const CandidateDetailModal = ({
                             <button
                                 className="cdm-btn-view-profile"
                                 onClick={() => setShowProfile(true)}
+                                title="Xem hồ sơ ứng viên"
                             >
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                    <circle cx="12" cy="7" r="4" />
-                                </svg>
+                                <span className="material-symbols-outlined">person_search</span>
                                 Xem hồ sơ sinh viên
                             </button>
                         </div>
@@ -155,76 +157,158 @@ const CandidateDetailModal = ({
                     {loading ? (
                         <div className="cdm-loading">
                             <div className="cdm-spinner" />
-                            <p>Đang tải thông tin...</p>
+                            <p>Đang tải thông tin ứng viên...</p>
                         </div>
                     ) : candidate ? (
                         <div className="cdm-body">
 
-                            {/* ── CỘT TRÁI ── */}
+                            {/* ── CỘT TRÁI (LEFT) ── */}
                             <div className="cdm-col-left">
 
                                 {/* Thông tin sinh viên */}
                                 <div className="cdm-section">
-                                    <p className="cdm-section-title">Thông tin sinh viên</p>
+                                    <h3 className="cdm-section-title">
+                                        <span className="material-symbols-outlined" style={{fontSize: '20px'}}>contact_page</span>
+                                        Thông tin sinh viên
+                                    </h3>
                                     <ul className="cdm-info-list">
                                         <li>
-                                            <span className="cdm-info-icon">✉</span>
-                                            <span>{candidate.email || 'Chưa cập nhật'}</span>
+                                            <div className="cdm-info-icon"><span className="material-symbols-outlined">mail</span></div>
+                                            <span style={{alignSelf: 'center'}}>{candidate.email || 'Chưa cập nhật'}</span>
                                         </li>
                                         <li>
-                                            <span className="cdm-info-icon">📞</span>
-                                            <span>{candidate.phone || 'Chưa cập nhật'}</span>
+                                            <div className="cdm-info-icon"><span className="material-symbols-outlined">call</span></div>
+                                            <span style={{alignSelf: 'center'}}>{candidate.phone || 'Chưa cập nhật'}</span>
                                         </li>
                                         <li>
-                                            <span className="cdm-info-icon">🎓</span>
-                                            <span>{candidate.major || 'Chưa cập nhật'}</span>
+                                            <div className="cdm-info-icon"><span className="material-symbols-outlined">school</span></div>
+                                            <span style={{alignSelf: 'center'}}>{candidate.major || 'Chưa cập nhật'}</span>
                                         </li>
                                         <li>
-                                            <span className="cdm-info-icon">🪪</span>
-                                            <span>{candidate.studentIdStr || 'Chưa cập nhật'}</span>
+                                            <div className="cdm-info-icon"><span className="material-symbols-outlined">badge</span></div>
+                                            <span style={{alignSelf: 'center'}}>{candidate.studentIdStr || 'Chưa cập nhật'}</span>
                                         </li>
                                     </ul>
                                 </div>
 
+                                {/* Học vấn */}
+                                <div className="cdm-section">
+                                    <h3 className="cdm-section-title">
+                                        <span className="material-symbols-outlined" style={{fontSize: '20px'}}>school</span>
+                                        Học vấn
+                                    </h3>
+                                    {candidate.educations?.length > 0 ? (
+                                        <div className="cdm-timeline-mini">
+                                            {candidate.educations.map((edu, i) => (
+                                                <div key={i} className="cdm-timeline-item-mini">
+                                                    <p style={{fontWeight: 700, margin: 0, fontSize: '0.9rem'}}>{edu.schoolName}</p>
+                                                    <p style={{margin: 0, fontSize: '0.8rem', color: 'var(--cdm-primary)'}}>{edu.degree} - {edu.major}</p>
+                                                    <p style={{margin: 0, fontSize: '0.75rem', color: 'var(--cdm-text-muted)'}}>{edu.startDate} - {edu.endDate || 'Hiện tại'}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="cdm-placeholder">Chưa cập nhật học vấn.</p>
+                                    )}
+                                </div>
+
                                 {/* Tệp đính kèm */}
                                 <div className="cdm-section">
-                                    <p className="cdm-section-title">Tệp đính kèm</p>
+                                    <h3 className="cdm-section-title">
+                                        <span className="material-symbols-outlined" style={{fontSize: '20px'}}>attach_file</span>
+                                        Tệp đính kèm
+                                    </h3>
                                     <div className="cdm-attachment" onClick={handleDownloadCV}>
-                                        <span className="cdm-attachment-icon">📄</span>
-                                        <div className="cdm-attachment-info">
-                                            <span className="cdm-attachment-name">
-                                                {initialCvFileName || `CV_${candidate.fullName}.pdf`}
-                                            </span>
-                                            <span className="cdm-attachment-action">
-                                                {downloading ? 'Đang tải...' : '↓ Tải xuống'}
-                                            </span>
+                                        <div className="cdm-attachment-left">
+                                            <span className="material-symbols-outlined cdm-attachment-icon">picture_as_pdf</span>
+                                            <div className="cdm-attachment-info">
+                                                <span className="cdm-attachment-name">
+                                                    {initialCvFileName || `CV_${candidate.fullName}.pdf`}
+                                                </span>
+                                                <span style={{fontSize: '0.75rem', color: '#94a3b8'}}>Tài liệu PDF</span>
+                                            </div>
+                                        </div>
+                                        <div className="cdm-attachment-action" title="Tải xuống CV">
+                                            {downloading ? (
+                                                <span className="material-symbols-outlined" style={{fontSize: '16px', animation: 'cdm-spin 1s linear infinite'}}>sync</span>
+                                            ) : (
+                                                <span className="material-symbols-outlined" style={{fontSize: '18px'}}>download</span>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* ── CỘT PHẢI ── */}
+                            {/* ── CỘT PHẢI (RIGHT) ── */}
                             <div className="cdm-col-right">
 
                                 {/* Thư giới thiệu */}
                                 <div className="cdm-section">
-                                    <p className="cdm-section-title">Thư giới thiệu</p>
+                                    <h3 className="cdm-section-title">
+                                        <span className="material-symbols-outlined" style={{fontSize: '20px'}}>chat</span>
+                                        Thư giới thiệu
+                                    </h3>
                                     <div className="cdm-cover-letter">
                                         {initialCoverLetter
-                                            ? <p>{initialCoverLetter}</p>
+                                            ? <p style={{margin: 0}}>{initialCoverLetter}</p>
                                             : <p className="cdm-placeholder">Ứng viên không để lại thư giới thiệu.</p>
                                         }
                                     </div>
                                 </div>
 
+                                {/* Kinh nghiệm làm việc & Dự án (Chỉ hiển thị khi có dự án) */}
+                                {candidate.projects?.length > 0 && (
+                                    <>
+                                        <div className="cdm-section">
+                                            <h3 className="cdm-section-title">
+                                                <span className="material-symbols-outlined" style={{fontSize: '20px'}}>work</span>
+                                                Kinh nghiệm làm việc
+                                            </h3>
+                                            {candidate.experiences?.length > 0 ? (
+                                                <div className="cdm-timeline-mini">
+                                                    {candidate.experiences.map((exp, i) => (
+                                                        <div key={i} className="cdm-timeline-item-mini">
+                                                            <p style={{fontWeight: 700, margin: 0, fontSize: '0.9rem'}}>{exp.jobTitle}</p>
+                                                            <p style={{margin: 0, fontSize: '0.8rem', color: 'var(--cdm-primary)'}}>{exp.companyName}</p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            ) : (
+                                                <p className="cdm-placeholder">Chưa cập nhật kinh nghiệm chi tiết.</p>
+                                            )}
+                                        </div>
+
+                                        <div className="cdm-section">
+                                            <h3 className="cdm-section-title">
+                                                <span className="material-symbols-outlined" style={{fontSize: '20px'}}>rocket_launch</span>
+                                                Dự án tiêu biểu
+                                            </h3>
+                                            <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
+                                                {candidate.projects.map((pj, i) => (
+                                                    <div key={i} style={{padding: '10px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0'}}>
+                                                        <p style={{fontWeight: 800, margin: '0 0 4px', fontSize: '0.9rem'}}>{pj.name}</p>
+                                                        <p style={{margin: 0, fontSize: '0.8rem', color: 'var(--cdm-text-muted)'}}>{pj.description}</p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+
                                 {/* Vị trí ứng tuyển */}
                                 <div className="cdm-section">
-                                    <p className="cdm-section-title">Vị trí ứng tuyển</p>
+                                    <h3 className="cdm-section-title">
+                                        <span className="material-symbols-outlined" style={{fontSize: '20px'}}>work</span>
+                                        Vị trí ứng tuyển
+                                    </h3>
                                     <p className="cdm-job-title">{initialJobTitle || 'Không xác định'}</p>
                                     <div className="cdm-job-tags">
                                         {initialJobType && <span className="cdm-job-tag">{initialJobType}</span>}
                                         {(initialJobLocation || candidate.location) && (
-                                            <span className="cdm-job-tag">📍 {initialJobLocation || candidate.location}</span>
+                                            <span className="cdm-job-tag">
+                                                <span className="material-symbols-outlined" style={{fontSize: '14px', verticalAlign: 'middle', marginRight: '4px'}}>location_on</span>
+                                                {initialJobLocation || candidate.location}
+                                            </span>
                                         )}
                                     </div>
                                 </div>
@@ -233,16 +317,23 @@ const CandidateDetailModal = ({
                                 {applicationId && (
                                     <div className="cdm-section">
                                         <div className="cdm-status-update-header">
-                                            <p className="cdm-section-title">Cập nhật trạng thái</p>
+                                            <h3 className="cdm-section-title">
+                                                <span className="material-symbols-outlined" style={{fontSize: '20px'}}>update</span>
+                                                Cập nhật trạng thái
+                                            </h3>
                                             <span className={`cdm-current-badge ${currentStatusConfig.className}`}>
-                                                Hiện tại: {currentStatusConfig.label}
+                                                ĐANG CHỌN: {currentStatusConfig.label}
                                             </span>
                                         </div>
+                                        
                                         <div className="cdm-status-radios">
                                             {[
-                                                { key: 'review', label: 'Theo dõi thêm' },
+                                                { key: 'pending', label: 'Chờ xử lý' },
                                                 { key: 'interview', label: 'Hẹn phỏng vấn' },
+                                                { key: 'passed', label: 'Vượt phỏng vấn' },
+                                                { key: 'hired', label: 'Đã tuyển (Hired)' },
                                                 { key: 'rejected', label: 'Từ chối' },
+                                                { key: 'review', label: 'Theo dõi thêm' },
                                             ].map(opt => (
                                                 <label key={opt.key} className={`cdm-radio-label ${opt.key}`}>
                                                     <input

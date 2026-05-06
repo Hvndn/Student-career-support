@@ -40,7 +40,7 @@ const ManageCategories = () => {
     };
 
     const iconsList = [
-        'category', 'window', 'verified', 'domain', 'palette', 'account_balance', 
+        'category', 'window', 'verified', 'domain', 'palette', 'account_balance',
         'engineering', 'architecture', 'construction', 'design_services', 'home_work', 'layers'
     ];
 
@@ -109,8 +109,8 @@ const ManageCategories = () => {
         }
     };
 
-    const filteredCategories = categories.filter(c => 
-        c.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    const filteredCategories = categories.filter(c =>
+        c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         c.description.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -153,10 +153,10 @@ const ManageCategories = () => {
                         </div>
                         <div className="controls-right">
                             <div className="search-wrapper-premium" style={{ width: '300px' }}>
-                                <input 
-                                    type="text" 
-                                    className="search-input-premium" 
-                                    placeholder="Tìm kiếm..." 
+                                <input
+                                    type="text"
+                                    className="search-input-premium"
+                                    placeholder="Tìm kiếm..."
                                     value={searchTerm}
                                     style={{ borderRadius: '8px', paddingRight: '40px' }}
                                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -251,14 +251,14 @@ const ManageCategories = () => {
                                             Tên lĩnh vực <span className="required">*</span>
                                         </label>
                                         <div className="input-with-icon">
-                                            <input 
-                                                type="text" 
-                                                className="premium-input" 
-                                                name="name" 
-                                                value={formData.name} 
-                                                onChange={handleInputChange} 
+                                            <input
+                                                type="text"
+                                                className="premium-input"
+                                                name="name"
+                                                value={formData.name}
+                                                onChange={handleInputChange}
                                                 placeholder="Vd: Công nghệ thông tin..."
-                                                required 
+                                                required
                                                 disabled={isViewMode}
                                             />
                                         </div>
@@ -269,14 +269,14 @@ const ManageCategories = () => {
                                             Đường dẫn (Slug) <span className="required">*</span>
                                         </label>
                                         <div className="input-with-icon">
-                                            <input 
-                                                type="text" 
-                                                className="premium-input" 
-                                                name="slug" 
-                                                value={formData.slug} 
-                                                onChange={handleInputChange} 
+                                            <input
+                                                type="text"
+                                                className="premium-input"
+                                                name="slug"
+                                                value={formData.slug}
+                                                onChange={handleInputChange}
                                                 placeholder="cong-nghe-thong-tin"
-                                                required 
+                                                required
                                                 disabled={isViewMode}
                                             />
                                         </div>
@@ -286,11 +286,11 @@ const ManageCategories = () => {
                                             <span className="material-symbols-outlined">description</span>
                                             Mô tả ngắn
                                         </label>
-                                        <textarea 
-                                            className="premium-input" 
-                                            name="description" 
-                                            value={formData.description} 
-                                            onChange={handleInputChange} 
+                                        <textarea
+                                            className="premium-input"
+                                            name="description"
+                                            value={formData.description}
+                                            onChange={handleInputChange}
                                             rows="3"
                                             placeholder="Mô tả tóm tắt về lĩnh vực này..."
                                             disabled={isViewMode}
@@ -301,10 +301,10 @@ const ManageCategories = () => {
                                             <span className="material-symbols-outlined">toggle_on</span>
                                             Trạng thái
                                         </label>
-                                        <select 
-                                            className="premium-input" 
-                                            name="status" 
-                                            value={formData.status} 
+                                        <select
+                                            className="premium-input"
+                                            name="status"
+                                            value={formData.status}
                                             onChange={handleInputChange}
                                             disabled={isViewMode}
                                         >
@@ -319,8 +319,8 @@ const ManageCategories = () => {
                                         </label>
                                         <div className="category-select-icon-premium">
                                             {iconsList.map(icon => (
-                                                <div 
-                                                    key={icon} 
+                                                <div
+                                                    key={icon}
                                                     className={`icon-option-premium ${formData.icon === icon ? 'selected' : ''}`}
                                                     onClick={() => !isViewMode && setFormData({ ...formData, icon })}
                                                     style={{ cursor: isViewMode ? 'default' : 'pointer' }}

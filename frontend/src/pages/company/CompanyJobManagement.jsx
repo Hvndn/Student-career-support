@@ -21,9 +21,10 @@ const CompanyJobManagement = () => {
   const [filters, setFilters] = useState({
     search: '',
     status: 'Tất cả trạng thái',
-    type: 'Tất cả loại tin',
+    industry: 'Tất cả ngành nghề',
     region: 'Tất cả khu vực'
   });
+  const [sortConfig, setSortConfig] = useState({ key: 'postedAt', direction: 'desc' });
   const JOBS_PER_PAGE = 5;
 
   const REGIONS = ['Hà Nội', 'TP. Hồ Chí Minh', 'Đà Nẵng', 'Hải Phòng', 'Cần Thơ', 'Bình Dương', 'Đồng Nai', 'Bắc Ninh', 'Long An'];
@@ -53,6 +54,7 @@ const CompanyJobManagement = () => {
   }, []);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetchJobs();
   }, []);
 
@@ -320,13 +322,26 @@ const CompanyJobManagement = () => {
     // Lọc theo trạng thái
     const matchesStatus = filters.status === 'Tất cả trạng thái' || statusInfo.label === filters.status;
     
-    // Lọc theo loại tin
-    const matchesType = filters.type === 'Tất cả loại tin' || job.jobType === filters.type;
+    // Lọc theo ngành nghề
+    const matchesIndustry = filters.industry === 'Tất cả ngành nghề' || job.industry === filters.industry;
     
     // Lọc theo khu vực
     const matchesRegion = filters.region === 'Tất cả khu vực' || job.region === filters.region;
     
-    return matchesSearch && matchesStatus && matchesType && matchesRegion;
+    return matchesSearch && matchesStatus && matchesIndustry && matchesRegion;
+  }).sort((a, b) => {
+    const { key, direction } = sortConfig;
+    let valA = a[key];
+    let valB = b[key];
+
+    if (key === 'postedAt') {
+      valA = new Date(valA || 0).getTime();
+      valB = new Date(valB || 0).getTime();
+    }
+
+    if (valA < valB) return direction === 'asc' ? -1 : 1;
+    if (valA > valB) return direction === 'asc' ? 1 : -1;
+    return 0;
   });
 
   const handleExport = () => {
@@ -375,25 +390,82 @@ const CompanyJobManagement = () => {
         <div className="cd-content dau-style">
           <div className="cjm-content">
             <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#1e293b', marginBottom: '1.5rem' }}>Quản lý tuyển dụng</h2>
-            <div className="cjm-header intro-y" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-              <button 
-                className="cjm-post-btn-blue" 
-                onClick={() => { setEditingJob(null); setShowPostModal(true); }}
-              >
-                Đăng tin tuyển dụng
-              </button>
-
+            <div className="cjm-header intro-y" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <div className="cjm-search-box">
                 <input 
                   type="text" 
-                  placeholder="Tìm kiếm..." 
+                  placeholder="Tìm kiếm tin tuyển dụng..." 
                   value={filters.search}
                   onChange={(e) => {
                     setFilters({...filters, search: e.target.value});
                     setCurrentPage(1);
                   }}
                 />
-                <i className="fa-solid fa-magnifying-glass search-icon"></i>
+                <i className="fa-solid fa-magnifying-glass cjm-icon-search"></i>
+              </div>
+
+              <button 
+                className="cjm-post-btn-blue" 
+                onClick={() => { setEditingJob(null); setShowPostModal(true); }}
+              >
+                <i className="fa-solid fa-plus"></i> Đăng tin tuyển dụng
+              </button>
+            </div>
+
+            {/* Toolbar Bộ lọc & Sắp xếp */}
+            <div className="cjm-toolbar intro-y delay-1" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', gap: '15px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '12px', flex: 1 }}>
+                <select 
+                  className="dau-select filter-control"
+                  value={filters.status}
+                  onChange={(e) => setFilters({...filters, status: e.target.value})}
+                  style={{ minWidth: '160px', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '8px 12px', color: '#64748b', fontSize: '14px', background: '#fff' }}
+                >
+                  <option>Tất cả trạng thái</option>
+                  <option>Đã duyệt</option>
+                  <option>Chờ duyệt</option>
+                  <option>Bản nháp</option>
+                  <option>Hết hạn</option>
+                  <option>Đã ẩn</option>
+                </select>
+
+                <select 
+                  className="dau-select filter-control"
+                  value={filters.region}
+                  onChange={(e) => setFilters({...filters, region: e.target.value})}
+                  style={{ minWidth: '160px', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '8px 12px', color: '#64748b', fontSize: '14px', background: '#fff' }}
+                >
+                  <option>Tất cả khu vực</option>
+                  {REGIONS.map(r => <option key={r} value={r}>{r}</option>)}
+                </select>
+
+                <button 
+                  onClick={() => setFilters({ search: '', status: 'Tất cả trạng thái', industry: 'Tất cả ngành nghề', region: 'Tất cả khu vực' })}
+                  style={{ padding: '8px 15px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#64748b', fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}
+                >
+                  Làm mới
+                </button>
+              </div>
+
+              <div className="sort-section" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0 12px', background: '#fff', borderRadius: '8px', border: '1px solid #e2e8f0', height: '40px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#64748b' }}>
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><path d="M3 6h18M6 12h12m-9 6h6"></path></svg>
+                  <span style={{ fontSize: '12px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Sắp xếp</span>
+                </div>
+                <select 
+                  className="dau-select filter-control"
+                  value={`${sortConfig.key}-${sortConfig.direction}`}
+                  onChange={(e) => {
+                    const [key, direction] = e.target.value.split('-');
+                    setSortConfig({ key, direction });
+                  }}
+                  style={{ border: 'none', background: 'transparent', color: '#64748b', fontSize: '14px', fontWeight: '500', cursor: 'pointer', outline: 'none' }}
+                >
+                  <option value="postedAt-desc">Mới nhất</option>
+                  <option value="postedAt-asc">Cũ nhất</option>
+                  <option value="title-asc">Tiêu đề (A-Z)</option>
+                  <option value="applicantsCount-desc">Ứng tuyển (Nhiều nhất)</option>
+                </select>
               </div>
             </div>
 
@@ -404,7 +476,7 @@ const CompanyJobManagement = () => {
                     <th style={{width: '10%'}}>HÌNH ẢNH</th>
                     <th style={{width: '35%'}}>TÊN TIN TUYỂN DỤNG</th>
                     <th style={{width: '15%'}}>NGÀNH NGHỀ</th>
-                    <th className="text-center" style={{width: '10%'}}>LƯỢT XEM</th>
+                    <th className="text-center" style={{width: '10%'}}>NGÀY TẠO</th>
                     <th className="text-center" style={{width: '10%'}}>ỨNG TUYỂN</th>
                     <th className="text-center" style={{width: '10%'}}>TRẠNG THÁI</th>
                     <th className="text-center" style={{width: '10%'}}>HÀNH ĐỘNG</th>
@@ -462,25 +534,25 @@ const CompanyJobManagement = () => {
                                 Kỹ năng: {Array.isArray(job.skills) ? job.skills.join(', ') : (job.skills || 'Không yêu cầu')}
                               </div>
                             </td>
-                            <td className="modern-industry">
+                            <td data-label="NGÀNH NGHỀ" className="modern-industry">
                                {job.industry || 'Chưa cập nhật'}
                             </td>
-                            <td className="text-center modern-stats">
-                              <i className="fa-regular fa-eye"></i> {job.viewsCount || 0}
+                            <td data-label="NGÀY TẠO" className="text-center modern-stats">
+                              {formatDate(job.postedAt)}
                             </td>
-                            <td className="text-center modern-applicants">
+                            <td data-label="ỨNG TUYỂN" className="text-center modern-stats">
                               <i className="fa-solid fa-user-group"></i> {job.applicantsCount || 0}
                             </td>
-                            <td className="text-center modern-status" style={{ color: statusColor }}>
+                            <td data-label="TRẠNG THÁI" className="text-center modern-status" style={{ color: statusColor }}>
                               <i className="fa-regular fa-circle-check"></i> {statusText}
                             </td>
-                            <td className="text-center">
+                            <td data-label="HÀNH ĐỘNG" className="text-center">
                               <div className="modern-actions">
-                                <button className="action-btn edit" onClick={() => handleEdit(job.id)}>
-                                  <i className="fa-solid fa-pencil"></i> Sửa
+                                <button className="action-btn edit" onClick={() => handleEdit(job.id)} title="Chỉnh sửa">
+                                  <i className="fa-solid fa-pencil"></i>
                                 </button>
-                                <button className="action-btn delete" onClick={() => handleDelete(job.id)}>
-                                  <i className="fa-solid fa-trash-can"></i> Xóa
+                                <button className="action-btn delete" onClick={() => handleDelete(job.id)} title="Xóa">
+                                  <i className="fa-solid fa-trash-can"></i>
                                 </button>
                               </div>
                             </td>
@@ -551,14 +623,13 @@ const CompanyJobManagement = () => {
               </div>
             )}
 
-          <div className="cjm-footer-note">
-             ⓘ Để đảm bảo tin đăng hợp lệ, tham khảo <a href="#">Quy định duyệt tin tuyển dụng</a> tại đây
+            <div className="cjm-footer-note">
+              ⓘ Để đảm bảo tin đăng hợp lệ, tham khảo <a href="#">Quy định duyệt tin tuyển dụng</a> tại đây
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-      {/* Post Job Modal */}
       <PostJobModal 
         isOpen={showPostModal} 
         onClose={() => setShowPostModal(false)}

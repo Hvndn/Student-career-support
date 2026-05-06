@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { adminApi } from '../../api';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import AdminNavbar from '../../components/admin/AdminNavbar';
+import ConfirmModal from '../../components/common/ConfirmModal';
+import toast from 'react-hot-toast';
 import '../../assets/css/admin/AdminManagement.css';
 
 const ManageAppointment = () => {
@@ -11,6 +13,8 @@ const ManageAppointment = () => {
     const [statusFilter, setStatusFilter] = useState('all');
     const [selectedApt, setSelectedApt] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [aptToDelete, setAptToDelete] = useState(null);
 
     useEffect(() => {
         fetchAppointments();
@@ -47,6 +51,25 @@ const ManageAppointment = () => {
         setIsModalOpen(true);
     };
 
+    const handleDeleteClick = (apt) => {
+        setAptToDelete(apt);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!aptToDelete) return;
+        try {
+            await adminApi.deleteInterview(aptToDelete.id);
+            toast.success("Xóa lịch hẹn thành công");
+            setShowDeleteModal(false);
+            setAptToDelete(null);
+            fetchAppointments();
+        } catch (error) {
+            console.error("Lỗi khi xóa lịch hẹn:", error);
+            toast.error("Không thể xóa lịch hẹn");
+        }
+    };
+
     const filteredAppointments = appointments.filter(apt => {
         // Lọc theo trạng thái
         const matchesStatus = statusFilter === 'all' ||
@@ -71,7 +94,7 @@ const ManageAppointment = () => {
                 <AdminNavbar title="Quản lý lịch hẹn" />
                 <main className="admin-management-container">
                     <div className="management-header">
-                        
+
                         <h2 className="management-title">Quản lý Lịch hẹn</h2>
                     </div>
 
@@ -162,7 +185,7 @@ const ManageAppointment = () => {
                                             <span className="material-symbols-outlined">visibility</span>
                                             Xem
                                         </button>
-                                        <button className="action-btn delete">
+                                        <button className="action-btn delete" onClick={() => handleDeleteClick(apt)}>
                                             <span className="material-symbols-outlined">delete</span>
                                             Xóa
                                         </button>
@@ -282,6 +305,18 @@ const ManageAppointment = () => {
                     </div>
                 </div>
             )}
+
+            {/* Modal Xác nhận Xóa */}
+            <ConfirmModal
+                show={showDeleteModal}
+                title="Xác nhận xóa lịch hẹn"
+                message={`Bạn có chắc chắn muốn xóa lịch hẹn giữa "${aptToDelete?.companyName}" và "${aptToDelete?.studentName}" không?`}
+                onConfirm={confirmDelete}
+                onCancel={() => setShowDeleteModal(false)}
+                confirmText="Xác nhận xóa"
+                cancelText="Hủy"
+                type="danger"
+            />
         </div>
     );
 };

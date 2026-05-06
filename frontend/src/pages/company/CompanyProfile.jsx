@@ -187,6 +187,12 @@ const CompanyProfile = () => {
 
             if (selectedFile) dataToSubmit.append('logoFile', selectedFile);
             
+            // Gửi danh sách các ảnh cũ vẫn còn giữ lại (không bị xóa)
+            const existingImages = formData.activityImages.filter(img => typeof img === 'string' && img.startsWith('/uploads'));
+            existingImages.forEach(url => {
+                dataToSubmit.append('existingImages', url);
+            });
+
             if (selectedActivityFiles.length > 0) {
                 selectedActivityFiles.forEach(file => {
                     dataToSubmit.append('activityFiles', file);

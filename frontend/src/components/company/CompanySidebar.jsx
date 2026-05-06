@@ -17,11 +17,7 @@ const NAV_ITEMS = [
   },
   { 
     icon: <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>, 
-    label: 'Quản lý ứng viên',
-    children: [
-      { label: 'Ứng viên đã ứng tuyển', to: '/company/management/candidates' },
-      { label: 'Ứng viên đã lưu', to: '/company/candidates/saved' },
-    ]
+    label: 'Quản lý ứng viên', to: '/company/management/candidates' 
   },
   { 
     icon: <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>, 
@@ -38,7 +34,21 @@ const CompanySidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('');
-  const [expandedMenus, setExpandedMenus] = useState(['Quản lý ứng viên']); // Mặc định mở menu ứng viên
+  const [expandedMenus, setExpandedMenus] = useState(['Quản lý ứng viên']); 
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  React.useEffect(() => {
+    const handleToggle = () => setIsMobileOpen(prev => !prev);
+    const handleClose = () => setIsMobileOpen(false);
+
+    window.addEventListener('toggle-company-sidebar', handleToggle);
+    window.addEventListener('close-company-sidebar', handleClose);
+
+    return () => {
+      window.removeEventListener('toggle-company-sidebar', handleToggle);
+      window.removeEventListener('close-company-sidebar', handleClose);
+    };
+  }, []);
 
   React.useEffect(() => {
     let currentItem = null;
@@ -85,7 +95,12 @@ const CompanySidebar = () => {
   };
 
   return (
-    <aside className="company-sidebar persistent">
+    <>
+      <div 
+        className={`sidebar-overlay ${isMobileOpen ? 'show' : ''}`} 
+        onClick={() => setIsMobileOpen(false)}
+      ></div>
+      <aside className={`company-sidebar persistent ${isMobileOpen ? 'mobile-open' : ''}`}>
       <div className="sidebar-brand">
         <div className="brand-icon">
           <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -149,6 +164,7 @@ const CompanySidebar = () => {
         })}
       </div>
     </aside>
+    </>
   );
 };
 

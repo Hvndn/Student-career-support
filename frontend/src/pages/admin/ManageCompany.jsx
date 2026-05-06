@@ -44,7 +44,7 @@ const ManageCompany = () => {
                 size: 8
             };
             if (statusFilter !== 'all') params.active = statusFilter === 'active';
-            
+
             const res = await adminApi.getUsers(params);
             if (res.data && res.data.data) {
                 setCompanies(res.data.data.content || []);
@@ -63,7 +63,7 @@ const ManageCompany = () => {
             const res = await adminApi.getUserDetail(companyUser.id);
             const detail = res.data.data;
             setSelectedCompany(detail);
-            
+
             if (mode === 'edit' || mode === 'view') {
                 const profile = detail.companyProfile || {};
                 setFormData({
@@ -158,8 +158,8 @@ const ManageCompany = () => {
         }
     };
 
-    const filteredCompanies = companies.filter(c => 
-        c.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    const filteredCompanies = companies.filter(c =>
+        c.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         c.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -182,7 +182,7 @@ const ManageCompany = () => {
                         </div>
                         <div className="controls-right">
                             <div className="filter-group">
-                                <select 
+                                <select
                                     className="management-select"
                                     value={statusFilter}
                                     onChange={(e) => setStatusFilter(e.target.value)}
@@ -193,10 +193,10 @@ const ManageCompany = () => {
                                 </select>
                             </div>
                             <div className="search-wrapper-premium">
-                                <input 
-                                    type="text" 
-                                    className="search-input-premium" 
-                                    placeholder="Tìm tên hoặc email..." 
+                                <input
+                                    type="text"
+                                    className="search-input-premium"
+                                    placeholder="Tìm tên hoặc email..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
@@ -218,7 +218,7 @@ const ManageCompany = () => {
 
                         {loading ? (
                             <div style={{ textAlign: 'center', padding: '3rem' }}>
-                                <div className="loader" style={{margin: '0 auto'}}></div>
+                                <div className="loader" style={{ margin: '0 auto' }}></div>
                             </div>
                         ) : filteredCompanies.length > 0 ? (
                             filteredCompanies.map((c) => (
@@ -226,7 +226,7 @@ const ManageCompany = () => {
                                     <div className="avatar-cell">
                                         <div className="circle-avatar" style={{ backgroundColor: '#f1f5f9', color: '#64748b' }}>
                                             {c.companyProfile?.logoUrl ? (
-                                                <img src={c.companyProfile.logoUrl} alt="Logo" style={{width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover'}} />
+                                                <img src={c.companyProfile.logoUrl} alt="Logo" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
                                             ) : (
                                                 <span className="material-symbols-outlined">business</span>
                                             )}
@@ -239,7 +239,7 @@ const ManageCompany = () => {
                                     <div className="text-cell">{c.companyProfile?.industry || '---'}</div>
                                     <div className="text-cell">
                                         {c.companyProfile?.website ? (
-                                            <a href={c.companyProfile.website} target="_blank" rel="noreferrer" style={{color: '#a31919', fontWeight: 600}}>Xem Website</a>
+                                            <a href={c.companyProfile.website} target="_blank" rel="noreferrer" style={{ color: '#a31919', fontWeight: 600 }}>Xem Website</a>
                                         ) : '---'}
                                     </div>
                                     <div className="contact-cell">
@@ -275,8 +275,8 @@ const ManageCompany = () => {
                     {totalPages > 1 && (
                         <div className="management-pagination">
                             {[...Array(totalPages)].map((_, i) => (
-                                <button 
-                                    key={i} 
+                                <button
+                                    key={i}
                                     className={`page-link ${page === i ? 'active' : ''}`}
                                     onClick={() => setPage(i)}
                                 >
@@ -294,10 +294,10 @@ const ManageCompany = () => {
                     <div className={`premium-modal ${modalMode === 'view' ? 'large' : ''}`} style={{ maxWidth: modalMode === 'delete' ? '450px' : '' }} onClick={e => e.stopPropagation()}>
                         <div className="modal-header">
                             <h3>
-                                {modalMode === 'view' ? 'Hồ sơ doanh nghiệp' : 
-                                 modalMode === 'edit' ? 'Cập nhật doanh nghiệp' : 
-                                 modalMode === 'add' ? 'Thêm doanh nghiệp mới' :
-                                 'Xác nhận xóa doanh nghiệp'}
+                                {modalMode === 'view' ? 'Hồ sơ doanh nghiệp' :
+                                    modalMode === 'edit' ? 'Cập nhật doanh nghiệp' :
+                                        modalMode === 'add' ? 'Thêm doanh nghiệp mới' :
+                                            'Xác nhận xóa doanh nghiệp'}
                             </h3>
                             <button className="close-btn" onClick={closeModal}>
                                 <span className="material-symbols-outlined">close</span>
@@ -316,7 +316,7 @@ const ManageCompany = () => {
                                                         {selectedCompany?.companyProfile?.logoUrl ? (
                                                             <img src={selectedCompany.companyProfile.logoUrl} alt="Logo" className="avatar-img-premium" />
                                                         ) : (
-                                                            <span className="material-symbols-outlined" style={{fontSize: '3rem'}}>business</span>
+                                                            <span className="material-symbols-outlined" style={{ fontSize: '3rem' }}>business</span>
                                                         )}
                                                     </div>
                                                 </div>
@@ -332,7 +332,7 @@ const ManageCompany = () => {
                                                 </p>
                                                 {selectedCompany?.companyProfile?.website && (
                                                     <a href={selectedCompany.companyProfile.website} target="_blank" rel="noreferrer" className="profile-mssv-badge-premium">
-                                                        <span className="material-symbols-outlined" style={{fontSize: '18px', verticalAlign: 'middle', marginRight: '6px'}}>language</span>
+                                                        <span className="material-symbols-outlined" style={{ fontSize: '18px', verticalAlign: 'middle', marginRight: '6px' }}>language</span>
                                                         Xem Website
                                                     </a>
                                                 )}
@@ -397,10 +397,10 @@ const ManageCompany = () => {
                                         <div className="detail-column">
                                             <div className="detail-section">
                                                 <h4 className="detail-section-title">Địa chỉ trụ sở</h4>
-                                                <div className="info-row" style={{alignItems: 'flex-start'}}>
+                                                <div className="info-row" style={{ alignItems: 'flex-start' }}>
                                                     <span className="info-icon material-symbols-outlined">location_on</span>
                                                     <div className="info-content">
-                                                        <span className="info-value" style={{fontWeight: 500, lineHeight: 1.5}}>
+                                                        <span className="info-value" style={{ fontWeight: 500, lineHeight: 1.5 }}>
                                                             {selectedCompany?.companyProfile?.address || 'Chưa cập nhật địa chỉ'}
                                                         </span>
                                                     </div>
@@ -539,7 +539,7 @@ const ManageCompany = () => {
                                     </div>
                                     <h4 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', color: '#1e293b' }}>Xác nhận xóa doanh nghiệp</h4>
                                     <p style={{ color: '#64748b', fontSize: '0.9rem' }}>
-                                        Bạn có chắc chắn muốn xóa doanh nghiệp <strong>{selectedCompany?.fullName}</strong> vĩnh viễn? 
+                                        Bạn có chắc chắn muốn xóa doanh nghiệp <strong>{selectedCompany?.fullName}</strong> vĩnh viễn?
                                         Dữ liệu bài đăng tuyển dụng và hồ sơ liên quan sẽ bị xóa sạch.
                                     </p>
                                 </div>

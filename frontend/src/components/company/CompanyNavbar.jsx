@@ -153,6 +153,17 @@ const CompanyTopbar = () => {
   return (
     <header className="cd-topbar revamped">
       <div className="cd-topbar-left">
+        <button 
+          className="sidebar-toggle-btn"
+          onClick={() => window.dispatchEvent(new CustomEvent('toggle-company-sidebar'))}
+          aria-label="Toggle Sidebar"
+        >
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
         <nav className="cd-breadcrumbs">
           {crumbs.map((crumb, idx) => (
             <React.Fragment key={idx}>
@@ -166,70 +177,70 @@ const CompanyTopbar = () => {
       </div>
 
       <div className="cd-topbar-right">
+        <button 
+          className="tb-action-btn" 
+          title="Trò chuyện"
+          onClick={() => navigate('/company/chat')}
+        >
+          <span className="tb-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          </span>
+        </button>
+
+        <div className={`notification-container ${isNotifOpen ? 'open' : ''}`} ref={notifRef}>
           <button 
             className="tb-action-btn" 
-            title="Trò chuyện"
-            onClick={() => navigate('/company/chat')}
+            title="Thông báo"
+            onClick={() => setIsNotifOpen(!isNotifOpen)}
           >
             <span className="tb-icon">
-              <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
             </span>
+            {unreadCount > 0 && <span className="tb-badge">{unreadCount}</span>}
           </button>
 
-          <div className={`notification-container ${isNotifOpen ? 'open' : ''}`} ref={notifRef}>
-            <button 
-              className="tb-action-btn" 
-              title="Thông báo"
-              onClick={() => setIsNotifOpen(!isNotifOpen)}
-            >
-              <span className="tb-icon">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-              </span>
-              {unreadCount > 0 && <span className="tb-badge">{unreadCount}</span>}
-            </button>
-
-            <div className="notif-dropdown">
-              <div className="notif-header">
-                <h4>Thông báo</h4>
-                {unreadCount > 0 && <button className="mark-read-btn" onClick={markAllRead}>Đánh dấu đã đọc</button>}
-              </div>
-              <div className="notif-body">
-                {notifications.length > 0 ? (
-                  notifications.map(n => (
-                    <div 
-                      key={n.id} 
-                      className={`notif-item ${n.unread ? 'unread' : ''}`}
-                      onClick={() => markAsRead(n.id)}
-                    >
-                      <div className={`notif-icon-box ${n.icon}`}>
-                        {n.type === 'application' && <FiUsers size={20} />}
-                        {n.type === 'interview' && <FiCalendar size={20} />}
-                        {n.type === 'system' && <FiBriefcase size={20} />}
-                      </div>
-                      <div className="notif-content">
-                        <div className="notif-item-title-row">
-                          <span className="notif-item-title-text">{n.title}</span>
-                        </div>
-                        <div className="notif-text" dangerouslySetInnerHTML={{ __html: n.content }}></div>
-                        <div className="notif-time">{n.time}</div>
-                      </div>
+          <div className="notif-dropdown">
+            <div className="notif-header">
+              <h4>Thông báo</h4>
+              {unreadCount > 0 && <button className="mark-read-btn" onClick={markAllRead}>Đánh dấu đã đọc</button>}
+            </div>
+            <div className="notif-body">
+              {notifications.length > 0 ? (
+                notifications.map(n => (
+                  <div 
+                    key={n.id} 
+                    className={`notif-item ${n.unread ? 'unread' : ''}`}
+                    onClick={() => markAsRead(n.id)}
+                  >
+                    <div className={`notif-icon-box ${n.icon}`}>
+                      {n.type === 'application' && <FiUsers size={20} />}
+                      {n.type === 'interview' && <FiCalendar size={20} />}
+                      {n.type === 'system' && <FiBriefcase size={20} />}
                     </div>
-                  ))
-                ) : (
-                  <div className="notif-empty">
-                    <i className="fa-regular fa-bell-slash"></i>
-                    <p>Bạn chưa có thông báo nào</p>
+                    <div className="notif-content">
+                      <div className="notif-item-title-row">
+                        <span className="notif-item-title-text">{n.title}</span>
+                      </div>
+                      <div className="notif-text" dangerouslySetInnerHTML={{ __html: n.content }}></div>
+                      <div className="notif-time">{n.time}</div>
+                    </div>
                   </div>
-                )}
-              </div>
-              <div className="notif-footer">
-                <Link to="/company/management/candidates" className="view-all-btn" onClick={() => setIsNotifOpen(false)}>
-                  Xem tất cả thông báo
-                </Link>
-              </div>
+                ))
+              ) : (
+                <div className="notif-empty">
+                  <i className="fa-regular fa-bell-slash"></i>
+                  <p>Bạn chưa có thông báo nào</p>
+                </div>
+              )}
+            </div>
+            <div className="notif-footer">
+              <Link to="/company/management/candidates" className="view-all-btn" onClick={() => setIsNotifOpen(false)}>
+                Xem tất cả thông báo
+              </Link>
             </div>
           </div>
-
+        </div>
+        
         <div className="divider"></div>
         
         <div
@@ -254,7 +265,7 @@ const CompanyTopbar = () => {
             </div>
             <div className="user-info">
               <span className="user-name">{companyName}</span>
-              <span className="user-role">Quản trị viên</span>
+              <span className="user-role">Nhà tuyển dụng</span>
             </div>
             <span className={`cd-dropdown-arrow ${isDropdownOpen ? 'open' : ''}`}>▼</span>
           </div>
@@ -287,8 +298,8 @@ const CompanyTopbar = () => {
                   <span className="item-icon">🚪</span>
                   Đăng xuất
                 </button>
-             </div>
-          </div>
+              </div>
+           </div>
         </div>
       </div>
     </header>

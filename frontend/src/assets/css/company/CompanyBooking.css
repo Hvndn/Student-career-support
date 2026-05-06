@@ -1,5 +1,5 @@
 .booking-page {
-    padding: 1.5rem 0;
+    padding: 1.5rem;
     animation: fadeIn 0.5s ease-out;
     min-height: calc(100vh - 70px);
     background: #f8fafc;
@@ -43,7 +43,8 @@
 /* Filter Panel */
 .filter-panel {
     display: flex;
-    gap: 2rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
     padding: 1.5rem;
     border-radius: 16px;
     background: white;
@@ -55,6 +56,18 @@
     flex-direction: column;
     gap: 0.5rem;
     flex: 1;
+    min-width: 200px;
+}
+
+@media (max-width: 768px) {
+    .filter-panel {
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .filter-group {
+        min-width: 100%;
+    }
 }
 
 .filter-group label {
@@ -246,7 +259,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 280px;
+    max-width: 200px; /* Giảm mạnh để an toàn cho mobile hẹp */
 }
 
 /* Nội dung phỏng vấn dài - cho phép wrap */
@@ -284,13 +297,15 @@
 }
 
 .status-scheduled {
-    background: #eff6ff;
-    color: #2563eb;
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
 }
 
 .status-completed {
-    background: #f0fdf4;
-    color: #16a34a;
+    background: #f5f3ff;
+    color: #7c3aed;
+    border: 1px solid rgba(124, 58, 237, 0.2);
 }
 
 .status-confirmed {
@@ -307,6 +322,36 @@
 .status-cancelled {
     background: #fef2f2;
     color: #dc2626;
+}
+
+.status-in_progress {
+    background: #fef9c3;
+    color: #854d0e;
+    border: 1px solid rgba(133, 77, 14, 0.2);
+}
+
+.status-no_show {
+    background: #fff7ed;
+    color: #ea580c;
+    border: 1px solid rgba(234, 88, 12, 0.2);
+}
+
+.eval-pending-badge {
+    margin-top: 8px;
+    background: #fef3c7;
+    color: #92400e;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border: 1px solid #fde68a;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
 }
 
 .card-actions {
@@ -334,10 +379,79 @@
     border-color: #cbd5e1;
 }
 
-.icon-btn.delete:hover {
+.icon-btn.delete:hover,
+.icon-btn.cancel:hover {
     background: #fef2f2;
     color: #dc2626;
     border-color: #fca5a5;
+}
+
+/* --- New ATS Action Area Styles --- */
+.card-actions-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 8px 12px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #f1f5f9;
+    margin-top: 10px;
+}
+
+.action-main-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.action-danger-group {
+    margin-left: auto;
+    padding-left: 12px;
+    border-left: 2px solid #e2e8f0;
+}
+
+.icon-btn {
+    width: 42px; /* Tăng kích thước hitbox */
+    height: 42px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.icon-btn span {
+    font-size: 22px; /* Icon lớn hơn chút */
+}
+
+.icon-btn:hover {
+    background: white;
+    color: #2563eb;
+    border-color: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.icon-btn.evaluate {
+    color: #10b981;
+    background: #f0fdf4;
+    border-color: #d1fae5;
+}
+
+.icon-btn.evaluate:hover {
+    background: #10b981;
+    color: white;
+    border-color: #10b981;
+}
+
+.icon-btn.cancel {
+    color: #ef4444;
 }
 
 /* Empty State */
@@ -435,6 +549,8 @@
     margin-bottom: 0.5rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px dashed rgba(0, 0, 0, 0.05);
+    flex-wrap: wrap;
+    height: auto;
 }
 
 .detail-item.job-tag-detail .material-symbols-outlined {
@@ -466,7 +582,35 @@
     font-weight: 500;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
+    .booking-page {
+        padding: 1rem;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .header-title-group h3 {
+        font-size: 1.5rem;
+    }
+
+    .btn-respond.primary {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .filter-panel {
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .filter-group {
+        min-width: 100%;
+    }
+
     .booking-card {
         flex-direction: column;
     }
@@ -474,10 +618,11 @@
     .booking-date-side {
         width: 100%;
         flex-direction: row;
-        gap: 2rem;
+        gap: 1rem;
         padding: 1rem;
         border-right: none;
         border-bottom: 1px solid #f1f5f9;
+        justify-content: space-between;
     }
     
     .date-badge {
@@ -493,12 +638,177 @@
     .booking-main-content {
         flex-direction: column;
         align-items: flex-start;
-        gap: 1.5rem;
+        gap: 1rem;
+        padding: 1.25rem;
+    }
+
+    .candidate-info {
+        min-width: 100%;
     }
     
     .booking-status-side {
-        flex-direction: row;
-        align-items: center;
-        padding-top: 0.5rem;
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1.25rem;
+        border-left: none;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .card-actions {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+}
+
+/* New Styles for Interview Lifecycle & Evaluation */
+.btn-evaluate-mini {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
+}
+
+.btn-evaluate-mini:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+    filter: brightness(1.1);
+}
+
+.btn-evaluate-mini span {
+    font-size: 18px;
+}
+
+.score-badge-mini {
+    background: #f1f5f9;
+    color: #64748b;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.score-badge-mini.score-high {
+    background: #f0fdf4;
+    color: #16a34a;
+    border-color: #bbf7d0;
+}
+
+.score-badge-mini.score-medium {
+    background: #fffbeb;
+    color: #d97706;
+    border-color: #fef3c7;
+}
+
+.score-badge-mini.score-low {
+    background: #fef2f2;
+    color: #dc2626;
+    border-color: #fecaca;
+}
+
+.icon-btn.success {
+    color: #10b981;
+    border-color: #d1fae5;
+}
+
+.icon-btn.success:hover {
+    background: #f0fdf4;
+    border-color: #10b981;
+}
+
+.icon-btn.info {
+    color: #3b82f6;
+    border-color: #dbeafe;
+}
+
+.icon-btn.info:hover {
+    background: #eff6ff;
+    border-color: #3b82f6;
+}
+
+.icon-btn.warning {
+    color: #f59e0b;
+    background: #fffbeb;
+    border-color: #fef3c7;
+}
+
+.icon-btn.warning:hover {
+    background: #f59e0b;
+    color: white;
+    border-color: #f59e0b;
+}
+
+.link-text {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.link-text:hover {
+    text-decoration: underline;
+}
+
+.pjm-range {
+    -webkit-appearance: none;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    outline: none;
+}
+
+.pjm-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pjm-range::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.1);
+}
+
+@media (max-width: 480px) {
+    .booking-main-content {
+        padding: 1rem;
+    }
+    
+    .candidate-info {
+        gap: 0.75rem;
+    }
+    
+    .c-avatar {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .c-text h4 {
+        font-size: 1rem;
+    }
+    
+    .detail-item .text {
+        max-width: 140px;
+    }
+    
+    .booking-status-side {
+        padding: 1rem;
     }
 }

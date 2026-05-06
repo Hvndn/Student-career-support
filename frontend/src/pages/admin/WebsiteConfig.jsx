@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import AdminNavbar from '../../components/admin/AdminNavbar';
+import toast from 'react-hot-toast';
 import '../../assets/css/admin/AdminManagement.css';
 import '../../assets/css/admin/WebsiteConfig.css';
 
@@ -9,7 +10,7 @@ const WebsiteConfig = () => {
     const logoInputRef = useRef(null);
     const faviconInputRef = useRef(null);
 
-    const [config, setConfig] = useState({
+    const DEFAULT_CONFIG = {
         systemName: 'CareerLink',
         tagline: 'Cổng kết nối việc làm sinh viên',
         logoUrl: '',
@@ -30,6 +31,15 @@ const WebsiteConfig = () => {
         enableProjectChallenges: true,
         enableCareerMentor: true,
         enableChat: true
+    };
+
+    const [config, setConfig] = useState(() => {
+        try {
+            const saved = localStorage.getItem('websiteConfig');
+            return saved ? { ...DEFAULT_CONFIG, ...JSON.parse(saved) } : DEFAULT_CONFIG;
+        } catch {
+            return DEFAULT_CONFIG;
+        }
     });
 
     const [previews, setPreviews] = useState({
@@ -55,8 +65,16 @@ const WebsiteConfig = () => {
 
     const handleSave = (e) => {
         e.preventDefault();
-        alert('Đã lưu cấu hình thành công!');
-        console.log('Saved Config:', config);
+        try {
+            localStorage.setItem('websiteConfig', JSON.stringify(config));
+            // Cập nhật title trang
+            if (config.systemName) {
+                document.title = config.systemName + ' - Quản trị hệ thống';
+            }
+            toast.success('Lưu cấu hình thành công!');
+        } catch (err) {
+            toast.error('Không thể lưu cấu hình!');
+        }
     };
 
     return (
@@ -417,36 +435,6 @@ const WebsiteConfig = () => {
                                     </div>
 
                                     <div className="module-list-container">
-                                        <div className="module-item">
-                                            <label className="switch">
-                                                <input 
-                                                    type="checkbox" 
-                                                    checked={config.enableProjectChallenges}
-                                                    onChange={(e) => setConfig({ ...config, enableProjectChallenges: e.target.checked })}
-                                                />
-                                                <span className="slider"></span>
-                                            </label>
-                                            <div className="module-info">
-                                                <h5>Hiển thị tính năng "Thử thách dự án"</h5>
-                                                <p>Khi bật, sinh viên và doanh nghiệp sẽ thấy và tham gia các thử thách, dự án thực tế.</p>
-                                            </div>
-                                        </div>
-
-                                        <div className="module-item">
-                                            <label className="switch">
-                                                <input 
-                                                    type="checkbox" 
-                                                    checked={config.enableCareerMentor}
-                                                    onChange={(e) => setConfig({ ...config, enableCareerMentor: e.target.checked })}
-                                                />
-                                                <span className="slider"></span>
-                                            </label>
-                                            <div className="module-info">
-                                                <h5>Hiển thị tính năng "Cố vấn nghề nghiệp"</h5>
-                                                <p>Khi bật, sinh viên sẽ thấy tính năng đặt lịch, xem danh sách cố vấn chuyên gia.</p>
-                                            </div>
-                                        </div>
-
                                         <div className="module-item">
                                             <label className="switch">
                                                 <input 

@@ -72,6 +72,6 @@ public class Application {
     private List<Interview> interviews;
 
     public enum ApplicationStatus {
-        pending, review, suitable, interview, accepted, rejected
+        pending, review, suitable, interview, interviewing, passed, offer, accepted, rejected, hired
     }
 }

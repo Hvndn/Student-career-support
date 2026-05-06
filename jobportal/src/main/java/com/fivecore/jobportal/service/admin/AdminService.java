@@ -37,6 +37,7 @@ public class AdminService {
     private final InterviewRepository interviewRepository;
     private final PasswordEncoder passwordEncoder;
     private final DailyStatRepository dailyStatRepository;
+    private final CategoryRepository categoryRepository;
 
     /**
      * Lấy số liệu thống kê tổng quan cho Dashboard Admin.
@@ -66,11 +67,29 @@ public class AdminService {
         double successRate = totalJobs > 0 ? (double) totalApplications / totalJobs * 10 : 0;
         stats.put("successRate", Math.round(successRate * 10.0) / 10.0);
 
-        // Biểu đồ tròn: Industry Distribution (Doanh nghiệp theo lĩnh vực)
-        Map<String, Long> industryDistribution = companyRepository.findAll().stream()
-                .filter(c -> c.getIndustry() != null && !c.getIndustry().isEmpty())
-                .collect(Collectors.groupingBy(Company::getIndustry, Collectors.counting()));
-        stats.put("industryDistribution", industryDistribution);
+        // Biểu đồ tròn: Industry Distribution (Doanh nghiệp theo lĩnh vực thực tế từ categories)
+        List<Category> allCategories = categoryRepository.findAll();
+        Map<String, Long> industryDistribution = new HashMap<>();
+        
+        // Khởi tạo các lĩnh vực từ bảng categories với số lượng 0
+        allCategories.forEach(cat -> industryDistribution.put(cat.getName(), 0L));
+        
+        // Đếm số lượng doanh nghiệp cho mỗi lĩnh vực
+        companyRepository.findAll().forEach(company -> {
+            String ind = company.getIndustry();
+            if (ind != null && industryDistribution.containsKey(ind)) {
+                industryDistribution.put(ind, industryDistribution.get(ind) + 1);
+            }
+        });
+        
+        // Loại bỏ các lĩnh vực không có doanh nghiệp nào (tùy chọn, để biểu đồ không bị rối)
+        // Hoặc giữ lại để hiển thị đầy đủ các lĩnh vực hệ thống đang hỗ trợ.
+        // Ở đây ta giữ lại các lĩnh vực có > 0 doanh nghiệp để biểu đồ đẹp hơn
+        Map<String, Long> filteredDistribution = industryDistribution.entrySet().stream()
+                .filter(entry -> entry.getValue() > 0)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        stats.put("industryDistribution", filteredDistribution);
 
         // Biểu đồ đường: Truy cập theo ngày (Daily Visits)
         List<Map<String, Object>> dailyVisits = dailyStatRepository.findAll().stream()
@@ -142,6 +161,20 @@ public class AdminService {
     }
 
     /**
+     * Cập nhật tài khoản quản trị (US-013).
+     */
+    public void updateAdmin(Integer userId, AdminCreateRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy quản trị viên"));
+        user.setFullName(request.getFullName());
+        user.setEmail(request.getEmail());
+        if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+        userRepository.save(user);
+    }
+
+    /**
      * Khóa hoặc mở khóa tài khoản người dùng.
      */
     public void toggleUserLock(Integer userId, boolean lock) {
@@ -171,6 +204,12 @@ public class AdminService {
                     .minSalary(job.getMinSalary())
                     .maxSalary(job.getMaxSalary())
                     .status(status)
+                    .description(job.getDescription())
+                    .requirements(job.getRequirements())
+                    .benefits(job.getBenefits())
+                    .jobType(job.getJobType() != null ? job.getJobType().name() : null)
+                    .location(job.getLocation())
+                    .industry(job.getIndustry())
                     .build();
         }).collect(Collectors.toList());
     }
@@ -188,7 +227,23 @@ public class AdminService {
             }
             job.setStatus(newStatus);
             jobRepository.save(job);
-            log.info("Admin đã cập nhật trạng thái tin '{}' sang {}", job.getTitle(), status);
+
+            // Gửi thông báo cho doanh nghiệp
+            String title = "Cập nhật trạng thái tin tuyển dụng";
+            String statusText = "APPROVED".equalsIgnoreCase(status) ? "phê duyệt" : "từ chối";
+            String message = String.format("Tin tuyển dụng <strong>%s</strong> của bạn đã được <strong>%s</strong> bởi quản trị viên.", 
+                    job.getTitle(), statusText);
+
+            if (job.getCompany() != null && job.getCompany().getUser() != null) {
+                notificationRepository.save(Notification.builder()
+                        .user(job.getCompany().getUser())
+                        .title(title)
+                        .message(message)
+                        .isRead(false)
+                        .build());
+            }
+
+            log.info("Admin đã cập nhật trạng thái tin '{}' sang {} và gửi thông báo cho doanh nghiệp", job.getTitle(), status);
         });
     }
 
@@ -535,5 +590,15 @@ public class AdminService {
 
         companyRepository.save(company);
         log.info("Admin đã tạo DOANH NGHIỆP mới: {} (Tên: {})", user.getEmail(), company.getName());
+    }
+
+    /**
+     * Xóa lịch hẹn (Interview).
+     */
+    public void deleteInterview(Integer interviewId) {
+        interviewRepository.findById(interviewId).ifPresent(i -> {
+            interviewRepository.delete(i);
+            log.info("Admin đã XÓA lịch hẹn ID: {}", interviewId);
+        });
     }
 }

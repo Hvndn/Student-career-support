@@ -5,6 +5,7 @@ import { adminApi } from '../../api';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import AdminNavbar from '../../components/admin/AdminNavbar';
 import AddAdminModal from '../../components/admin/AddAdminModal';
+import ConfirmModal from '../../components/common/ConfirmModal';
 import '../../assets/css/admin/ManageAdminAccounts.css';
 
 const ManageAdminAccounts = () => {
@@ -16,6 +17,9 @@ const ManageAdminAccounts = () => {
     const [pageSize, setPageSize] = useState(10);
     const [totalElements, setTotalElements] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
+    const [selectedAccount, setSelectedAccount] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [accountToDelete, setAccountToDelete] = useState(null);
 
     useEffect(() => {
         loadAccounts(page);
@@ -41,19 +45,36 @@ const ManageAdminAccounts = () => {
         }
     };
 
-    const handleDeleteAccount = async (account) => {
-        if (!window.confirm(`Bạn có chắc chắn muốn xóa tài khoản ${account.fullName}?`)) return;
-        
+    const handleEditAccount = (account) => {
+        setSelectedAccount(account);
+        setIsModalOpen(true);
+    };
+
+    const handleDeleteAccount = (account) => {
+        setAccountToDelete(account);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDeleteAccount = async () => {
+        if (!accountToDelete) return;
         try {
-            await adminApi.deleteUser(account.id);
+            await adminApi.deleteUser(accountToDelete.id);
             toast.success('Đã xóa tài khoản thành công');
+            setShowDeleteModal(false);
+            setAccountToDelete(null);
             loadAccounts(page);
         } catch (err) {
             console.error('Lỗi khi xóa admin:', err);
+            toast.error('Không thể xóa tài khoản');
         }
     };
 
-    const filteredAccounts = accounts.filter(acc => 
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedAccount(null);
+    };
+
+    const filteredAccounts = accounts.filter(acc =>
         acc.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         acc.email?.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -79,9 +100,9 @@ const ManageAdminAccounts = () => {
                         <h1>Quản lý Tài khoản Quản trị</h1>
                         <div className="header-controls">
                             <div className="search-bar">
-                                <input 
-                                    type="text" 
-                                    placeholder="Tìm kiếm..." 
+                                <input
+                                    type="text"
+                                    placeholder="Tìm kiếm..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                 />
@@ -116,18 +137,22 @@ const ManageAdminAccounts = () => {
                                     <div className="account-name">{account.fullName}</div>
                                     <div className="account-email">{account.email}</div>
                                     <div>
-                                        <span className={`status-badge ${account.active ? 'status-active' : 'status-locked'}`}>
-                                            <span className="status-dot"></span>
+                                        <span className={`admin-account-badge ${account.active ? 'admin-account-active' : 'admin-account-locked'}`}>
+                                            <span className="admin-account-dot"></span>
                                             {account.active ? 'Hoạt động' : 'Bị khóa'}
                                         </span>
                                     </div>
                                     <div className="action-buttons">
-                                        <button className="btn-edit-action" title="Sửa">
+                                        <button
+                                            className="btn-edit-action"
+                                            title="Sửa"
+                                            onClick={() => handleEditAccount(account)}
+                                        >
                                             <span className="material-symbols-outlined">edit</span>
                                             Sửa
                                         </button>
-                                        <button 
-                                            className="btn-delete-action" 
+                                        <button
+                                            className="btn-delete-action"
                                             title="Xóa"
                                             onClick={() => handleDeleteAccount(account)}
                                         >
@@ -146,24 +171,24 @@ const ManageAdminAccounts = () => {
 
                     <div className="table-pagination">
                         <div className="pagination-pages">
-                            <button 
+                            <button
                                 className="btn-page"
                                 onClick={() => setPage(0)}
                                 disabled={page === 0}
                             >
                                 <span className="material-symbols-outlined">keyboard_double_arrow_left</span>
                             </button>
-                            <button 
+                            <button
                                 className="btn-page"
                                 onClick={() => setPage(p => Math.max(0, p - 1))}
                                 disabled={page === 0}
                             >
                                 <span className="material-symbols-outlined">chevron_left</span>
                             </button>
-                            
+
                             {[...Array(totalPages)].map((_, i) => (
-                                <button 
-                                    key={i} 
+                                <button
+                                    key={i}
                                     className={`btn-page ${page === i ? 'active' : ''}`}
                                     onClick={() => setPage(i)}
                                 >
@@ -171,14 +196,14 @@ const ManageAdminAccounts = () => {
                                 </button>
                             )).slice(Math.max(0, page - 2), Math.min(totalPages, page + 3))}
 
-                            <button 
+                            <button
                                 className="btn-page"
                                 onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
                                 disabled={page >= totalPages - 1}
                             >
                                 <span className="material-symbols-outlined">chevron_right</span>
                             </button>
-                            <button 
+                            <button
                                 className="btn-page"
                                 onClick={() => setPage(totalPages - 1)}
                                 disabled={page >= totalPages - 1}
@@ -203,10 +228,22 @@ const ManageAdminAccounts = () => {
                 </main>
             </div>
 
-            <AddAdminModal 
-                isOpen={isModalOpen} 
-                onClose={() => setIsModalOpen(false)} 
+            <AddAdminModal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
                 onSuccess={() => loadAccounts(page)}
+                account={selectedAccount}
+            />
+
+            <ConfirmModal
+                show={showDeleteModal}
+                title="Xác nhận xóa tài khoản"
+                message={`Bạn có chắc chắn muốn xóa tài khoản quản trị "${accountToDelete?.fullName}" không? Hành động này không thể hoàn tác.`}
+                onConfirm={confirmDeleteAccount}
+                onCancel={() => setShowDeleteModal(false)}
+                confirmText="Xác nhận xóa"
+                cancelText="Hủy"
+                type="danger"
             />
         </div>
     );

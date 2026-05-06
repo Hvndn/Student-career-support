@@ -17,7 +17,13 @@ public class InterviewRequest {
     private String notes;
     private String status;
     private String interviewerInfo;
+    private String interviewerEmail;
+    private String interviewerPhone;
     private String requiredDocuments;
     private String interviewFormat;
     private String preliminaryContent;
+    private Integer duration;
+    private String meetingLink;
+    private String round;
+    private String stageType;
 }

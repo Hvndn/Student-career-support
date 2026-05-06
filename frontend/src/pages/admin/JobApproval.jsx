@@ -4,11 +4,14 @@ import { adminApi } from '../../api';
 import AdminSidebar from '../../components/admin/AdminSidebar';
 import AdminNavbar from '../../components/admin/AdminNavbar';
 import '../../assets/css/admin/AdminDashboard.css';
+import '../../assets/css/admin/AdminManagement.css';
 import toast from 'react-hot-toast';
 
 const JobApproval = () => {
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedJob, setSelectedJob] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -37,10 +40,16 @@ const JobApproval = () => {
         try {
             await adminApi.updateJobStatus(id, status);
             toast.success(`Đã ${status === 'APPROVED' ? 'phê duyệt' : 'từ chối'} tin tuyển dụng!`);
+            setIsModalOpen(false);
             fetchJobs();
         } catch (err) {
             toast.error('Cập nhật trạng thái thất bại. Vui lòng thử lại!');
         }
+    };
+
+    const handleViewDetail = (job) => {
+        setSelectedJob(job);
+        setIsModalOpen(true);
     };
 
     if (loading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Đang tải dữ liệu...</div>;
@@ -49,13 +58,10 @@ const JobApproval = () => {
         <div className="admin-layout">
             <AdminSidebar />
             <div className="admin-main-content">
-                <AdminNavbar title="Kiểm duyệt việc làm" />
+                <AdminNavbar title="Quản lý việc làm" />
                 <main className="admin-management-container">
                     <div className="management-header">
-                        <h2 className="management-title">Kiểm duyệt việc làm</h2>
-                        <p style={{ color: '#4b5563', fontSize: '1rem', margin: '0.5rem 0 0', maxWidth: '600px', lineHeight: 1.5 }}>
-                            Xem xét và phê duyệt các tin đăng tuyển dụng mới từ doanh nghiệp để đảm bảo chất lượng nội dung.
-                        </p>
+                        <h2 className="management-title">Danh sách việc làm hệ thống</h2>
                     </div>
 
                     {/* TOP CARDS */}
@@ -148,8 +154,8 @@ const JobApproval = () => {
                                             <td style={{ padding: '1.5rem 2rem', textAlign: 'center' }}>
                                                 <div style={{ display: 'flex', gap: '0.8rem', justifyContent: 'center' }}>
                                                     <button 
-                                                        onClick={() => navigate(`/jobs/${job.id}`)}
-                                                        title="Xem chi tiết"
+                                                        onClick={() => handleViewDetail(job)}
+                                                        title="Xem nhanh"
                                                         style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#f3f4f6', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
                                                     >
                                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
@@ -201,6 +207,179 @@ const JobApproval = () => {
                     </div>
                 </main>
             </div>
+
+            {isModalOpen && selectedJob && (
+                <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+                    <div className="premium-modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '900px', borderRadius: '24px', textAlign: 'left' }}>
+                        <div className="modal-header" style={{ padding: '2rem 2.5rem', background: 'linear-gradient(to right, #f8fafc, #ffffff)', borderBottom: '1px solid #f1f5f9', position: 'relative', textAlign: 'left' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', textAlign: 'left' }}>
+                                <div style={{ background: '#0652dd', color: '#fff', width: '48px', height: '48px', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px rgba(6, 82, 221, 0.2)' }}>
+                                    <span className="material-symbols-outlined" style={{ fontSize: '28px' }}>work</span>
+                                </div>
+                                <div style={{ textAlign: 'left' }}>
+                                    <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 800, color: '#1e293b', textAlign: 'left' }}>Chi tiết tin đăng tuyển</h3>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', textAlign: 'left' }}>
+                                        <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>Mã số: #{selectedJob.id}</span>
+                                        <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#cbd5e1' }}></span>
+                                        <span style={{ fontSize: '0.85rem', color: '#0652dd', fontWeight: 700 }}>{selectedJob.industry || 'Lĩnh vực khác'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button className="close-btn" onClick={() => setIsModalOpen(false)} style={{ 
+                                position: 'absolute',
+                                top: '20px',
+                                right: '20px',
+                                background: '#f1f5f9', 
+                                width: '36px', 
+                                height: '36px',
+                                border: 'none',
+                                borderRadius: '50%',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: '#64748b',
+                                transition: 'all 0.2s'
+                            }}>
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        
+                        <div className="modal-body" style={{ padding: '2.5rem', maxHeight: '75vh', textAlign: 'left' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '3rem', textAlign: 'left' }}>
+                                {/* Left Column: Info Card */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', textAlign: 'left' }}>
+                                    <section style={{ textAlign: 'left' }}>
+                                        <h4 style={{ fontSize: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px', textAlign: 'left' }}>Thông tin cơ bản</h4>
+                                        <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '16px', border: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', gap: '1.5rem', textAlign: 'left' }}>
+                                            <div style={{ textAlign: 'left' }}>
+                                                <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', marginBottom: '4px', textAlign: 'left' }}>{selectedJob.title}</div>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontWeight: 600, fontSize: '0.9rem', textAlign: 'left' }}>
+                                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>business</span>
+                                                    {selectedJob.companyName || 'Doanh nghiệp'}
+                                                </div>
+                                            </div>
+
+                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', textAlign: 'left' }}>
+                                                <div style={{ background: '#fff', padding: '12px', borderRadius: '12px', border: '1px solid #edf2f7', textAlign: 'left' }}>
+                                                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 700, marginBottom: '4px', textAlign: 'left' }}>MỨC LƯƠNG</div>
+                                                    <div style={{ color: '#059669', fontWeight: 800, fontSize: '0.95rem', textAlign: 'left' }}>
+                                                        {selectedJob.minSalary && selectedJob.maxSalary ? 
+                                                            `${(selectedJob.minSalary/1000000).toFixed(1)}M - ${(selectedJob.maxSalary/1000000).toFixed(1)}M` : 
+                                                            'Thỏa thuận'}
+                                                    </div>
+                                                </div>
+                                                <div style={{ background: '#fff', padding: '12px', borderRadius: '12px', border: '1px solid #edf2f7', textAlign: 'left' }}>
+                                                    <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 700, marginBottom: '4px', textAlign: 'left' }}>HÌNH THỨC</div>
+                                                    <div style={{ color: '#0652dd', fontWeight: 800, fontSize: '0.95rem', textTransform: 'capitalize', textAlign: 'left' }}>
+                                                        {selectedJob.jobType || 'Full-time'}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#475569', fontSize: '0.9rem', fontWeight: 500, textAlign: 'left' }}>
+                                                <div style={{ background: '#e0f2fe', color: '#0ea5e9', width: '32px', height: '32px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>location_on</span>
+                                                </div>
+                                                {selectedJob.location || 'Đà Nẵng (Toàn quốc)'}
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                    {selectedJob.requirements && (
+                                        <section style={{ textAlign: 'left' }}>
+                                            <h4 style={{ fontSize: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '12px', textAlign: 'left' }}>Yêu cầu ứng viên</h4>
+                                            <div style={{ fontSize: '0.9rem', color: '#475569', lineHeight: 1.6, whiteSpace: 'pre-line', textAlign: 'justify' }}>
+                                                {selectedJob.requirements}
+                                            </div>
+                                        </section>
+                                    )}
+                                </div>
+
+                                {/* Right Column: Description & Benefits */}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                                    <section>
+                                        <h4 style={{ fontSize: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px', textAlign: 'left' }}>Mô tả công việc</h4>
+                                        <div style={{ 
+                                            background: '#fff', 
+                                            padding: '1.5rem', 
+                                            borderRadius: '20px', 
+                                            fontSize: '0.95rem', 
+                                            lineHeight: 1.7, 
+                                            color: '#334155',
+                                            border: '1px solid #f1f5f9',
+                                            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)',
+                                            whiteSpace: 'pre-line',
+                                            textAlign: 'justify'
+                                        }}>
+                                            {selectedJob.description || 'Chưa có mô tả chi tiết cho công việc này.'}
+                                        </div>
+                                    </section>
+
+                                    {selectedJob.benefits && (
+                                        <section>
+                                            <h4 style={{ fontSize: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '12px', textAlign: 'left' }}>Quyền lợi & Phúc lợi</h4>
+                                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'flex-start' }}>
+                                                {selectedJob.benefits.split('\n').map((benefit, i) => (
+                                                    benefit.trim() && (
+                                                        <span key={i} style={{ background: '#f0fdf4', color: '#166534', padding: '6px 14px', borderRadius: '10px', fontSize: '0.85rem', fontWeight: 600, border: '1px solid #dcfce7' }}>
+                                                            ✓ {benefit.trim()}
+                                                        </span>
+                                                    )
+                                                ))}
+                                            </div>
+                                        </section>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="modal-footer" style={{ background: '#fff', borderTop: '1px solid #f1f5f9', padding: '1.5rem 2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <button className="btn-secondary" onClick={() => setIsModalOpen(false)} style={{ borderRadius: '12px', padding: '12px 24px' }}>Để sau</button>
+                            
+                            <div style={{ display: 'flex', gap: '12px' }}>
+                                {selectedJob.status === 'PENDING' && (
+                                    <>
+                                        <button 
+                                            className="btn-danger" 
+                                            onClick={() => handleUpdateStatus(selectedJob.id, 'REJECTED')}
+                                            style={{ borderRadius: '12px', padding: '12px 24px', background: '#fff', border: '1px solid #fee2e2', color: '#dc2626' }}
+                                        >
+                                            Từ chối tin
+                                        </button>
+                                        <button 
+                                            className="btn-primary" 
+                                            onClick={() => handleUpdateStatus(selectedJob.id, 'APPROVED')}
+                                            style={{ borderRadius: '12px', padding: '12px 30px', background: '#0652dd', boxShadow: '0 10px 20px rgba(6, 82, 221, 0.2)' }}
+                                        >
+                                            Phê duyệt tin này
+                                        </button>
+                                    </>
+                                )}
+                                <button 
+                                    className="btn-primary" 
+                                    onClick={() => navigate(`/jobs/${selectedJob.id}`)} 
+                                    style={{ 
+                                        borderRadius: '12px', 
+                                        padding: '12px 24px', 
+                                        background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)', 
+                                        color: 'white', 
+                                        border: 'none',
+                                        fontWeight: 700,
+                                        boxShadow: '0 8px 16px rgba(217, 119, 6, 0.2)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px'
+                                    }}
+                                >
+                                    <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>open_in_new</span>
+                                    Xem chi tiết trang web
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

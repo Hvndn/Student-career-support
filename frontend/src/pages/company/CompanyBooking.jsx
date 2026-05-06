@@ -4,8 +4,10 @@ import CompanyNavbar from '../../components/company/CompanyNavbar';
 import { recruitmentApi, companyApi } from '../../api';
 import toast from 'react-hot-toast';
 import CreateBookingModal from '../../components/company/CreateBookingModal';
-import InterviewDetailModal from '../../components/company/InterviewDetailModal';
 import StudentProfileModal from '../../components/company/StudentProfileModal';
+import InterviewEvaluationModal from '../../components/company/InterviewEvaluationModal';
+import InterviewDetailModal from '../../components/company/InterviewDetailModal';
+import ConfirmModal from '../../components/common/ConfirmModal';
 import '../../assets/css/company/CompanyBooking.css';
 
 const CompanyBooking = () => {
@@ -19,8 +21,16 @@ const CompanyBooking = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const [showDetail, setShowDetail] = useState(false);
+    const [showEvaluation, setShowEvaluation] = useState(false);
     const [selectedCandidate, setSelectedCandidate] = useState(null);
     const [selectedInterview, setSelectedInterview] = useState(null);
+    const [confirmModal, setConfirmModal] = useState({
+        show: false,
+        title: '',
+        message: '',
+        onConfirm: () => {},
+        type: 'danger'
+    });
 
     const fetchData = async () => {
         setLoading(true);
@@ -48,24 +58,36 @@ const CompanyBooking = () => {
         fetchData();
     }, []);
 
-    const handleDeleteInterview = async (id) => {
-        if (!id) {
+    const handleCancelInterview = async (interview) => {
+        if (!interview?.id) {
             toast.error('Không tìm thấy mã lịch hẹn');
             return;
         }
 
-        if (!window.confirm('Bạn có chắc chắn muốn XÓA VĨNH VIỄN lịch phỏng vấn này?')) return;
-
-        try {
-            const response = await recruitmentApi.deleteInterview(id);
-            if (response.data.status === 'success') {
-                toast.success('Đã xóa lịch phỏng vấn thành công');
-                fetchData();
-            }
-        } catch (error) {
-            console.error('Lỗi khi xóa lịch:', error);
-            toast.error('Không thể xóa lịch hẹn. Vui lòng thử lại sau.');
+        if (interview.status === 'completed') {
+            toast.error('Không thể hủy lịch phỏng vấn đã hoàn thành');
+            return;
         }
+
+        setConfirmModal({
+            show: true,
+            title: 'Hủy lịch phỏng vấn',
+            message: 'Bạn có chắc chắn muốn HỦY lịch phỏng vấn này? Hành động này sẽ thông báo tới ứng viên.',
+            type: 'danger',
+            onConfirm: async () => {
+                try {
+                    const response = await recruitmentApi.deleteInterview(interview.id);
+                    if (response.data.status === 'success') {
+                        toast.success('Đã hủy lịch phỏng vấn thành công');
+                        setConfirmModal(prev => ({ ...prev, show: false }));
+                        fetchData();
+                    }
+                } catch (error) {
+                    console.error('Lỗi khi hủy lịch:', error);
+                    toast.error('Không thể hủy lịch hẹn. Vui lòng thử lại sau.');
+                }
+            }
+        });
     };
 
     const handleEditInterview = (interview) => {
@@ -96,6 +118,49 @@ const CompanyBooking = () => {
         } catch (error) {
             console.error('Lỗi khi tải hồ sơ:', error);
         }
+    };
+
+    const handleEvaluate = (interview) => {
+        setSelectedInterview(interview);
+        setShowEvaluation(true);
+    };
+
+    const handleUpdateStatus = async (interview, status) => {
+        if (status === 'no_show') {
+            setConfirmModal({
+                show: true,
+                title: 'Đánh dấu Vắng mặt',
+                message: 'Xác nhận ứng viên này KHÔNG ĐẾN phỏng vấn? Trạng thái sẽ được cập nhật để lưu trữ lịch sử.',
+                type: 'warning',
+                onConfirm: async () => {
+                    await executeUpdateStatus(interview.id, status);
+                    setConfirmModal(prev => ({ ...prev, show: false }));
+                }
+            });
+            return;
+        }
+
+        await executeUpdateStatus(interview.id, status);
+    };
+
+    const executeUpdateStatus = async (id, status) => {
+        try {
+            const response = await recruitmentApi.updateInterviewStatus(id, status);
+            if (response.data.status === 'success') {
+                toast.success(`Đã cập nhật trạng thái: ${status.toUpperCase()}`);
+                fetchData();
+            }
+        } catch (error) {
+            console.error('Lỗi khi cập nhật trạng thái:', error);
+            toast.error('Không thể cập nhật trạng thái. Vui lòng thử lại.');
+        }
+    };
+
+    const getScoreClass = (score) => {
+        if (!score) return '';
+        if (score >= 8) return 'score-high';
+        if (score >= 5) return 'score-medium';
+        return 'score-low';
     };
 
     const formatDate = (dateString) => {
@@ -195,11 +260,11 @@ const CompanyBooking = () => {
                                     onChange={(e) => setStatusFilter(e.target.value)}
                                 >
                                     <option value="all">Tất cả trạng thái</option>
-                                    <option value="pending">Chờ xác nhận</option>
                                     <option value="scheduled">Sắp diễn ra</option>
                                     <option value="confirmed">Đã xác nhận</option>
                                     <option value="completed">Đã hoàn thành</option>
                                     <option value="cancelled">Đã hủy</option>
+                                    <option value="no_show">No-show (Ứng viên vắng)</option>
                                 </select>
                             </div>
                             <div className="filter-group">
@@ -268,41 +333,136 @@ const CompanyBooking = () => {
                                                 <div className="interview-details">
                                                     <div className="detail-item job-tag-detail">
                                                         <span className="material-symbols-outlined">work</span>
-                                                        <span className="text fw-bold" style={{ color: 'var(--primary-color)' }}>{interview.jobTitle}</span>
+                                                        <span className="text fw-bold" style={{ color: 'var(--primary-color)' }}>
+                                                            {interview.jobTitle}
+                                                        </span>
+                                                        {interview.stageType && (
+                                                            <span className="badge-stage" style={{ 
+                                                                marginLeft: '8px', 
+                                                                background: '#eff6ff', 
+                                                                color: '#2563eb',
+                                                                fontWeight: '700',
+                                                                textTransform: 'uppercase',
+                                                                border: '1px solid #dbeafe'
+                                                            }}>
+                                                                {interview.stageType}
+                                                            </span>
+                                                        )}
                                                     </div>
-                                                    <div className="detail-item">
-                                                        <span className="material-symbols-outlined">location_on</span>
-                                                        <span className="text">{interview.location || 'Địa điểm chưa xác định'}</span>
-                                                    </div>
-                                                    {interview.interviewFormat && (
+                                                    
+                                                    {interview.interviewFormat === 'Trực tuyến' && interview.meetingLink ? (
+                                                        <div className="detail-item">
+                                                            <span className="material-symbols-outlined" style={{ color: '#3b82f6' }}>link</span>
+                                                            <a href={interview.meetingLink} target="_blank" rel="noreferrer" className="text link-text">
+                                                                Link họp Online
+                                                            </a>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="detail-item">
+                                                            <span className="material-symbols-outlined">location_on</span>
+                                                            <span className="text">{interview.location || 'Địa điểm chưa xác định'}</span>
+                                                        </div>
+                                                    )}
+
+                                                    <div className="detail-row-flex" style={{ display: 'flex', gap: '15px' }}>
                                                         <div className="detail-item">
                                                             <span className="material-symbols-outlined">
                                                                 {interview.interviewFormat === 'Trực tuyến' ? 'videocam' : 'meeting_room'}
                                                             </span>
                                                             <span className="text">{interview.interviewFormat}</span>
                                                         </div>
-                                                    )}
+                                                        {interview.duration && (
+                                                            <div className="detail-item">
+                                                                <span className="material-symbols-outlined">timer</span>
+                                                                <span className="text">{interview.duration} phút</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
 
                                             <div className="booking-status-side">
-                                                <span className={`status-pill status-${interview.status.toLowerCase()}`}>
-                                                    {interview.status === 'scheduled' ? 'Sắp diễn ra' : 
-                                                     interview.status === 'confirmed' ? 'Đã xác nhận' :
-                                                     interview.status === 'completed' ? 'Hoàn thành' : 
-                                                     interview.status === 'cancelled' ? 'Đã hủy' : 
-                                                     interview.status === 'pending' ? 'Chờ xác nhận' : interview.status}
-                                                </span>
-                                                <div className="card-actions">
-                                                    <button className="icon-btn" onClick={() => handleViewDetail(interview)} title="Chi tiết lịch hẹn">
-                                                        <span className="material-symbols-outlined">visibility</span>
-                                                    </button>
-                                                    <button className="icon-btn" onClick={() => handleEditInterview(interview)} title="Sửa">
-                                                        <span className="material-symbols-outlined">edit</span>
-                                                    </button>
-                                                    <button className="icon-btn delete" onClick={() => handleDeleteInterview(interview.id)} title="Xóa">
-                                                        <span className="material-symbols-outlined">delete</span>
-                                                    </button>
+                                                <div className="status-group-stack" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+                                                    <span className={`status-pill status-${interview.status.toLowerCase()}`}>
+                                                        {interview.status === 'scheduled' ? 'Sắp diễn ra' : 
+                                                         interview.status === 'confirmed' ? 'Đã xác nhận' :
+                                                         interview.status === 'completed' ? 'Đã hoàn thành' : 
+                                                         interview.status === 'cancelled' ? 'Đã hủy' : 
+                                                         interview.status === 'no_show' ? 'No-show' :
+                                                         interview.status === 'pending' ? 'Chờ xác nhận' : interview.status}
+                                                    </span>
+                                                    
+                                                    {interview.status === 'completed' && interview.result && (
+                                                        <span className={`result-badge result-${interview.result.toLowerCase()}`} style={{
+                                                            fontSize: '0.75rem',
+                                                            fontWeight: 'bold',
+                                                            padding: '4px 8px',
+                                                            borderRadius: '6px',
+                                                            textTransform: 'uppercase',
+                                                            background: interview.result === 'PASS' ? '#dcfce7' : interview.result === 'FAIL' ? '#fee2e2' : '#fef3c7',
+                                                            color: interview.result === 'PASS' ? '#166534' : interview.result === 'FAIL' ? '#991b1b' : '#92400e',
+                                                            border: `1px solid ${interview.result === 'PASS' ? '#bbf7d0' : interview.result === 'FAIL' ? '#fecaca' : '#fde68a'}`
+                                                        }}>
+                                                            {interview.result === 'PASS' ? '✅ Pass -> Offer' : 
+                                                             interview.result === 'FAIL' ? '❌ Rejected' : '🤔 Consider'}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <div className="card-actions-wrapper">
+                                                    <div className="action-main-group">
+                                                        {/* 1. Xem chi tiết - Luôn ưu tiên */}
+                                                        <button className="icon-btn" onClick={() => handleViewDetail(interview)} title="Chi tiết lịch hẹn">
+                                                            <span className="material-symbols-outlined">visibility</span>
+                                                        </button>
+
+                                                        {/* 2. Chỉnh sửa - Chỉ hiện khi chưa xong/hủy */}
+                                                        {['scheduled', 'confirmed'].includes(interview.status) && (
+                                                            <button className="icon-btn" onClick={() => handleEditInterview(interview)} title="Chỉnh sửa lịch">
+                                                                <span className="material-symbols-outlined">edit</span>
+                                                            </button>
+                                                        )}
+
+                                                        {/* 3. Thao tác trạng thái theo workflow */}
+                                                        {interview.status === 'scheduled' && (
+                                                            <button className="icon-btn success" onClick={() => handleUpdateStatus(interview, 'confirmed')} title="Xác nhận tham gia">
+                                                                <span className="material-symbols-outlined">check_circle</span>
+                                                            </button>
+                                                        )}
+
+                                                        {interview.status === 'confirmed' && (
+                                                            <>
+                                                                <button className="icon-btn evaluate" onClick={() => handleEvaluate(interview)} title="Đánh giá kết quả">
+                                                                    <span className="material-symbols-outlined">fact_check</span>
+                                                                </button>
+                                                                <button className="icon-btn warning" onClick={() => handleUpdateStatus(interview, 'no_show')} title="Đánh dấu ứng viên vắng mặt">
+                                                                    <span className="material-symbols-outlined">event_busy</span>
+                                                                </button>
+                                                            </>
+                                                        )}
+
+                                                        {interview.status === 'completed' && (
+                                                            <button className="icon-btn evaluate" onClick={() => handleEvaluate(interview)} title="Xem/Sửa đánh giá">
+                                                                <span className="material-symbols-outlined">assignment_turned_in</span>
+                                                            </button>
+                                                        )}
+
+                                                        {/* 4. Điểm đánh giá (nếu có) */}
+                                                        {interview.overallScore > 0 && (
+                                                            <div className={`score-badge-mini ${getScoreClass(interview.overallScore)}`} title="Điểm đánh giá">
+                                                                <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>analytics</span>
+                                                                {interview.overallScore}
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    {/* 5. Nhóm nguy hiểm (Hủy) - Tách biệt */}
+                                                    {['scheduled', 'confirmed'].includes(interview.status) && (
+                                                        <div className="action-danger-group">
+                                                            <button className="icon-btn cancel" onClick={() => handleCancelInterview(interview)} title="Hủy lịch phỏng vấn">
+                                                                <span className="material-symbols-outlined">cancel</span>
+                                                            </button>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
@@ -338,6 +498,24 @@ const CompanyBooking = () => {
                 show={showProfile}
                 candidate={selectedCandidate}
                 onClose={() => setShowProfile(false)}
+            />
+
+            <InterviewEvaluationModal 
+                isOpen={showEvaluation}
+                onClose={() => setShowEvaluation(false)}
+                onSuccess={fetchData}
+                interview={selectedInterview}
+            />
+
+            <ConfirmModal 
+                show={confirmModal.show}
+                title={confirmModal.title}
+                message={confirmModal.message}
+                type={confirmModal.type}
+                onConfirm={confirmModal.onConfirm}
+                onCancel={() => setConfirmModal(prev => ({ ...prev, show: false }))}
+                confirmText="Xác nhận"
+                cancelText="Quay lại"
             />
         </div>
     );
