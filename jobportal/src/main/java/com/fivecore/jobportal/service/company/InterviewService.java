@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 public class InterviewService {
 
     private final InterviewRepository interviewRepository;
+    private final com.fivecore.jobportal.repository.ApplicationRepository applicationRepository;
     private final EmailService emailService;
     private final NotificationService notificationService;
 
@@ -31,6 +32,11 @@ public class InterviewService {
      */
     @Transactional
     public Interview scheduleInterview(Application application, com.fivecore.jobportal.dto.InterviewRequest request) {
+        // Validate thời gian phỏng vấn không được ở quá khứ
+        if (request.getInterviewDate().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Thời gian phỏng vấn không thể ở quá khứ!");
+        }
+
         Interview interview = Interview.builder()
                 .application(application)
                 .interviewDate(request.getInterviewDate())
@@ -51,8 +57,9 @@ public class InterviewService {
 
         Interview savedInterview = interviewRepository.save(interview);
 
-        // Cập nhật trạng thái đơn ứng tuyển sang 'interview'
+        // Cập nhật trạng thái đơn ứng tuyển sang 'interview' và lưu lại
         application.setStatus(com.fivecore.jobportal.entity.Application.ApplicationStatus.interview);
+        applicationRepository.save(application);
 
         // Gửi email và thông báo chi tiết
         String studentEmail = application.getStudent().getUser().getEmail();
@@ -123,8 +130,12 @@ public class InterviewService {
         interview.setStatus("cancelled");
         interviewRepository.save(interview);
 
-        // Gửi thông báo cho sinh viên
+        // Đưa trạng thái đơn ứng tuyển quay lại 'pending' khi hủy lịch
         Application app = interview.getApplication();
+        app.setStatus(com.fivecore.jobportal.entity.Application.ApplicationStatus.pending);
+        applicationRepository.save(app);
+
+        // Gửi thông báo cho sinh viên
         String companyName = app.getJob().getCompany().getName();
         String jobTitle = app.getJob().getTitle();
         
@@ -228,6 +239,7 @@ public class InterviewService {
             notificationService.sendNotification(app.getStudent().getUser(), title, message);
         }
 
+        applicationRepository.save(app);
         log.info("Đã đánh giá phỏng vấn ID {} với kết quả {}", id, result);
     }
 

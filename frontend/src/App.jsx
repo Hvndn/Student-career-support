@@ -35,7 +35,6 @@ import CompanyDetail from './pages/student/CompanyDetail'
 // company pages
 import CompanyDashboard from './pages/company/CompanyDashboard'
 import CompanyJobManagement from './pages/company/CompanyJobManagement'
-import PostJob from './pages/company/PostJob'
 import Applicants from './pages/company/Applicants'
 import CompanyCandidates from './pages/company/CompanyCandidates'
 import CompanyProfile from './pages/company/CompanyProfile'
@@ -186,8 +185,6 @@ const AppContent = () => {
             <Routes>
               <Route path="dashboard" element={<CompanyDashboard />} />
               <Route path="management" element={<CompanyJobManagement />} />
-              <Route path="jobs/create" element={<PostJob />} />
-              <Route path="jobs/edit/:id" element={<PostJob />} />
               <Route path="management/jobs/:jobId/applicants" element={<Applicants />} />
               <Route path="management/candidates" element={<CompanyCandidates />} />
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import CompanySidebar from '../../components/company/CompanySidebar';
 import CompanyNavbar from '../../components/company/CompanyNavbar';
 import CandidateDetailModal from '../../components/company/CandidateDetailModal';
@@ -10,19 +10,16 @@ import { FiArrowUp, FiArrowDown } from 'react-icons/fi';
 import '../../assets/css/company/CompanyCandidates.css';
 
 const CompanyCandidates = () => {
+    const { jobId } = useParams();
     const [applications, setApplications] = useState([]);
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedJobId, setSelectedJobId] = useState('all');
+    const [selectedJobId, setSelectedJobId] = useState(jobId || 'all');
     const [activeTab, setActiveTab] = useState('all');
-    const [selectedTagId, setSelectedTagId] = useState('all');
     const [dateFilter, setDateFilter] = useState('all');
     const [startDate, setStartDate] = useState('');
     
-    // State for Tagging
-    const [allTags, setAllTags] = useState([]);
-    const [tagMappings, setTagMappings] = useState({});
     const customDateRef = useRef(null);
     
     // State for Modal
@@ -88,9 +85,6 @@ const CompanyCandidates = () => {
                     setJobs(jobsRes.data.data);
                 }
                 
-                // Load Tags metadata
-                setAllTags(tagService.getTags());
-                setTagMappings(tagService.getAllMappings());
                 
             } catch (error) {
                 console.error('Lỗi khi lấy dữ liệu ứng viên:', error);
@@ -104,7 +98,6 @@ const CompanyCandidates = () => {
     // Re-load tags when modal closes (to reflect changes made in modal)
     const handleCloseModal = () => {
         setShowModal(false);
-        setTagMappings(tagService.getAllMappings());
     };
 
     const handleOpenModal = (app) => {

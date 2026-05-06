@@ -240,24 +240,47 @@ public class CompanyRestController {
 
     private List<Map<String, Object>> fetchApplicationTrends(Integer companyId, Integer days) {
         List<Object[]> trendData;
+        Map<String, Long> dataMap = new java.util.HashMap<>();
+        List<Map<String, Object>> result = new java.util.ArrayList<>();
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+
         if (days == 1) {
-            trendData = applicationRepository.countApplicationsByHour(companyId, 
-                    java.time.LocalDateTime.now().with(java.time.LocalTime.MIN));
-            return trendData.stream().map(obj -> {
+            java.time.LocalDateTime startDate = now.with(java.time.LocalTime.MIN);
+            trendData = applicationRepository.countApplicationsByHour(companyId, startDate);
+            
+            // Map existing data: Hour -> Count
+            for (Object[] obj : trendData) {
+                dataMap.put(obj[0].toString(), ((Number) obj[1]).longValue());
+            }
+
+            // Fill all 24 hours
+            for (int i = 0; i <= 23; i++) {
+                String hourStr = String.format("%02d", i);
                 Map<String, Object> m = new java.util.HashMap<>();
-                m.put("date", obj[0].toString() + ":00");
-                m.put("count", obj[1]);
-                return m;
-            }).collect(java.util.stream.Collectors.toList());
+                m.put("date", hourStr + ":00");
+                m.put("count", dataMap.getOrDefault(String.valueOf(i), 0L));
+                result.add(m);
+            }
         } else {
-            trendData = applicationRepository.countApplicationsByDay(companyId, 
-                    java.time.LocalDateTime.now().minusDays(days).with(java.time.LocalTime.MIN));
-            return trendData.stream().map(obj -> {
+            java.time.LocalDateTime startDate = now.minusDays(days - 1).with(java.time.LocalTime.MIN);
+            trendData = applicationRepository.countApplicationsByDay(companyId, startDate);
+            
+            // Map existing data: Date -> Count
+            for (Object[] obj : trendData) {
+                dataMap.put(obj[0].toString(), ((Number) obj[1]).longValue());
+            }
+
+            // Fill each day in the range
+            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            for (int i = 0; i < days; i++) {
+                java.time.LocalDate date = startDate.toLocalDate().plusDays(i);
+                String dateStr = date.format(formatter);
                 Map<String, Object> m = new java.util.HashMap<>();
-                m.put("date", obj[0].toString());
-                m.put("count", obj[1]);
-                return m;
-            }).collect(java.util.stream.Collectors.toList());
+                m.put("date", dateStr);
+                m.put("count", dataMap.getOrDefault(dateStr, 0L));
+                result.add(m);
+            }
         }
+        return result;
     }
 }

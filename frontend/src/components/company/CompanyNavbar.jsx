@@ -225,7 +225,7 @@ const CompanyTopbar = () => {
               )}
             </div>
             <div className="notif-footer">
-              <Link to="/company/management/candidates" className="view-all-btn" onClick={() => setIsNotifOpen(false)}>
+              <Link to="/company/candidates/notifications" className="view-all-btn" onClick={() => setIsNotifOpen(false)}>
                 Xem tất cả thông báo
               </Link>
             </div>

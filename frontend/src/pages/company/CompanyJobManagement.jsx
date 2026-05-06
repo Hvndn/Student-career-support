@@ -12,9 +12,9 @@ const CompanyJobManagement = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('all');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [openDropdownId, setOpenDropdownId] = useState(null);
-  const [publishingId, setPublishingId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [showPostModal, setShowPostModal] = useState(false);
   const [editingJob, setEditingJob] = useState(null);
@@ -28,13 +28,7 @@ const CompanyJobManagement = () => {
   const JOBS_PER_PAGE = 5;
 
   const REGIONS = ['Hà Nội', 'TP. Hồ Chí Minh', 'Đà Nẵng', 'Hải Phòng', 'Cần Thơ', 'Bình Dương', 'Đồng Nai', 'Bắc Ninh', 'Long An'];
-  const JOB_TYPES = [
-    { value: 'fulltime', label: 'Toàn thời gian' },
-    { value: 'parttime', label: 'Bán thời gian' },
-    { value: 'intern', label: 'Thực tập' },
-    { value: 'remote', label: 'Từ xa' },
-    { value: 'freelance', label: 'Hợp đồng' }
-  ];
+  const JOBS_PER_PAGE = 5;
 
   const showToast = (message, type = 'success') => {
     if (type === 'error') toast.error(message);
@@ -94,43 +88,6 @@ const CompanyJobManagement = () => {
     }
   };
 
-  const handlePublish = async (jobId) => {
-    try {
-      setPublishingId(jobId);
-      const detailsRes = await companyApi.getJobDetailsForEdit(jobId);
-      if (detailsRes.data.status === 'success') {
-        const fullJob = detailsRes.data.data;
-        const now = new Date();
-        // Cập nhật status và postedAt (giờ thực tế)
-        await companyApi.updateJob(jobId, {
-          ...fullJob,
-          status: 'pending',
-          postedAt: now.toISOString()
-        });
-        showToast('Tin đăng đã được gửi duyệt thành công!', 'success');
-        await fetchJobs();
-      }
-    } catch (err) {
-      console.error('Publish error:', err);
-      showToast('Không thể xuất bản tin. Vui lòng thử lại sau.', 'error');
-    } finally {
-      setPublishingId(null);
-    }
-  };
-
-  const handleDuplicate = async (jobId) => {
-    try {
-      setLoading(true);
-      await companyApi.duplicateJob(jobId);
-      showToast('Đã sao chép tin tuyển dụng thành công!', 'success');
-      await fetchJobs();
-    } catch (err) {
-      console.error('Duplicate error:', err);
-      showToast('Không thể sao chép tin tuyển dụng.', 'error');
-      setLoading(false);
-    }
-  };
-
   const handleDelete = async (jobId) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa tin tuyển dụng này? Thao tác này không thể hoàn tác.')) {
       try {
@@ -143,36 +100,6 @@ const CompanyJobManagement = () => {
         showToast('Không thể xóa tin tuyển dụng.', 'error');
         setLoading(false);
       }
-    }
-  };
-
-  const handleExtend = async (jobId) => {
-    try {
-      setLoading(true);
-      const detailsRes = await companyApi.getJobDetailsForEdit(jobId);
-      if (detailsRes.data.status === 'success') {
-        const fullJob = detailsRes.data.data;
-        
-        // Extend deadline by 30 days from today or from current deadline if it's in the future
-        const now = new Date();
-        const currentDeadline = fullJob.deadline ? new Date(fullJob.deadline) : now;
-        const baseDate = currentDeadline > now ? currentDeadline : now;
-        
-        const newDeadline = new Date(baseDate);
-        newDeadline.setDate(newDeadline.getDate() + 30);
-        
-        await companyApi.updateJob(jobId, {
-          ...fullJob,
-          deadline: newDeadline.toISOString().split('T')[0]
-        });
-        
-        showToast('Đã gia hạn tin tuyển dụng thêm 30 ngày!', 'success');
-        await fetchJobs();
-      }
-    } catch (err) {
-      console.error('Extend error:', err);
-      showToast('Không thể gia hạn tin tuyển dụng.', 'error');
-      setLoading(false);
     }
   };
 
@@ -189,15 +116,6 @@ const CompanyJobManagement = () => {
       showToast('Không thể tải thông tin tin đăng.', 'error');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const getStatusBadge = (status) => {
-    switch (status?.toLowerCase()) {
-      case 'open': return <span className="status-badge active">Đang hiển thị</span>;
-      case 'draft': return <span className="status-badge draft">Bản nháp</span>;
-      case 'closed': return <span className="status-badge closed">Đã đóng</span>;
-      default: return <span className="status-badge">{status}</span>;
     }
   };
 
@@ -218,38 +136,6 @@ const CompanyJobManagement = () => {
     }
     
     return String(dateValue);
-  };
-
-  const formatFullDateTime = (dateValue) => {
-    if (!dateValue) return 'Chưa cập nhật';
-    
-    const d = new Date(dateValue);
-    if (isNaN(d.getTime())) return dateValue;
-    
-    return d.toLocaleString('vi-VN', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
-  };
-
-  const formatDateTimeVertical = (dateValue) => {
-    if (!dateValue) return <div className="vertical-date"><div className="date-day">Chưa cập nhật</div></div>;
-    const d = new Date(dateValue);
-    if (isNaN(d.getTime())) return <div className="vertical-date"><div className="date-day">{dateValue}</div></div>;
-    
-    const time = d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    const date = d.toLocaleDateString('vi-VN');
-    
-    return (
-      <div className="vertical-date">
-        <div className="date-time">{time}</div>
-        <div className="date-day">{date}</div>
-      </div>
-    );
   };
 
   const getJobStatusInfo = (job) => {
@@ -291,27 +177,6 @@ const CompanyJobManagement = () => {
     }
   };
 
-  const handleToggleStatus = async (jobId, currentChecked) => {
-    try {
-      const newStatus = currentChecked ? 'closed' : 'open';
-      const detailsRes = await companyApi.getJobDetailsForEdit(jobId);
-      if (detailsRes.data.status === 'success') {
-        const fullJob = detailsRes.data.data;
-        const now = new Date();
-        await companyApi.updateJob(jobId, {
-          ...fullJob,
-          status: newStatus,
-          postedAt: now.toISOString() // Cập nhật giờ thực tế khi thao tác
-        });
-        showToast(`Đã ${newStatus === 'open' ? 'hiển thị' : 'ẩn'} tin đăng thành công!`, 'success');
-        await fetchJobs();
-      }
-    } catch (err) {
-      console.error('Toggle status error:', err);
-      showToast('Không thể thay đổi trạng thái hiển thị.', 'error');
-    }
-  };
-
   const filteredJobs = jobs.filter(job => {
     const statusInfo = getJobStatusInfo(job);
     
@@ -343,44 +208,6 @@ const CompanyJobManagement = () => {
     if (valA > valB) return direction === 'asc' ? 1 : -1;
     return 0;
   });
-
-  const handleExport = () => {
-    if (filteredJobs.length === 0) {
-      showToast('Không có dữ liệu để xuất!', 'error');
-      return;
-    }
-
-    const headers = ['ID', 'Tieu de', 'Trang thai', 'Ngay dang', 'Han chot', 'Ho so nop', 'Luot xem', 'Khu vuc', 'Loai hinh'];
-    const rows = filteredJobs.map(job => {
-      const statusInfo = getJobStatusInfo(job);
-      return [
-        job.id,
-        `"${job.title}"`,
-        statusInfo.label,
-        new Date(job.postedAt).toLocaleDateString('vi-VN'),
-        formatDate(job.deadline),
-        job.applicantsCount || 0,
-        job.viewsCount || 0,
-        job.region || 'N/A',
-        job.jobType || 'N/A'
-      ];
-    });
-
-    const csvContent = [
-      headers.join(','),
-      ...rows.map(row => row.join(','))
-    ].join('\n');
-
-    const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", `danh_sach_tin_dang_${new Date().toISOString().split('T')[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    showToast('Đã tải xuống danh sách thành công!', 'success');
-  };
 
   return (
     <div className="cd-layout">

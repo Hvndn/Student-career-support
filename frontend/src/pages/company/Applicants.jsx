@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { recruitmentApi } from '../../api';
 import toast from 'react-hot-toast';
 import CompanySidebar from '../../components/company/CompanySidebar';
@@ -10,7 +10,6 @@ import CandidateDetailModal from '../../components/company/CandidateDetailModal'
 
 const Applicants = () => {
     const { jobId } = useParams();
-    const navigate = useNavigate();
     const [applicants, setApplicants] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showRejectionModal, setShowRejectionModal] = useState(false);

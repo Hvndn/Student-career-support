@@ -5,7 +5,7 @@ import CompanyNavbar from '../../components/company/CompanyNavbar';
 import { companyApi } from '../../api';
 import '../../assets/css/company/CompanyDashboard.css';
 import {
-    LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Dot
+    AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts';
 import { FiUsers, FiCalendar, FiBriefcase, FiPlusCircle } from 'react-icons/fi';
 
@@ -126,7 +126,13 @@ const CompanyDashboard = () => {
                                 </div>
                                 <div className="widget-body">
                                     <ResponsiveContainer width="100%" height={300}>
-                                        <LineChart data={trendData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                                        <AreaChart data={trendData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                                            <defs>
+                                                <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stopColor="#A31D1D" stopOpacity={0.2}/>
+                                                    <stop offset="95%" stopColor="#A31D1D" stopOpacity={0}/>
+                                                </linearGradient>
+                                            </defs>
                                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                             <XAxis 
                                                 dataKey="date" 
@@ -136,7 +142,7 @@ const CompanyDashboard = () => {
                                                 dy={10}
                                                 tickFormatter={(val) => {
                                                     if (timeRange === 1) return val;
-                                                    if (val && val.includes('-')) return val.split('-').slice(1).join('-');
+                                                    if (val && val.includes('-')) return val.split('-').slice(2).join('-');
                                                     return val;
                                                 }}
                                             />
@@ -148,27 +154,23 @@ const CompanyDashboard = () => {
                                                 allowDecimals={false}
                                             />
                                             <Tooltip 
-                                                contentStyle={{ borderRadius: '12px', border: '1px solid #f1f5f9', boxShadow: '0 4px 12px rgba(0,0,0,0.08)', fontSize: '13px' }}
-                                                labelStyle={{ color: '#64748b', fontWeight: 600 }}
+                                                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', fontSize: '13px', padding: '10px 15px' }}
+                                                labelStyle={{ color: '#1e293b', fontWeight: 700, marginBottom: '5px' }}
+                                                itemStyle={{ color: '#A31D1D', fontWeight: 500 }}
                                                 formatter={(value) => [value, 'Hồ sơ ứng tuyển']}
                                             />
-                                            <Legend 
-                                                verticalAlign="top"
-                                                align="left"
-                                                iconType="circle"
-                                                iconSize={10}
-                                                wrapperStyle={{ paddingBottom: '20px', fontSize: '13px', color: '#1e293b', fontWeight: 500 }}
-                                                formatter={() => 'Hồ sơ ứng tuyển'}
-                                            />
-                                            <Line 
-                                                type="monotone"
+                                            <Area 
+                                                type="monotone" 
                                                 dataKey="count" 
                                                 stroke="#A31D1D" 
                                                 strokeWidth={3}
-                                                dot={{ r: 6, fill: '#A31D1D', stroke: '#A31D1D', strokeWidth: 2 }}
-                                                activeDot={{ r: 8, fill: '#A31D1D', stroke: '#fff', strokeWidth: 2 }}
+                                                fillOpacity={1} 
+                                                fill="url(#colorCount)" 
+                                                dot={{ r: 4, fill: '#fff', stroke: '#A31D1D', strokeWidth: 2 }}
+                                                activeDot={{ r: 6, fill: '#A31D1D', stroke: '#fff', strokeWidth: 2 }}
+                                                animationDuration={1500}
                                             />
-                                        </LineChart>
+                                        </AreaChart>
                                     </ResponsiveContainer>
                                 </div>
                             </section>

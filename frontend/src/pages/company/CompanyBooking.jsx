@@ -105,21 +105,6 @@ const CompanyBooking = () => {
         setShowDetail(true);
     };
 
-    const handleViewProfile = async (studentId) => {
-        if (!studentId) {
-            toast.error('Ứng viên này chưa có tài khoản sinh viên trên hệ thống');
-            return;
-        }
-        
-        try {
-            const response = await recruitmentApi.getCandidateDetail(studentId);
-            setSelectedCandidate(response.data.data);
-            setShowProfile(true);
-        } catch (error) {
-            console.error('Lỗi khi tải hồ sơ:', error);
-        }
-    };
-
     const handleEvaluate = (interview) => {
         setSelectedInterview(interview);
         setShowEvaluation(true);
@@ -188,11 +173,6 @@ const CompanyBooking = () => {
             const matchesStatus = statusFilter === 'all' || status === filterStatus;
             const matchesJob = jobFilter === 'all' || jobTitle === filterJob;
             
-            // Console log to help debug filtering issues
-            if (filterSearch || statusFilter !== 'all' || jobFilter !== 'all') {
-                console.log(`Filtering item: ${item.studentName}, Status: ${status}, Target: ${filterStatus}, Match: ${matchesStatus}`);
-            }
-
             return matchesSearch && matchesStatus && matchesJob;
         })
         .sort((a, b) => {
