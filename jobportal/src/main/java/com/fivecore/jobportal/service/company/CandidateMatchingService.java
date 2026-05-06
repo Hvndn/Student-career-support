@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fivecore.jobportal.dto.StudentProfileResponse;
 import com.fivecore.jobportal.entity.Job;
-import com.fivecore.jobportal.entity.JobSkill;
 import com.fivecore.jobportal.entity.Student;
 import com.fivecore.jobportal.repository.JobRepository;
 import com.fivecore.jobportal.repository.StudentRepository;
@@ -16,12 +15,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * Dịch vụ gợi ý ứng viên phù hợp dựa trên thuật toán so khớp Industry/Major và Kỹ năng.
+ * Sử dụng kiến trúc Modular Scoring.
  */
 @Service
 @RequiredArgsConstructor
@@ -33,6 +32,7 @@ public class CandidateMatchingService {
     private final StudentProfileMapper studentProfileMapper;
     private final List<ScoringFactor> scoringFactors;
     private final MatchingConfig matchingConfig;
+    private final ObjectMapper objectMapper;
 
     /**
      * Lấy danh sách các ứng viên gợi ý cho một công việc cụ thể.
@@ -76,9 +76,9 @@ public class CandidateMatchingService {
 
                 // Lưu breakdown cho UI
                 java.util.Map<String, Object> factorInfo = new java.util.HashMap<>();
-                factorInfo.put("score", Math.round(factorScore * 100)); // Điểm % của riêng tiêu chí này
+                factorInfo.put("score", Math.round(factorScore * 100));
                 factorInfo.put("weight", weight);
-                factorInfo.put("contribution", Math.round(weightedScore * 10) / 10.0); // Điểm đóng góp vào tổng
+                factorInfo.put("contribution", Math.round(weightedScore * 10) / 10.0);
                 factorInfo.putAll(factorDetails);
                 
                 breakdown.put(name, factorInfo);
@@ -89,5 +89,21 @@ public class CandidateMatchingService {
         details.put("engine_version", "1.0-modular");
         
         return Math.min(100.0, Math.round(weightedTotal * 10) / 10.0);
+    }
+
+    private List<JsonNode> getStudentSkillsNodes(Student student) {
+        List<JsonNode> nodes = new ArrayList<>();
+        String json = student.getCvData();
+        if (json == null || json.isBlank()) return nodes;
+        try {
+            JsonNode root = objectMapper.readTree(json);
+            JsonNode skillsNode = root.get("skills");
+            if (skillsNode != null && skillsNode.isArray()) {
+                for (JsonNode node : skillsNode) nodes.add(node);
+            }
+        } catch (Exception e) {
+            log.warn("Lỗi khi parse skills cho student ID {}: {}", student.getId(), e.getMessage());
+        }
+        return nodes;
     }
 }

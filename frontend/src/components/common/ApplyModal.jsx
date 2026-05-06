@@ -16,6 +16,7 @@ const ApplyModal = ({ job, profile, onClose, onApplySuccess }) => {
         coverLetter: ''
     });
     const [cvFile, setCvFile] = useState(null);
+    const [coverLetterFile, setCoverLetterFile] = useState(null);
     const [useOnlineCv, setUseOnlineCv] = useState(false);
     const [selectedOnlineCv, setSelectedOnlineCv] = useState(null);
     const [localCVs, setLocalCVs] = useState([]);
@@ -86,6 +87,15 @@ const ApplyModal = ({ job, profile, onClose, onApplySuccess }) => {
         }
     };
 
+    const handleCoverLetterFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file && (file.type === 'application/pdf' || file.type === 'application/msword' || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')) {
+            setCoverLetterFile(file);
+        } else {
+            toast.error("Vui lòng tải lên tệp PDF hoặc Word (doc/docx) cho Thư giới thiệu");
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!useOnlineCv && !cvFile) {
@@ -113,7 +123,14 @@ const ApplyModal = ({ job, profile, onClose, onApplySuccess }) => {
                 submitData.append('cvName', cvFile.name);
             }
 
+            if (coverLetterFile) {
+                submitData.append('coverLetterFile', coverLetterFile);
+            } else {
+                submitData.append('coverLetter', formData.coverLetter);
+            }
+
             await studentApi.applyJobWithData(job.id, submitData);
+            
             toast.success("Nộp hồ sơ thành công!");
             if (onApplySuccess) onApplySuccess();
             onClose();
@@ -290,17 +307,61 @@ const ApplyModal = ({ job, profile, onClose, onApplySuccess }) => {
                         )}
                     </div>
 
-                    {/* Cover Letter */}
+                    {/* Cover Letter File Upload */}
                     <div className="form-group">
-                        <label className="form-label">Thư giới thiệu (Cover Letter)</label>
-                        <textarea 
-                            name="coverLetter"
-                            value={formData.coverLetter}
-                            onChange={handleInputChange}
-                            rows="4"
-                            className="form-textarea"
-                            placeholder="Viết ngắn gọn về lý do bạn phù hợp với vị trí này..."
-                        ></textarea>
+                        <label className="form-label">Thư giới thiệu (Cover Letter) - Định dạng file có chữ ký</label>
+                        <div 
+                            className={`upload-area-mini ${coverLetterFile ? 'has-file' : ''}`}
+                            onClick={() => document.getElementById('cl-upload-input').click()}
+                            style={{
+                                border: '2px dashed #e2e8f0',
+                                borderRadius: '12px',
+                                padding: '1.5rem',
+                                textAlign: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                background: coverLetterFile ? '#f0fdf4' : '#f8fafc'
+                            }}
+                        >
+                            <input 
+                                id="cl-upload-input"
+                                type="file" 
+                                hidden
+                                onChange={handleCoverLetterFileChange}
+                                accept=".pdf,.doc,.docx"
+                            />
+                            {coverLetterFile ? (
+                                <div className="file-info-mini" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                                    <span className="material-symbols-outlined" style={{ color: '#10b981' }}>task</span>
+                                    <span style={{ fontWeight: '500', fontSize: '0.9rem' }}>{coverLetterFile.name}</span>
+                                    <button 
+                                        type="button"
+                                        onClick={(e) => { e.stopPropagation(); setCoverLetterFile(null); }}
+                                        style={{ border: 'none', background: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '0.8rem', textDecoration: 'underline' }}
+                                    >
+                                        Gỡ bỏ
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="upload-prompt-mini" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px' }}>
+                                    <span className="material-symbols-outlined" style={{ color: '#64748b' }}>upload_file</span>
+                                    <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Nhấn để tải lên file Thư giới thiệu (PDF, Word)</span>
+                                </div>
+                            )}
+                        </div>
+                        {!coverLetterFile && (
+                            <div style={{ marginTop: '1rem' }}>
+                                <label className="form-label" style={{ fontSize: '0.8rem', color: '#64748b' }}>Hoặc viết lời nhắn ngắn gọn</label>
+                                <textarea 
+                                    name="coverLetter"
+                                    value={formData.coverLetter}
+                                    onChange={handleInputChange}
+                                    rows="3"
+                                    className="form-textarea"
+                                    placeholder="Viết lời nhắn nếu không có file đính kèm..."
+                                ></textarea>
+                            </div>
+                        )}
                     </div>
 
                     {/* Actions */}
@@ -318,6 +379,7 @@ const ApplyModal = ({ job, profile, onClose, onApplySuccess }) => {
                                 'Nộp hồ sơ'
                             )}
                         </button>
+
                     </div>
                 </form>
             </div>
