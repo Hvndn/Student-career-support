@@ -11,16 +11,15 @@ import lombok.*;
 @Builder
 public class StudentProfileRequest {
     private String fullName;
+    private String studentIdStr;
+    private String studentClass;
     private String phone;
     private String bio;
     private String university;
     private String major;
     private Integer graduationYear;
     private Double gpa;
-    private String academicYear;
     private String address;
-    private String coverImageUrl;
-    private String videoUrl;
     private String githubUrl;
     private String linkedinUrl;
     private String cvData;

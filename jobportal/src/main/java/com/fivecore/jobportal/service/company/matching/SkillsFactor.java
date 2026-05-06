@@ -37,6 +37,7 @@ public class SkillsFactor implements ScoringFactor {
 
         List<JsonNode> studentSkillsNodes = getStudentSkillsNodes(student);
         if (studentSkillsNodes.isEmpty()) {
+            details.put("is_missing_data", true);
             details.put("skills_reason", "Ứng viên chưa cập nhật kỹ năng");
             return 0.0;
         }

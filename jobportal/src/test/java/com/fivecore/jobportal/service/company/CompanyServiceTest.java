@@ -31,6 +31,7 @@ public class CompanyServiceTest {
     @Mock private JobRepository jobRepository;
     @Mock private UserRepository userRepository;
     @Mock private StorageService storageService;
+    @Mock private com.fivecore.jobportal.repository.SkillRepository skillRepository;
 
     @InjectMocks
     private CompanyService companyService;

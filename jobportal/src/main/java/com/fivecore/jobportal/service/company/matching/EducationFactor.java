@@ -20,7 +20,14 @@ public class EducationFactor implements ScoringFactor {
         String major = student.getMajor() != null ? student.getMajor().toLowerCase() : "";
         String industry = job.getIndustry() != null ? job.getIndustry().toLowerCase() : "";
 
-        if (!industry.isEmpty() && !major.isEmpty()) {
+        boolean isMajorMissing = major.isEmpty() || major.equals("n/a") || major.equals("chưa cập nhật");
+        boolean isGpaMissing = student.getGpa() == null || student.getGpa() == 0;
+
+        if (isMajorMissing && isGpaMissing) {
+            details.put("is_missing_data", true);
+            details.put("education_reason", "Ứng viên chưa cập nhật thông tin học vấn (Chuyên ngành & GPA)");
+            return 0.0;
+        } else if (!industry.isEmpty() && !isMajorMissing) {
             if (major.contains(industry) || industry.contains(major)) {
                 score = 1.0;
             } else if (isSameCluster(major, industry)) {
@@ -29,7 +36,7 @@ public class EducationFactor implements ScoringFactor {
                 score = 0.3;
             }
         } else {
-            score = 0.5; // Điểm trung bình nếu thiếu dữ liệu so sánh
+            score = 0.5; // Điểm trung bình nếu thiếu dữ liệu so sánh từ Job
         }
         
         if (student.getGpa() != null && student.getGpa() >= 3.2) {

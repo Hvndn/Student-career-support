@@ -21,6 +21,12 @@ public class LocationFactor implements ScoringFactor {
             return 1.0;
         }
 
+        if (student.getAddress() == null || student.getAddress().isBlank()) {
+            details.put("is_missing_data", true);
+            details.put("location_reason", "Ứng viên chưa cập nhật địa chỉ");
+            return 0.0;
+        }
+
         if (student.getAddress() != null && job.getLocation() != null) {
             String sAddr = student.getAddress().toLowerCase();
             String jLoc = job.getLocation().toLowerCase();

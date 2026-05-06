@@ -140,24 +140,6 @@ public class StudentProfileRestController {
         }
     }
 
-    @PostMapping("/video")
-    public ResponseEntity<ApiResponse<String>> updateVideo(@RequestParam("videoFile") MultipartFile videoFile,
-            Authentication authentication) {
-        try {
-            Integer studentId = getCurrentStudentId(authentication);
-            if (videoFile == null || videoFile.isEmpty()) {
-                return ResponseEntity.badRequest().body(ApiResponse.error("Vui lòng chọn video", "INVALID_FILE"));
-            }
-            String videoUrl = storageService.saveFile(videoFile, "videos");
-            profileService.updateVideo(studentId, videoUrl);
-            return ResponseEntity.ok(ApiResponse.success("Cập nhật video giới thiệu thành công", videoUrl));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage(), "UPLOAD_ERROR"));
-        } catch (Exception e) {
-            log.error("Lỗi không xác định khi upload video: {}", e.getMessage(), e);
-            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi hệ thống", "SERVER_ERROR"));
-        }
-    }
 
     @PostMapping("/resume/upload")
     public ResponseEntity<ApiResponse<String>> updateResume(@RequestParam("file") MultipartFile file,

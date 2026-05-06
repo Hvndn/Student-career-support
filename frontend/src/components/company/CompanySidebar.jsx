@@ -34,7 +34,21 @@ const CompanySidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('');
-  const [expandedMenus, setExpandedMenus] = useState(['Quản lý ứng viên']); // Mặc định mở menu ứng viên
+  const [expandedMenus, setExpandedMenus] = useState(['Quản lý ứng viên']); 
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  React.useEffect(() => {
+    const handleToggle = () => setIsMobileOpen(prev => !prev);
+    const handleClose = () => setIsMobileOpen(false);
+
+    window.addEventListener('toggle-company-sidebar', handleToggle);
+    window.addEventListener('close-company-sidebar', handleClose);
+
+    return () => {
+      window.removeEventListener('toggle-company-sidebar', handleToggle);
+      window.removeEventListener('close-company-sidebar', handleClose);
+    };
+  }, []);
 
   React.useEffect(() => {
     let currentItem = null;
@@ -81,7 +95,12 @@ const CompanySidebar = () => {
   };
 
   return (
-    <aside className="company-sidebar persistent">
+    <>
+      <div 
+        className={`sidebar-overlay ${isMobileOpen ? 'show' : ''}`} 
+        onClick={() => setIsMobileOpen(false)}
+      ></div>
+      <aside className={`company-sidebar persistent ${isMobileOpen ? 'mobile-open' : ''}`}>
       <div className="sidebar-brand">
         <div className="brand-icon">
           <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -145,6 +164,7 @@ const CompanySidebar = () => {
         })}
       </div>
     </aside>
+    </>
   );
 };
 

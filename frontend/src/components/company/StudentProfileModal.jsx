@@ -16,8 +16,8 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
     const gpa = candidate.gpa ? parseFloat(candidate.gpa).toFixed(2) : '0.00';
 
     return (
-        <div className="spm-overlay" onClick={onClose}>
-            <div className="spm-container" onClick={e => e.stopPropagation()}>
+        <div className="spm-overlay">
+            <div className="spm-container">
                 
                 {/* Close Button */}
                 <button className="spm-close-btn" onClick={onClose} title="Đóng">✕</button>
@@ -295,19 +295,22 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                         Phân tích độ phù hợp
                                     </h3>
                                     <div className="match-analysis" style={{ padding: 0, background: 'transparent', border: 'none' }}>
-                                        {Object.entries(candidate.matchDetails.breakdown).map(([key, data]) => (
-                                            <div key={key} className="analysis-item" title={data.experience_reason || data.skills_reason || data.projects_reason || data.education_reason || data.location_reason}>
+                                        {Object.entries(candidate.matchDetails.breakdown).map(([key, factorData]) => (
+                                            <div key={key} className="analysis-item" title={factorData.experience_reason || factorData.skills_reason || factorData.projects_reason || factorData.education_reason || factorData.location_reason}>
                                                 <div className="analysis-label">
                                                     <span>{key === 'skills' ? 'Kỹ năng' : key === 'experience' ? 'Kinh nghiệm' : key === 'projects' ? 'Dự án' : key === 'education' ? 'Học vấn' : 'Địa điểm'}</span>
-                                                    <span className="score-val" style={{ color: '#6366f1' }}>{data.score}%</span>
+                                                    {factorData.is_missing_data ? (
+                                                        <span className="score-val missing">Chưa cập nhật</span>
+                                                    ) : (
+                                                        <span className="score-val">{factorData.score}%</span>
+                                                    )}
                                                 </div>
-                                                <div className="analysis-bar-bg" style={{ height: '4px', background: '#e2e8f0' }}>
+                                                <div className="analysis-bar-bg">
                                                     <div 
-                                                        className="analysis-bar-fill" 
+                                                        className={`analysis-bar-fill ${factorData.is_missing_data ? 'missing' : ''}`} 
                                                         style={{ 
-                                                            width: `${data.score}%`,
-                                                            height: '100%',
-                                                            backgroundColor: data.score >= 80 ? '#10b981' : data.score >= 50 ? '#f59e0b' : '#ef4444'
+                                                            width: factorData.is_missing_data ? '100%' : `${factorData.score}%`,
+                                                            backgroundColor: factorData.is_missing_data ? '#e2e8f0' : (factorData.score >= 80 ? '#10b981' : factorData.score >= 50 ? '#f59e0b' : '#ef4444')
                                                         }}
                                                     ></div>
                                                 </div>

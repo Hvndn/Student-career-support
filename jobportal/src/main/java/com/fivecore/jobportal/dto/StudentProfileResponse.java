@@ -17,17 +17,15 @@ public class StudentProfileResponse {
     private String fullName;
     private String email;
     private String studentIdStr;
+    private String studentClass;
     private String university;
     private String major;
     private Integer graduationYear;
     private Double gpa;
-    private String academicYear;
     private String bio;
     private String phone;
     private String address;
     private String avatarUrl;
-    private String coverImageUrl;
-    private String videoUrl;
     private String resumeUrl;
     private String githubUrl;
     private String linkedinUrl;

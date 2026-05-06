@@ -240,9 +240,13 @@ const CompanyCandidates = () => {
 
     const getStatusLabel = (status) => {
         const labels = {
-    
+            'pending': 'Chờ xử lý',
             'review': 'Theo dõi thêm',
-            'interview': 'Phỏng vấn',
+            'interview': 'Lên lịch phỏng vấn',
+            'interviewing': 'Đang phỏng vấn',
+            'passed': 'Vượt phỏng vấn',
+            'offer': 'Gửi Offer',
+            'hired': 'Đã tuyển',
             'rejected': 'Từ chối'
         };
         return labels[status.toLowerCase()] || 'Chờ xử lý';
@@ -276,10 +280,7 @@ const CompanyCandidates = () => {
                     <div className="section-header intro-y">
                         <h3><span className="icon">👥</span> Quản lý ứng viên</h3>
                         <div className="header-actions">
-                            <button className="btn-respond" style={{ width: 'auto', padding: '0.6rem 1.2rem' }}>
-                                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none" style={{marginRight: '8px'}}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                                Xuất báo cáo
-                            </button>
+                           
                         </div>
                     </div>
 
@@ -297,10 +298,13 @@ const CompanyCandidates = () => {
                                         style={{ width: '150px', borderRadius: '8px', border: '1px solid #e2e8f0', padding: '10px 14px', color: '#64748b', fontSize: '14px' }}
                                     >
                                         <option value="all">Tất cả trạng thái</option>
-                                        <option value="pending">Chờ duyệt</option>
-                                        <option value="interview">Phỏng vấn</option>
-                                        <option value="review">Theo dõi thêm</option>
+                                        <option value="pending">Chờ xử lý</option>
+                                        <option value="interview">Lên lịch phỏng vấn</option>
+                                        <option value="interviewing">Đang phỏng vấn</option>
+                                        <option value="passed">Vượt phỏng vấn</option>
+                                        <option value="hired">Đã tuyển</option>
                                         <option value="rejected">Từ chối</option>
+                                        <option value="review">Theo dõi thêm</option>
                                     </select>
 
                                     {/* Chọn vị trí ứng tuyển */}
@@ -465,36 +469,38 @@ const CompanyCandidates = () => {
                                                 </td>
 
                                                 {/* Cột 2: Vị trí */}
-                                                <td style={{ padding: '16px 20px' }}>
+                                                <td data-label="VỊ TRÍ" style={{ padding: '16px 20px' }}>
                                                     <div style={{ fontWeight: '600', color: '#0f172a', fontSize: '14.5px' }}>{app.jobTitle}</div>
                                                     <div style={{ fontSize: '13px', color: '#94a3b8', marginTop: '2px' }}>Full-time - Vị trí ứng tuyển</div>
                                                 </td>
 
                                                 {/* Cột 3: Ngày nộp */}
-                                                <td style={{ padding: '16px 20px', color: '#0f172a', fontSize: '14px', fontWeight: '500' }}>
+                                                <td data-label="NGÀY NỘP" style={{ padding: '16px 20px', color: '#0f172a', fontSize: '14px', fontWeight: '500' }}>
                                                     {new Date(app.appliedAt).toLocaleDateString('vi-VN')}
                                                 </td>
 
                                                 {/* Cột 4: Trạng thái */}
-                                                <td style={{ padding: '16px 20px', textAlign: 'center' }}>
+                                                <td data-label="TRẠNG THÁI" style={{ padding: '16px 20px', textAlign: 'center' }}>
                                                     <span style={{ 
                                                         display: 'inline-flex', alignItems: 'center', gap: '6px', 
-                                                        color: app.status === 'pending' ? '#ea580c' : app.status === 'review' ? '#7c3aed' : app.status === 'rejected' ? '#dc2626' : app.status === 'interview' ? '#2563eb' : '#64748b', 
+                                                        color: app.status === 'pending' ? '#ea580c' : app.status === 'review' ? '#7c3aed' : app.status === 'rejected' ? '#dc2626' : (app.status === 'interview' || app.status === 'interviewing') ? '#2563eb' : app.status === 'passed' ? '#16a34a' : app.status === 'hired' ? '#059669' : '#64748b', 
                                                         fontSize: '14px', fontWeight: '600',
-                                                        background: app.status === 'pending' ? '#fff7ed' : app.status === 'review' ? '#f5f3ff' : app.status === 'rejected' ? '#fef2f2' : '#eff6ff',
+                                                        background: app.status === 'pending' ? '#fff7ed' : app.status === 'review' ? '#f5f3ff' : app.status === 'rejected' ? '#fef2f2' : (app.status === 'interview' || app.status === 'interviewing') ? '#eff6ff' : app.status === 'passed' ? '#f0fdf4' : app.status === 'hired' ? '#ecfdf5' : '#f8fafc',
                                                         padding: '4px 10px',
                                                         borderRadius: '20px'
                                                     }}>
                                                         {app.status === 'pending' && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>}
                                                         {app.status === 'review' && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>}
                                                         {app.status === 'rejected' && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>}
-                                                        {app.status === 'interview' && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>}
+                                                        {(app.status === 'interview' || app.status === 'interviewing') && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>}
+                                                        {app.status === 'passed' && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>}
+                                                        {app.status === 'hired' && <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>}
                                                         {getStatusLabel(app.status)}
                                                     </span>
                                                 </td>
 
                                                 {/* Cột 5: Hành động */}
-                                                <td style={{ padding: '16px 20px', textAlign: 'right' }}>
+                                                <td data-label="HÀNH ĐỘNG" style={{ padding: '16px 20px', textAlign: 'right' }}>
                                                     <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', alignItems: 'center' }}>
                                                         <button 
                                                             style={{ background: '#f8fafc', border: '1px solid #e2e8f0', color: '#64748b', height: '32px', padding: '0 12px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: '600' }}

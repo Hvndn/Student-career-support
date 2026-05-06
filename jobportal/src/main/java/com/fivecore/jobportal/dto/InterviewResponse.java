@@ -27,7 +27,19 @@ public class InterviewResponse {
     private String companyLogo;
     private String companyEmail;
     private String interviewerInfo;
+    private String interviewerEmail;
+    private String interviewerPhone;
     private String requiredDocuments;
     private String interviewFormat;
     private String preliminaryContent;
+    private Integer duration;
+    private String meetingLink;
+    private String round;
+    private Integer technicalScore;
+    private Integer communicationScore;
+    private Integer problemSolvingScore;
+    private String evaluationNotes;
+    private Double overallScore;
+    private String stageType;
+    private String recommendation; // PASS, FAIL, CONSIDER
 }

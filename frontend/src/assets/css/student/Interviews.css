@@ -519,3 +519,14 @@
         padding-top: 1.5rem;
     }
 }
+
+.round-tag {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 8px;
+    border: 1px solid #e2e8f0;
+}

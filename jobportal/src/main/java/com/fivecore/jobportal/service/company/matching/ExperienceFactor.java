@@ -31,8 +31,16 @@ public class ExperienceFactor implements ScoringFactor {
         }
 
         int requiredYears = parseRequiredExperience(job.getExperience());
-        double score = 0;
+        boolean hasExperiences = student.getExperiences() != null && !student.getExperiences().isEmpty();
+        if (!hasExperiences) {
+            details.put("is_missing_data", true);
+            details.put("experience_years", 0.0);
+            details.put("experience_required", requiredYears);
+            details.put("experience_reason", "Ứng viên chưa cập nhật kinh nghiệm làm việc");
+            return 0.0;
+        }
 
+        double score;
         if (requiredYears == 0) {
             score = 1.0; // Không yêu cầu kinh nghiệm
         } else {

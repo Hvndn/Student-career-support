@@ -26,6 +26,7 @@ public class EmailService {
      * @param subject Tiêu đề email
      * @param content Nội dung email
      */
+    @org.springframework.scheduling.annotation.Async
     public void sendSimpleEmail(String to, String subject, String content) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromEmail);
