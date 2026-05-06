@@ -594,7 +594,8 @@ const CVBuilder = ({ initialData = null, readOnly = false }) => {
         <main className="cvb-canvas">
           <div className="cvb-canvas-scroll">
             <div className="cvb-canvas-inner" style={{ transform: `scale(${zoom / 100})`, transformOrigin: 'top center' }}>
-              {/* //hiển thị cv */}
+              <Template
+                profile={cv} cvData={cv}
                 isEditMode={!readOnly}
                 onUpdate={(d)=>!readOnly && setCV(d)}
                 themeColor={cv.themeColor||'#0f409f'}
