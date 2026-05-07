@@ -45,7 +45,10 @@ public class CompanyService {
     }
 
     /**
-     * Cập nhật thông tin doanh nghiệp (US-013).
+     * [BE Logic] Cập nhật thông tin doanh nghiệp (US-013).
+     * 1. Cập nhật các trường text [DB] companies
+     * 2. Xử lý upload Logo mới nếu có (sử dụng StorageService)
+     * 3. Xử lý đồng bộ ảnh hoạt động (xóa ảnh cũ, lưu ảnh mới) [DB] company_images
      */
     @Transactional
     public void updateCompanyInfo(Integer companyId, Company updatedData, MultipartFile logoFile, List<MultipartFile> activityFiles, List<String> existingActivityImages) {
@@ -95,7 +98,10 @@ public class CompanyService {
     }
 
     /**
-     * Đăng tin tuyển dụng mới (US-005).
+     * [BE Logic] Đăng tin tuyển dụng mới (US-005).
+     * 1. Khởi tạo đối tượng Job từ Request
+     * 2. Xử lý danh sách Skills (Lưu Skill mới nếu chưa tồn tại) [DB] skills, job_skills
+     * 3. Lưu Job vào database [DB] jobs
      */
     @Transactional
     public JobResponse postJob(Integer companyId, JobRequest request) {

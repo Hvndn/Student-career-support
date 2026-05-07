@@ -23,14 +23,24 @@ import java.time.LocalDateTime;
 public class InterviewService {
 
     private final InterviewRepository interviewRepository;
+    private final com.fivecore.jobportal.repository.ApplicationRepository applicationRepository;
     private final EmailService emailService;
     private final NotificationService notificationService;
 
     /**
-     * Sắp xếp lịch phỏng vấn và gửi email (US-017).
+     * [BE Logic] Sắp xếp lịch phỏng vấn và gửi email (US-017).
+     * 1. Lưu thông tin lịch phỏng vấn vào DB [DB] interviews
+     * 2. Cập nhật trạng thái Application sang 'interview' [DB] applications
+     * 3. Gửi Email thông báo chi tiết cho sinh viên.
+     * 4. Gửi Notification trong hệ thống cho sinh viên.
      */
     @Transactional
     public Interview scheduleInterview(Application application, com.fivecore.jobportal.dto.InterviewRequest request) {
+        // Validate thời gian phỏng vấn không được ở quá khứ
+        if (request.getInterviewDate().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Thời gian phỏng vấn không thể ở quá khứ!");
+        }
+
         Interview interview = Interview.builder()
                 .application(application)
                 .interviewDate(request.getInterviewDate())
@@ -51,8 +61,9 @@ public class InterviewService {
 
         Interview savedInterview = interviewRepository.save(interview);
 
-        // Cập nhật trạng thái đơn ứng tuyển sang 'interview'
+        // Cập nhật trạng thái đơn ứng tuyển sang 'interview' và lưu lại
         application.setStatus(com.fivecore.jobportal.entity.Application.ApplicationStatus.interview);
+        applicationRepository.save(application);
 
         // Gửi email và thông báo chi tiết
         String studentEmail = application.getStudent().getUser().getEmail();
@@ -123,8 +134,12 @@ public class InterviewService {
         interview.setStatus("cancelled");
         interviewRepository.save(interview);
 
-        // Gửi thông báo cho sinh viên
+        // Đưa trạng thái đơn ứng tuyển quay lại 'pending' khi hủy lịch
         Application app = interview.getApplication();
+        app.setStatus(com.fivecore.jobportal.entity.Application.ApplicationStatus.pending);
+        applicationRepository.save(app);
+
+        // Gửi thông báo cho sinh viên
         String companyName = app.getJob().getCompany().getName();
         String jobTitle = app.getJob().getTitle();
         
@@ -183,7 +198,11 @@ public class InterviewService {
     }
 
     /**
-     * Ghi nhận đánh giá sau phỏng vấn và tự động cập nhật Application (US-017 MVP).
+     * [BE Logic] Ghi nhận đánh giá sau phỏng vấn và tự động cập nhật Application (US-017 MVP).
+     * 1. Lưu các đầu điểm: Technical, Communication, Problem Solving. [DB] interviews
+     * 2. Tính toán Overall Score dựa trên trọng số (50% - 20% - 30%).
+     * 3. Nếu kết quả là PASS/FAIL, tự động cập nhật trạng thái đơn ứng tuyển [DB] applications
+     * 4. Gửi Notification kết quả cho sinh viên.
      */
     @Transactional
     public void submitEvaluation(Integer id, com.fivecore.jobportal.dto.InterviewEvaluationRequest request) {
@@ -228,6 +247,7 @@ public class InterviewService {
             notificationService.sendNotification(app.getStudent().getUser(), title, message);
         }
 
+        applicationRepository.save(app);
         log.info("Đã đánh giá phỏng vấn ID {} với kết quả {}", id, result);
     }
 

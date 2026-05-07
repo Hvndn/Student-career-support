@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import '../../assets/css/company/CompanySidebar.css';
 
+// [FE Logic] Định nghĩa các mục điều hướng chính cho menu bên trái (Sidebar) của doanh nghiệp
 const NAV_ITEMS = [
   { 
     icon: <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>, 

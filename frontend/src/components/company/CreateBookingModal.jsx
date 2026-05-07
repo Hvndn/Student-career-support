@@ -77,8 +77,10 @@ const CreateBookingModal = ({ isOpen, onClose, onSuccess, initialData = null }) 
         }
     }, [isOpen, initialData]);
 
+    // [FE Logic] Lấy danh sách tin tuyển dụng và danh sách đơn ứng tuyển để chọn ứng viên cần đặt lịch
     const fetchApplications = async () => {
         try {
+            // [BE] CompanyRestController.getJobs(), RecruitmentRestController.getApplications()
             const [jobsRes, appsRes] = await Promise.all([
                 companyApi.getJobs(),
                 recruitmentApi.getApplications()
@@ -88,6 +90,7 @@ const CreateBookingModal = ({ isOpen, onClose, onSuccess, initialData = null }) 
                 const allJobs = jobsRes.data.data || [];
                 const allApps = appsRes.data.data || [];
                 
+                // Chỉ lấy những ứng viên đang ở trạng thái 'suitable' (phù hợp) hoặc 'interview' (đang phỏng vấn)
                 const candidatesForBooking = allApps.filter(app => 
                     ['suitable', 'interview'].includes(app.status.toLowerCase()) || 
                     (initialData && app.id === initialData.applicationId)
@@ -120,6 +123,7 @@ const CreateBookingModal = ({ isOpen, onClose, onSuccess, initialData = null }) 
         setFormData(prev => ({ ...prev, applicationId: '' }));
     };
 
+    // [FE Logic] Lưu lịch phỏng vấn mới hoặc cập nhật lịch cũ
     const handleSubmit = async (e) => {
         e.preventDefault();
         
@@ -137,7 +141,7 @@ const CreateBookingModal = ({ isOpen, onClose, onSuccess, initialData = null }) 
             return;
         }
 
-        // Validate địa điểm/link dựa trên hình thức
+        // Validate địa điểm/link dựa trên hình thức (Online/Offline)
         if (formData.interviewFormat === 'Trực tuyến' && !formData.meetingLink) {
             toast.error('Vui lòng cung cấp link họp trực tuyến');
             return;
@@ -158,8 +162,11 @@ const CreateBookingModal = ({ isOpen, onClose, onSuccess, initialData = null }) 
 
             let response;
             if (initialData) {
+                // [BE] RecruitmentRestController.updateInterview()
                 response = await recruitmentApi.updateInterview(initialData.id, payload);
             } else {
+                // [BE] RecruitmentRestController.scheduleInterview()
+                // [DB] INSERT INTO interviews (...)
                 response = await recruitmentApi.scheduleInterview(payload);
             }
 

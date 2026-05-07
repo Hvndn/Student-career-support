@@ -36,9 +36,11 @@ const CandidateDetailModal = ({
         }
     }, [show, applicationId]);
 
+    // [FE Logic] Lấy thông tin chi tiết ứng tuyển bao gồm profile sinh viên, học vấn, kinh nghiệm
     const fetchDetail = async () => {
         try {
             setLoading(true);
+            // [BE] RecruitmentRestController.getCandidateDetail() | [DB] SELECT * FROM applications a JOIN students s ... WHERE a.id = ?
             const res = await recruitmentApi.getCandidateDetail(applicationId);
             if (res.data.status === 'success') {
                 setCandidate(res.data.data);
@@ -53,9 +55,11 @@ const CandidateDetailModal = ({
         }
     };
 
+    // [FE Logic] Cập nhật trạng thái hồ sơ ứng tuyển (Duyệt, Từ chối, Phỏng vấn...)
     const handleUpdateStatus = async (newStatus, rejectionReason = null) => {
         if (newStatus === status) return;
 
+        // Nếu từ chối, yêu cầu nhập lý do (Mở modal phụ)
         if (newStatus === 'rejected' && rejectionReason === null) {
             setShowRejectionModal(true);
             return;
@@ -63,10 +67,11 @@ const CandidateDetailModal = ({
 
         try {
             setUpdatingStatus(true);
+            // [BE] RecruitmentRestController.updateStatus() | [DB] UPDATE applications SET status = ?, rejection_reason = ?
             const res = await recruitmentApi.updateStatus(applicationId, newStatus, rejectionReason);
             if (res.data.status === 'success') {
                 setStatus(newStatus);
-                if (onStatusUpdate) onStatusUpdate(newStatus);
+                if (onStatusUpdate) onStatusUpdate(newStatus); // Callback báo cho trang cha cập nhật lại list
                 
                 if (newStatus === 'accepted' || newStatus === 'hired') {
                     toast.success('Đã duyệt ứng viên!');

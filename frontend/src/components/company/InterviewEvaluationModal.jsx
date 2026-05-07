@@ -47,6 +47,7 @@ const InterviewEvaluationModal = ({ isOpen, onClose, onSuccess, interview }) => 
         setFormData(prev => ({ ...prev, [name]: parseInt(value) }));
     };
 
+    // [FE Logic] Tính toán điểm trung bình dựa trên trọng số (Kỹ thuật 50%, Giao tiếp 20%, Giải quyết vấn đề 30%)
     const calculateOverall = () => {
         const score = (formData.technicalScore * 0.5) + 
                       (formData.communicationScore * 0.2) + 
@@ -60,14 +61,17 @@ const InterviewEvaluationModal = ({ isOpen, onClose, onSuccess, interview }) => 
         return '#ef4444'; // Red
     };
 
+    // [FE Logic] Lưu kết quả đánh giá phỏng vấn
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
         try {
+            // [BE] RecruitmentRestController.evaluateInterview()
+            // [DB] UPDATE interviews SET technical_score = ?, ..., result = ? WHERE id = ?
             const response = await recruitmentApi.evaluateInterview(interview.id, formData);
             if (response.data.status === 'success') {
                 toast.success('Ghi nhận đánh giá thành công!');
-                onSuccess();
+                onSuccess(); // Refresh lại danh sách lịch hẹn ở trang cha
                 onClose();
             }
         } catch (error) {

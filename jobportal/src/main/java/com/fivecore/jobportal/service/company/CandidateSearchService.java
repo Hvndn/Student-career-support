@@ -43,7 +43,8 @@ public class CandidateSearchService {
     }
 
     /**
-     * Tìm kiếm sinh viên theo tên, chuyên ngành hoặc kỹ năng.
+     * [BE Logic] Tìm kiếm sinh viên theo tên, chuyên ngành hoặc kỹ năng.
+     * [DB] Truy xuất từ bảng students và users
      */
     public List<StudentProfileResponse> searchStudents(String query, String skill) {
         List<Student> students = studentRepository.findAll();
@@ -82,7 +83,10 @@ public class CandidateSearchService {
     }
 
     /**
-     * Lấy chi tiết ứng viên cho giao diện Quản lý Tuyển dụng (Premium View).
+     * [BE Logic] Lấy chi tiết ứng viên cho giao diện Quản lý Tuyển dụng (Premium View).
+     * 1. Lấy thông tin Application và Student tương ứng [DB] applications, students
+     * 2. Gọi CandidateMatchingService để tính toán độ phù hợp AI (AI Match)
+     * 3. Tổng hợp dữ liệu thành một Map để Frontend dễ dàng hiển thị.
      */
     public Map<String, Object> getCandidateDetail(Integer applicationId) {
         Application app = applicationRepository.findById(applicationId)

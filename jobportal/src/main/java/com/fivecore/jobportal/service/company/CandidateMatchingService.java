@@ -35,7 +35,10 @@ public class CandidateMatchingService {
     private final ObjectMapper objectMapper;
 
     /**
-     * Lấy danh sách các ứng viên gợi ý cho một công việc cụ thể.
+     * [BE Logic] Lấy danh sách các ứng viên gợi ý cho một công việc cụ thể.
+     * 1. Duyệt qua toàn bộ sinh viên trong DB [DB] students
+     * 2. Với mỗi sinh viên, tính toán điểm so khớp (Match Score) dựa trên thuật toán Modular Scoring.
+     * 3. Sắp xếp theo điểm cao nhất và lấy Top 30 ứng viên phù hợp.
      */
     public List<StudentProfileResponse> getRecommendedCandidates(Integer jobId) {
         Job job = jobRepository.findById(jobId)
@@ -59,6 +62,12 @@ public class CandidateMatchingService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * [BE Logic] Thuật toán tính điểm chi tiết (Modular Scoring Engine).
+     * Duyệt qua các nhân tố (ScoringFactor): Kỹ năng, Kinh nghiệm, Học vấn, Dự án, Vị trí.
+     * Mỗi nhân tố sẽ có trọng số (Weight) cấu hình trong MatchingConfig.
+     * Trả về tổng điểm và chi tiết breakdown (lý do chấm điểm) để hiển thị ở Frontend.
+     */
     public double calculateDetailedScore(Student student, Job job, java.util.Map<String, Object> details) {
         double weightedTotal = 0;
         java.util.Map<String, Object> breakdown = new java.util.HashMap<>();
@@ -74,7 +83,7 @@ public class CandidateMatchingService {
                 
                 weightedTotal += weightedScore;
 
-                // Lưu breakdown cho UI
+                // Lưu breakdown cho UI (Dữ liệu này sẽ được FE component StudentProfileModal tiêu thụ)
                 java.util.Map<String, Object> factorInfo = new java.util.HashMap<>();
                 factorInfo.put("score", Math.round(factorScore * 100));
                 factorInfo.put("weight", weight);

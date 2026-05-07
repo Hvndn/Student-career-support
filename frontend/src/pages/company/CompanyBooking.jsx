@@ -32,9 +32,13 @@ const CompanyBooking = () => {
         type: 'danger'
     });
 
+    // [FE Logic] Tải toàn bộ dữ liệu lịch phỏng vấn và các vị trí tuyển dụng
     const fetchData = async () => {
         setLoading(true);
         try {
+            // Gọi song song 2 API | [BE] RecruitmentRestController.getInterviews() & CompanyRestController.getJobs()
+            // [DB] SELECT * FROM interviews WHERE company_id = ? 
+            // [DB] SELECT * FROM jobs WHERE company_id = ?
             const [interviewsRes, jobsRes] = await Promise.all([
                 recruitmentApi.getInterviews(),
                 companyApi.getJobs()
@@ -58,6 +62,7 @@ const CompanyBooking = () => {
         fetchData();
     }, []);
 
+    // [FE Logic] Hủy lịch phỏng vấn
     const handleCancelInterview = async (interview) => {
         if (!interview?.id) {
             toast.error('Không tìm thấy mã lịch hẹn');
@@ -76,11 +81,12 @@ const CompanyBooking = () => {
             type: 'danger',
             onConfirm: async () => {
                 try {
+                    // [BE] RecruitmentRestController.deleteInterview() | [DB] DELETE FROM interviews WHERE id = ?
                     const response = await recruitmentApi.deleteInterview(interview.id);
                     if (response.data.status === 'success') {
                         toast.success('Đã hủy lịch phỏng vấn thành công');
                         setConfirmModal(prev => ({ ...prev, show: false }));
-                        fetchData();
+                        fetchData(); // Tải lại danh sách
                     }
                 } catch (error) {
                     console.error('Lỗi khi hủy lịch:', error);
@@ -103,21 +109,6 @@ const CompanyBooking = () => {
     const handleViewDetail = (interview) => {
         setSelectedInterview(interview);
         setShowDetail(true);
-    };
-
-    const handleViewProfile = async (studentId) => {
-        if (!studentId) {
-            toast.error('Ứng viên này chưa có tài khoản sinh viên trên hệ thống');
-            return;
-        }
-        
-        try {
-            const response = await recruitmentApi.getCandidateDetail(studentId);
-            setSelectedCandidate(response.data.data);
-            setShowProfile(true);
-        } catch (error) {
-            console.error('Lỗi khi tải hồ sơ:', error);
-        }
     };
 
     const handleEvaluate = (interview) => {
@@ -143,17 +134,26 @@ const CompanyBooking = () => {
         await executeUpdateStatus(interview.id, status);
     };
 
+    // [FE Logic] Cập nhật trạng thái buổi phỏng vấn (Xác nhận/Vắng mặt/...)
     const executeUpdateStatus = async (id, status) => {
         try {
+            // [BE] RecruitmentRestController.updateInterviewStatus() | [DB] UPDATE interviews SET status = ?
             const response = await recruitmentApi.updateInterviewStatus(id, status);
             if (response.data.status === 'success') {
                 toast.success(`Đã cập nhật trạng thái: ${status.toUpperCase()}`);
                 fetchData();
             }
         } catch (error) {
-            console.error('Lỗi khi cập nhật trạng thái:', error);
             toast.error('Không thể cập nhật trạng thái. Vui lòng thử lại.');
         }
+    };
+
+    const handleResetFilters = () => {
+        setSearchTerm('');
+        setStatusFilter('all');
+        setJobFilter('all');
+        setSortOrder('oldest');
+        toast.success('Đã làm mới bộ lọc', { icon: '🔄' });
     };
 
     const getScoreClass = (score) => {
@@ -188,11 +188,6 @@ const CompanyBooking = () => {
             const matchesStatus = statusFilter === 'all' || status === filterStatus;
             const matchesJob = jobFilter === 'all' || jobTitle === filterJob;
             
-            // Console log to help debug filtering issues
-            if (filterSearch || statusFilter !== 'all' || jobFilter !== 'all') {
-                console.log(`Filtering item: ${item.studentName}, Status: ${status}, Target: ${filterStatus}, Match: ${matchesStatus}`);
-            }
-
             return matchesSearch && matchesStatus && matchesJob;
         })
         .sort((a, b) => {
@@ -240,6 +235,38 @@ const CompanyBooking = () => {
 
                     <div className="booking-container">
                         <div className="filter-panel glass intro-y delay-1">
+                            <div className="filter-header" style={{ marginBottom: '15px' }}>
+                                <button 
+                                    onClick={handleResetFilters}
+                                    style={{ 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        gap: '6px',
+                                        padding: '8px 12px', 
+                                        background: '#f1f5f9', 
+                                        border: '1px solid #e2e8f0', 
+                                        borderRadius: '8px', 
+                                        color: '#64748b', 
+                                        fontSize: '13px', 
+                                        fontWeight: '600', 
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s ease',
+                                        width: 'fit-content',
+                                        marginTop: '20px' // Căn chỉnh để ngang hàng với các ô input khác
+                                    }}
+                                    onMouseOver={(e) => {
+                                        e.currentTarget.style.background = '#e2e8f0';
+                                        e.currentTarget.style.color = '#1e293b';
+                                    }}
+                                    onMouseOut={(e) => {
+                                        e.currentTarget.style.background = '#f1f5f9';
+                                        e.currentTarget.style.color = '#64748b';
+                                    }}
+                                >
+                                    <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>restart_alt</span>
+                                    Làm mới
+                                </button>
+                            </div>
                             <div className="filter-group">
                                 <label>Tìm kiếm</label>
                                 <div className="search-input-wrapper">

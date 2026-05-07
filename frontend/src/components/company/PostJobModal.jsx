@@ -6,6 +6,7 @@ const PostJobModal = ({ isOpen, onClose, jobToEdit, onSuccess }) => {
     if (!isOpen) return null;
 
     return (
+        // [FE Logic] Wrapper Modal cho component JobForm.jsx để tái sử dụng logic Đăng mới / Cập nhật tin tuyển dụng
         <div className="pjm-overlay">
             <div className="pjm-container">
                 <div className="pjm-header">

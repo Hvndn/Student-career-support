@@ -11,6 +11,8 @@ const RejectionModal = ({ show, onClose, onConfirm, studentName }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        // [FE Logic] Gửi lý do từ chối về component cha (CompanyCandidates.jsx hoặc CandidateDetailModal.jsx) 
+        // Sau đó sẽ gọi API [BE] RecruitmentRestController.updateApplicationStatus()
         onConfirm(reason);
         setReason(''); // Reset
     };

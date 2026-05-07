@@ -1,28 +1,278 @@
-/* ─── Company Candidate Notifications Page - Navy Blue ─── */
-.setting-info-box {
-    background: #eff6ff;
-    border: 1px solid #dbeafe;
+/* ─── Premium Company Candidate Notifications CSS ─── */
+
+.candidate-notifications-page {
+    padding: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
+.notif-header {
+    margin-bottom: 2.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.notif-header::after {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -20px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(30, 58, 138, 0.05) 0%, transparent 70%);
+    z-index: -1;
+}
+
+.notif-header h2 {
+    font-size: 2.25rem;
+    font-weight: 850;
+    color: #0f172a;
+    letter-spacing: -0.04em;
+    margin-bottom: 0.75rem;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.notif-header .subtitle {
+    color: #64748b;
+    font-size: 1.1rem;
+    max-width: 600px;
+}
+
+/* Glass Card Design */
+.notification-settings-card {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 24px;
+    padding: 3rem;
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgba(0, 0, 0, 0.02);
+    margin-bottom: 2rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.notification-settings-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.08);
+    border-color: #cbd5e1;
+}
+
+.setting-info-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 2rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 20px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 3rem;
+}
+
+.info-icon {
+    width: 64px;
+    height: 64px;
+    background: #fff;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.03);
+    flex-shrink: 0;
+}
+
+.info-text h4 {
+    font-size: 1.25rem;
+    font-weight: 750;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.info-text p {
+    color: #64748b;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Setup Guide Section */
+.setup-guide h5 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.setup-guide h5::before {
+    content: '';
+    width: 32px;
+    height: 4px;
+    background: #1e3a8a;
+    border-radius: 2px;
+}
+
+.guide-steps-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.step-card {
+    padding: 2rem;
+    background: #fff;
+    border: 1px solid #f1f5f9;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.step-card:hover {
+    border-color: #1e3a8a;
+    background: #f8fafc;
+}
+
+.step-number {
+    font-size: 0.8rem;
+    font-weight: 900;
+    color: #1e3a8a;
+    background: rgba(30, 58, 138, 0.08);
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-bottom: 1.25rem;
+}
+
+.step-icon {
+    font-size: 1.5rem;
+    color: #1e3a8a;
+    margin-bottom: 1rem;
+}
+
+.step-text {
+    font-size: 0.95rem;
+    color: #475569;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+.step-text strong {
+    color: #0f172a;
+    font-weight: 700;
+}
+
+/* Action Button */
 .btn-go-search {
     background: #1e3a8a;
     color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 12px;
+    padding: 1rem 2rem;
+    border-radius: 16px;
     font-weight: 800;
-    transition: all 0.2s;
-    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+    font-size: 1.1rem;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 25px rgba(30, 58, 138, 0.25);
+    width: fit-content;
 }
 
 .btn-go-search:hover {
     background: #1e40af;
-    transform: translateX(5px);
-    box-shadow: 0 6px 15px rgba(30, 58, 138, 0.3);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(30, 58, 138, 0.3);
 }
 
-.notif-header h2 {
-    font-size: 2rem;
-    font-weight: 850;
-    color: #0f172a;
-    letter-spacing: -0.03em;
+.btn-go-search svg {
+    transition: transform 0.3s ease;
+}
+
+.btn-go-search:hover svg {
+    transform: translateX(5px);
+}
+
+/* Status Panel */
+.notification-status-panel {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.status-card {
+    background: #fff;
+    padding: 1.5rem 2rem;
+    border-radius: 20px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.status-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+}
+
+.status-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-value {
+    font-size: 1.1rem;
+    font-weight: 750;
+    color: #1e293b;
+}
+
+.status-value.active {
+    color: #059669;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-value.active::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: #059669;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.15);
+    animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.5); }
+    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(5, 150, 105, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
+}
+
+/* Mobile Responsive */
+@media (max-width: 992px) {
+    .guide-steps-container, .notification-status-panel {
+        grid-template-columns: 1fr;
+    }
+    
+    .notification-settings-card {
+        padding: 1.5rem;
+    }
+    
+    .setting-info-box {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
 }

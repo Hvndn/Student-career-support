@@ -106,6 +106,7 @@ const InterviewDetailModal = ({ isOpen, onClose, interview, onEdit }) => {
 
                     {interview.overallScore > 0 && (
                         <div className="pjm-section ats-eval-section" style={{ border: '2px solid #3b82f6', borderRadius: '12px', padding: '15px', background: 'rgba(59, 130, 246, 0.02)' }}>
+                            {/* [FE Logic] Hiển thị kết quả đánh giá chi tiết nếu buổi phỏng vấn đã được hoàn thành và chấm điểm */}
                             <div className="pjm-section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#1d4ed8' }}>
                                 <span className="material-symbols-outlined">analytics</span> Kết quả đánh giá ATS
                             </div>
