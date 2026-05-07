@@ -24,7 +24,7 @@ const Profile = () => {
     const [projectForm, setProjectForm] = useState({ name: '', role: '', technologies: '', startDate: '', endDate: '', description: '', responsibilities: '', repositoryUrl: '', demoUrl: '' });
     const [skillName, setSkillName] = useState('');
     const [skillLevel, setSkillLevel] = useState('intermediate');
-    
+
     const loadLocalCVs = () => {
         const cvs = [];
         for (let i = 0; i < localStorage.length; i++) {
@@ -53,8 +53,8 @@ const Profile = () => {
             await reload();
             setShowCVSelector(false);
             flash('✅ Đã đính kèm CV thành công!');
-        } catch { 
-            flash('❌ Lỗi khi đính kèm CV.'); 
+        } catch {
+            flash('❌ Lỗi khi đính kèm CV.');
         }
         setSaving(false);
     };
@@ -67,19 +67,19 @@ const Profile = () => {
 
     useEffect(() => {
         studentApi.getProfile()
-            .then(res => { 
-                setProfile(res.data.data); 
-                setLoading(false); 
+            .then(res => {
+                setProfile(res.data.data);
+                setLoading(false);
             })
             .catch(() => setLoading(false));
     }, []);
 
     const openEdit = () => {
-        setForm({ 
-            fullName: profile.fullName || '', 
+        setForm({
+            fullName: profile.fullName || '',
             studentIdStr: profile.studentIdStr || '',
             studentClass: profile.studentClass || '',
-            major: profile.major || '', 
+            major: profile.major || '',
             bio: profile.bio || '',
             phone: profile.phone || '',
             email: profile.email || '',
@@ -119,7 +119,7 @@ const Profile = () => {
     const handleVideoChange = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        
+
         // Validate file size (e.g., max 50MB)
         if (file.size > 50 * 1024 * 1024) {
             return flash('⚠️ Video quá lớn (Tối đa 50MB)');
@@ -141,7 +141,7 @@ const Profile = () => {
         if (!file) return;
         if (file.type !== 'application/pdf') return flash('⚠️ Vui lòng tải lên file PDF');
         if (file.size > 10 * 1024 * 1024) return flash('⚠️ File quá lớn (Tối đa 10MB)');
-        
+
         const formData = new FormData();
         formData.append('file', file);
         setIsUploading(true);
@@ -214,527 +214,527 @@ const Profile = () => {
     return (
         <div className="pf-profile-wrapper">
             {/* Toast Notification */}
-                {message && (
-                    <div className={`pf-toast ${message.startsWith('✅') ? 'is-success' : 'is-error'}`}>
-                        {message}
-                    </div>
+            {message && (
+                <div className={`pf-toast ${message.startsWith('✅') ? 'is-success' : 'is-error'}`}>
+                    {message}
+                </div>
+            )}
+
+            {/* Premium Banner */}
+
+            {/* Premium Banner */}
+            <div className="pf-premium-banner">
+                <div className="pf-banner-overlay"></div>
+                {profile.coverImageUrl ? (
+                    <img src={getImageUrl(profile.coverImageUrl)} alt="Banner" className="pf-banner-img" />
+                ) : (
+                    <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=1200" alt="Banner" className="pf-banner-img" />
                 )}
+                <button className="pf-btn-banner-edit" onClick={openEdit}>
+                    <span className="material-symbols-outlined">edit_note</span>
+                    Chỉnh sửa hồ sơ
+                </button>
+            </div>
 
-                {/* Premium Banner */}
-
-                {/* Premium Banner */}
-                <div className="pf-premium-banner">
-                    <div className="pf-banner-overlay"></div>
-                    {profile.coverImageUrl ? (
-                        <img src={getImageUrl(profile.coverImageUrl)} alt="Banner" className="pf-banner-img" />
-                    ) : (
-                        <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=1200" alt="Banner" className="pf-banner-img" />
-                    )}
-                    <button className="pf-btn-banner-edit" onClick={openEdit}>
-                        <span className="material-symbols-outlined">edit_note</span>
-                        Chỉnh sửa hồ sơ
-                    </button>
-                </div>
-
-                {/* Header Info Card */}
-                <div className="pf-modern-header">
-                    <div className="pf-header-left">
-                        <div className="pf-header-avatar">
-                            <img 
-                                src={profile.avatarUrl ? getImageUrl(profile.avatarUrl) : `https://ui-avatars.com/api/?name=${profile.fullName}&size=200`} 
-                                alt="Avatar" 
-                                className="pf-avatar-img"
-                            />
-                        </div>
-                        <div className="pf-user-id">
-                            <span className="pf-major-tag">{profile.major || 'Kiến Trúc'}</span>
-                            <h2>{profile.fullName}</h2>
-                            <div className="pf-class-info">
-                                Lớp: {profile.studentClass || '26kt6'} &nbsp; - &nbsp; MSSV: {profile.studentIdStr || '19KT123'}
-                            </div>
-                        </div>
+            {/* Header Info Card */}
+            <div className="pf-modern-header">
+                <div className="pf-header-left">
+                    <div className="pf-header-avatar">
+                        <img
+                            src={profile.avatarUrl ? getImageUrl(profile.avatarUrl) : `https://ui-avatars.com/api/?name=${profile.fullName}&size=200`}
+                            alt="Avatar"
+                            className="pf-avatar-img"
+                        />
                     </div>
-
-                    <div className="pf-header-center">
-                        <h4>Thông tin liên lạc</h4>
-                        <div className="pf-contact-grid">
-                            <div className="pf-contact-item">
-                                <div className="pf-contact-icon"><span className="material-symbols-outlined">mail</span></div>
-                                <span>{profile.email || 'n/a'}</span>
-                            </div>
-                            <div className="pf-contact-item">
-                                <div className="pf-contact-icon"><span className="material-symbols-outlined">call</span></div>
-                                <span>{profile.phone || 'n/a'}</span>
-                            </div>
-                            <div className="pf-contact-item">
-                                <div className="pf-contact-icon"><span className="material-symbols-outlined">location_on</span></div>
-                                <span>{profile.address || 'Hòa Xuân, Cẩm Lệ'}</span>
-                            </div>
-                            <div className="pf-contact-item">
-                                <div className="pf-contact-icon"><span className="material-symbols-outlined">globe</span></div>
-                                <span>{profile.githubUrl || 'fivecore.edu.vn'}</span>
-                            </div>
-                            <div className="pf-contact-item">
-                                <div className="pf-contact-icon"><span className="material-symbols-outlined">person</span></div>
-                                <span>{profile.linkedinUrl || 'nl_truong'}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="pf-header-right">
-                        <div className="pf-stat-box">
-                            <span className="pf-stat-val">{profile.gpa || '0.00'}</span>
-                            <span className="pf-stat-lbl">GPA</span>
-                        </div>
-                        <div className="pf-stat-box">
-                            <span className="pf-stat-val">{profile.projects?.length || 0}</span>
-                            <span className="pf-stat-lbl">DỰ ÁN</span>
-                        </div>
-                        <div className="pf-stat-box">
-                            <span className="pf-stat-val">{ (profile.cvData || profile.resumeUrl) ? 1 : 0 }</span>
-                            <span className="pf-stat-lbl">BẢN CV</span>
+                    <div className="pf-user-id">
+                        <span className="pf-major-tag">{profile.major || 'Kiến Trúc'}</span>
+                        <h2>{profile.fullName}</h2>
+                        <div className="pf-class-info">
+                            Lớp: {profile.studentClass || '26kt6'} &nbsp; - &nbsp; MSSV: {profile.studentIdStr || '19KT123'}
                         </div>
                     </div>
                 </div>
 
-                <div className="pf-content-grid">
-                    <div className="pf-main-col">
-                        <div className="pf-card">
-                            <div className="pf-card-header">
-                                <h3 className="pf-card-title">
-                                    <span className="material-symbols-outlined">badge</span>
-                                    Thông tin chung
-                                </h3>
-                                <button className="pf-btn-text" onClick={openEdit}>Sửa</button>
-                            </div>
-                            <div className="pf-bio-box">
-                                <div dangerouslySetInnerHTML={{ __html: profile.bio || 'Chưa có thông tin giới thiệu.' }} />
-                            </div>
+                <div className="pf-header-center">
+                    <h4>Thông tin liên lạc</h4>
+                    <div className="pf-contact-grid">
+                        <div className="pf-contact-item">
+                            <div className="pf-contact-icon"><span className="material-symbols-outlined">mail</span></div>
+                            <span>{profile.email || 'n/a'}</span>
                         </div>
+                        <div className="pf-contact-item">
+                            <div className="pf-contact-icon"><span className="material-symbols-outlined">call</span></div>
+                            <span>{profile.phone || 'n/a'}</span>
+                        </div>
+                        <div className="pf-contact-item">
+                            <div className="pf-contact-icon"><span className="material-symbols-outlined">location_on</span></div>
+                            <span>{profile.address || 'Hòa Xuân, Cẩm Lệ'}</span>
+                        </div>
+                        <div className="pf-contact-item">
+                            <div className="pf-contact-icon"><span className="material-symbols-outlined">globe</span></div>
+                            <span>{profile.githubUrl || 'fivecore.edu.vn'}</span>
+                        </div>
+                        <div className="pf-contact-item">
+                            <div className="pf-contact-icon"><span className="material-symbols-outlined">person</span></div>
+                            <span>{profile.linkedinUrl || 'nl_truong'}</span>
+                        </div>
+                    </div>
+                </div>
 
-                        {/* Projects Management Section */}
-                        <div className="pf-card">
-                            <div className="pf-card-header">
-                                <h3 className="pf-card-title">
-                                    <span className="material-symbols-outlined">rocket_launch</span>
-                                    Dự án cá nhân ({profile.projects?.length || 0})
-                                </h3>
-                                <button className="pf-btn-text" onClick={() => setShowProjectForm(true)}>+ Thêm dự án</button>
-                            </div>
-                            <div className="pf-projects-list">
-                                {profile.projects?.length > 0 ? profile.projects.map((proj, idx) => (
-                                    <div key={idx} className="pf-project-item">
-                                        <div className="pf-project-info">
-                                            <h4>{proj.name}</h4>
-                                            {(proj.role || proj.startDate) && (
-                                                <div className="pf-project-meta" style={{fontSize: '0.8125rem', color: 'var(--dau-primary)', fontWeight: 600, marginBottom: '0.5rem', display: 'flex', gap: '1rem'}}>
-                                                    {proj.role && <span><span className="material-symbols-outlined" style={{fontSize: '14px', verticalAlign: 'text-bottom'}}>person</span> {proj.role}</span>}
-                                                    {(proj.startDate || proj.endDate) && <span><span className="material-symbols-outlined" style={{fontSize: '14px', verticalAlign: 'text-bottom'}}>calendar_month</span> {proj.startDate ? new Date(proj.startDate).toLocaleDateString('vi-VN') : ''} - {proj.endDate ? new Date(proj.endDate).toLocaleDateString('vi-VN') : 'Hiện tại'}</span>}
-                                                </div>
-                                            )}
-                                            {proj.technologies && (
-                                                <div className="pf-project-tech" style={{fontSize: '0.75rem', color: 'var(--dau-text-muted)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '4px'}}>
-                                                    <span className="material-symbols-outlined" style={{fontSize: '14px'}}>build</span> {proj.technologies}
-                                                </div>
-                                            )}
-                                            {proj.description && <p>{proj.description}</p>}
-                                            {proj.responsibilities && (
-                                                <div className="pf-project-resp" style={{fontSize: '0.8125rem', color: 'var(--dau-text-main)', marginTop: '0.5rem', whiteSpace: 'pre-line', lineHeight: '1.6'}}>
-                                                    {proj.responsibilities}
-                                                </div>
-                                            )}
-                                            <div className="pf-project-links" style={{marginTop: '1rem'}}>
-                                                {proj.repositoryUrl && <a href={proj.repositoryUrl} target="_blank" rel="noreferrer">Tài liệu đính kèm</a>}
-                                                {proj.demoUrl && <a href={proj.demoUrl} target="_blank" rel="noreferrer">Sản phẩm / Demo</a>}
-                                            </div>
-                                        </div>
-                                        <button className="pf-btn-icon-delete" onClick={() => handleDeleteProject(proj.id)}>
-                                            <span className="material-symbols-outlined">delete</span>
-                                        </button>
-                                    </div>
-                                )) : <p className="pf-text-muted">Chưa có dự án nào được thêm.</p>}
-                            </div>
+                <div className="pf-header-right">
+                    <div className="pf-stat-box">
+                        <span className="pf-stat-val">{profile.gpa || '0.00'}</span>
+                        <span className="pf-stat-lbl">GPA</span>
+                    </div>
+                    <div className="pf-stat-box">
+                        <span className="pf-stat-val">{profile.projects?.length || 0}</span>
+                        <span className="pf-stat-lbl">DỰ ÁN</span>
+                    </div>
+                    <div className="pf-stat-box">
+                        <span className="pf-stat-val">{(profile.cvData || profile.resumeUrl) ? 1 : 0}</span>
+                        <span className="pf-stat-lbl">BẢN CV</span>
+                    </div>
+                </div>
+            </div>
+
+            <div className="pf-content-grid">
+                <div className="pf-main-col">
+                    <div className="pf-card">
+                        <div className="pf-card-header">
+                            <h3 className="pf-card-title">
+                                <span className="material-symbols-outlined">badge</span>
+                                Thông tin chung
+                            </h3>
+                            <button className="pf-btn-text" onClick={openEdit}>Sửa</button>
+                        </div>
+                        <div className="pf-bio-box">
+                            <div dangerouslySetInnerHTML={{ __html: profile.bio || 'Chưa có thông tin giới thiệu.' }} />
                         </div>
                     </div>
 
-                    <aside className="pf-sidebar-col" style={{display: 'flex', flexDirection: 'column', gap: '2rem'}}>
-                        <div className="pf-card">
-                            <div className="pf-card-header">
-                                <h3 className="pf-card-title">
-                                    <span className="material-symbols-outlined">videocam</span>
-                                    Video giới thiệu
-                                </h3>
-                            </div>
-                            <div className="pf-video-window">
-                                {profile.videoUrl ? (
-                                    <video src={getImageUrl(profile.videoUrl)} controls className="pf-video-obj" />
-                                ) : (
-                                    <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=400" alt="Video Placeholder" className="pf-video-obj" />
-                                )}
-                                {isUploading && <div className="pf-upload-overlay">Đang tải...</div>}
-                            </div>
-                            <label className="pf-btn-dau" style={{ cursor: 'pointer', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <span className="material-symbols-outlined">upload</span>
-                                {profile.videoUrl ? 'Đổi Video' : 'Thêm Video'}
-                                <input type="file" accept="video/*" hidden onChange={handleVideoChange} />
-                            </label>
+                    {/* Projects Management Section */}
+                    <div className="pf-card">
+                        <div className="pf-card-header">
+                            <h3 className="pf-card-title">
+                                <span className="material-symbols-outlined">rocket_launch</span>
+                                Dự án cá nhân ({profile.projects?.length || 0})
+                            </h3>
+                            <button className="pf-btn-text" onClick={() => setShowProjectForm(true)}>+ Thêm dự án</button>
                         </div>
-
-                        <div className="pf-card">
-                            <div className="pf-card-header">
-                                <h3 className="pf-card-title">
-                                    <span className="material-symbols-outlined">psychology</span>
-                                    Kỹ năng chuyên môn
-                                </h3>
-                                <button className="pf-btn-text" onClick={() => setShowSkillForm(true)}>+ Thêm</button>
-                            </div>
-                            <div className="pf-skill-tags">
-                                {profile.skills?.length > 0 ? profile.skills.map((skill, idx) => (
-                                    <div key={idx} className="pf-tag" onDoubleClick={() => handleDeleteSkill(skill.name)}>
-                                        {skill.name}
-                                    </div>
-                                )) : <p className="pf-text-muted">Chưa cập nhật kỹ năng.</p>}
-                            </div>
-                        </div>
-
-                        <div className="pf-card">
-                            <div className="pf-card-header">
-                                <h3 className="pf-card-title">
-                                    <span className="material-symbols-outlined">description</span>
-                                    Hồ sơ năng lực (CV)
-                                </h3>
-                            </div>
-                            <div className="pf-cv-list" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                                {/* Bản trực tuyến của hệ thống */}
-                                {(() => {
-                                    let attachedCvName = null;
-                                    try {
-                                        if (profile.cvData) {
-                                            const data = JSON.parse(profile.cvData);
-                                            attachedCvName = data._name || data.fullName;
-                                        }
-                                    } catch (e) { /* ignore */ }
-
-                                    return (
-                                        <div className="pf-cv-item" style={{ 
-                                            border: attachedCvName ? '1px solid var(--dau-primary)' : '1px dashed #ccc', 
-                                            background: attachedCvName ? 'rgba(var(--dau-primary-rgb), 0.05)' : 'transparent' 
-                                        }}>
-                                            <div className="pf-cv-left">
-                                                <div className="pf-cv-icon" style={{ color: 'var(--dau-primary)' }}>
-                                                    <span className="material-symbols-outlined">{attachedCvName ? 'verified' : 'auto_stories'}</span>
-                                                </div>
-                                                <div className="pf-cv-info">
-                                                    <span className="pf-cv-title">CV Online (Hệ thống)</span>
-                                                    <span className="pf-cv-meta" style={{fontSize: '0.75rem', color: attachedCvName ? 'var(--dau-primary)' : '#888', fontWeight: attachedCvName ? '600' : '400'}}>
-                                                        {attachedCvName ? `Đã đính kèm: ${attachedCvName}` : 'Chưa chọn bản thiết kế'}
-                                                    </span>
-                                                </div>
+                        <div className="pf-projects-list">
+                            {profile.projects?.length > 0 ? profile.projects.map((proj, idx) => (
+                                <div key={idx} className="pf-project-item">
+                                    <div className="pf-project-info">
+                                        <h4>{proj.name}</h4>
+                                        {(proj.role || proj.startDate) && (
+                                            <div className="pf-project-meta" style={{ fontSize: '0.8125rem', color: 'var(--dau-primary)', fontWeight: 600, marginBottom: '0.5rem', display: 'flex', gap: '1rem' }}>
+                                                {proj.role && <span><span className="material-symbols-outlined" style={{ fontSize: '14px', verticalAlign: 'text-bottom' }}>person</span> {proj.role}</span>}
+                                                {(proj.startDate || proj.endDate) && <span><span className="material-symbols-outlined" style={{ fontSize: '14px', verticalAlign: 'text-bottom' }}>calendar_month</span> {proj.startDate ? new Date(proj.startDate).toLocaleDateString('vi-VN') : ''} - {proj.endDate ? new Date(proj.endDate).toLocaleDateString('vi-VN') : 'Hiện tại'}</span>}
                                             </div>
-                                            <div style={{ display: 'flex', gap: '0.5rem' }}>
-                                                {attachedCvName && (
-                                                    <Link to="/cv/view/live" target="_blank" className="pf-cv-btn" title="Xem bản hiện tại">
-                                                        <span className="material-symbols-outlined">visibility</span>
-                                                    </Link>
-                                                )}
-                                                <button 
-                                                    className="pf-cv-btn" 
-                                                    title="Chọn CV khác từ danh sách"
-                                                    onClick={() => { loadLocalCVs(); setShowCVSelector(true); }}
-                                                >
-                                                    <span className="material-symbols-outlined">swap_horiz</span>
-                                                </button>
-                                                <Link to="/student/cv-management" className="pf-cv-btn" title="Quản lý tất cả CV">
-                                                    <span className="material-symbols-outlined">settings</span>
-                                                </Link>
+                                        )}
+                                        {proj.technologies && (
+                                            <div className="pf-project-tech" style={{ fontSize: '0.75rem', color: 'var(--dau-text-muted)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>build</span> {proj.technologies}
                                             </div>
+                                        )}
+                                        {proj.description && <p>{proj.description}</p>}
+                                        {proj.responsibilities && (
+                                            <div className="pf-project-resp" style={{ fontSize: '0.8125rem', color: 'var(--dau-text-main)', marginTop: '0.5rem', whiteSpace: 'pre-line', lineHeight: '1.6' }}>
+                                                {proj.responsibilities}
+                                            </div>
+                                        )}
+                                        <div className="pf-project-links" style={{ marginTop: '1rem' }}>
+                                            {proj.repositoryUrl && <a href={proj.repositoryUrl} target="_blank" rel="noreferrer">Tài liệu đính kèm</a>}
+                                            {proj.demoUrl && <a href={proj.demoUrl} target="_blank" rel="noreferrer">Sản phẩm / Demo</a>}
                                         </div>
-                                    );
-                                })()}
+                                    </div>
+                                    <button className="pf-btn-icon-delete" onClick={() => handleDeleteProject(proj.id)}>
+                                        <span className="material-symbols-outlined">delete</span>
+                                    </button>
+                                </div>
+                            )) : <p className="pf-text-muted">Chưa có dự án nào được thêm.</p>}
+                        </div>
+                    </div>
+                </div>
 
-                                <div style={{ height: '1px', background: '#eee', margin: '2px 0' }}></div>
+                <aside className="pf-sidebar-col" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                    <div className="pf-card">
+                        <div className="pf-card-header">
+                            <h3 className="pf-card-title">
+                                <span className="material-symbols-outlined">videocam</span>
+                                Video giới thiệu
+                            </h3>
+                        </div>
+                        <div className="pf-video-window">
+                            {profile.videoUrl ? (
+                                <video src={getImageUrl(profile.videoUrl)} controls className="pf-video-obj" />
+                            ) : (
+                                <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=400" alt="Video Placeholder" className="pf-video-obj" />
+                            )}
+                            {isUploading && <div className="pf-upload-overlay">Đang tải...</div>}
+                        </div>
+                        <label className="pf-btn-dau" style={{ cursor: 'pointer', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <span className="material-symbols-outlined">upload</span>
+                            {profile.videoUrl ? 'Đổi Video' : 'Thêm Video'}
+                            <input type="file" accept="video/*" hidden onChange={handleVideoChange} />
+                        </label>
+                    </div>
 
-                                {/* File đính kèm */}
-                                {profile.resumeUrl ? (
-                                    <div className="pf-cv-item">
+                    <div className="pf-card">
+                        <div className="pf-card-header">
+                            <h3 className="pf-card-title">
+                                <span className="material-symbols-outlined">psychology</span>
+                                Kỹ năng chuyên môn
+                            </h3>
+                            <button className="pf-btn-text" onClick={() => setShowSkillForm(true)}>+ Thêm</button>
+                        </div>
+                        <div className="pf-skill-tags">
+                            {profile.skills?.length > 0 ? profile.skills.map((skill, idx) => (
+                                <div key={idx} className="pf-tag" onDoubleClick={() => handleDeleteSkill(skill.name)}>
+                                    {skill.name}
+                                </div>
+                            )) : <p className="pf-text-muted">Chưa cập nhật kỹ năng.</p>}
+                        </div>
+                    </div>
+
+                    <div className="pf-card">
+                        <div className="pf-card-header">
+                            <h3 className="pf-card-title">
+                                <span className="material-symbols-outlined">description</span>
+                                Hồ sơ năng lực (CV)
+                            </h3>
+                        </div>
+                        <div className="pf-cv-list" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                            {/* Bản trực tuyến của hệ thống */}
+                            {(() => {
+                                let attachedCvName = null;
+                                try {
+                                    if (profile.cvData) {
+                                        const data = JSON.parse(profile.cvData);
+                                        attachedCvName = data._name || data.fullName;
+                                    }
+                                } catch (e) { /* ignore */ }
+
+                                return (
+                                    <div className="pf-cv-item" style={{
+                                        border: attachedCvName ? '1px solid var(--dau-primary)' : '1px dashed #ccc',
+                                        background: attachedCvName ? 'rgba(var(--dau-primary-rgb), 0.05)' : 'transparent'
+                                    }}>
                                         <div className="pf-cv-left">
-                                            <div className="pf-cv-icon" style={{color: '#e74c3c'}}><span className="material-symbols-outlined">picture_as_pdf</span></div>
+                                            <div className="pf-cv-icon" style={{ color: 'var(--dau-primary)' }}>
+                                                <span className="material-symbols-outlined">{attachedCvName ? 'verified' : 'auto_stories'}</span>
+                                            </div>
                                             <div className="pf-cv-info">
-                                                <span className="pf-cv-title">File hồ sơ đính kèm</span>
+                                                <span className="pf-cv-title">CV Online (Hệ thống)</span>
+                                                <span className="pf-cv-meta" style={{ fontSize: '0.75rem', color: attachedCvName ? 'var(--dau-primary)' : '#888', fontWeight: attachedCvName ? '600' : '400' }}>
+                                                    {attachedCvName ? `Đã đính kèm: ${attachedCvName}` : 'Chưa chọn bản thiết kế'}
+                                                </span>
                                             </div>
                                         </div>
-                                        <div style={{display: 'flex', gap: '0.5rem'}}>
-                                            <a href={getImageUrl(profile.resumeUrl)} target="_blank" rel="noreferrer" className="pf-cv-btn" title="Xem file">
-                                                <span className="material-symbols-outlined">visibility</span>
-                                            </a>
-                                            <label className="pf-cv-btn" style={{cursor: 'pointer', margin: 0}} title="Đổi file khác">
-                                                <span className="material-symbols-outlined">upload</span>
-                                                <input type="file" accept="application/pdf" hidden onChange={handleResumeUpload} disabled={isUploading} />
-                                            </label>
+                                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                            {attachedCvName && (
+                                                <Link to="/cv/view/live" target="_blank" className="pf-cv-btn" title="Xem bản hiện tại">
+                                                    <span className="material-symbols-outlined">visibility</span>
+                                                </Link>
+                                            )}
+                                            <button
+                                                className="pf-cv-btn"
+                                                title="Chọn CV khác từ danh sách"
+                                                onClick={() => { loadLocalCVs(); setShowCVSelector(true); }}
+                                            >
+                                                <span className="material-symbols-outlined">swap_horiz</span>
+                                            </button>
+                                            <Link to="/student/cv-management" className="pf-cv-btn" title="Quản lý tất cả CV">
+                                                <span className="material-symbols-outlined">settings</span>
+                                            </Link>
                                         </div>
                                     </div>
-                                ) : (
-                                    <label className="pf-btn-dau" style={{ cursor: 'pointer', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f9fa', border: '1px solid #ddd', color: '#555', margin: 0, padding: '0.75rem' }}>
-                                        <span className="material-symbols-outlined" style={{marginRight: '8px'}}>attach_file</span>
-                                        {isUploading ? 'Đang tải lên...' : 'Đính kèm file PDF'}
-                                        <input type="file" accept="application/pdf" hidden onChange={handleResumeUpload} disabled={isUploading} />
-                                    </label>
-                                )}
-                            </div>
-                        </div>
-                    </aside>
-                </div>
+                                );
+                            })()}
 
-                {/* --- CONSOLIDATED EDIT MODAL --- */}
-                {editMode && (
-                    <div className="pf-modal-overlay">
-                        <div className="pf-modal-container">
-                            <div className="pf-modal-header">
-                                <h3>Chỉnh sửa hồ sơ</h3>
-                                <button className="pf-modal-close" onClick={() => setEditMode(false)}>
-                                    <span className="material-symbols-outlined">close</span>
-                                </button>
-                            </div>
+                            <div style={{ height: '1px', background: '#eee', margin: '2px 0' }}></div>
 
-                            <div className="pf-modal-body">
-                                {/* Avatar Edit Section */}
-                                <div className="pf-modal-avatar-section">
-                                    <div className="pf-modal-avatar-box">
-                                        <img 
-                                            src={profile.avatarUrl ? getImageUrl(profile.avatarUrl) : `https://ui-avatars.com/api/?name=${profile.fullName}&size=200`} 
-                                            alt="Preview" 
-                                        />
-                                        <label htmlFor="modal-avatar-input" className="pf-avatar-overlay">
-                                            <span className="material-symbols-outlined">photo_camera</span>
+                            {/* File đính kèm */}
+                            {profile.resumeUrl ? (
+                                <div className="pf-cv-item">
+                                    <div className="pf-cv-left">
+                                        <div className="pf-cv-icon" style={{ color: '#e74c3c' }}><span className="material-symbols-outlined">picture_as_pdf</span></div>
+                                        <div className="pf-cv-info">
+                                            <span className="pf-cv-title">File hồ sơ đính kèm</span>
+                                        </div>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                        <a href={getImageUrl(profile.resumeUrl)} target="_blank" rel="noreferrer" className="pf-cv-btn" title="Xem file">
+                                            <span className="material-symbols-outlined">visibility</span>
+                                        </a>
+                                        <label className="pf-cv-btn" style={{ cursor: 'pointer', margin: 0 }} title="Đổi file khác">
+                                            <span className="material-symbols-outlined">upload</span>
+                                            <input type="file" accept="application/pdf" hidden onChange={handleResumeUpload} disabled={isUploading} />
                                         </label>
-                                        <input type="file" id="modal-avatar-input" hidden onChange={handleAvatarChange} />
-                                    </div>
-                                    <p className="pf-avatar-hint">Nhấn để thay đổi ảnh đại diện</p>
-                                </div>
-
-                                <div className="pf-modal-grid">
-                                    <div className="pf-modal-field">
-                                        <label>Họ và tên</label>
-                                        <input type="text" value={form.fullName} onChange={e => setForm({...form, fullName: e.target.value})} placeholder="Nguyễn Lê Trường" />
-                                    </div>
-                                    <div className="pf-modal-field">
-                                        <label>Mã sinh viên</label>
-                                        <input type="text" value={form.studentIdStr} onChange={e => setForm({...form, studentIdStr: e.target.value})} placeholder="19KT123" />
-                                    </div>
-                                    <div className="pf-modal-field">
-                                        <label>Lớp</label>
-                                        <input type="text" value={form.studentClass} onChange={e => setForm({...form, studentClass: e.target.value})} placeholder="26kt6" />
-                                    </div>
-                                    <div className="pf-modal-field">
-                                        <label>Chuyên ngành</label>
-                                        <input type="text" value={form.major} onChange={e => setForm({...form, major: e.target.value})} placeholder="Kiến trúc" />
                                     </div>
                                 </div>
-
-                                <div className="pf-modal-field full-width">
-                                    <label>Giới thiệu bản thân</label>
-                                    <div className="pf-quill-wrapper">
-                                        <ReactQuill 
-                                            theme="snow" 
-                                            value={form.bio} 
-                                            onChange={val => setForm({...form, bio: val})} 
-                                            modules={QUILL_MODULES}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="pf-modal-grid">
-                                    <div className="pf-modal-field">
-                                        <label>Email</label>
-                                        <input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} placeholder="example@gmail.com" />
-                                    </div>
-                                    <div className="pf-modal-field">
-                                        <label>Số điện thoại</label>
-                                        <input type="text" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} placeholder="0901234567" />
-                                    </div>
-                                </div>
-
-                                <div className="pf-modal-field full-width">
-                                    <label>Địa chỉ</label>
-                                    <input type="text" value={form.address} onChange={e => setForm({...form, address: e.target.value})} placeholder="Số nhà, Tên đường, Quận/Huyện..." />
-                                </div>
-
-                                <div className="pf-modal-grid-3">
-                                    <div className="pf-modal-field">
-                                        <label>GPA</label>
-                                        <input type="number" step="0.1" value={form.gpa} onChange={e => setForm({...form, gpa: e.target.value})} placeholder="4.0" />
-                                    </div>
-                                    <div className="pf-modal-field">
-                                        <label>Website / Portfolio URL</label>
-                                        <input type="text" value={form.githubUrl} onChange={e => setForm({...form, githubUrl: e.target.value})} placeholder="fivecore.edu.vn" />
-                                    </div>
-                                    <div className="pf-modal-field">
-                                        <label>Facebook / LinkedIn</label>
-                                        <input type="text" value={form.linkedinUrl} onChange={e => setForm({...form, linkedinUrl: e.target.value})} placeholder="linkedin.com/in/user" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="pf-modal-footer">
-                                <button className="pf-btn-save-all" onClick={handleSave} disabled={saving}>
-                                    {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
-                                </button>
-                            </div>
+                            ) : (
+                                <label className="pf-btn-dau" style={{ cursor: 'pointer', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f9fa', border: '1px solid #ddd', color: '#555', margin: 0, padding: '0.75rem' }}>
+                                    <span className="material-symbols-outlined" style={{ marginRight: '8px' }}>attach_file</span>
+                                    {isUploading ? 'Đang tải lên...' : 'Đính kèm file PDF'}
+                                    <input type="file" accept="application/pdf" hidden onChange={handleResumeUpload} disabled={isUploading} />
+                                </label>
+                            )}
                         </div>
                     </div>
-                )}
+                </aside>
+            </div>
 
-                {showSkillForm && (
-                    <div className="pf-modal-overlay">
-                        <div className="pf-modal-container small">
-                            <div className="pf-modal-header">
-                                <h3>Thêm kỹ năng chuyên môn</h3>
-                                <button className="pf-modal-close" onClick={() => setShowSkillForm(false)}>&times;</button>
+            {/* --- CONSOLIDATED EDIT MODAL --- */}
+            {editMode && (
+                <div className="pf-modal-overlay">
+                    <div className="pf-modal-container">
+                        <div className="pf-modal-header">
+                            <h3>Chỉnh sửa hồ sơ</h3>
+                            <button className="pf-modal-close" onClick={() => setEditMode(false)}>
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+
+                        <div className="pf-modal-body">
+                            {/* Avatar Edit Section */}
+                            <div className="pf-modal-avatar-section">
+                                <div className="pf-modal-avatar-box">
+                                    <img
+                                        src={profile.avatarUrl ? getImageUrl(profile.avatarUrl) : `https://ui-avatars.com/api/?name=${profile.fullName}&size=200`}
+                                        alt="Preview"
+                                    />
+                                    <label htmlFor="modal-avatar-input" className="pf-avatar-overlay">
+                                        <span className="material-symbols-outlined">photo_camera</span>
+                                    </label>
+                                    <input type="file" id="modal-avatar-input" hidden onChange={handleAvatarChange} />
+                                </div>
+                                <p className="pf-avatar-hint">Nhấn để thay đổi ảnh đại diện</p>
                             </div>
-                            <div className="pf-modal-body">
+
+                            <div className="pf-modal-grid">
                                 <div className="pf-modal-field">
-                                    <label>Tên kỹ năng</label>
-                                    <input 
-                                        type="text" 
-                                        className="pf-input" 
-                                        value={skillName} 
-                                        onChange={e => setSkillName(e.target.value)} 
-                                        placeholder="Nhập tên kỹ năng (vd: AutoCAD, Thuyết trình...)" 
+                                    <label>Họ và tên</label>
+                                    <input type="text" value={form.fullName} onChange={e => setForm({ ...form, fullName: e.target.value })} placeholder="Nguyễn Lê Trường" />
+                                </div>
+                                <div className="pf-modal-field">
+                                    <label>Mã sinh viên</label>
+                                    <input type="text" value={form.studentIdStr} onChange={e => setForm({ ...form, studentIdStr: e.target.value })} placeholder="19KT123" />
+                                </div>
+                                <div className="pf-modal-field">
+                                    <label>Lớp</label>
+                                    <input type="text" value={form.studentClass} onChange={e => setForm({ ...form, studentClass: e.target.value })} placeholder="26kt6" />
+                                </div>
+                                <div className="pf-modal-field">
+                                    <label>Chuyên ngành</label>
+                                    <input type="text" value={form.major} onChange={e => setForm({ ...form, major: e.target.value })} placeholder="Kiến trúc" />
+                                </div>
+                            </div>
+
+                            <div className="pf-modal-field full-width">
+                                <label>Giới thiệu bản thân</label>
+                                <div className="pf-quill-wrapper">
+                                    <ReactQuill
+                                        theme="snow"
+                                        value={form.bio}
+                                        onChange={val => setForm({ ...form, bio: val })}
+                                        modules={QUILL_MODULES}
                                     />
                                 </div>
                             </div>
-                            <div className="pf-modal-footer">
-                                <button className="pf-btn-save-all" onClick={handleAddSkill} disabled={saving}>Thêm kỹ năng</button>
-                            </div>
-                        </div>
-                    </div>
-                )}
 
-                {/* --- PROJECT FORM MODAL --- */}
-                {showProjectForm && (
-                    <div className="pf-modal-overlay">
-                        <div className="pf-modal-container">
-                            <div className="pf-modal-header">
-                                <h3>Thêm dự án mới</h3>
-                                <button className="pf-modal-close" onClick={() => setShowProjectForm(false)}>&times;</button>
-                            </div>
-                            <div className="pf-modal-body">
+                            <div className="pf-modal-grid">
                                 <div className="pf-modal-field">
-                                    <label>Tên dự án</label>
-                                    <input type="text" value={projectForm.name} onChange={e => setProjectForm({...projectForm, name: e.target.value})} placeholder="Tên dự án, Đồ án, Công trình..." />
-                                </div>
-                                <div className="pf-modal-grid">
-                                    <div className="pf-modal-field">
-                                        <label>Vai trò / Vị trí</label>
-                                        <input type="text" value={projectForm.role} onChange={e => setProjectForm({...projectForm, role: e.target.value})} placeholder="Kiến trúc sư, Quản lý dự án, Developer..." />
-                                    </div>
-                                    <div className="pf-modal-field">
-                                        <label>Công cụ / Kỹ năng sử dụng</label>
-                                        <input type="text" value={projectForm.technologies} onChange={e => setProjectForm({...projectForm, technologies: e.target.value})} placeholder="AutoCAD, React, Excel, Photoshop..." />
-                                    </div>
-                                </div>
-                                <div className="pf-modal-grid">
-                                    <div className="pf-modal-field">
-                                        <label>Ngày bắt đầu</label>
-                                        <input type="date" value={projectForm.startDate} onChange={e => setProjectForm({...projectForm, startDate: e.target.value})} />
-                                    </div>
-                                    <div className="pf-modal-field">
-                                        <label>Ngày kết thúc (Để trống nếu đang làm)</label>
-                                        <input type="date" value={projectForm.endDate} onChange={e => setProjectForm({...projectForm, endDate: e.target.value})} />
-                                    </div>
+                                    <label>Email</label>
+                                    <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} placeholder="example@gmail.com" />
                                 </div>
                                 <div className="pf-modal-field">
-                                    <label>Mô tả ngắn</label>
-                                    <textarea rows="2" value={projectForm.description} onChange={e => setProjectForm({...projectForm, description: e.target.value})} placeholder="Mô tả tóm tắt về dự án..."></textarea>
-                                </div>
-                                <div className="pf-modal-field" style={{marginBottom: '1.5rem'}}>
-                                    <label>Chi tiết công việc / Thành tựu</label>
-                                    <textarea rows="4" value={projectForm.responsibilities} onChange={e => setProjectForm({...projectForm, responsibilities: e.target.value})} placeholder="- Thiết kế bản vẽ 3D&#10;- Phân tích dữ liệu tài chính&#10;- Phát triển tính năng..."></textarea>
-                                </div>
-                                <div className="pf-modal-grid">
-                                    <div className="pf-modal-field">
-                                        <label>Link tài liệu / Mã nguồn (Tùy chọn)</label>
-                                        <input type="text" value={projectForm.repositoryUrl} onChange={e => setProjectForm({...projectForm, repositoryUrl: e.target.value})} placeholder="Google Drive, GitHub..." />
-                                    </div>
-                                    <div className="pf-modal-field">
-                                        <label>Link sản phẩm / Demo (Tùy chọn)</label>
-                                        <input type="text" value={projectForm.demoUrl} onChange={e => setProjectForm({...projectForm, demoUrl: e.target.value})} placeholder="Behance, YouTube, Website..." />
-                                    </div>
+                                    <label>Số điện thoại</label>
+                                    <input type="text" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="0901234567" />
                                 </div>
                             </div>
-                            <div className="pf-modal-footer">
-                                <button className="pf-btn-save-all" onClick={handleAddProject} disabled={saving}>Lưu dự án</button>
+
+                            <div className="pf-modal-field full-width">
+                                <label>Địa chỉ</label>
+                                <input type="text" value={form.address} onChange={e => setForm({ ...form, address: e.target.value })} placeholder="Số nhà, Tên đường, Quận/Huyện..." />
+                            </div>
+
+                            <div className="pf-modal-grid-3">
+                                <div className="pf-modal-field">
+                                    <label>GPA</label>
+                                    <input type="number" step="0.1" value={form.gpa} onChange={e => setForm({ ...form, gpa: e.target.value })} placeholder="4.0" />
+                                </div>
+                                <div className="pf-modal-field">
+                                    <label>Website / Portfolio URL</label>
+                                    <input type="text" value={form.githubUrl} onChange={e => setForm({ ...form, githubUrl: e.target.value })} placeholder="fivecore.edu.vn" />
+                                </div>
+                                <div className="pf-modal-field">
+                                    <label>Facebook / LinkedIn</label>
+                                    <input type="text" value={form.linkedinUrl} onChange={e => setForm({ ...form, linkedinUrl: e.target.value })} placeholder="linkedin.com/in/user" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                )}
 
-                {/* --- CV SELECTOR MODAL --- */}
-                {showCVSelector && (
-                    <div className="pf-modal-overlay">
-                        <div className="pf-modal-container">
-                            <div className="pf-modal-header">
-                                <h3>Chọn CV để hiển thị</h3>
-                                <button className="pf-modal-close" onClick={() => setShowCVSelector(false)}>
-                                    <span className="material-symbols-outlined">close</span>
-                                </button>
+                        <div className="pf-modal-footer">
+                            <button className="pf-btn-save-all" onClick={handleSave} disabled={saving}>
+                                {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showSkillForm && (
+                <div className="pf-modal-overlay">
+                    <div className="pf-modal-container small">
+                        <div className="pf-modal-header">
+                            <h3>Thêm kỹ năng chuyên môn</h3>
+                            <button className="pf-modal-close" onClick={() => setShowSkillForm(false)}>&times;</button>
+                        </div>
+                        <div className="pf-modal-body">
+                            <div className="pf-modal-field">
+                                <label>Tên kỹ năng</label>
+                                <input
+                                    type="text"
+                                    className="pf-input"
+                                    value={skillName}
+                                    onChange={e => setSkillName(e.target.value)}
+                                    placeholder="Nhập tên kỹ năng (vd: AutoCAD, Thuyết trình...)"
+                                />
                             </div>
-                            <div className="pf-modal-body">
-                                <p className="pf-text-muted" style={{ marginBottom: '1.5rem' }}>
-                                    Chọn một bản CV từ danh sách bạn đã tạo để đính kèm vào hồ sơ hiển thị cho nhà tuyển dụng.
-                                </p>
-                                <div className="pf-local-cv-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1rem' }}>
-                                    {localCVs.length > 0 ? localCVs.map(cv => (
-                                        <div key={cv.id} className="pf-local-cv-card" style={{ 
-                                            border: '1px solid #eee', 
-                                            borderRadius: '12px', 
-                                            padding: '1rem',
-                                            cursor: 'pointer',
-                                            transition: 'all 0.2s',
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            gap: '0.5rem'
-                                        }}
+                        </div>
+                        <div className="pf-modal-footer">
+                            <button className="pf-btn-save-all" onClick={handleAddSkill} disabled={saving}>Thêm kỹ năng</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* --- PROJECT FORM MODAL --- */}
+            {showProjectForm && (
+                <div className="pf-modal-overlay">
+                    <div className="pf-modal-container">
+                        <div className="pf-modal-header">
+                            <h3>Thêm dự án mới</h3>
+                            <button className="pf-modal-close" onClick={() => setShowProjectForm(false)}>&times;</button>
+                        </div>
+                        <div className="pf-modal-body">
+                            <div className="pf-modal-field">
+                                <label>Tên dự án</label>
+                                <input type="text" value={projectForm.name} onChange={e => setProjectForm({ ...projectForm, name: e.target.value })} placeholder="Tên dự án, Đồ án, Công trình..." />
+                            </div>
+                            <div className="pf-modal-grid">
+                                <div className="pf-modal-field">
+                                    <label>Vai trò / Vị trí</label>
+                                    <input type="text" value={projectForm.role} onChange={e => setProjectForm({ ...projectForm, role: e.target.value })} placeholder="Kiến trúc sư, Quản lý dự án, Developer..." />
+                                </div>
+                                <div className="pf-modal-field">
+                                    <label>Công cụ / Kỹ năng sử dụng</label>
+                                    <input type="text" value={projectForm.technologies} onChange={e => setProjectForm({ ...projectForm, technologies: e.target.value })} placeholder="AutoCAD, React, Excel, Photoshop..." />
+                                </div>
+                            </div>
+                            <div className="pf-modal-grid">
+                                <div className="pf-modal-field">
+                                    <label>Ngày bắt đầu</label>
+                                    <input type="date" value={projectForm.startDate} onChange={e => setProjectForm({ ...projectForm, startDate: e.target.value })} />
+                                </div>
+                                <div className="pf-modal-field">
+                                    <label>Ngày kết thúc (Để trống nếu đang làm)</label>
+                                    <input type="date" value={projectForm.endDate} onChange={e => setProjectForm({ ...projectForm, endDate: e.target.value })} />
+                                </div>
+                            </div>
+                            <div className="pf-modal-field">
+                                <label>Mô tả ngắn</label>
+                                <textarea rows="2" value={projectForm.description} onChange={e => setProjectForm({ ...projectForm, description: e.target.value })} placeholder="Mô tả tóm tắt về dự án..."></textarea>
+                            </div>
+                            <div className="pf-modal-field" style={{ marginBottom: '1.5rem' }}>
+                                <label>Chi tiết công việc / Thành tựu</label>
+                                <textarea rows="4" value={projectForm.responsibilities} onChange={e => setProjectForm({ ...projectForm, responsibilities: e.target.value })} placeholder="- Thiết kế bản vẽ 3D&#10;- Phân tích dữ liệu tài chính&#10;- Phát triển tính năng..."></textarea>
+                            </div>
+                            <div className="pf-modal-grid">
+                                <div className="pf-modal-field">
+                                    <label>Link tài liệu / Mã nguồn (Tùy chọn)</label>
+                                    <input type="text" value={projectForm.repositoryUrl} onChange={e => setProjectForm({ ...projectForm, repositoryUrl: e.target.value })} placeholder="Google Drive, GitHub..." />
+                                </div>
+                                <div className="pf-modal-field">
+                                    <label>Link sản phẩm / Demo (Tùy chọn)</label>
+                                    <input type="text" value={projectForm.demoUrl} onChange={e => setProjectForm({ ...projectForm, demoUrl: e.target.value })} placeholder="Behance, YouTube, Website..." />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="pf-modal-footer">
+                            <button className="pf-btn-save-all" onClick={handleAddProject} disabled={saving}>Lưu dự án</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* --- CV SELECTOR MODAL --- */}
+            {showCVSelector && (
+                <div className="pf-modal-overlay">
+                    <div className="pf-modal-container">
+                        <div className="pf-modal-header">
+                            <h3>Chọn CV để hiển thị</h3>
+                            <button className="pf-modal-close" onClick={() => setShowCVSelector(false)}>
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        <div className="pf-modal-body">
+                            <p className="pf-text-muted" style={{ marginBottom: '1.5rem' }}>
+                                Chọn một bản CV từ danh sách bạn đã tạo để đính kèm vào hồ sơ hiển thị cho nhà tuyển dụng.
+                            </p>
+                            <div className="pf-local-cv-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1rem' }}>
+                                {localCVs.length > 0 ? localCVs.map(cv => (
+                                    <div key={cv.id} className="pf-local-cv-card" style={{
+                                        border: '1px solid #eee',
+                                        borderRadius: '12px',
+                                        padding: '1rem',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '0.5rem'
+                                    }}
                                         onClick={() => handleSelectLocalCV(cv)}
                                         onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--dau-primary)'}
                                         onMouseLeave={(e) => e.currentTarget.style.borderColor = '#eee'}
-                                        >
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                                <div style={{ 
-                                                    width: '40px', 
-                                                    height: '40px', 
-                                                    borderRadius: '8px', 
-                                                    background: 'rgba(var(--dau-primary-rgb), 0.1)',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    color: 'var(--dau-primary)'
-                                                }}>
-                                                    <span className="material-symbols-outlined">description</span>
-                                                </div>
-                                                <div style={{ flex: 1, minWidth: 0 }}>
-                                                    <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cv.title}</h4>
-                                                    <span style={{ fontSize: '0.75rem', color: '#888' }}>
-                                                        Cập nhật: {cv.updatedAt ? new Date(cv.updatedAt).toLocaleDateString('vi-VN') : 'n/a'}
-                                                    </span>
-                                                </div>
+                                    >
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                            <div style={{
+                                                width: '40px',
+                                                height: '40px',
+                                                borderRadius: '8px',
+                                                background: 'rgba(var(--dau-primary-rgb), 0.1)',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                color: 'var(--dau-primary)'
+                                            }}>
+                                                <span className="material-symbols-outlined">description</span>
                                             </div>
-                                            <button className="pf-btn-dau small" style={{ width: '100%', marginTop: '0.5rem', padding: '0.4rem' }}>
-                                                Chọn bản này
-                                            </button>
+                                            <div style={{ flex: 1, minWidth: 0 }}>
+                                                <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cv.title}</h4>
+                                                <span style={{ fontSize: '0.75rem', color: '#888' }}>
+                                                    Cập nhật: {cv.updatedAt ? new Date(cv.updatedAt).toLocaleDateString('vi-VN') : 'n/a'}
+                                                </span>
+                                            </div>
                                         </div>
-                                    )) : (
-                                        <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '2rem' }}>
-                                            <span className="material-symbols-outlined" style={{ fontSize: '48px', color: '#ddd' }}>no_sim</span>
-                                            <p style={{ marginTop: '1rem', color: '#888' }}>Bạn chưa có bản CV nào được tạo trực tuyến.</p>
-                                            <Link to="/student/cv-management" className="pf-btn-text">Đến trang quản lý CV</Link>
-                                        </div>
-                                    )}
-                                </div>
+                                        <button className="pf-btn-dau small" style={{ width: '100%', marginTop: '0.5rem', padding: '0.4rem' }}>
+                                            Chọn bản này
+                                        </button>
+                                    </div>
+                                )) : (
+                                    <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '2rem' }}>
+                                        <span className="material-symbols-outlined" style={{ fontSize: '48px', color: '#ddd' }}>no_sim</span>
+                                        <p style={{ marginTop: '1rem', color: '#888' }}>Bạn chưa có bản CV nào được tạo trực tuyến.</p>
+                                        <Link to="/student/cv-management" className="pf-btn-text">Đến trang quản lý CV</Link>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
-                )}
+                </div>
+            )}
         </div>
     );
 };

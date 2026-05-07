@@ -360,28 +360,6 @@ public class AdminService {
                     .studentClass(student.getStudentClass())
                     .bio(student.getBio())
                     .avatarUrl(student.getAvatarUrl())
-                    .educations(student.getEducations().stream()
-                            .map(e -> com.fivecore.jobportal.dto.StudentProfileResponse.EducationDto.builder()
-                                    .id(e.getId())
-                                    .schoolName(e.getSchoolName())
-                                    .major(e.getMajor())
-                                    .degree(e.getDegree())
-                                    .startDate(e.getStartDate())
-                                    .endDate(e.getEndDate())
-                                    .description(e.getDescription())
-                                    .build())
-                            .collect(Collectors.toList()))
-                    .certifications(student.getCertifications().stream()
-                            .map(c -> com.fivecore.jobportal.dto.StudentProfileResponse.CertificationDto.builder()
-                                    .id(c.getId())
-                                    .name(c.getName())
-                                    .issuer(c.getIssuer())
-                                    .issueDate(c.getIssueDate() != null ? c.getIssueDate().toString() : null)
-                                    .expirationDate(
-                                            c.getExpirationDate() != null ? c.getExpirationDate().toString() : null)
-                                    .certificateUrl(c.getCertificateUrl())
-                                    .build())
-                            .collect(Collectors.toList()))
                     .build());
         } else if (user.getRole() == com.fivecore.jobportal.entity.User.Role.company && user.getCompany() != null) {
             com.fivecore.jobportal.entity.Company company = user.getCompany();

@@ -3,7 +3,6 @@ package com.fivecore.jobportal.controller.api.student;
 import com.fivecore.jobportal.dto.*;
 import com.fivecore.jobportal.entity.*;
 import com.fivecore.jobportal.repository.UserRepository;
-import com.fivecore.jobportal.service.auth.CertificationService;
 import com.fivecore.jobportal.service.auth.ProfileService;
 import com.fivecore.jobportal.service.common.StorageService;
 import com.fivecore.jobportal.service.interaction.PdfExportService;
@@ -32,7 +31,6 @@ public class StudentProfileRestController {
     private final PdfExportService pdfExportService;
     private final StorageService storageService;
     private final UserRepository userRepository;
-    private final CertificationService certificationService;
     private final StudentProfileMapper studentProfileMapper;
 
     private Integer getCurrentStudentId(Authentication authentication) {
@@ -66,57 +64,6 @@ public class StudentProfileRestController {
             log.error("Lỗi khi cập nhật hồ sơ: {}", e.getMessage(), e);
             return ResponseEntity.status(500)
                     .body(ApiResponse.error("Lỗi khi cập nhật hồ sơ: " + e.getMessage(), "SERVER_ERROR"));
-        }
-    }
-
-    /* ---- Education ---- */
-    @PostMapping("/educations")
-    public ResponseEntity<ApiResponse<Object>> addEducation(@Valid @RequestBody EducationRequest request,
-            Authentication authentication) {
-        try {
-            Integer studentId = getCurrentStudentId(authentication);
-            if (studentId == null) {
-                return ResponseEntity.status(401).body(ApiResponse.error("Không tìm thấy sinh viên", "UNAUTHORIZED"));
-            }
-            profileService.addEducation(studentId, Education.builder()
-                    .schoolName(request.getSchoolName())
-                    .major(request.getMajor())
-                    .startDate(request.getStartDate())
-                    .endDate(request.getEndDate())
-                    .description(request.getDescription())
-                    .build());
-            return ResponseEntity.ok(ApiResponse.success("Thêm học vấn thành công", null));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body(ApiResponse.error(e.getMessage(), "BAD_REQUEST"));
-        } catch (Exception e) {
-            log.error("Lỗi khi thêm học vấn: {}", e.getMessage(), e);
-            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi thêm học vấn: " + e.getMessage(), "SERVER_ERROR"));
-        }
-    }
-
-    @PutMapping("/educations/{id}")
-    public ResponseEntity<ApiResponse<Object>> updateEducation(@PathVariable Integer id,
-            @Valid @RequestBody EducationRequest request, Authentication authentication) {
-        try {
-            Integer studentId = getCurrentStudentId(authentication);
-            profileService.updateEducation(id, studentId, request);
-            return ResponseEntity.ok(ApiResponse.success("Cập nhật học vấn thành công", null));
-        } catch (Exception e) {
-            log.error("Lỗi khi cập nhật học vấn: {}", e.getMessage(), e);
-            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi cập nhật học vấn: " + e.getMessage(), "SERVER_ERROR"));
-        }
-    }
-
-    @DeleteMapping("/educations/{id}")
-    public ResponseEntity<ApiResponse<Object>> deleteEducation(@PathVariable Integer id,
-            Authentication authentication) {
-        try {
-            Integer studentId = getCurrentStudentId(authentication);
-            profileService.deleteEducation(id, studentId);
-            return ResponseEntity.ok(ApiResponse.success("Xóa học vấn thành công", null));
-        } catch (Exception e) {
-            log.error("Lỗi khi xóa học vấn: {}", e.getMessage(), e);
-            return ResponseEntity.status(500).body(ApiResponse.error("Lỗi khi xóa học vấn: " + e.getMessage(), "SERVER_ERROR"));
         }
     }
 
@@ -169,39 +116,6 @@ public class StudentProfileRestController {
         pdfExportService.exportProfileToPdf(studentId, response);
     }
 
-    /* ---- Certifications ---- */
-    @PostMapping("/certifications")
-    public ResponseEntity<ApiResponse<Object>> addCertification(@RequestBody CertificationRequest request, Authentication authentication) {
-        Integer studentId = getCurrentStudentId(authentication);
-        certificationService.addCertification(studentId, Certification.builder()
-                .name(request.getName())
-                .issuer(request.getIssuer())
-                .issueDate(request.getIssueDate())
-                .expirationDate(request.getExpirationDate())
-                .certificateUrl(request.getCertificateUrl())
-                .build());
-        return ResponseEntity.ok(ApiResponse.success("Thêm chứng chỉ thành công", null));
-    }
-
-    @PutMapping("/certifications/{id}")
-    public ResponseEntity<ApiResponse<Object>> updateCertification(@PathVariable Integer id, @RequestBody CertificationRequest request, Authentication authentication) {
-        Integer studentId = getCurrentStudentId(authentication);
-        certificationService.updateCertification(id, studentId, Certification.builder()
-                .name(request.getName())
-                .issuer(request.getIssuer())
-                .issueDate(request.getIssueDate())
-                .expirationDate(request.getExpirationDate())
-                .certificateUrl(request.getCertificateUrl())
-                .build());
-        return ResponseEntity.ok(ApiResponse.success("Cập nhật chứng chỉ thành công", null));
-    }
-
-    @DeleteMapping("/certifications/{id}")
-    public ResponseEntity<ApiResponse<Object>> deleteCertification(@PathVariable Integer id, Authentication authentication) {
-        Integer studentId = getCurrentStudentId(authentication);
-        certificationService.deleteCertification(id, studentId);
-        return ResponseEntity.ok(ApiResponse.success("Xóa chứng chỉ thành công", null));
-    }
 
     /* ---- Skills (via cvData JSON) ---- */
     @PostMapping("/skills")

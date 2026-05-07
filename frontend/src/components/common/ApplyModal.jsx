@@ -97,6 +97,7 @@ const ApplyModal = ({ job, profile, onClose, onApplySuccess }) => {
     };
 
     const handleSubmit = async (e) => {
+        // chặn tải lại trang
         e.preventDefault();
         if (!useOnlineCv && !cvFile) {
             toast.error("Vui lòng đính kèm hồ sơ / CV");

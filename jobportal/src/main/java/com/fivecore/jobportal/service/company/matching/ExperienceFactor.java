@@ -1,6 +1,5 @@
 package com.fivecore.jobportal.service.company.matching;
 
-import com.fivecore.jobportal.entity.Experience;
 import com.fivecore.jobportal.entity.Job;
 import com.fivecore.jobportal.entity.Student;
 import org.springframework.stereotype.Component;
@@ -20,18 +19,39 @@ public class ExperienceFactor implements ScoringFactor {
     @Override
     public double calculate(Student student, Job job, Map<String, Object> details) {
         double totalYears = 0;
-        if (student.getExperiences() != null) {
-            for (Experience exp : student.getExperiences()) {
-                LocalDate start = exp.getStartDate();
-                LocalDate end = exp.getEndDate() != null ? exp.getEndDate() : LocalDate.now();
-                if (start != null) {
-                    totalYears += ChronoUnit.DAYS.between(start, end) / 365.0;
+        String cvData = student.getCvData();
+        boolean hasExperiences = false;
+
+        if (cvData != null && !cvData.isBlank()) {
+            try {
+                com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                com.fasterxml.jackson.databind.JsonNode root = mapper.readTree(cvData);
+                com.fasterxml.jackson.databind.JsonNode expNode = root.get("experiences");
+                
+                if (expNode != null && expNode.isArray() && expNode.size() > 0) {
+                    hasExperiences = true;
+                    for (com.fasterxml.jackson.databind.JsonNode node : expNode) {
+                        String startStr = node.path("startDate").asText();
+                        String endStr = node.path("endDate").asText();
+                        
+                        try {
+                            LocalDate start = !startStr.isBlank() ? LocalDate.parse(startStr.substring(0, 10)) : null;
+                            LocalDate end = !endStr.isBlank() ? LocalDate.parse(endStr.substring(0, 10)) : LocalDate.now();
+                            if (start != null) {
+                                totalYears += ChronoUnit.DAYS.between(start, end) / 365.0;
+                            }
+                        } catch (Exception e) {
+                            // Cố gắng lấy số năm trực tiếp nếu có trường years
+                            totalYears += node.path("years").asDouble(0);
+                        }
+                    }
                 }
+            } catch (Exception e) {
+                // Ignore parsing errors
             }
         }
 
         int requiredYears = parseRequiredExperience(job.getExperience());
-        boolean hasExperiences = student.getExperiences() != null && !student.getExperiences().isEmpty();
         if (!hasExperiences) {
             details.put("is_missing_data", true);
             details.put("experience_years", 0.0);
@@ -42,24 +62,12 @@ public class ExperienceFactor implements ScoringFactor {
 
         double score;
         if (requiredYears == 0) {
-            score = 1.0; // Không yêu cầu kinh nghiệm
+            score = 1.0;
         } else {
             if (totalYears >= requiredYears) score = 1.0;
             else if (totalYears >= requiredYears * 0.7) score = 0.7;
             else if (totalYears > 0) score = 0.3;
             else score = 0.0;
-        }
-
-        // Kiểm tra độ tương đồng vị trí (Bonus)
-        boolean roleMatch = student.getExperiences() != null && student.getExperiences().stream()
-                .anyMatch(exp -> {
-                    String title = exp.getJobTitle().toLowerCase();
-                    String jobTitle = job.getTitle().toLowerCase();
-                    return title.contains(jobTitle) || jobTitle.contains(title);
-                });
-        
-        if (roleMatch && score < 1.0) {
-            score = Math.min(1.0, score + 0.2); // Cộng thêm điểm nếu đã từng làm vị trí tương đương
         }
 
         details.put("experience_years", Math.round(totalYears * 10) / 10.0);

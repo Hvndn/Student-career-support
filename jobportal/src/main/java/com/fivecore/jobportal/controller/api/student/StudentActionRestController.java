@@ -63,7 +63,6 @@ public class StudentActionRestController {
         Integer studentId = getCurrentStudentId(authentication);
         if (studentId == null)
             return ResponseEntity.status(403).body(ApiResponse.error("Không có quyền", "FORBIDDEN"));
-
         try {
             log.info("Ứng tuyển Job ID: {}, cvData length: {}, hasFile: {}, cvName: {}", jobId, 
                 cvData != null ? cvData.length() : "null", 

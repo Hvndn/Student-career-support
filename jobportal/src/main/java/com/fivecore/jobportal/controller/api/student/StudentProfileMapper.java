@@ -35,9 +35,6 @@ public class StudentProfileMapper {
                 .resumeUrl(student.getResumeUrl())
                 .githubUrl(student.getGithubUrl())
                 .linkedinUrl(student.getLinkedinUrl())
-                .educations(mapEducations(student.getEducations()))
-                .certifications(mapCertifications(student.getCertifications()))
-                .experiences(mapExperiencesFromJson(student.getCvData()))
                 .projects(mapProjects(student.getProjects()))
                 .skills(mapSkillsFromJson(student.getCvData()))
                 .cvData(student.getCvData())
@@ -60,24 +57,6 @@ public class StudentProfileMapper {
                 .build()).collect(Collectors.toList());
     }
 
-    private List<StudentProfileResponse.ExperienceDto> mapExperiencesFromJson(String json) {
-        List<StudentProfileResponse.ExperienceDto> experiences = new ArrayList<>();
-        if (json == null || json.isBlank()) return experiences;
-        try {
-            JsonNode root = objectMapper.readTree(json);
-            JsonNode expNode = root.get("experiences");
-            if (expNode != null && expNode.isArray()) {
-                for (JsonNode node : expNode) {
-                    experiences.add(StudentProfileResponse.ExperienceDto.builder()
-                            .jobTitle(node.path("jobTitle").asText())
-                            .companyName(node.path("companyName").asText())
-                            .description(node.path("description").asText())
-                            .build());
-                }
-            }
-        } catch (Exception e) { /* ignore */ }
-        return experiences;
-    }
 
     private List<StudentProfileResponse.SkillDto> mapSkillsFromJson(String json) {
         List<StudentProfileResponse.SkillDto> skills = new ArrayList<>();
@@ -99,28 +78,5 @@ public class StudentProfileMapper {
         return skills;
     }
 
-    private List<StudentProfileResponse.EducationDto> mapEducations(List<Education> edus) {
-        if (edus == null) return List.of();
-        return edus.stream().map(e -> StudentProfileResponse.EducationDto.builder()
-                .id(e.getId())
-                .schoolName(e.getSchoolName())
-                .major(e.getMajor())
-                .degree(e.getDegree())
-                .startDate(e.getStartDate())
-                .endDate(e.getEndDate())
-                .description(e.getDescription())
-                .build()).collect(Collectors.toList());
-    }
 
-    private List<StudentProfileResponse.CertificationDto> mapCertifications(List<Certification> certs) {
-        if (certs == null) return List.of();
-        return certs.stream().map(c -> StudentProfileResponse.CertificationDto.builder()
-                .id(c.getId())
-                .name(c.getName())
-                .issuer(c.getIssuer())
-                .issueDate(c.getIssueDate() != null ? c.getIssueDate().toString() : null)
-                .expirationDate(c.getExpirationDate() != null ? c.getExpirationDate().toString() : null)
-                .certificateUrl(c.getCertificateUrl())
-                .build()).collect(Collectors.toList());
-    }
 }

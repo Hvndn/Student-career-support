@@ -71,22 +71,6 @@ public class PdfExportService {
         document.add(new Paragraph("Giới thiệu: " + cleanBio, fontBody));
         document.add(new Paragraph("\n"));
 
-        // Educations
-        document.add(new Paragraph("HỌC VẤN", fontSubtitle));
-        var educations = profileService.getEducations(studentId);
-        if (educations.isEmpty()) {
-            document.add(new Paragraph("- (Chưa có thông tin)", fontBody));
-        } else {
-            educations.forEach(edu -> {
-                try {
-                    String eduInfo = "- " + edu.getSchoolName() + " | "
-                            + (edu.getDegree() != null ? edu.getDegree() + " - " : "") + edu.getMajor();
-                    document.add(new Paragraph(eduInfo + " (" + edu.getStartDate() + " - "
-                            + (edu.getEndDate() != null ? edu.getEndDate() : "Nay") + ")", fontBody));
-                } catch (Exception e) { }
-            });
-        }
-        document.add(new Paragraph("\n"));
 
         // Projects
         document.add(new Paragraph("DỰ ÁN CÁ NHÂN", fontSubtitle));

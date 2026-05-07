@@ -1,8 +1,6 @@
 package com.fivecore.jobportal.service.auth;
 
 import com.fivecore.jobportal.entity.Student;
-import com.fivecore.jobportal.entity.Education;
-import com.fivecore.jobportal.repository.EducationRepository;
 import com.fivecore.jobportal.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,16 +19,9 @@ import java.util.List;
 public class ProfileService {
 
     private final StudentRepository studentRepository;
-    private final EducationRepository educationRepository;
     private final com.fivecore.jobportal.repository.SkillRepository skillRepository;
     private final com.fivecore.jobportal.repository.ProjectRepository projectRepository;
 
-    /**
-     * Lấy danh sách Học vấn của sinh viên.
-     */
-    public List<Education> getEducations(Integer studentId) {
-        return educationRepository.findByStudentIdOrderByStartDateDesc(studentId);
-    }
 
     /**
      * Cập nhật thông tin hồ sơ sinh viên (US-011).
@@ -83,44 +74,6 @@ public class ProfileService {
         studentRepository.save(student);
     }
 
-    /** Thêm Học vấn mới. */
-    @Transactional
-    public Education addEducation(Integer studentId, Education education) {
-        if (education.getEndDate() != null && education.getEndDate().isBefore(education.getStartDate())) {
-            throw new IllegalArgumentException("Thời gian kết thúc không được nhỏ hơn thời gian bắt đầu");
-        }
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy sinh viên"));
-        education.setStudent(student);
-        return educationRepository.save(education);
-    }
-
-    /** Cập nhật Học vấn cụ thể. */
-    @Transactional
-    public void updateEducation(Integer id, Integer studentId, com.fivecore.jobportal.dto.EducationRequest request) {
-        Education edu = educationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy học vấn"));
-        if (!edu.getStudent().getId().equals(studentId)) {
-            throw new RuntimeException("Bạn không có quyền sửa mục này");
-        }
-        edu.setSchoolName(request.getSchoolName());
-        edu.setMajor(request.getMajor());
-        edu.setStartDate(request.getStartDate());
-        edu.setEndDate(request.getEndDate());
-        edu.setDescription(request.getDescription());
-        educationRepository.save(edu);
-    }
-
-    /** Xóa Học vấn. */
-    @Transactional
-    public void deleteEducation(Integer id, Integer studentId) {
-        Education edu = educationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy thông tin học vấn"));
-        if (!edu.getStudent().getId().equals(studentId)) {
-            throw new RuntimeException("Bạn không có quyền xóa mục này");
-        }
-        educationRepository.delete(edu);
-    }
 
     /** Quản lý Kỹ năng trong cvData (JSON). */
     @Transactional
