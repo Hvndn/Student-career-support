@@ -155,4 +155,27 @@ public class ProfileService {
         }
         projectRepository.delete(project);
     }
+
+    @Transactional
+    public void updateProject(Integer projectId, Integer studentId, com.fivecore.jobportal.entity.Project updatedProject) {
+        com.fivecore.jobportal.entity.Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy dự án"));
+        
+        if (!project.getStudent().getId().equals(studentId)) {
+            throw new RuntimeException("Bạn không có quyền chỉnh sửa mục này");
+        }
+
+        project.setName(updatedProject.getName());
+        project.setTitle(updatedProject.getName());
+        project.setRole(updatedProject.getRole());
+        project.setTechnologies(updatedProject.getTechnologies());
+        project.setStartDate(updatedProject.getStartDate());
+        project.setEndDate(updatedProject.getEndDate());
+        project.setDescription(updatedProject.getDescription());
+        project.setResponsibilities(updatedProject.getResponsibilities());
+        project.setRepositoryUrl(updatedProject.getRepositoryUrl());
+        project.setDemoUrl(updatedProject.getDemoUrl());
+
+        projectRepository.save(project);
+    }
 }

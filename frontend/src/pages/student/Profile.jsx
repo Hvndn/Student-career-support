@@ -22,6 +22,8 @@ const Profile = () => {
     const [localCVs, setLocalCVs] = useState([]);
     const [showProjectForm, setShowProjectForm] = useState(false);
     const [projectForm, setProjectForm] = useState({ name: '', role: '', technologies: '', startDate: '', endDate: '', description: '', responsibilities: '', repositoryUrl: '', demoUrl: '' });
+    const [isEditingProject, setIsEditingProject] = useState(false);
+    const [editingProjectId, setEditingProjectId] = useState(null);
     const [skillName, setSkillName] = useState('');
     const [skillLevel, setSkillLevel] = useState('intermediate');
 
@@ -177,16 +179,44 @@ const Profile = () => {
         } catch { flash('❌ Lỗi khi xóa.'); }
     };
 
-    const handleAddProject = async () => {
+    const handleAddProjectRequest = () => {
+        setProjectForm({ name: '', role: '', technologies: '', startDate: '', endDate: '', description: '', responsibilities: '', repositoryUrl: '', demoUrl: '' });
+        setIsEditingProject(false);
+        setEditingProjectId(null);
+        setShowProjectForm(true);
+    };
+
+    const handleEditProjectRequest = (proj) => {
+        setProjectForm({
+            name: proj.name || '',
+            role: proj.role || '',
+            technologies: proj.technologies || '',
+            startDate: proj.startDate || '',
+            endDate: proj.endDate || '',
+            description: proj.description || '',
+            responsibilities: proj.responsibilities || '',
+            repositoryUrl: proj.repositoryUrl || '',
+            demoUrl: proj.demoUrl || ''
+        });
+        setIsEditingProject(true);
+        setEditingProjectId(proj.id);
+        setShowProjectForm(true);
+    };
+
+    const handleSaveProject = async () => {
         if (!projectForm.name) return flash('⚠️ Tên dự án là bắt buộc');
         setSaving(true);
         try {
-            await studentApi.addProject(projectForm);
+            if (isEditingProject) {
+                await studentApi.updateProject(editingProjectId, projectForm);
+                flash('✅ Đã cập nhật dự án!');
+            } else {
+                await studentApi.addProject(projectForm);
+                flash('✅ Đã thêm dự án!');
+            }
             await reload();
             setShowProjectForm(false);
-            setProjectForm({ name: '', role: '', technologies: '', startDate: '', endDate: '', description: '', responsibilities: '', repositoryUrl: '', demoUrl: '' });
-            flash('✅ Đã thêm dự án!');
-        } catch { flash('❌ Lỗi khi thêm.'); }
+        } catch { flash('❌ Lỗi khi lưu dự án.'); }
         setSaving(false);
     };
 
@@ -319,7 +349,7 @@ const Profile = () => {
                                 <span className="material-symbols-outlined">rocket_launch</span>
                                 Dự án cá nhân ({profile.projects?.length || 0})
                             </h3>
-                            <button className="pf-btn-text" onClick={() => setShowProjectForm(true)}>+ Thêm dự án</button>
+                            <button className="pf-btn-text" onClick={handleAddProjectRequest}>+ Thêm dự án</button>
                         </div>
                         <div className="pf-projects-list">
                             {profile.projects?.length > 0 ? profile.projects.map((proj, idx) => (
@@ -348,9 +378,14 @@ const Profile = () => {
                                             {proj.demoUrl && <a href={proj.demoUrl} target="_blank" rel="noreferrer">Sản phẩm / Demo</a>}
                                         </div>
                                     </div>
-                                    <button className="pf-btn-icon-delete" onClick={() => handleDeleteProject(proj.id)}>
-                                        <span className="material-symbols-outlined">delete</span>
-                                    </button>
+                                    <div className="pf-project-actions" style={{ display: 'flex', gap: '0.5rem' }}>
+                                        <button className="pf-btn-icon-edit" onClick={() => handleEditProjectRequest(proj)} style={{ background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer' }}>
+                                            <span className="material-symbols-outlined">edit</span>
+                                        </button>
+                                        <button className="pf-btn-icon-delete" onClick={() => handleDeleteProject(proj.id)}>
+                                            <span className="material-symbols-outlined">delete</span>
+                                        </button>
+                                    </div>
                                 </div>
                             )) : <p className="pf-text-muted">Chưa có dự án nào được thêm.</p>}
                         </div>
@@ -615,7 +650,7 @@ const Profile = () => {
                 <div className="pf-modal-overlay">
                     <div className="pf-modal-container">
                         <div className="pf-modal-header">
-                            <h3>Thêm dự án mới</h3>
+                            <h3>{isEditingProject ? 'Chỉnh sửa dự án' : 'Thêm dự án mới'}</h3>
                             <button className="pf-modal-close" onClick={() => setShowProjectForm(false)}>&times;</button>
                         </div>
                         <div className="pf-modal-body">
@@ -663,7 +698,9 @@ const Profile = () => {
                             </div>
                         </div>
                         <div className="pf-modal-footer">
-                            <button className="pf-btn-save-all" onClick={handleAddProject} disabled={saving}>Lưu dự án</button>
+                            <button className="pf-btn-save-all" onClick={handleSaveProject} disabled={saving}>
+                                {saving ? 'Đang lưu...' : (isEditingProject ? 'Cập nhật dự án' : 'Lưu dự án')}
+                            </button>
                         </div>
                     </div>
                 </div>

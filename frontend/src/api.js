@@ -86,6 +86,7 @@ export const studentApi = {
     deleteSkill: (id) => api.delete(`/student/profile/skills/${id}`),
     // Projects
     addProject: (data) => api.post('/student/profile/projects', data),
+    updateProject: (id, data) => api.put(`/student/profile/projects/${id}`, data),
     deleteProject: (id) => api.delete(`/student/profile/projects/${id}`),
     // Education
     addEducation: (data) => api.post('/student/profile/educations', data),

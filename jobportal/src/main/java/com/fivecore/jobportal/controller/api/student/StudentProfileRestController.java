@@ -148,4 +148,12 @@ public class StudentProfileRestController {
         profileService.deleteProject(id, studentId);
         return ResponseEntity.ok(ApiResponse.success("Xóa dự án thành công", null));
     }
+
+    @PutMapping("/projects/{id}")
+    public ResponseEntity<ApiResponse<Object>> updateProject(@PathVariable Integer id, 
+            @RequestBody com.fivecore.jobportal.entity.Project project, Authentication authentication) {
+        Integer studentId = getCurrentStudentId(authentication);
+        profileService.updateProject(id, studentId, project);
+        return ResponseEntity.ok(ApiResponse.success("Cập nhật dự án thành công", null));
+    }
 }
