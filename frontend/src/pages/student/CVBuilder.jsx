@@ -55,6 +55,7 @@ const F = ({ label, value = '', onChange, multi = false, ph = '' }) => (
 
 // ─── right panel content per section ──────────────────────────────────────
 const Editor = ({ section, cv, setCV, onAvatarClick }) => {
+  //key value
   const s = (k, v) => setCV({ ...cv, [k]: v });
   const upItem = (field, i, k, v) => { const a = [...(cv[field] || [])]; a[i] = { ...a[i], [k]: v }; s(field, a); };
   const addItem = (field, blank) => s(field, [...(cv[field] || []), { ...blank, id: Date.now() }]);

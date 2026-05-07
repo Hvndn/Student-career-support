@@ -4,6 +4,7 @@ import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import { studentApi } from '../../api';
 import { getImageUrl } from '../../utils/urlUtils';
+import ConfirmModal from '../../components/common/ConfirmModal';
 import '../../assets/css/student/Profile.css';
 
 const Profile = () => {
@@ -24,6 +25,10 @@ const Profile = () => {
     const [projectForm, setProjectForm] = useState({ name: '', role: '', technologies: '', startDate: '', endDate: '', description: '', responsibilities: '', repositoryUrl: '', demoUrl: '' });
     const [isEditingProject, setIsEditingProject] = useState(false);
     const [editingProjectId, setEditingProjectId] = useState(null);
+
+    // Custom Confirm Modal State
+    const [showConfirm, setShowConfirm] = useState(false);
+    const [confirmConfig, setConfirmConfig] = useState({ title: '', message: '', onConfirm: () => {} });
     const [skillName, setSkillName] = useState('');
     const [skillLevel, setSkillLevel] = useState('intermediate');
 
@@ -170,13 +175,20 @@ const Profile = () => {
         setSaving(false);
     };
 
-    const handleDeleteSkill = async (id) => {
-        if (!window.confirm('Xóa kỹ năng này?')) return;
-        try {
-            await studentApi.deleteSkill(id);
-            await reload();
-            flash('✅ Đã xóa kỹ năng.');
-        } catch { flash('❌ Lỗi khi xóa.'); }
+    const handleDeleteSkill = (id) => {
+        setConfirmConfig({
+            title: 'Xác nhận xóa kỹ năng',
+            message: 'Bạn có chắc chắn muốn xóa kỹ năng này khỏi hồ sơ?',
+            onConfirm: async () => {
+                try {
+                    await studentApi.deleteSkill(id);
+                    await reload();
+                    flash('✅ Đã xóa kỹ năng.');
+                } catch { flash('❌ Lỗi khi xóa.'); }
+                setShowConfirm(false);
+            }
+        });
+        setShowConfirm(true);
     };
 
     const handleAddProjectRequest = () => {
@@ -220,13 +232,20 @@ const Profile = () => {
         setSaving(false);
     };
 
-    const handleDeleteProject = async (id) => {
-        if (!window.confirm('Xóa dự án này?')) return;
-        try {
-            await studentApi.deleteProject(id);
-            await reload();
-            flash('✅ Đã xóa dự án.');
-        } catch { flash('❌ Lỗi khi xóa.'); }
+    const handleDeleteProject = (id) => {
+        setConfirmConfig({
+            title: 'Xác nhận xóa dự án',
+            message: 'Bạn có chắc chắn muốn xóa dự án này? Hành động này không thể hoàn tác.',
+            onConfirm: async () => {
+                try {
+                    await studentApi.deleteProject(id);
+                    await reload();
+                    flash('✅ Đã xóa dự án.');
+                } catch { flash('❌ Lỗi khi xóa.'); }
+                setShowConfirm(false);
+            }
+        });
+        setShowConfirm(true);
     };
 
     if (loading) return <div className="pf-loading">Đang tải hồ sơ...</div>;
@@ -772,6 +791,15 @@ const Profile = () => {
                     </div>
                 </div>
             )}
+            {/* Custom Confirm Modal */}
+            <ConfirmModal
+                show={showConfirm}
+                title={confirmConfig.title}
+                message={confirmConfig.message}
+                onConfirm={confirmConfig.onConfirm}
+                onCancel={() => setShowConfirm(false)}
+                type="danger"
+            />
         </div>
     );
 };
