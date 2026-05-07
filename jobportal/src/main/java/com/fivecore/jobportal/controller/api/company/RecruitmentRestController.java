@@ -35,7 +35,9 @@ public class RecruitmentRestController {
     private final NotificationService notificationService;
 
     /**
-     * API Gợi ý ứng viên phù hợp cho một công việc.
+     * [BE] API Gợi ý ứng viên phù hợp cho một công việc.
+     * Luồng: FE getRecommendations(jobId) -> BE getRecommendedCandidates -> CandidateMatchingService
+     * Logic: So khớp Kỹ năng ứng viên (student_skills) với Yêu cầu công việc (job.description/tags)
      */
     @GetMapping("/jobs/{jobId}/recommendations")
     public ResponseEntity<ApiResponse<Object>> getRecommendedCandidates(@PathVariable Integer jobId, Authentication authentication) {
@@ -91,7 +93,9 @@ public class RecruitmentRestController {
     }
 
     /**
-     * API Xem danh sách ứng viên cho một tin tuyển dụng.
+     * [BE] API Xem danh sách ứng viên cho một tin tuyển dụng.
+     * Luồng: FE getApplicants(jobId) -> BE getApplicants -> ApplicationService
+     * DB Query: SELECT * FROM applications WHERE job_id = ?
      */
     @GetMapping("/jobs/{jobId}/applicants")
     public ResponseEntity<ApiResponse<Object>> getApplicants(@PathVariable Integer jobId) {
@@ -100,7 +104,10 @@ public class RecruitmentRestController {
     }
 
     /**
-     * API Cập nhật trạng thái ứng viên.
+     * [BE] API Cập nhật trạng thái ứng viên (Duyệt/Loại).
+     * Luồng: FE updateStatus(appId, status) -> BE updateStatus -> ApplicationService
+     * DB Query: UPDATE applications SET status = ? WHERE id = ?
+     * Thông báo: Gửi mail/notification cho sinh viên khi trạng thái thay đổi.
      */
     @PatchMapping("/applications/{appId}/status")
     public ResponseEntity<ApiResponse<Object>> updateStatus(@PathVariable Integer appId,
@@ -135,6 +142,12 @@ public class RecruitmentRestController {
                 candidateSearchService.searchStudents(query, skill)));
     }
 
+    /**
+     * [BE] API Đặt lịch phỏng vấn.
+     * Luồng: FE scheduleInterview(data) -> BE scheduleInterview -> InterviewService
+     * DB Query: INSERT INTO interviews (...) VALUES (...)
+     * Hành động kèm theo: UPDATE applications SET status = 'interview' WHERE id = ?
+     */
     @PostMapping("/applications/schedule")
     public ResponseEntity<ApiResponse<Object>> scheduleInterview(@RequestBody com.fivecore.jobportal.dto.InterviewRequest request,
             Authentication authentication) {

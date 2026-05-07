@@ -116,10 +116,16 @@ export const studentApi = {
     exportProfilePdf: (studentId) => api.get(`/student/profile/${studentId}/pdf`, { responseType: 'blob' }),
 };
 
-// ── Company ───────────────────────────────────────────────────────────────
+// ── Company (Doanh nghiệp) ────────────────────────────────────────────────
+// Luồng chung: FE gọi api.js -> BE CompanyRestController -> DB Company/Job Table
 export const companyApi = {
+    // [FE] Lấy dữ liệu Dashboard | [BE] /company/dashboard | [DB] SELECT COUNT/SUM từ applications, jobs
     getDashboard: (days) => api.get(`/company/dashboard?days=${days || 7}`),
+    
+    // [FE] Lấy hồ sơ công ty | [BE] /company/profile (GET) | [DB] SELECT * FROM companies WHERE user_id = ?
     getProfile: () => api.get('/company/profile'),
+    
+    // [FE] Cập nhật hồ sơ | [BE] /company/profile (PUT) | [DB] UPDATE companies SET ...
     updateProfile: (data, onUploadProgress) => {
         if (data instanceof FormData) {
             return api.put('/company/profile', data, {
@@ -128,12 +134,26 @@ export const companyApi = {
         }
         return api.put('/company/profile', data);
     },
+    
+    // [FE] Đăng tin tuyển dụng | [BE] /company/jobs (POST) | [DB] INSERT INTO jobs ...
     postJob: (jobData) => api.post('/company/jobs', jobData),
+    
+    // [FE] Cập nhật tin | [BE] /company/jobs/{id} (PUT) | [DB] UPDATE jobs SET ...
     updateJob: (id, jobData) => api.put(`/company/jobs/${id}`, jobData),
+    
+    // [FE] Lấy tin để sửa | [BE] /company/jobs/{id} (GET) | [DB] SELECT * FROM jobs WHERE id = ?
     getJobDetailsForEdit: (id) => api.get(`/company/jobs/${id}`),
+    
+    // [FE] Danh sách tin đã đăng | [BE] /company/jobs (GET) | [DB] SELECT * FROM jobs WHERE company_id = ?
     getJobs: () => api.get('/company/jobs'),
+    
+    // [FE] Xóa tin | [BE] /company/jobs/{id} (DELETE) | [DB] DELETE FROM jobs WHERE id = ?
     deleteJob: (id) => api.delete(`/company/jobs/${id}`),
+    
+    // [FE] Nhân bản tin | [BE] /company/jobs/{id}/duplicate (POST) | [DB] INSERT INTO jobs SELECT FROM jobs ...
     duplicateJob: (id) => api.post(`/company/jobs/${id}/duplicate`),
+    
+    // [FE] Upload ảnh banner | [BE] /company/jobs/upload-banner | [Storage] Lưu file vào thư mục banners
     uploadBanner: (file) => {
         const formData = new FormData();
         formData.append('file', file);
@@ -141,18 +161,36 @@ export const companyApi = {
             headers: { 'Content-Type': 'multipart/form-data' }
         });
     },
+    
+    // [FE] Lưu ứng viên | [BE] /company/saved-candidates/{id} (POST) | [DB] INSERT INTO saved_candidates ...
     saveCandidate: (studentId) => api.post(`/company/saved-candidates/${studentId}`),
+    
+    // [FE] Bỏ lưu ứng viên | [BE] /company/saved-candidates/{id} (DELETE) | [DB] DELETE FROM saved_candidates ...
     unsaveCandidate: (studentId) => api.delete(`/company/saved-candidates/${studentId}`),
+    
+    // [FE] Danh sách ứng viên đã lưu | [BE] /company/saved-candidates (GET) | [DB] SELECT * FROM saved_candidates
     getSavedCandidates: () => api.get('/company/saved-candidates'),
+    
+    // [FE] Chi tiết ứng viên | [BE] /company/saved-candidates/{id}/detail | [DB] SELECT * FROM students ...
     getCandidateDetail: (studentId) => api.get(`/company/saved-candidates/${studentId}/detail`),
+    
+    // [FE] Tải CV ứng viên | [BE] /company/saved-candidates/{id}/cv | [Storage] Truy xuất file CV từ disk/cloud
     downloadCv: (studentId) => api.get(`/company/saved-candidates/${studentId}/cv`, { responseType: 'blob' }),
 };
 
-// ── Recruitment ───────────────────────────────────────────────────────────
+// ── Recruitment (Quản lý Tuyển dụng) ──────────────────────────────────────
+// Luồng chung: FE gọi api.js -> BE RecruitmentRestController -> DB Applications/Interviews Table
 export const recruitmentApi = {
+    // [FE] Lấy tất cả hồ sơ ứng tuyển | [BE] /company/management/applications | [DB] SELECT * FROM applications
     getApplications: () => api.get('/company/management/applications'),
+    
+    // [FE] Lấy ứng viên theo Job | [BE] /company/management/jobs/{id}/applicants | [DB] SELECT * FROM applications WHERE job_id = ?
     getApplicants: (jobId) => api.get(`/company/management/jobs/${jobId}/applicants`),
+    
+    // [FE] Chi tiết hồ sơ | [BE] /company/management/applications/{id} | [DB] SELECT * FROM applications JOIN students ...
     getApplicationDetail: (appId) => api.get(`/company/management/applications/${appId}`),
+    
+    // [FE] Cập nhật trạng thái (Duyệt/Loại) | [BE] /company/management/applications/{id}/status | [DB] UPDATE applications SET status = ?
     updateStatus: (appId, status, rejectionReason) => {
         let url = `/company/management/applications/${appId}/status?status=${status}`;
         if (rejectionReason) {
@@ -160,17 +198,41 @@ export const recruitmentApi = {
         }
         return api.patch(url);
     },
+    
+    // [FE] Tìm kiếm ứng viên | [BE] /company/management/candidates/search | [DB] SELECT * FROM students WHERE ... (Fulltext search/Criteria)
     searchCandidates: (params) => api.get('/company/management/candidates/search', { params }),
+    
+    // [FE] Đặt lịch phỏng vấn | [BE] /company/management/applications/schedule | [DB] INSERT INTO interviews & UPDATE application.status
     scheduleInterview: (data) => api.post('/company/management/applications/schedule', data),
+    
+    // [FE] Danh sách lịch phỏng vấn | [BE] /company/management/interviews | [DB] SELECT * FROM interviews
     getInterviews: () => api.get('/company/management/interviews'),
+    
+    // [FE] Hủy lịch phỏng vấn | [BE] /company/management/interviews/{id} | [DB] DELETE FROM interviews
     deleteInterview: (id) => api.delete('/company/management/interviews/' + id),
+    
+    // [FE] Chi tiết phỏng vấn | [BE] /company/management/interviews/{id} | [DB] SELECT * FROM interviews WHERE id = ?
     getInterviewDetail: (id) => api.get('/company/management/interviews/' + id),
+    
+    // [FE] Cập nhật lịch phỏng vấn | [BE] /company/management/interviews/{id} (PUT) | [DB] UPDATE interviews SET ...
     updateInterview: (id, data) => api.put('/company/management/interviews/' + id, data),
+    
+    // [FE] Chi tiết ứng viên | [BE] /company/management/candidates/{id} | [DB] SELECT * FROM students ...
     getCandidateDetail: (id) => api.get('/company/management/candidates/' + id),
+    
+    // [FE] AI Gợi ý ứng viên | [BE] /company/management/jobs/{id}/recommendations | [BE Logic] So khớp kỹ năng & Job description
     getRecommendations: (jobId) => api.get('/company/management/jobs/' + jobId + '/recommendations'),
+    
+    // [FE] Lấy thông báo | [BE] /company/management/notifications | [DB] SELECT * FROM notifications WHERE user_id = ?
     getNotifications: () => api.get('/company/management/notifications'),
+    
+    // [FE] Đánh dấu đã đọc | [BE] /company/management/notifications/{id}/read | [DB] UPDATE notifications SET is_read = true
     markNotificationAsRead: (id) => api.patch(`/company/management/notifications/${id}/read`),
+    
+    // [FE] Đánh giá phỏng vấn | [BE] /company/management/interviews/{id}/evaluate | [DB] UPDATE interviews SET evaluation = ?
     evaluateInterview: (id, data) => api.post(`/company/management/interviews/${id}/evaluate`, data),
+    
+    // [FE] Cập nhật trạng thái phỏng vấn | [BE] /company/management/interviews/{id}/status | [DB] UPDATE interviews SET status = ?
     updateInterviewStatus: (id, status) => api.patch(`/company/management/interviews/${id}/status?status=${status}`),
 };
 

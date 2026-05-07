@@ -15,6 +15,7 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
 
     const gpa = candidate.gpa ? parseFloat(candidate.gpa).toFixed(2) : '0.00';
 
+    // [FE Logic] Hiển thị hồ sơ chi tiết của sinh viên bao gồm cả phân tích độ phù hợp (AI Match)
     return (
         <div className="spm-overlay">
             <div className="spm-container">
@@ -312,7 +313,7 @@ const StudentProfileModal = ({ show, candidate, onClose }) => {
                                 )}
                             </div>
 
-                            {/* Match Analysis Breakdown (If available) */}
+                            {/* [AI Match Analysis] Phân tích độ phù hợp dựa trên thuật toán so khớp giữa Job và Student Profile */}
                             {candidate.matchDetails?.breakdown && (
                                 <div className="spm-card">
                                     <h3 className="spm-card-title">

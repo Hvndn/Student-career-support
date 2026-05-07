@@ -45,6 +45,10 @@ public class CompanySavedCandidateRestController {
                 .orElse(null);
     }
 
+    /**
+     * [BE Logic] Lưu ứng viên tiềm năng vào danh sách theo dõi.
+     * [DB] INSERT INTO saved_candidates (company_id, student_id)
+     */
     @PostMapping("/{studentId}")
     public ResponseEntity<ApiResponse<Object>> saveCandidate(@PathVariable Integer studentId, Authentication authentication) {
         Company company = getCurrentCompany(authentication);
@@ -122,6 +126,11 @@ public class CompanySavedCandidateRestController {
         return ResponseEntity.ok(ApiResponse.success("Lấy chi tiết ứng viên thành công", profile));
     }
 
+    /**
+     * [BE Logic] Xuất hồ sơ sinh viên ra file PDF cho doanh nghiệp tải về.
+     * 1. Kiểm tra quyền (phải là ứng viên đã lưu hoặc ứng viên đã nộp đơn cho doanh nghiệp).
+     * 2. Gọi PdfExportService để generate file PDF từ Profile.
+     */
     @GetMapping("/{studentId}/cv")
     public void downloadCv(@PathVariable Integer studentId, HttpServletResponse response, Authentication authentication) throws IOException {
         Company company = getCurrentCompany(authentication);

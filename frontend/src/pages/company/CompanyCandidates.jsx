@@ -29,9 +29,12 @@ const CompanyCandidates = () => {
     const [currentStatus, setCurrentStatus] = useState(null);
     const [showModal, setShowModal] = useState(false);
 
+    // [FE Logic] Tải toàn bộ danh sách hồ sơ ứng tuyển (Applications) của doanh nghiệp
     useEffect(() => {
         const fetchData = async () => {
             try {
+                // Bước 1: Lấy danh sách hồ sơ và các tin tuyển dụng
+                // [BE] RecruitmentRestController.getApplications() & CompanyRestController.getJobs()
                 const [appsRes, jobsRes] = await Promise.all([
                     recruitmentApi.getApplications(),
                     companyApi.getJobs()
@@ -41,9 +44,11 @@ const CompanyCandidates = () => {
                     const apps = appsRes.data.data;
                     setApplications(apps);
                     
-                    // Tăng cường dữ liệu: Lấy thông tin chi tiết từ profile gốc để đảm bảo chuyên ngành và kỹ năng là mới nhất
+                    // Bước 2 [Tăng cường dữ liệu]: Lấy thông tin chi tiết từ profile gốc của sinh viên (Major, Skills, GPA...)
+                    // Để đảm bảo doanh nghiệp luôn thấy thông tin mới nhất dù sinh viên nộp hồ sơ từ lâu
                     const uniqueStudentIds = [...new Set(apps.map(a => a.studentId))];
                     if (uniqueStudentIds.length > 0) {
+                        // [BE] CompanyRestController.getCandidateDetail() | [DB] SELECT * FROM students s JOIN majors m ON ... WHERE s.id = ?
                         const detailsRes = await Promise.all(
                             uniqueStudentIds.map(id => companyApi.getCandidateDetail(id).catch(() => null))
                         );
@@ -52,7 +57,6 @@ const CompanyCandidates = () => {
                         detailsRes.forEach(res => {
                             if (res?.data?.status === 'success') {
                                 const d = res.data.data;
-                                // API này trả về đối tượng có id là studentId
                                 const sId = d.id || d.studentId;
                                 if (sId) detailsMap[sId] = d;
                             }
@@ -63,7 +67,6 @@ const CompanyCandidates = () => {
                             if (detail) {
                                 return {
                                     ...a,
-                                    // Ghi đè bằng dữ liệu tươi mới nhất từ profile sinh viên gốc
                                     studentMajor: detail.major || a.studentMajor,
                                     studentSkills: (detail.skills && Array.isArray(detail.skills)) 
                                         ? detail.skills.map(s => typeof s === 'string' ? s : (s.name || '')).join(', ') 
@@ -84,8 +87,6 @@ const CompanyCandidates = () => {
                 if (jobsRes.data.status === 'success') {
                     setJobs(jobsRes.data.data);
                 }
-                
-                
             } catch (error) {
                 console.error('Lỗi khi lấy dữ liệu ứng viên:', error);
             } finally {
@@ -108,9 +109,11 @@ const CompanyCandidates = () => {
         setShowModal(true);
     };
 
+    // [FE Logic] Cập nhật trạng thái trực tiếp từ danh sách (Quick Action)
     const handleUpdateStatus = async (appId, status, e) => {
         if (e) e.stopPropagation();
         try {
+            // [BE] RecruitmentRestController.updateStatus() | [DB] UPDATE applications SET status = ?
             const res = await recruitmentApi.updateStatus(appId, status);
             if (res.data.status === 'success') {
                 if (status === 'pending') {
@@ -118,7 +121,7 @@ const CompanyCandidates = () => {
                 } else {
                     toast.success(`Đã chuyển ứng viên sang trạng thái ${getStatusLabel(status)}`);
                 }
-                // Cập nhật state local
+                // Cập nhật state local ngay để UI phản hồi tức thì
                 setApplications(prev => prev.map(app => 
                     app.id === appId ? { ...app, status: status } : app
                 ));
@@ -205,6 +208,23 @@ const CompanyCandidates = () => {
         setSortConfig({ key, direction });
     };
 
+    const handleResetFilters = () => {
+        setSearchTerm('');
+        setSelectedJobId(jobId || 'all');
+        setActiveTab('all');
+        setDateFilter('all');
+        setStartDate('');
+        setSortConfig({ key: 'appliedAt', direction: 'desc' });
+        toast.success('Đã làm mới bộ lọc', {
+            icon: '🔄',
+            style: {
+                borderRadius: '10px',
+                background: '#333',
+                color: '#fff',
+            }
+        });
+    };
+
     const getSortIcon = (key) => {
         if (sortConfig.key !== key) return <FiArrowDown size={12} style={{ opacity: 0.3, marginLeft: '4px' }} />;
         return sortConfig.direction === 'asc' 
@@ -280,6 +300,46 @@ const CompanyCandidates = () => {
                     <div className="candidates-container">
                         <div className="candidates-main-content full-width">
                             
+                            {/* Quick Stats Summary */}
+                            <div className="stats-summary-grid intro-y" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '24px' }}>
+                                <div className="stat-summary-card" style={{ background: '#fff', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '15px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                                    <div style={{ background: '#eff6ff', color: '#2563eb', width: '45px', height: '45px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <i className="fa-solid fa-users" style={{ fontSize: '20px' }}></i>
+                                    </div>
+                                    <div>
+                                        <p style={{ margin: 0, fontSize: '13px', color: '#64748b', fontWeight: '500' }}>Tổng hồ sơ</p>
+                                        <h4 style={{ margin: 0, fontSize: '20px', color: '#1e293b', fontWeight: '700' }}>{applications.length}</h4>
+                                    </div>
+                                </div>
+                                <div className="stat-summary-card" style={{ background: '#fff', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '15px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                                    <div style={{ background: '#fffbeb', color: '#d97706', width: '45px', height: '45px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <i className="fa-solid fa-clock-rotate-left" style={{ fontSize: '20px' }}></i>
+                                    </div>
+                                    <div>
+                                        <p style={{ margin: 0, fontSize: '13px', color: '#64748b', fontWeight: '500' }}>Chờ xử lý</p>
+                                        <h4 style={{ margin: 0, fontSize: '20px', color: '#1e293b', fontWeight: '700' }}>{applications.filter(a => a.status?.toLowerCase() === 'pending').length}</h4>
+                                    </div>
+                                </div>
+                                <div className="stat-summary-card" style={{ background: '#fff', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '15px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                                    <div style={{ background: '#f0fdf4', color: '#16a34a', width: '45px', height: '45px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <i className="fa-solid fa-user-check" style={{ fontSize: '20px' }}></i>
+                                    </div>
+                                    <div>
+                                        <p style={{ margin: 0, fontSize: '13px', color: '#64748b', fontWeight: '500' }}>Đã tuyển</p>
+                                        <h4 style={{ margin: 0, fontSize: '20px', color: '#1e293b', fontWeight: '700' }}>{applications.filter(a => a.status?.toLowerCase() === 'hired').length}</h4>
+                                    </div>
+                                </div>
+                                <div className="stat-summary-card" style={{ background: '#fff', padding: '20px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: '15px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                                    <div style={{ background: '#fef2f2', color: '#dc2626', width: '45px', height: '45px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <i className="fa-solid fa-user-xmark" style={{ fontSize: '20px' }}></i>
+                                    </div>
+                                    <div>
+                                        <p style={{ margin: 0, fontSize: '13px', color: '#64748b', fontWeight: '500' }}>Từ chối</p>
+                                        <h4 style={{ margin: 0, fontSize: '20px', color: '#1e293b', fontWeight: '700' }}>{applications.filter(a => a.status?.toLowerCase() === 'rejected').length}</h4>
+                                    </div>
+                                </div>
+                            </div>
+
                             {/* Fivecore Standard Filter Bar */}
                             <div className="dau-filter-bar intro-y" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
                                 <div className="filter-left" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
@@ -329,6 +389,38 @@ const CompanyCandidates = () => {
                                         <option value="30d">30 ngày qua</option>
                                         <option value="custom">Tùy chọn...</option>
                                     </select>
+
+                                    {/* Nút Làm mới bộ lọc */}
+                                    <button 
+                                        onClick={handleResetFilters}
+                                        className="dau-btn-refresh"
+                                        style={{ 
+                                            display: 'flex', 
+                                            alignItems: 'center', 
+                                            gap: '8px',
+                                            padding: '8px 16px', 
+                                            background: '#f1f5f9', 
+                                            border: '1px solid #e2e8f0', 
+                                            borderRadius: '8px', 
+                                            color: '#64748b', 
+                                            fontSize: '13px', 
+                                            fontWeight: '600', 
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s ease',
+                                            height: '42px'
+                                        }}
+                                        onMouseOver={(e) => {
+                                            e.currentTarget.style.background = '#e2e8f0';
+                                            e.currentTarget.style.color = '#1e293b';
+                                        }}
+                                        onMouseOut={(e) => {
+                                            e.currentTarget.style.background = '#f1f5f9';
+                                            e.currentTarget.style.color = '#64748b';
+                                        }}
+                                    >
+                                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><path d="M23 4v6h-6M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                                        Làm mới
+                                    </button>
 
                                     {/* MỤC SẮP XẾP RIÊNG BIỆT - Đồng bộ màu sắc */}
                                     <div className="sort-section" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0 12px', background: '#fff', borderRadius: '8px', border: '1px solid #e2e8f0', height: '42px' }}>

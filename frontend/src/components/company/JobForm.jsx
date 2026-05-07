@@ -92,9 +92,12 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
     const [showSuggestions, setShowSuggestions] = useState(false);
     const suggestionRef = useRef(null);
 
+    // [FE Logic] Tải danh mục và kỹ năng từ hệ thống để gợi ý khi nhập liệu
     useEffect(() => {
         const fetchMetadata = async () => {
             try {
+                // [BE] JobRestController.getCategories() & StudentRestController.getSkills()
+                // [DB] SELECT * FROM categories & SELECT * FROM skills
                 const [catRes, skillRes] = await Promise.all([
                     jobApi.getCategories(),
                     studentApi.getSkills()
@@ -263,6 +266,7 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
         return combined.slice(0, 15);
     };
 
+    // [FE Logic] Xử lý lưu tin tuyển dụng (Đăng mới hoặc Cập nhật)
     const handleSubmit = async (isDraft = false) => {
         // Kiểm tra các trường bắt buộc
         const missingFields = [];
@@ -277,6 +281,7 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
             return;
         }
 
+        // Chuẩn bị payload gửi lên server
         const payload = {
             ...form,
             quantity: parseInt(form.quantity) || 1,
@@ -286,28 +291,31 @@ const JobForm = ({ jobData, onSuccess, onCancel, isPage = false }) => {
             status: isDraft ? 'draft' : (jobData?.status === 'open' ? 'open' : 'pending')
         };
 
-        // Explicitly ensure all required fields are present in payload
+        // Đảm bảo các trường quan trọng luôn có giá trị
         payload.title = form.title;
         payload.industry = form.industry;
         payload.region = form.region;
         payload.description = form.description;
 
-        console.log("Final Payload to API:", payload);
-
         setSubmitting(true);
         try {
+            // Bước 1: Nếu có chọn banner mới, tải lên banner trước
+            // [BE] CompanyRestController.uploadBanner()
             if (selectedBannerFile) {
                 const res = await companyApi.uploadBanner(selectedBannerFile);
                 if (res.data.status === 'success') payload.bannerUrl = res.data.data;
             }
 
+            // Bước 2: Lưu thông tin tin tuyển dụng
+            // [BE] CompanyRestController.postJob() hoặc updateJob()
+            // [DB] INSERT INTO jobs ... OR UPDATE jobs SET ... WHERE id = ?
             const response = jobData?.id 
                 ? await companyApi.updateJob(jobData.id, payload)
                 : await companyApi.postJob(payload);
 
             if (response.data.status === 'success') {
                 toast.success(jobData ? 'Cập nhật thành công!' : 'Đăng tin thành công!');
-                onSuccess();
+                onSuccess(); // Gọi callback để trang cha đóng modal hoặc chuyển hướng
             }
         } catch (err) {
             console.error("Submit Error:", err);

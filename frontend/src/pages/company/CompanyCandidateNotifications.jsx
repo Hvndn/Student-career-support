@@ -3,6 +3,7 @@ import CompanySidebar from '../../components/company/CompanySidebar';
 import CompanyNavbar from '../../components/company/CompanyNavbar';
 import '../../assets/css/company/CompanyCandidateNotifications.css';
 
+// [FE Logic] Trang thông báo và hướng dẫn thiết lập nhận thông báo ứng viên phù hợp qua Email
 const CompanyCandidateNotifications = () => {
     return (
         <div className="company-dashboard-container">

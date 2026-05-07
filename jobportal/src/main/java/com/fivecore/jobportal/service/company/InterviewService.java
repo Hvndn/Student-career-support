@@ -28,7 +28,11 @@ public class InterviewService {
     private final NotificationService notificationService;
 
     /**
-     * Sắp xếp lịch phỏng vấn và gửi email (US-017).
+     * [BE Logic] Sắp xếp lịch phỏng vấn và gửi email (US-017).
+     * 1. Lưu thông tin lịch phỏng vấn vào DB [DB] interviews
+     * 2. Cập nhật trạng thái Application sang 'interview' [DB] applications
+     * 3. Gửi Email thông báo chi tiết cho sinh viên.
+     * 4. Gửi Notification trong hệ thống cho sinh viên.
      */
     @Transactional
     public Interview scheduleInterview(Application application, com.fivecore.jobportal.dto.InterviewRequest request) {
@@ -194,7 +198,11 @@ public class InterviewService {
     }
 
     /**
-     * Ghi nhận đánh giá sau phỏng vấn và tự động cập nhật Application (US-017 MVP).
+     * [BE Logic] Ghi nhận đánh giá sau phỏng vấn và tự động cập nhật Application (US-017 MVP).
+     * 1. Lưu các đầu điểm: Technical, Communication, Problem Solving. [DB] interviews
+     * 2. Tính toán Overall Score dựa trên trọng số (50% - 20% - 30%).
+     * 3. Nếu kết quả là PASS/FAIL, tự động cập nhật trạng thái đơn ứng tuyển [DB] applications
+     * 4. Gửi Notification kết quả cho sinh viên.
      */
     @Transactional
     public void submitEvaluation(Integer id, com.fivecore.jobportal.dto.InterviewEvaluationRequest request) {

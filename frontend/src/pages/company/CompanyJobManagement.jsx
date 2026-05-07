@@ -49,11 +49,13 @@ const CompanyJobManagement = () => {
     fetchJobs();
   }, []);
 
+  // [FE Logic] Lấy danh sách tin tuyển dụng của doanh nghiệp
   const fetchJobs = async () => {
     try {
       setLoading(true);
+      // Gọi API getJobs() từ api.js | [BE] CompanyRestController.getJobs()
+      // DB Query: SELECT * FROM jobs WHERE company_id = ?
       const response = await companyApi.getJobs();
-      console.log('Fetched jobs data:', response.data);
       if (response.data.status === 'success') {
         const sortedJobs = response.data.data.sort((a, b) => {
           // Sắp xếp theo thời gian đăng/cập nhật mới nhất (Real-time)
@@ -63,7 +65,7 @@ const CompanyJobManagement = () => {
         });
         setJobs(sortedJobs);
         
-        // Đảm bảo currentPage không vượt quá tổng số trang mới
+        // Cập nhật phân trang
         const newTotalPages = Math.ceil(sortedJobs.length / JOBS_PER_PAGE);
         if (currentPage > newTotalPages && newTotalPages > 0) {
           setCurrentPage(newTotalPages);
@@ -85,13 +87,16 @@ const CompanyJobManagement = () => {
     }
   };
 
+  // [FE Logic] Xóa tin tuyển dụng
   const handleDelete = async (jobId) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa tin tuyển dụng này? Thao tác này không thể hoàn tác.')) {
       try {
         setLoading(true);
+        // Gọi API deleteJob(jobId) | [BE] CompanyRestController.deleteJob()
+        // DB Query: DELETE FROM jobs WHERE id = ?
         await companyApi.deleteJob(jobId);
         showToast('Đã xóa tin tuyển dụng thành công!', 'success');
-        await fetchJobs();
+        await fetchJobs(); // Tải lại danh sách sau khi xóa
       } catch (err) {
         console.error('Delete error:', err);
         showToast('Không thể xóa tin tuyển dụng.', 'error');
@@ -100,13 +105,16 @@ const CompanyJobManagement = () => {
     }
   };
 
+  // [FE Logic] Lấy chi tiết để chỉnh sửa
   const handleEdit = async (jobId) => {
     try {
       setLoading(true);
+      // Gọi API getJobDetailsForEdit(jobId) | [BE] CompanyRestController.getJobForEdit()
+      // DB Query: SELECT * FROM jobs WHERE id = ?
       const detailsRes = await companyApi.getJobDetailsForEdit(jobId);
       if (detailsRes.data.status === 'success') {
         setEditingJob(detailsRes.data.data);
-        setShowPostModal(true);
+        setShowPostModal(true); // Mở Modal và truyền dữ liệu job cần sửa
       }
     } catch (err) {
       console.error('Edit error:', err);
@@ -264,9 +272,29 @@ const CompanyJobManagement = () => {
                 </select>
 
                 <button 
-                  onClick={() => setFilters({ search: '', status: 'Tất cả trạng thái', industry: 'Tất cả ngành nghề', region: 'Tất cả khu vực' })}
-                  style={{ padding: '8px 15px', background: '#f1f5f9', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#64748b', fontSize: '14px', fontWeight: '600', cursor: 'pointer' }}
+                  onClick={() => {
+                    setFilters({ search: '', status: 'Tất cả trạng thái', industry: 'Tất cả ngành nghề', region: 'Tất cả khu vực' });
+                    setSortConfig({ key: 'postedAt', direction: 'desc' });
+                    toast.success('Đã làm mới bộ lọc', { icon: '🔄' });
+                  }}
+                  style={{ 
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '8px 15px', 
+                    background: '#f1f5f9', 
+                    border: '1px solid #e2e8f0', 
+                    borderRadius: '8px', 
+                    color: '#64748b', 
+                    fontSize: '14px', 
+                    fontWeight: '600', 
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.background = '#e2e8f0'}
+                  onMouseOut={(e) => e.currentTarget.style.background = '#f1f5f9'}
                 >
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><path d="M23 4v6h-6M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
                   Làm mới
                 </button>
               </div>
@@ -351,7 +379,7 @@ const CompanyJobManagement = () => {
                               </div>
                             </td>
                             <td>
-                              <div className="modern-job-title">
+                              <div className="modern-job-title" onClick={() => handleEdit(job.id)} style={{ cursor: 'pointer' }}>
                                 {job.title}
                               </div>
                               <div className="modern-job-skills">
@@ -365,7 +393,9 @@ const CompanyJobManagement = () => {
                               {formatDate(job.postedAt)}
                             </td>
                             <td data-label="ỨNG TUYỂN" className="text-center modern-stats">
-                              <i className="fa-solid fa-user-group"></i> {job.applicantsCount || 0}
+                              <Link to={`/company/management/candidates/${job.id}`} className="applicants-count">
+                                <i className="fa-solid fa-user-group"></i> {job.applicantsCount || 0}
+                              </Link>
                             </td>
                             <td data-label="TRẠNG THÁI" className="text-center modern-status" style={{ color: statusColor }}>
                               <i className="fa-regular fa-circle-check"></i> {statusText}

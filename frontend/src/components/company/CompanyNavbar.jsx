@@ -24,8 +24,10 @@ const CompanyTopbar = () => {
 
   const unreadCount = notifications.filter(n => n.unread).length;
 
+  // [FE Logic] Lấy thông tin hồ sơ doanh nghiệp để hiển thị trên Topbar
   const fetchCompanyProfile = async () => {
     try {
+      // [BE] CompanyRestController.getProfile()
       const response = await companyApi.getProfile();
       if (response.data.status === 'success') {
         setCompanyData(response.data.data);
@@ -35,14 +37,17 @@ const CompanyTopbar = () => {
     }
   };
 
+  // [FE Logic] Lấy danh sách thông báo mới nhất cho doanh nghiệp
   const fetchNotifications = async () => {
     setLoadingNotif(true);
     try {
+      // [BE] RecruitmentRestController.getNotifications()
+      // [DB] SELECT * FROM notifications WHERE user_id = ?
       const response = await recruitmentApi.getNotifications();
       if (response.data.status === 'success' || response.data.success) {
         const data = response.data.data || [];
         
-        // Transform system notifications into UI format
+        // Transform system notifications into UI format (Phân loại theo từ khóa: ứng tuyển, phỏng vấn,...)
         const notifs = data.map(n => {
           const t = (n.title || '').toLowerCase();
           let type = 'system';

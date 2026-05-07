@@ -48,7 +48,12 @@ public class CompanyRestController {
     }
 
     /**
-     * API Dashboard doanh nghiệp.
+     * [BE] API Dashboard doanh nghiệp.
+     * Luồng: FE gọi /api/company/dashboard -> BE fetch stats từ DB.
+     * DB Queries: 
+     * - SELECT COUNT(*) FROM jobs WHERE company_id = ? (Active Jobs)
+     * - SELECT COUNT(*) FROM applications WHERE job_id IN (...) (Total Candidates)
+     * - SELECT SUM(views) FROM jobs WHERE company_id = ? (Total Views)
      */
     @GetMapping("/dashboard")
     public ResponseEntity<ApiResponse<CompanyDashboardResponse>> getDashboard(@RequestParam(defaultValue = "7") Integer days, Authentication authentication) {
@@ -58,6 +63,7 @@ public class CompanyRestController {
         }
 
         Company company = user.getCompany();
+        // [Logic] Tổng hợp dữ liệu từ nhiều Repository (Job, Application)
         CompanyDashboardResponse dashboard = CompanyDashboardResponse.builder()
                 .fullName(user.getFullName())
                 .companyName(company.getName())
@@ -100,7 +106,9 @@ public class CompanyRestController {
     }
 
     /**
-     * API Đăng tin tuyển dụng.
+     * [BE] API Đăng tin tuyển dụng.
+     * Luồng: FE postJob(jobData) -> BE postJob -> CompanyService.postJob()
+     * DB Query: INSERT INTO jobs (title, description, company_id, ...) VALUES (?, ?, ?, ...)
      */
     @PostMapping("/jobs")
     public ResponseEntity<ApiResponse<Object>> postJob(@RequestBody JobRequest jobRequest,
@@ -134,7 +142,9 @@ public class CompanyRestController {
     }
 
     /**
-     * API Xóa tin tuyển dụng.
+     * [BE] API Xóa tin tuyển dụng.
+     * Luồng: FE deleteJob(id) -> BE deleteJob -> CompanyService.deleteJob()
+     * DB Query: DELETE FROM jobs WHERE id = ? AND company_id = ?
      */
     @DeleteMapping("/jobs/{id}")
     public ResponseEntity<ApiResponse<Object>> deleteJob(@PathVariable("id") Integer id,
@@ -172,7 +182,9 @@ public class CompanyRestController {
     }
 
     /**
-     * API Lấy hồ sơ công ty.
+     * [BE] API Lấy hồ sơ công ty.
+     * Luồng: FE getProfile() -> BE getProfile
+     * DB Query: SELECT * FROM companies WHERE user_id = (SELECT id FROM users WHERE email = ?)
      */
     @GetMapping("/profile")
     public ResponseEntity<ApiResponse<CompanyResponse>> getProfile(Authentication authentication) {

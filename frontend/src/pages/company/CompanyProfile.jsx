@@ -58,8 +58,10 @@ const CompanyProfile = () => {
         fetchCategories();
     }, []);
 
+    // [FE Logic] Tải danh mục ngành nghề để hiển thị trong select
     const fetchCategories = async () => {
         try {
+            // [BE] JobRestController.getCategories() | [DB] SELECT * FROM categories
             const res = await jobApi.getCategories();
             if (res.data.status === 'success') {
                 setCategories(res.data.data);
@@ -69,8 +71,10 @@ const CompanyProfile = () => {
         }
     };
 
+    // [FE Logic] Tải thông tin hồ sơ của doanh nghiệp hiện tại (Dựa trên JWT)
     const fetchProfile = async () => {
         try {
+            // [BE] CompanyRestController.getProfile() | [DB] SELECT * FROM companies WHERE user_id = ?
             const res = await companyApi.getProfile();
             if (res.data.status === 'success') {
                 const data = res.data.data;
@@ -92,7 +96,7 @@ const CompanyProfile = () => {
                     activityImages: data.activityImages || []
                 });
 
-                // Load districts if province exists
+                // Tải danh sách Quận/Huyện/Phường dựa trên Tỉnh đã lưu
                 if (data.province) {
                     const foundProv = vietnamLocations.find(p => p.name === data.province);
                     if (foundProv) {
@@ -166,18 +170,20 @@ const CompanyProfile = () => {
         });
     };
     
+    // [FE Logic] Lưu thông tin hồ sơ (Sử dụng FormData vì có gửi file ảnh)
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
         try {
             const dataToSubmit = new FormData();
             
-            // Map frontend fields to backend entity fields
+            // Map các trường từ giao diện sang đúng tên thuộc tính trong Backend Entity (JobPortal/Entity/Company)
             const fieldMapping = {
                 taxCode: 'taxId',
                 representativeName: 'representative'
             };
 
+            // Đóng gói các trường văn bản
             Object.keys(formData).forEach(key => {
                 if (key !== 'logo' && key !== 'activityImages' && formData[key] !== null && formData[key] !== undefined) {
                     const backendKey = fieldMapping[key] || key;
@@ -185,23 +191,27 @@ const CompanyProfile = () => {
                 }
             });
 
+            // Gửi file Logo mới nếu có thay đổi
             if (selectedFile) dataToSubmit.append('logoFile', selectedFile);
             
-            // Gửi danh sách các ảnh cũ vẫn còn giữ lại (không bị xóa)
+            // Gửi danh sách các ảnh hoạt động cũ vẫn còn giữ lại (không bị xóa)
             const existingImages = formData.activityImages.filter(img => typeof img === 'string' && img.startsWith('/uploads'));
             existingImages.forEach(url => {
                 dataToSubmit.append('existingImages', url);
             });
 
+            // Gửi các file ảnh hoạt động mới được tải lên
             if (selectedActivityFiles.length > 0) {
                 selectedActivityFiles.forEach(file => {
                     dataToSubmit.append('activityFiles', file);
                 });
             }
 
+            // Gọi API updateProfile | [BE] CompanyRestController.updateProfile()
+            // [DB] UPDATE companies SET ... WHERE id = ?
             await companyApi.updateProfile(dataToSubmit);
             
-            await fetchProfile(); // Refresh data
+            await fetchProfile(); // Tải lại dữ liệu mới nhất sau khi lưu thành công
             setSelectedFile(null);
             setSelectedActivityFiles([]);
             window.dispatchEvent(new CustomEvent('companyProfileUpdated'));
